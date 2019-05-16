@@ -1,0 +1,19 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.example.mutidemo.widget.XSlideMenu
+        android:id="@+id/mXSlideMenu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- 菜单界面的布局 -->
+
+        <include layout="@layout/layout_slidemenu" />
+
+        <!-- 主界面的布局 -->
+
+        <include layout="@layout/layout_slidemenu_main" />
+    </com.example.mutidemo.widget.XSlideMenu>
+
+</RelativeLayout>

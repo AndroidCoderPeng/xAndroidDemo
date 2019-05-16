@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/mBtn_Start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="开始异步任务" />
+
+        <com.example.mutidemo.widget.CustomProgressBar
+            android:id="@+id/mCustomProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            app:borderWidth="1dp"
+            app:progressColor="#0094ff"
+            app:progressDesc="剩余"
+            app:progressRadius="10dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/mBtn_Async"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="异步获取网络图片" />
+
+        <ImageView
+            android:id="@+id/mImageView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+</LinearLayout>

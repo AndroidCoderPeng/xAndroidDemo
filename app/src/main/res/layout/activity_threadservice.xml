@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/mBtn_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开始摇号" />
+
+    <Button
+        android:id="@+id/mBtn_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/mBtn_start"
+        android:layout_toRightOf="@+id/mBtn_start"
+        android:text="揭晓号码" />
+
+    <TextView
+        android:id="@+id/mTv_show"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/mBtn_start"
+        android:gravity="center"
+        android:textSize="50sp" />
+
+</RelativeLayout>

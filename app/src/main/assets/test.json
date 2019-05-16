@@ -1,0 +1,68 @@
+{
+  "status": "ok",
+  "result": [{
+    "date": "1",
+    "amount": "1464"
+  },
+    {
+      "date": "2",
+      "amount": "1553"
+    },
+    {
+      "date": "3",
+      "amount": "1544.5"
+    },
+    {
+      "date": "4",
+      "amount": "32"
+    },
+    {
+      "date": "5",
+      "amount": "116.5"
+    },
+    {
+      "date": "6",
+      "amount": "73"
+    },
+    {
+      "date": "7",
+      "amount": "36"
+    },
+    {
+      "date": "8",
+      "amount": "251"
+    },
+    {
+      "date": "9",
+      "amount": "369"
+    },
+    {
+      "date": "10",
+      "amount": "129"
+    },
+    {
+      "date": "11",
+      "amount": "131.4"
+    },
+    {
+      "date": "12",
+      "amount": "589"
+    },
+    {
+      "date": "13",
+      "amount": "1189"
+    },
+    {
+      "date": "14",
+      "amount": "289"
+    },
+    {
+      "date": "15",
+      "amount": "189"
+    },
+    {
+      "date": "16",
+      "amount": "89"
+    }
+  ]
+}
