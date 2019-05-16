@@ -8,7 +8,7 @@ import android.widget.Toast;
 import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.SlideMenuAdapter;
 import com.example.mutidemo.widget.XSlideMenu;
-import com.pengxh.app.multilib.base.NormalActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import butterknife.BindView;
 
@@ -16,7 +16,7 @@ import butterknife.BindView;
  * Created by Administrator on 2017/12/9.
  */
 
-public class SlideMenuActivity extends NormalActivity {
+public class SlideMenuActivity extends BaseNormalActivity {
 
     @BindView(R.id.lv_menu)
     ListView lvMenu;

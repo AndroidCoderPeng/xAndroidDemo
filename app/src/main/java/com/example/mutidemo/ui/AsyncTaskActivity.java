@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.widget.CustomProgressBar;
-import com.pengxh.app.multilib.base.NormalActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -23,7 +23,7 @@ import butterknife.BindView;
  * Created by Administrator on 2017/11/26.
  */
 
-public class AsyncTaskActivity extends NormalActivity {
+public class AsyncTaskActivity extends BaseNormalActivity {
 
     @BindView(R.id.mBtn_Start)
     Button mBtnStart;

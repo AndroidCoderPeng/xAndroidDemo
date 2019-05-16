@@ -1,13 +1,13 @@
 package com.example.mutidemo.ui;
 
 import com.example.mutidemo.R;
-import com.pengxh.app.multilib.base.NormalActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 /**
  * Created by Administrator on 2017/11/26.
  */
 
-public class CircleImageViewActivity extends NormalActivity {
+public class CircleImageViewActivity extends BaseNormalActivity {
 
     @Override
     public void initView() {

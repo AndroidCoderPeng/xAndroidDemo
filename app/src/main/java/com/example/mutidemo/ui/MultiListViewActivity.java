@@ -4,7 +4,7 @@ import android.widget.ListView;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.MultiListViewAdapter;
-import com.pengxh.app.multilib.base.NormalActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +15,7 @@ import butterknife.BindView;
  * Created by Administrator on 2018/7/20.
  */
 
-public class MultiListViewActivity extends NormalActivity {
+public class MultiListViewActivity extends BaseNormalActivity {
 
 
     @BindView(R.id.mVerticListView)

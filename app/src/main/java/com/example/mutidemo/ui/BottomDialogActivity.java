@@ -13,13 +13,13 @@ import com.aihook.alertview.library.AlertView;
 import com.aihook.alertview.library.OnDismissListener;
 import com.aihook.alertview.library.OnItemClickListener;
 import com.example.mutidemo.R;
-import com.pengxh.app.multilib.base.NormalActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 /**
  * Created by Administrator on 2017/12/16.
  */
 
-public class BottomDialogActivity extends NormalActivity implements OnItemClickListener, OnDismissListener {
+public class BottomDialogActivity extends BaseNormalActivity implements OnItemClickListener, OnDismissListener {
 
     private AlertView mAlertView;//避免创建重复View，先创建View，然后需要的时候show出来，推荐这个做法
     private AlertView mAlertViewExt;//窗口拓展例子

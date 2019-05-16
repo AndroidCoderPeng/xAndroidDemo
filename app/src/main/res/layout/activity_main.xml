@@ -2,20 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#efefef"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical"
-    android:padding="10dp">
+    android:background="@color/white"
+    android:padding="5dp">
 
-    <GridView
-        android:id="@+id/mMainGridView"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mMainRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:columnWidth="90dp"
-        android:gravity="center"
-        android:horizontalSpacing="10dp"
-        android:numColumns="3"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="10dp" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>

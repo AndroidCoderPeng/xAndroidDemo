@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.mutidemo.R;
-import com.pengxh.app.multilib.base.NormalActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,7 +21,7 @@ import butterknife.BindView;
  * 计时器还可以用CountDownTimer
  */
 
-public class TimerActivity extends NormalActivity {
+public class TimerActivity extends BaseNormalActivity {
 
     @BindView(R.id.mTv_timer_show)
     TextView mTvTimerShow;

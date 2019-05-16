@@ -15,7 +15,7 @@ import com.example.mutidemo.ui.fragment.FirstFragment;
 import com.example.mutidemo.ui.fragment.SecondFragment;
 import com.example.mutidemo.ui.fragment.ThirdFragment;
 import com.example.mutidemo.widget.NoScrollViewPager;
-import com.pengxh.app.multilib.base.NormalActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ import java.util.List;
 
 import butterknife.BindView;
 
-public class MutiFragmentActivity extends NormalActivity {
+public class MutiFragmentActivity extends BaseNormalActivity {
 
     @BindView(R.id.mViewPager)
     NoScrollViewPager mViewPager;

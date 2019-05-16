@@ -29,7 +29,6 @@
         <activity android:name=".ui.SharedPreferencesActivity" />
         <activity android:name=".ui.CircleImageViewActivity" />
         <activity android:name=".ui.CustomProgressBarActivity" />
-        <activity android:name=".ui.PrinterTextViewActivity" />
         <activity android:name=".ui.AsyncTaskActivity" />
         <activity android:name=".ui.login.UserManagerActivity" />
         <activity android:name=".ui.SlideMenuActivity" />
@@ -47,7 +46,7 @@
         <activity android:name=".ui.zxing.ZxingActivity" />
         <activity android:name=".ui.zxing.scanner.CaptureActivity" />
         <activity android:name=".ui.MutiFragmentActivity" />
-        <activity android:name=".ui.ImgAutoFitActivity"/>
-        <activity android:name=".ui.PullToRefreshActivity"/>
+        <activity android:name=".ui.ImgAutoFitActivity" />
+        <activity android:name=".ui.PullToRefreshActivity" />
     </application>
 </manifest>

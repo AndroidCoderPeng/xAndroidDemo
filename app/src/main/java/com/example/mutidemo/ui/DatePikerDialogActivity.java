@@ -9,7 +9,7 @@ import com.example.mutidemo.R;
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
 import com.jzxiang.pickerview.listener.OnDateSetListener;
-import com.pengxh.app.multilib.base.NormalActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,7 +22,7 @@ import butterknife.BindView;
  * https://github.com/JZXiang/TimePickerDialog
  */
 
-public class DatePikerDialogActivity extends NormalActivity {
+public class DatePikerDialogActivity extends BaseNormalActivity {
 
     @BindView(R.id.mBtnDatePicker)
     Button mBtnDatePicker;

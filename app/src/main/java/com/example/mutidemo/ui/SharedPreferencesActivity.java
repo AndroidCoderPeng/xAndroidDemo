@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.mutidemo.R;
-import com.pengxh.app.multilib.base.NormalActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import butterknife.BindView;
 
@@ -16,7 +16,7 @@ import butterknife.BindView;
  * Created by Administrator on 2017/11/26.
  */
 
-public class SharedPreferencesActivity extends NormalActivity {
+public class SharedPreferencesActivity extends BaseNormalActivity {
 
     @BindView(R.id.mEt_Account)
     EditText mEtAccount;

@@ -9,7 +9,7 @@ import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.MyExpandableListViewAdapter;
 import com.example.mutidemo.bean.ChildData;
 import com.example.mutidemo.bean.GroupData;
-import com.pengxh.app.multilib.base.NormalActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import butterknife.BindView;
  * Created by Administrator on 2018/4/3.
  */
 
-public class ExpandableListViewActivity extends NormalActivity {
+public class ExpandableListViewActivity extends BaseNormalActivity {
 
     @BindView(R.id.expandableListView)
     ExpandableListView expandableListView;

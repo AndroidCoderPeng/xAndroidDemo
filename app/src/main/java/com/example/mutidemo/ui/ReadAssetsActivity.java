@@ -7,7 +7,7 @@ import android.widget.SimpleAdapter;
 import com.example.mutidemo.R;
 import com.example.mutidemo.bean.TestBean;
 import com.google.gson.Gson;
-import com.pengxh.app.multilib.base.NormalActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import butterknife.BindView;
  * Created by Administrator on 2018/3/4.
  */
 
-public class ReadAssetsActivity extends NormalActivity {
+public class ReadAssetsActivity extends BaseNormalActivity {
 
     @BindView(R.id.mLv_read)
     ListView mLvRead;

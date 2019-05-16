@@ -9,7 +9,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.example.mutidemo.R;
-import com.pengxh.app.multilib.base.NormalActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.InputStream;
@@ -18,7 +18,7 @@ import java.net.URL;
 
 import butterknife.BindView;
 
-public class ImgAutoFitActivity extends NormalActivity {
+public class ImgAutoFitActivity extends BaseNormalActivity {
 
     @BindView(R.id.mAutoImg)
     ImageView mAutoImg;

@@ -5,7 +5,7 @@ import android.widget.Toast;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.widget.CustomProgressBar;
-import com.pengxh.app.multilib.base.NormalActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import butterknife.BindView;
 
@@ -13,7 +13,7 @@ import butterknife.BindView;
  * Created by Administrator on 2017/11/26.
  */
 
-public class CustomProgressBarActivity extends NormalActivity {
+public class CustomProgressBarActivity extends BaseNormalActivity {
 
     @BindView(R.id.cpb_progresbar)
     CustomProgressBar cpbProgresbar;

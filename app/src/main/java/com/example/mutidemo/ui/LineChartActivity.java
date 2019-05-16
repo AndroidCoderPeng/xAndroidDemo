@@ -2,7 +2,7 @@ package com.example.mutidemo.ui;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.view.LineChartView;
-import com.pengxh.app.multilib.base.NormalActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import butterknife.BindView;
 
@@ -10,7 +10,7 @@ import butterknife.BindView;
  * Created by Administrator on 2017/12/13.
  */
 
-public class LineChartActivity extends NormalActivity {
+public class LineChartActivity extends BaseNormalActivity {
 
     @BindView(R.id.mLineChartView)
     LineChartView mLineChartView;
