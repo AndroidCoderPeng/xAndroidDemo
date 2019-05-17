@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <com.example.mutidemo.widget.CircleImageView
-        android:layout_width="wrap_content"
+    <ExpandableListView
+        android:id="@+id/mExpandableListView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/timg"
-        app:border_color="@color/colorAccent"
-        app:border_width="2dp" />
+        android:dividerHeight="1dp"
+        android:groupIndicator="@null"
+        android:scrollbars="none" />
 
 </LinearLayout>

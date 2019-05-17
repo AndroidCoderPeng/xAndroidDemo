@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mutidemo.R;
-import com.example.mutidemo.adapter.BaseMyFPAdapter;
+import com.example.mutidemo.adapter.BaseFragmentAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class FirstFragment extends Fragment {
     Unbinder unbinder;
 
     private List<Fragment> list_fragment = new ArrayList<>();
-    private BaseMyFPAdapter fragmentPagerAdapter;
+    private BaseFragmentAdapter fragmentPagerAdapter;
 
     @Nullable
     @Override
@@ -51,7 +51,7 @@ public class FirstFragment extends Fragment {
         list_fragment.add(new FiveFragment());
         list_fragment.add(new SixFragment());
 
-        fragmentPagerAdapter = new BaseMyFPAdapter(getActivity().getSupportFragmentManager(), list_fragment);
+        fragmentPagerAdapter = new BaseFragmentAdapter(getActivity().getSupportFragmentManager(), list_fragment);
         mViewPagerFg.setAdapter(fragmentPagerAdapter);
         mViewPagerFg.setOffscreenPageLimit(3);
         tabLayout.setupWithViewPager(mViewPagerFg);

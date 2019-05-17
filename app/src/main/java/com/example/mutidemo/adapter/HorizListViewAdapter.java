@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.mutidemo.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class HorizListViewAdapter extends BaseAdapter {
         } else {
             holder = (HorizViewHolder) convertView.getTag();
         }
-        Picasso.with(mContext).load(mHorzItemlist.get(position)).into(holder.mImageView);
+        Glide.with(mContext).load(mHorzItemlist.get(position)).into(holder.mImageView);
         return convertView;
     }
 

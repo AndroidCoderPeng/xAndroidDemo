@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.mutidemo.R;
-import com.example.mutidemo.widget.HorizontalListView;
+import com.pengxh.app.multilib.widget.HorizontalListView;
 
 import java.util.List;
 

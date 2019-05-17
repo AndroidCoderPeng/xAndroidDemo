@@ -29,7 +29,8 @@ dependencies {
     //cardview
     implementation 'com.android.support:cardview-v7:28.0.0'
     //图片加载库
-    implementation 'com.squareup.picasso:picasso:2.4.0'
+	implementation 'com.github.bumptech.glide:glide:4.5.0'
+	annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
     implementation files('libs/BmobSDK_V3.3.9_0612.jar')
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.jakewharton:butterknife:8.8.1'
@@ -40,4 +41,5 @@ dependencies {
     implementation 'com.github.pengxianhong:Android-library:1.3.1'
     //https://github.com/scwang90/SmartRefreshLayout
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.5.1'
+	implementation 'pub.devrel:easypermissions:1.0.1'
 }

@@ -10,12 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.mutidemo.R;
-import com.example.mutidemo.adapter.BaseMyFPAdapter;
+import com.example.mutidemo.adapter.BaseFragmentAdapter;
 import com.example.mutidemo.ui.fragment.FirstFragment;
 import com.example.mutidemo.ui.fragment.SecondFragment;
 import com.example.mutidemo.ui.fragment.ThirdFragment;
-import com.example.mutidemo.widget.NoScrollViewPager;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
+import com.pengxh.app.multilib.widget.NoScrollViewPager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +48,7 @@ public class MutiFragmentActivity extends BaseNormalActivity {
 
     @Override
     public void initEvent() {
-        FPAdapter = new BaseMyFPAdapter(getSupportFragmentManager(), list_fragment);
+        FPAdapter = new BaseFragmentAdapter(getSupportFragmentManager(), list_fragment);
         mViewPager.setAdapter(FPAdapter);
         mViewPager.setOffscreenPageLimit(3);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

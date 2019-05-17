@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp">
 
-        <com.example.mutidemo.widget.HorizontalListView
+        <com.pengxh.app.multilib.widget.HorizontalListView
             android:id="@+id/mHorizontalListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

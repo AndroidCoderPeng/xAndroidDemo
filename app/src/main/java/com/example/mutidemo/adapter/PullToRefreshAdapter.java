@@ -16,13 +16,13 @@ import java.util.List;
  * Created by Administrator on 2018/7/20.
  */
 
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
+public class PullToRefreshAdapter extends RecyclerView.Adapter {
 
     private Context mContext;
     private List<String> mItemList;
     private LayoutInflater inflater;
 
-    public MyRecyclerViewAdapter(Context mContext, List<String> mItemList) {
+    public PullToRefreshAdapter(Context mContext, List<String> mItemList) {
         this.mContext = mContext;
         this.mItemList = mItemList;
         inflater = LayoutInflater.from(mContext);

@@ -6,12 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.mutidemo.R;
 import com.example.mutidemo.bean.ChildData;
 import com.example.mutidemo.bean.GroupData;
+import com.pengxh.app.multilib.widget.CircleImageView;
 
 import java.util.List;
 
@@ -19,13 +20,13 @@ import java.util.List;
  * Created by Administrator on 2018/4/3.
  */
 
-public class MyExpandableListViewAdapter implements ExpandableListAdapter {
+public class ExListViewAdapter implements ExpandableListAdapter {
 
     private Context context;
     private List<GroupData> groupData;
     private List<List<ChildData>> childData;
 
-    public MyExpandableListViewAdapter(Context context, List<GroupData> groupData, List<List<ChildData>> childData) {
+    public ExListViewAdapter(Context context, List<GroupData> groupData, List<List<ChildData>> childData) {
         this.context = context;
         this.groupData = groupData;
         this.childData = childData;
@@ -90,11 +91,11 @@ public class MyExpandableListViewAdapter implements ExpandableListAdapter {
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         GroupViewHolder holder = null;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_group_expandablelistview, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_group_exlelistview, null);
             holder = new GroupViewHolder();
-            holder.img = (ImageView) convertView.findViewById(R.id.img_group);
-            holder.tv_name = (TextView) convertView.findViewById(R.id.tv_group_name);
-            holder.tv_num = (TextView) convertView.findViewById(R.id.tv_group_num);
+            holder.img = convertView.findViewById(R.id.img_group);
+            holder.tv_name = convertView.findViewById(R.id.tv_group_name);
+            holder.tv_num = convertView.findViewById(R.id.tv_group_num);
             convertView.setTag(holder);
         } else {
             holder = (GroupViewHolder) convertView.getTag();
@@ -102,9 +103,9 @@ public class MyExpandableListViewAdapter implements ExpandableListAdapter {
         GroupData groupData = this.groupData.get(groupPosition);
         //是否展开
         if (isExpanded) {
-            holder.img.setImageResource(R.mipmap.ic_launcher_round);
+            holder.img.setImageResource(R.mipmap.logo);
         } else {
-            holder.img.setImageResource(R.mipmap.ic_launcher_round);
+            holder.img.setImageResource(R.mipmap.logo);
         }
         holder.tv_name.setText(groupData.getName());
         holder.tv_num.setText(groupData.getNum());
@@ -113,19 +114,19 @@ public class MyExpandableListViewAdapter implements ExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        ChildViewHolder holder = null;
+        ChildViewHolder holder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_child_expandablelistview, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_child_exlistview, null);
             holder = new ChildViewHolder();
-            holder.img = (ImageView) convertView.findViewById(R.id.img_child_head);
-            holder.tv_name = (TextView) convertView.findViewById(R.id.tv_child_name);
-            holder.tv_content = (TextView) convertView.findViewById(R.id.tv_child_content);
+            holder.img = convertView.findViewById(R.id.img_child_head);
+            holder.tv_name = convertView.findViewById(R.id.tv_child_name);
+            holder.tv_content = convertView.findViewById(R.id.tv_child_content);
             convertView.setTag(holder);
         } else {
             holder = (ChildViewHolder) convertView.getTag();
         }
         ChildData childData = this.childData.get(groupPosition).get(childPosition);
-        holder.img.setBackgroundResource(R.mipmap.ic_launcher);
+        Glide.with(context).load(childData.getUrl()).into(holder.img);
         holder.tv_name.setText(childData.getName());
         holder.tv_content.setText(childData.getContent());
         return convertView;
@@ -167,13 +168,12 @@ public class MyExpandableListViewAdapter implements ExpandableListAdapter {
     }
 
     class GroupViewHolder {
-        ImageView img;
+        CircleImageView img;
         TextView tv_name, tv_num;
     }
 
     class ChildViewHolder {
-        ImageView img;
+        CircleImageView img;
         TextView tv_name, tv_content;
     }
-
 }

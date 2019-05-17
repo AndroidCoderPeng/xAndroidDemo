@@ -18,7 +18,11 @@ import butterknife.BindView;
 /**
  * Created by Administrator on 2017/11/25.
  * <p>
- * 计时器还可以用CountDownTimer
+ * handler+postDelayed() 方式
+ * Timer + TimerTask + handler 方式
+ * ScheduledExecutorService + handler 方式
+ * RxJava 方式
+ * CountDownTimer 方式
  */
 
 public class TimerActivity extends BaseNormalActivity {
@@ -58,7 +62,7 @@ public class TimerActivity extends BaseNormalActivity {
                         mHandler.sendMessage(msg);
                     }
                 };
-                mTimer.schedule(mTimerTask, 500, 500);
+                mTimer.schedule(mTimerTask, 0, 1000);
             }
         });
     }

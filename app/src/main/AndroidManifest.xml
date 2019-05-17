@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
@@ -27,8 +28,6 @@
 
         <activity android:name=".ui.TimerActivity" />
         <activity android:name=".ui.SharedPreferencesActivity" />
-        <activity android:name=".ui.CircleImageViewActivity" />
-        <activity android:name=".ui.CustomProgressBarActivity" />
         <activity android:name=".ui.AsyncTaskActivity" />
         <activity android:name=".ui.login.UserManagerActivity" />
         <activity android:name=".ui.SlideMenuActivity" />
@@ -37,7 +36,6 @@
         <activity android:name=".ui.BottomDialogActivity" />
         <activity android:name=".ui.DatePikerDialogActivity" />
         <activity android:name=".ui.ReadAssetsActivity" />
-        <activity android:name=".ui.JingdongActivity" />
         <activity android:name=".ui.ExpandableListViewActivity" />
         <activity android:name=".ui.MultiListViewActivity" />
         <activity android:name=".ui.login.RegisterActivity" />
@@ -46,7 +44,6 @@
         <activity android:name=".ui.zxing.ZxingActivity" />
         <activity android:name=".ui.zxing.scanner.CaptureActivity" />
         <activity android:name=".ui.MutiFragmentActivity" />
-        <activity android:name=".ui.ImgAutoFitActivity" />
         <activity android:name=".ui.PullToRefreshActivity" />
     </application>
 </manifest>

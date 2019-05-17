@@ -1,6 +1,5 @@
 package com.example.mutidemo.ui;
 
-import android.content.res.AssetManager;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -8,10 +7,8 @@ import com.example.mutidemo.R;
 import com.example.mutidemo.bean.TestBean;
 import com.google.gson.Gson;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
+import com.pengxh.app.multilib.utils.LocalDataUtil;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +33,7 @@ public class ReadAssetsActivity extends BaseNormalActivity {
 
     @Override
     public void init() {
-        String jsonFromAssets = getJsonFromAssets().toString();
+        String jsonFromAssets = LocalDataUtil.getStringFromAssets(this, "test.json");
         /**转换为实体类**/
         Gson gson = new Gson();
         TestBean testBean = gson.fromJson(jsonFromAssets, TestBean.class);
@@ -56,28 +53,9 @@ public class ReadAssetsActivity extends BaseNormalActivity {
     public void initEvent() {
         SimpleAdapter adapter = new SimpleAdapter(getApplicationContext()
                 , list_map
-                , R.layout.list_item
+                , R.layout.item_readassets
                 , new String[]{"date", "amount"}
                 , new int[]{R.id.text1, R.id.text2});
         mLvRead.setAdapter(adapter);
-    }
-
-    private String getJsonFromAssets() {
-        //将json数据变成字符串
-        StringBuilder stringBuilder = new StringBuilder();
-        try {
-            //获取assets资源管理器
-            AssetManager assetManager = getApplicationContext().getAssets();
-            //通过管理器打开文件并读取
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    assetManager.open("test.json")));
-            String line;
-            while ((line = br.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return stringBuilder.toString();
     }
 }

@@ -9,7 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.mutidemo.R;
-import com.example.mutidemo.adapter.viewholder.SlideViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +20,11 @@ import java.util.List;
 public class SlideMenuAdapter extends BaseAdapter {
     private List<String> list;
     private Context context;
+    private int selectItem = -1;
 
     public SlideMenuAdapter(Context context) {
         this.context = context;
-        list = new ArrayList();
+        list = new ArrayList<>();
         list.add("糊涂账");
         list.add("月消费分析");
         list.add("年消费分析");
@@ -34,6 +34,10 @@ public class SlideMenuAdapter extends BaseAdapter {
         list.add("数据备份");
         list.add("互动交流");
         list.add("关于我们");
+    }
+
+    public void setSelectItem(int selectItem) {
+        this.selectItem = selectItem;
     }
 
     @Override
@@ -74,9 +78,7 @@ public class SlideMenuAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void setSelectItem(int selectItem) {
-        this.selectItem = selectItem;
+    class SlideViewHolder {
+        public TextView tv_item;
     }
-
-    private int selectItem = -1;
 }

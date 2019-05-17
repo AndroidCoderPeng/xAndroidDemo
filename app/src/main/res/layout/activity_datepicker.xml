@@ -15,10 +15,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:clickable="false"
-        android:focusable="false"
+        android:background="@null"
+        android:enabled="false"
         android:gravity="center"
-        android:text="2018年01月07日"
+        android:padding="10dp"
+        android:text="2000-01-01"
         android:textColor="#0094ff"
         android:textSize="20sp" />
 

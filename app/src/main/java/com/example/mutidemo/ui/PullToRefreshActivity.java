@@ -4,7 +4,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.mutidemo.R;
-import com.example.mutidemo.adapter.MyRecyclerViewAdapter;
+import com.example.mutidemo.adapter.PullToRefreshAdapter;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -39,10 +39,10 @@ public class PullToRefreshActivity extends BaseNormalActivity {
 
     @Override
     public void initEvent() {
-        final MyRecyclerViewAdapter adapter = new MyRecyclerViewAdapter(this, mItemList);
+        final PullToRefreshAdapter adapter = new PullToRefreshAdapter(this, mItemList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(adapter);
-        mSmartRefreshLayout.setRefreshHeader(new ClassicsHeader(this).setArrowResource(R.mipmap.search_blue));
+        mSmartRefreshLayout.setRefreshHeader(new ClassicsHeader(this).setArrowResource(R.mipmap.loading));
         mSmartRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {

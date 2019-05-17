@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.ExpandableListView;
 
 import com.example.mutidemo.R;
-import com.example.mutidemo.adapter.MyExpandableListViewAdapter;
+import com.example.mutidemo.adapter.ExListViewAdapter;
 import com.example.mutidemo.bean.ChildData;
 import com.example.mutidemo.bean.GroupData;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
@@ -22,34 +22,25 @@ import butterknife.BindView;
 
 public class ExpandableListViewActivity extends BaseNormalActivity {
 
-    @BindView(R.id.expandableListView)
-    ExpandableListView expandableListView;
+    @BindView(R.id.mExpandableListView)
+    ExpandableListView mExpandableListView;
 
-    private MyExpandableListViewAdapter adapter;
     private List<GroupData> groupList;
     private List<List<ChildData>> childList;
-    private String[] url;
 
     @Override
     public void initView() {
-        setContentView(R.layout.activity_expandablelistview);
+        setContentView(R.layout.activity_exlistview);
     }
 
     @Override
     public void init() {
-
-    }
-
-    @Override
-    public void initEvent() {
         groupList = new ArrayList<>();
         childList = new ArrayList<>();
-        url = new String[]{
+        String[] url = new String[]{
                 "http://cdn.duitang.com/uploads/item/201506/07/20150607125903_vFWC5.png",
-                "http://upload.qqbody.com/ns/20160915/202359954jalrg3mqoei.jpg",
                 "http://tupian.qqjay.com/tou3/2016/0726/8529f425cf23fd5afaa376c166b58e29.jpg",
                 "http://cdn.duitang.com/uploads/item/201607/13/20160713094718_Xe3Tc.png",
-                "http://img3.imgtn.bdimg.com/it/u=1808104956,526590423&fm=11&gp=0.jpg",
                 "http://tupian.qqjay.com/tou3/2016/0725/5d6272a4acd7e21b2391aff92f765018.jpg"
         };
         List<String> group = new ArrayList<>();
@@ -65,7 +56,7 @@ public class ExpandableListViewActivity extends BaseNormalActivity {
         for (int i = 0; i < group.size(); i++) {
             List<ChildData> list = new ArrayList<>();
             for (int j = 0; j < 2 * i + 2; j++) {
-                ChildData cd = null;
+                ChildData cd;
                 if (i == 0) {
                     cd = new ChildData("null", "我的手机", "上次登录");
                     list.add(cd);
@@ -79,11 +70,15 @@ public class ExpandableListViewActivity extends BaseNormalActivity {
             }
             childList.add(list);
         }
-        adapter = new MyExpandableListViewAdapter(this, groupList, childList);
-        expandableListView.setAdapter(adapter);
+    }
+
+    @Override
+    public void initEvent() {
+        ExListViewAdapter adapter = new ExListViewAdapter(this, groupList, childList);
+        mExpandableListView.setAdapter(adapter);
 
         //重写OnGroupClickListener，实现当展开时，ExpandableListView不自动滚动
-        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+        mExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {

@@ -5,10 +5,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.mutidemo.R;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
+import com.pengxh.app.multilib.utils.ToastUtil;
 
 import butterknife.BindView;
 
@@ -53,9 +53,9 @@ public class SharedPreferencesActivity extends BaseNormalActivity {
                     SharedPreferences.Editor editor = sp.edit();
                     editor.putString(USER_NAME, name);
                     editor.putString(USER_PSWD, pswd);
-                    editor.commit();
+                    editor.apply();
                 }
-                Toast.makeText(getApplicationContext(), "保存成功", Toast.LENGTH_SHORT).show();
+                ToastUtil.showBeautifulToast("保存成功", 3);
             }
         });
     }
