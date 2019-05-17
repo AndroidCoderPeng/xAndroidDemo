@@ -2,13 +2,11 @@
 <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/mSmartRefreshLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="10dp">
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/mRecyclerView"
+    <com.pengxh.app.multilib.widget.swipemenu.SwipeMenuListView
+        android:id="@+id/mSwipeMenuListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#fff"
-        android:overScrollMode="never" />
+        android:layout_height="match_parent" />
+
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>

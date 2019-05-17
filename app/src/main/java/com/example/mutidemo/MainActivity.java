@@ -16,10 +16,10 @@ import com.example.mutidemo.ui.ExpandableListViewActivity;
 import com.example.mutidemo.ui.LineChartActivity;
 import com.example.mutidemo.ui.MultiListViewActivity;
 import com.example.mutidemo.ui.MutiFragmentActivity;
-import com.example.mutidemo.ui.PullToRefreshActivity;
 import com.example.mutidemo.ui.ReadAssetsActivity;
 import com.example.mutidemo.ui.SharedPreferencesActivity;
 import com.example.mutidemo.ui.SlideMenuActivity;
+import com.example.mutidemo.ui.SwipeListViewActivity;
 import com.example.mutidemo.ui.TimerActivity;
 import com.example.mutidemo.ui.login.UserManagerActivity;
 import com.example.mutidemo.ui.zxing.ZxingActivity;
@@ -44,7 +44,7 @@ public class MainActivity extends DoubleClickExitActivity implements EasyPermiss
             , Manifest.permission.CAMERA};
     private List<String> mItemNameList = Arrays.asList("计时器", "数据存取", "异步任务", "登陆注册"
             , "侧滑菜单", "折线图", "柱状图", "日期选择器", "读取本地Assets文件", "各种对话框", "折叠式ListView"
-            , "横竖嵌套ListView", "Fragment嵌套", "Zxing扫一扫", "上拉加载下拉刷新");
+            , "横竖嵌套ListView", "Fragment嵌套", "Zxing扫一扫", "带有侧滑删除效果的上拉加载下拉刷新");
 
     @Override
     public void initView() {
@@ -108,7 +108,7 @@ public class MainActivity extends DoubleClickExitActivity implements EasyPermiss
                         startActivity(new Intent(mContext, ZxingActivity.class));
                         break;
                     case 14:
-                        startActivity(new Intent(mContext, PullToRefreshActivity.class));
+                        startActivity(new Intent(mContext, SwipeListViewActivity.class));
                         break;
                     default:
                         break;

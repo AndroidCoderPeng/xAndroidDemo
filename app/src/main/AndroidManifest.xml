@@ -44,6 +44,6 @@
         <activity android:name=".ui.zxing.ZxingActivity" />
         <activity android:name=".ui.zxing.scanner.CaptureActivity" />
         <activity android:name=".ui.MutiFragmentActivity" />
-        <activity android:name=".ui.PullToRefreshActivity" />
+        <activity android:name=".ui.SwipeListViewActivity" />
     </application>
 </manifest>
