@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 
 import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.event.ZBEATEvent;
@@ -18,6 +19,7 @@ import com.example.mutidemo.event.ZCALLEvent;
 import com.example.mutidemo.ui.AsyncTaskActivity;
 import com.example.mutidemo.ui.BarChartActivity;
 import com.example.mutidemo.ui.BottomDialogActivity;
+import com.example.mutidemo.ui.CalculateDIPActivity;
 import com.example.mutidemo.ui.DatePikerDialogActivity;
 import com.example.mutidemo.ui.ExpandableListViewActivity;
 import com.example.mutidemo.ui.LineChartActivity;
@@ -33,6 +35,8 @@ import com.example.mutidemo.ui.login.UserManagerActivity;
 import com.example.mutidemo.ui.zxing.ZxingActivity;
 import com.example.mutidemo.util.Constant;
 import com.example.mutidemo.util.UsbAccessUtil;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.utils.ToastUtil;
 
@@ -51,6 +55,10 @@ public class MainActivity extends DoubleClickExitActivity implements EasyPermiss
 
     @BindView(R.id.mMainRecyclerView)
     RecyclerView mMainRecyclerView;
+    @BindView(R.id.mFloatingActionMenu)
+    FloatingActionMenu mFloatingActionMenu;
+    @BindView(R.id.mFabCalculate)
+    FloatingActionButton mFabCalculate;
 
     private Context mContext = MainActivity.this;
     private static final int permissionCode = 999;
@@ -180,6 +188,12 @@ public class MainActivity extends DoubleClickExitActivity implements EasyPermiss
                     break;
                 default:
                     break;
+            }
+        });
+        mFabCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(mContext, CalculateDIPActivity.class));
             }
         });
     }

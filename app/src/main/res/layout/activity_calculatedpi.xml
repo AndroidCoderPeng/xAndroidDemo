@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <ImageButton
+        android:id="@+id/mBtnGetDeviceSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:src="@android:drawable/ic_menu_info_details" />
+
+    <LinearLayout
+        android:id="@+id/ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mBtnGetDeviceSize"
+        android:orientation="vertical">
+
+        <org.angmarch.views.NiceSpinner
+            android:id="@+id/mSpinnerWidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="请选择设备像素高度" />
+
+        <org.angmarch.views.NiceSpinner
+            android:id="@+id/mSpinnerHeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="请选择设备像素宽度" />
+
+        <org.angmarch.views.NiceSpinner
+            android:id="@+id/mSpinnerSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="请选择设备像素尺寸" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/mBtnCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/ll"
+        android:text="计算" />
+
+    <TextView
+        android:id="@+id/mTvDeviceDPI"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/mBtnCalculate"
+        android:background="#000"
+        android:padding="10dp"
+        android:textColor="#FFF"
+        android:textSize="18sp" />
+
+</RelativeLayout>

@@ -47,4 +47,8 @@ dependencies {
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.5.1'
 	implementation 'pub.devrel:easypermissions:1.0.1'
 	implementation 'org.greenrobot:eventbus:3.1.1'
+	//悬浮按钮
+	implementation 'com.github.clans:fab:1.6.4'
+	//spinner
+	implementation 'com.github.arcadefire:nice-spinner:1.4'
 }
