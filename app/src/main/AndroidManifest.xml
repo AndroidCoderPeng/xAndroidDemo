@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mutidemo">
 
+    <uses-feature android:name="android.hardware.usb.accessory" />
+
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -24,6 +26,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                android:resource="@xml/accessory_filter" />
         </activity>
 
         <activity android:name=".ui.TimerActivity" />
@@ -45,5 +54,6 @@
         <activity android:name=".ui.zxing.scanner.CaptureActivity" />
         <activity android:name=".ui.MutiFragmentActivity" />
         <activity android:name=".ui.SwipeListViewActivity" />
+        <activity android:name=".ui.UsbDeviceActivity" />
     </application>
 </manifest>
