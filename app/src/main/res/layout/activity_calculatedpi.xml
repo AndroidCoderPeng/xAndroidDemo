@@ -19,23 +19,74 @@
         android:layout_below="@id/mBtnGetDeviceSize"
         android:orientation="vertical">
 
-        <org.angmarch.views.NiceSpinner
-            android:id="@+id/mSpinnerWidth"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="请选择设备像素高度" />
+            android:gravity="center"
+            android:orientation="horizontal">
 
-        <org.angmarch.views.NiceSpinner
-            android:id="@+id/mSpinnerHeight"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="请选择设备像素宽度" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="像素宽度：" />
 
-        <org.angmarch.views.NiceSpinner
-            android:id="@+id/mSpinnerSize"
+            <com.example.mutidemo.widget.EditTextWithDelete
+                android:id="@+id/mEtWidth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_edittext"
+                android:inputType="numberDecimal"
+                android:padding="5dp"
+                android:singleLine="true" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="请选择设备像素尺寸" />
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="像素高度：" />
+
+            <com.example.mutidemo.widget.EditTextWithDelete
+                android:id="@+id/mEtHeight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_edittext"
+                android:inputType="numberDecimal"
+                android:padding="5dp"
+                android:singleLine="true" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="设备尺寸：" />
+
+            <com.example.mutidemo.widget.EditTextWithDelete
+                android:id="@+id/mEtSize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_edittext"
+                android:inputType="numberDecimal"
+                android:padding="5dp"
+                android:singleLine="true" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -45,12 +96,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_below="@id/ll"
-        android:text="计算" />
+        android:text="计算DPI" />
 
     <TextView
         android:id="@+id/mTvDeviceDPI"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="100dp"
         android:layout_below="@id/mBtnCalculate"
         android:background="#000"
         android:padding="10dp"
