@@ -56,5 +56,6 @@
         <activity android:name=".ui.SwipeListViewActivity" />
         <activity android:name=".ui.UsbDeviceActivity" />
         <activity android:name=".ui.CalculateDIPActivity" />
+        <activity android:name=".ui.MVPActivity" />
     </application>
 </manifest>

@@ -20,4 +20,6 @@ public class Constant {
     public static final String mImageUrl_2 = "http://b-ssl.duitang.com/uploads/item/201706/04/20170604203631_GRtrX.jpeg";
     private static final String mBigImage = "https://read.html5.qq.com/image?imageUrl=http://abco1.heibaimanhua.com/wp-content/uploads/2018/11/20181102_5bdc700f9ec94.jpg&src=share";
 
+    //retrofit请求baseurl只能是根url，不能带任何参数
+    public static final String WEATHER_URL = "https://way.jd.com/";
 }

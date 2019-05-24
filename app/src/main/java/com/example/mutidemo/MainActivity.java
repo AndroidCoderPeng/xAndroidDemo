@@ -23,6 +23,7 @@ import com.example.mutidemo.ui.CalculateDIPActivity;
 import com.example.mutidemo.ui.DatePikerDialogActivity;
 import com.example.mutidemo.ui.ExpandableListViewActivity;
 import com.example.mutidemo.ui.LineChartActivity;
+import com.example.mutidemo.ui.MVPActivity;
 import com.example.mutidemo.ui.MultiListViewActivity;
 import com.example.mutidemo.ui.MutiFragmentActivity;
 import com.example.mutidemo.ui.ReadAssetsActivity;
@@ -68,7 +69,7 @@ public class MainActivity extends DoubleClickExitActivity implements EasyPermiss
     private List<String> mItemNameList = Arrays.asList("计时器", "数据存取", "异步任务", "登陆注册"
             , "侧滑菜单", "折线图", "柱状图", "日期选择器", "读取本地Assets文件", "各种对话框", "折叠式ListView"
             , "横竖嵌套ListView", "Fragment嵌套", "Zxing扫一扫", "带有侧滑删除效果的上拉加载下拉刷新"
-            , "USB串口调试");
+            , "USB串口调试", "MVP网络请求框架");
 
     private UsbAccessUtil usbAccessUtil;
     public SharedPreferences sharePrefSettings;
@@ -185,6 +186,9 @@ public class MainActivity extends DoubleClickExitActivity implements EasyPermiss
                     } else {
                         ToastUtil.showBeautifulToast("请连接背夹", 2);
                     }
+                    break;
+                case 16:
+                    startActivity(new Intent(mContext, MVPActivity.class));
                     break;
                 default:
                     break;
