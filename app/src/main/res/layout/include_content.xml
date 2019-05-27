@@ -16,7 +16,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="北京"
             android:textColor="#fff"
             android:textSize="18sp" />
 
@@ -38,7 +37,6 @@
             android:id="@+id/mMVP_TextView_temp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="27"
             android:textColor="#fff"
             android:textSize="80sp" />
 
@@ -49,7 +47,6 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="25dp"
             android:layout_toEndOf="@id/mMVP_TextView_temp"
-            android:text="晴"
             android:textColor="#fff"
             android:textSize="18sp" />
 
@@ -58,7 +55,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#80ffffff"
+        android:background="#26ffffff"
         android:orientation="horizontal"
         android:padding="8dp">
 
@@ -66,7 +63,6 @@
             android:id="@+id/mMVP_TextView_winddirect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="西北风"
             android:textColor="#fff" />
 
         <TextView
@@ -74,15 +70,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="4级"
             android:textColor="#fff" />
 
         <TextView
             android:id="@+id/mMVP_TextView_humidity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="湿度 14%"
+            android:layout_marginStart="20dp"
+            android:textColor="#fff" />
+
+        <TextView
+            android:id="@+id/mMVP_TextView_pressure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
             android:textColor="#fff" />
 
     </LinearLayout>
@@ -90,8 +91,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="#80ffffff"
+        android:layout_marginTop="30dp"
+        android:background="#26ffffff"
         android:orientation="horizontal"
         android:padding="8dp">
 
@@ -104,11 +105,26 @@
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/mMVP_TextView_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/mMVP_TextView_"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/mMVP_TextView_week"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/mMVP_TextView_date"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <TextView
             android:id="@+id/mMVP_TextView_weather_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text="晴"
             android:textColor="#fff"
             android:textSize="18sp" />
 
@@ -118,7 +134,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/mMVP_TextView_"
             android:layout_marginTop="5dp"
-            android:text="14~"
             android:textColor="#fff"
             android:textSize="18sp" />
 
@@ -129,7 +144,6 @@
             android:layout_below="@id/mMVP_TextView_"
             android:layout_marginTop="5dp"
             android:layout_toEndOf="@id/mMVP_TextView_templow"
-            android:text="31"
             android:textColor="#fff"
             android:textSize="18sp" />
 
