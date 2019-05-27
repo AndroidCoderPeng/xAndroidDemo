@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:singleLine="true"
         android:text="空调指数"
         android:textColor="#fff"
         android:textSize="15sp" />
@@ -22,6 +23,6 @@
         android:layout_marginTop="5dp"
         android:gravity="center"
         android:text="较少开启"
-        android:textColor="#aaa" />
+        android:textColor="#ccc" />
 
 </LinearLayout>

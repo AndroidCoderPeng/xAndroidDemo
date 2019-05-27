@@ -17,4 +17,9 @@
         <attr name="saveTextSize" format="dimension" />
         <attr name="saveTextColor" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="FramedGridView">
+        <attr name="border_width" format="dimension" />
+        <attr name="border_color" format="color" />
+    </declare-styleable>
 </resources>
