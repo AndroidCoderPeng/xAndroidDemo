@@ -2,11 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@mipmap/bg"
     android:orientation="vertical"
     android:padding="10dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
@@ -16,6 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
+            android:text="北京"
             android:textColor="#fff"
             android:textSize="18sp" />
 
@@ -24,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="10dp"
             android:background="@mipmap/loading" />
 
     </LinearLayout>
@@ -46,9 +48,19 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="25dp"
-            android:layout_toEndOf="@id/mMVP_TextView_temp"
+            android:layout_toEndOf="@id/mMVP_ImageView_img"
+            android:text="晴"
             android:textColor="#fff"
             android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/mMVP_ImageView_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="27dp"
+            android:layout_toEndOf="@id/mMVP_TextView_temp"
+            android:background="@mipmap/a0" />
 
     </RelativeLayout>
 
@@ -87,66 +99,5 @@
             android:textColor="#fff" />
 
     </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:background="#26ffffff"
-        android:orientation="horizontal"
-        android:padding="8dp">
-
-        <TextView
-            android:id="@+id/mMVP_TextView_"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="今天"
-            android:textColor="#fff"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/mMVP_TextView_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/mMVP_TextView_"
-            android:textColor="#fff"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/mMVP_TextView_week"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/mMVP_TextView_date"
-            android:textColor="#fff"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/mMVP_TextView_weather_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:textColor="#fff"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/mMVP_TextView_templow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/mMVP_TextView_"
-            android:layout_marginTop="5dp"
-            android:textColor="#fff"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/mMVP_TextView_temphigh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/mMVP_TextView_"
-            android:layout_marginTop="5dp"
-            android:layout_toEndOf="@id/mMVP_TextView_templow"
-            android:textColor="#fff"
-            android:textSize="18sp" />
-
-    </RelativeLayout>
 
 </LinearLayout>

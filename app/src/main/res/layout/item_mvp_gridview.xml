@@ -12,8 +12,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:singleLine="true"
-        android:text="空调指数"
-        android:textColor="#fff"
+        android:textColor="#333"
         android:textSize="15sp" />
 
     <TextView
@@ -22,7 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:gravity="center"
-        android:text="较少开启"
-        android:textColor="#ccc" />
+        android:textColor="#aaa" />
 
 </LinearLayout>

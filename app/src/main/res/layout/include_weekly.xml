@@ -8,18 +8,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="7天预报"
-        android:textColor="#ffffff"
+        android:text="7天天气预报"
         android:textSize="16sp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#ccc" />
-
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dp" />
 
 </LinearLayout>

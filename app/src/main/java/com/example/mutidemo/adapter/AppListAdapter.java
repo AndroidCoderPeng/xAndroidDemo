@@ -16,7 +16,7 @@ import java.util.List;
 public class AppListAdapter extends BaseSwipListAdapter {
     private Context context;
     private List<AppInfoBean> appInfoList;
-    private final LayoutInflater inflater;
+    private LayoutInflater inflater;
 
     public AppListAdapter(Context context, List<AppInfoBean> appInfoList) {
         this.context = context;

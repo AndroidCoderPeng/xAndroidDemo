@@ -1,13 +1,16 @@
 package com.example.mutidemo.ui;
 
 import android.app.ProgressDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.GridViewAdapter;
+import com.example.mutidemo.adapter.HourlyRecyclerViewAdapter;
 import com.example.mutidemo.bean.WeatherBean;
 import com.example.mutidemo.mvp.presenter.WeatherPresenterImpl;
 import com.example.mutidemo.mvp.view.IWeatherView;
@@ -27,8 +30,6 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView, Vie
     FramedGridView mFramedGridView;
     @BindView(R.id.mMVP_TextView_cityName)
     TextView mMVPTextViewCityName;
-    @BindView(R.id.mMVP_ImageView_getLocation)
-    ImageView mMVPImageViewGetLocation;
     @BindView(R.id.mMVP_TextView_temp)
     TextView mMVPTextViewTemp;
     @BindView(R.id.mMVP_TextView_weather_1)
@@ -51,6 +52,10 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView, Vie
     TextView mMVPTextViewDate;
     @BindView(R.id.mMVP_TextView_week)
     TextView mMVPTextViewWeek;
+    @BindView(R.id.mMVP_RecyclerView_hourly)
+    RecyclerView mMVPRecyclerViewHourly;
+    @BindView(R.id.mMVP_ListView_aqi)
+    ListView mMVPListViewAqi;
 
     private WeatherPresenterImpl weatherPresenter;
     private ProgressDialog progressDialog;
@@ -58,6 +63,10 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView, Vie
     @Override
     public void initView() {
         setContentView(R.layout.activity_mvp);
+        //TODO 解决页面太长，ScrollView默认不能置顶的问题
+        mMVPTextViewCityName.setFocusable(true);
+        mMVPTextViewCityName.setFocusableInTouchMode(true);
+        mMVPTextViewCityName.requestFocus();
     }
 
     @Override
@@ -102,6 +111,10 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView, Vie
             List<WeatherBean.ResultBeanX.ResultBean.DailyBean> dailyBeanList = weatherBean.getResult().getResult().getDaily();
             bindDailyData(dailyBeanList);
 
+            //TODO 显示空气质量
+            WeatherBean.ResultBeanX.ResultBean.AqiBean aqiBean = weatherBean.getResult().getResult().getAqi();
+            bindAqiData(aqiBean);
+
             //TODO 绑定GridView
             List<WeatherBean.ResultBeanX.ResultBean.IndexBean> indexBeanList = weatherBean.getResult().getResult().getIndex();
             bindIndexData(indexBeanList);
@@ -127,11 +140,21 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView, Vie
     }
 
     private void bindHourlyData(List<WeatherBean.ResultBeanX.ResultBean.HourlyBean> hourlyBeanList) {
-
+        HourlyRecyclerViewAdapter adapter = new HourlyRecyclerViewAdapter(this, hourlyBeanList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);//横向滚动
+        mMVPRecyclerViewHourly.setLayoutManager(layoutManager);
+        mMVPRecyclerViewHourly.setAdapter(adapter);
     }
 
     private void bindDailyData(List<WeatherBean.ResultBeanX.ResultBean.DailyBean> dailyBeanList) {
 
+    }
+
+    private void bindAqiData(WeatherBean.ResultBeanX.ResultBean.AqiBean aqiBean) {
+//        AqiListViewAdapter adapter = new AqiListViewAdapter(this, aqiBean);
+//        OtherUtil.measureViewHeight(this,mMVPListViewAqi);
+//        mMVPListViewAqi.setAdapter(adapter);
     }
 
     private void bindIndexData(List<WeatherBean.ResultBeanX.ResultBean.IndexBean> indexBeanList) {
