@@ -1,72 +1,24 @@
 package com.example.mutidemo.ui;
 
 import android.app.ProgressDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import com.example.mutidemo.R;
-import com.example.mutidemo.adapter.GridViewAdapter;
-import com.example.mutidemo.adapter.HourlyRecyclerViewAdapter;
 import com.example.mutidemo.bean.WeatherBean;
 import com.example.mutidemo.mvp.presenter.WeatherPresenterImpl;
 import com.example.mutidemo.mvp.view.IWeatherView;
-import com.example.mutidemo.util.OtherUtil;
-import com.example.mutidemo.widget.FramedGridView;
+import com.google.gson.Gson;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.utils.ToastUtil;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.OnClick;
-
-public class MVPActivity extends BaseNormalActivity implements IWeatherView, View.OnClickListener {
-
-    @BindView(R.id.mFramedGridView)
-    FramedGridView mFramedGridView;
-    @BindView(R.id.mMVP_TextView_cityName)
-    TextView mMVPTextViewCityName;
-    @BindView(R.id.mMVP_TextView_temp)
-    TextView mMVPTextViewTemp;
-    @BindView(R.id.mMVP_TextView_weather_1)
-    TextView mMVPTextViewWeather1;
-    @BindView(R.id.mMVP_TextView_winddirect)
-    TextView mMVPTextViewWinddirect;
-    @BindView(R.id.mMVP_TextView_windpower)
-    TextView mMVPTextViewWindpower;
-    @BindView(R.id.mMVP_TextView_humidity)
-    TextView mMVPTextViewHumidity;
-    @BindView(R.id.mMVP_TextView_weather_2)
-    TextView mMVPTextViewWeather2;
-    @BindView(R.id.mMVP_TextView_templow)
-    TextView mMVPTextViewTemplow;
-    @BindView(R.id.mMVP_TextView_temphigh)
-    TextView mMVPTextViewTemphigh;
-    @BindView(R.id.mMVP_TextView_pressure)
-    TextView mMVPTextViewPressure;
-    @BindView(R.id.mMVP_TextView_date)
-    TextView mMVPTextViewDate;
-    @BindView(R.id.mMVP_TextView_week)
-    TextView mMVPTextViewWeek;
-    @BindView(R.id.mMVP_RecyclerView_hourly)
-    RecyclerView mMVPRecyclerViewHourly;
-    @BindView(R.id.mMVP_ListView_aqi)
-    ListView mMVPListViewAqi;
+public class MVPActivity extends BaseNormalActivity implements IWeatherView {
 
     private WeatherPresenterImpl weatherPresenter;
     private ProgressDialog progressDialog;
 
     @Override
     public void initView() {
-        setContentView(R.layout.activity_mvp);
-        //TODO 解决页面太长，ScrollView默认不能置顶的问题
-        mMVPTextViewCityName.setFocusable(true);
-        mMVPTextViewCityName.setFocusableInTouchMode(true);
-        mMVPTextViewCityName.requestFocus();
+
     }
 
     @Override
@@ -83,9 +35,8 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView, Vie
     public void showProgress() {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage("正在加载数据...");
+            progressDialog.setMessage("正在加载......");
             progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
         }
     }
 
@@ -99,87 +50,10 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView, Vie
     @Override
     public void showNetWorkData(WeatherBean weatherBean) {
         if (weatherBean != null) {
-            //TODO 显示当天的详细天气情况
-            WeatherBean.ResultBeanX.ResultBean resultBean = weatherBean.getResult().getResult();
-            bindResultData(resultBean);
-
-            //TODO 显示当天24h的天气情况
-            List<WeatherBean.ResultBeanX.ResultBean.HourlyBean> hourlyBeanList = weatherBean.getResult().getResult().getHourly();
-            bindHourlyData(hourlyBeanList);
-
-            //TODO 将一周内的天气情况作为画廊形式展示
-            List<WeatherBean.ResultBeanX.ResultBean.DailyBean> dailyBeanList = weatherBean.getResult().getResult().getDaily();
-            bindDailyData(dailyBeanList);
-
-            //TODO 显示空气质量
-            WeatherBean.ResultBeanX.ResultBean.AqiBean aqiBean = weatherBean.getResult().getResult().getAqi();
-            bindAqiData(aqiBean);
-
-            //TODO 绑定GridView
-            List<WeatherBean.ResultBeanX.ResultBean.IndexBean> indexBeanList = weatherBean.getResult().getResult().getIndex();
-            bindIndexData(indexBeanList);
-        } else {
-            ToastUtil.showBeautifulToast("获取数据失败，请重试", 5);
-        }
-    }
-
-    private void bindResultData(WeatherBean.ResultBeanX.ResultBean resultBean) {
-        mMVPTextViewCityName.setText(resultBean.getCity());
-        mMVPTextViewTemp.setText(resultBean.getTemp() + "°");
-        mMVPTextViewWeather1.setText(resultBean.getWeather());
-        mMVPTextViewWinddirect.setText(resultBean.getWinddirect());
-        mMVPTextViewWindpower.setText(resultBean.getWindpower());
-        mMVPTextViewHumidity.setText("湿度\r\r" + resultBean.getHumidity() + "%");
-        mMVPTextViewPressure.setText("气压\r\r" + resultBean.getPressure() + "Pa");
-        mMVPTextViewDate.setText("\r\r" + resultBean.getDate() + "\r\r");
-        mMVPTextViewWeek.setText(resultBean.getWeek());
-        mMVPTextViewTemplow.setText(resultBean.getTemplow() + "~");
-        mMVPTextViewTemphigh.setText(resultBean.getTemphigh() + "°");
-        mMVPTextViewWeather2.setText(resultBean.getWeather());
-        ToastUtil.showBeautifulToast("更新时间：" + resultBean.getUpdatetime(), 3);
-    }
-
-    private void bindHourlyData(List<WeatherBean.ResultBeanX.ResultBean.HourlyBean> hourlyBeanList) {
-        HourlyRecyclerViewAdapter adapter = new HourlyRecyclerViewAdapter(this, hourlyBeanList);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);//横向滚动
-        mMVPRecyclerViewHourly.setLayoutManager(layoutManager);
-        mMVPRecyclerViewHourly.setAdapter(adapter);
-    }
-
-    private void bindDailyData(List<WeatherBean.ResultBeanX.ResultBean.DailyBean> dailyBeanList) {
-
-    }
-
-    private void bindAqiData(WeatherBean.ResultBeanX.ResultBean.AqiBean aqiBean) {
-//        AqiListViewAdapter adapter = new AqiListViewAdapter(this, aqiBean);
-//        OtherUtil.measureViewHeight(this,mMVPListViewAqi);
-//        mMVPListViewAqi.setAdapter(adapter);
-    }
-
-    private void bindIndexData(List<WeatherBean.ResultBeanX.ResultBean.IndexBean> indexBeanList) {
-        GridViewAdapter mGridViewAdapter = new GridViewAdapter(this, indexBeanList);
-        mFramedGridView.setAdapter(mGridViewAdapter);
-        OtherUtil.measureViewHeight(this, mFramedGridView);//计算GridView的实际高度
-        mFramedGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String detail = indexBeanList.get(position).getDetail();
-                ToastUtil.showBeautifulToast(detail, 3);
-            }
-        });
-    }
-
-    @OnClick(R.id.mMVP_ImageView_getLocation)
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.mMVP_ImageView_getLocation:
-                ToastUtil.showBeautifulToast("mMVP_ImageView_getLocation", 3);
-                break;
-
-            default:
-                break;
+            List<WeatherBean.ResultBeanX.ResultBean.DailyBean> daily = weatherBean.getResult().getResult().getDaily();
+            Gson gson = new Gson();
+            String json = gson.toJson(daily);
+            ToastUtil.showBeautifulToast(json, 3);
         }
     }
 }
