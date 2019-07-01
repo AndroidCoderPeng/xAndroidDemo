@@ -17,6 +17,7 @@ import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.event.ZBEATEvent;
 import com.example.mutidemo.event.ZCALLEvent;
 import com.example.mutidemo.ui.AsyncTaskActivity;
+import com.example.mutidemo.ui.AutoCompleteActivity;
 import com.example.mutidemo.ui.BarChartActivity;
 import com.example.mutidemo.ui.BottomDialogActivity;
 import com.example.mutidemo.ui.CalculateDIPActivity;
@@ -69,7 +70,7 @@ public class MainActivity extends DoubleClickExitActivity implements EasyPermiss
     private List<String> mItemNameList = Arrays.asList("计时器", "数据存取", "异步任务", "登陆注册"
             , "侧滑菜单", "折线图", "柱状图", "日期选择器", "读取本地Assets文件", "各种对话框", "折叠式ListView"
             , "横竖嵌套ListView", "Fragment嵌套", "Zxing扫一扫", "可以侧滑删除的上拉加载下拉刷新"
-            , "USB串口调试", "MVP网络请求框架");
+            , "USB串口调试", "MVP网络请求框架", "AutoCompleteTextView");
 
     private UsbAccessUtil usbAccessUtil;
     public SharedPreferences sharePrefSettings;
@@ -189,6 +190,9 @@ public class MainActivity extends DoubleClickExitActivity implements EasyPermiss
                     break;
                 case 16:
                     startActivity(new Intent(mContext, MVPActivity.class));
+                    break;
+                case 17:
+                    startActivity(new Intent(mContext, AutoCompleteActivity.class));
                     break;
                 default:
                     break;

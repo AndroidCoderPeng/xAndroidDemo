@@ -57,5 +57,6 @@
         <activity android:name=".ui.UsbDeviceActivity" />
         <activity android:name=".ui.CalculateDIPActivity" />
         <activity android:name=".ui.MVPActivity" />
+        <activity android:name=".ui.AutoCompleteActivity" />
     </application>
 </manifest>

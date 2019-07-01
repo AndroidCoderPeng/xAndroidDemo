@@ -197,6 +197,9 @@ public class UsbAccessUtil {
         if (numBytes > 252) {
             numBytes = 252;
         }
+        /**
+         * usb hid通信 单次最多发送64字节，这64字节中：第一个字节代表了数据长度，所以 这就相当于单次最多发送63字节
+         * */
         if (numBytes >= 64) {
             int retval = (numBytes / 63);
             for (int i = 0; i < retval; i++) {
