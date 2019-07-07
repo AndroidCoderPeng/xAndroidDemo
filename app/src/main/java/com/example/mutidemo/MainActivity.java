@@ -2,9 +2,12 @@ package com.example.mutidemo;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +15,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.event.ZBEATEvent;
@@ -36,6 +40,7 @@ import com.example.mutidemo.ui.UsbDeviceActivity;
 import com.example.mutidemo.ui.login.UserManagerActivity;
 import com.example.mutidemo.ui.zxing.ZxingActivity;
 import com.example.mutidemo.util.Constant;
+import com.example.mutidemo.util.NetWorkStateListener;
 import com.example.mutidemo.util.UsbAccessUtil;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -81,6 +86,7 @@ public class MainActivity extends DoubleClickExitActivity implements EasyPermiss
     private byte[] writeBuffer;
     private boolean bConfiged = false;
     private boolean isConnected = false;
+    private BroadcastReceiver netStatusBroadcast;
 
     @Override
     public void initView() {
@@ -90,6 +96,7 @@ public class MainActivity extends DoubleClickExitActivity implements EasyPermiss
     @Override
     public void init() {
         requirePermissions();
+        initReceiver();
         sharePrefSettings = getSharedPreferences("UARTLBPref", 0);
         usbAccessUtil = new UsbAccessUtil(this, sharePrefSettings);
 
@@ -301,6 +308,36 @@ public class MainActivity extends DoubleClickExitActivity implements EasyPermiss
         }
     }
 
+    private void initReceiver() {
+        netStatusBroadcast = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                boolean isConnected = NetWorkStateListener.isNetworkConnected(context);
+                if (isConnected) {
+                    boolean isWiFi = NetWorkStateListener.isWiFi(context);
+                    boolean isMobileNet = NetWorkStateListener.isMobileNet(context);
+                    if (isWiFi) {
+                        Toast.makeText(context, "已连上WiFi", Toast.LENGTH_SHORT).show();
+                    }
+                    if (isMobileNet) {
+                        Toast.makeText(context, "已连上4G网络", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(context, "网络连接已断开", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.net.ethernet.ETHERNET_STATE_CHANGED");
+        intentFilter.addAction("android.net.ethernet.STATE_CHANGE");
+        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        intentFilter.addAction("android.net.wifi.STATE_CHANGE");
+        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        registerReceiver(netStatusBroadcast, intentFilter);
+    }
+
     //千万别删除，连接上USB会走这个方法
     @Override
     protected void onResume() {
@@ -313,6 +350,10 @@ public class MainActivity extends DoubleClickExitActivity implements EasyPermiss
         usbAccessUtil.saveDetachPreference();
         usbAccessUtil.DestroyAccessory(bConfiged);
         EventBus.getDefault().unregister(this);
+        if (netStatusBroadcast != null) {
+            unregisterReceiver(netStatusBroadcast);
+            netStatusBroadcast = null;
+        }
         super.onDestroy();
     }
 }
