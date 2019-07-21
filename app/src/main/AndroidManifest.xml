@@ -59,5 +59,6 @@
         <activity android:name=".ui.CalculateDIPActivity" />
         <activity android:name=".ui.MVPActivity" />
         <activity android:name=".ui.AutoCompleteActivity" />
+        <activity android:name=".ui.AutoCreateFragmentActivity" />
     </application>
 </manifest>
