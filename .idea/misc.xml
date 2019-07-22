@@ -121,6 +121,30 @@
     <option name="id" value="Android" />
   </component>
   <component name="SvnBranchConfigurationManager">
+    <option name="myConfigurationMap">
+      <map>
+        <entry key="$PROJECT_DIR$/app">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://10.13.103.84/svn/135App/135webservice" />
+                  <option value="https://10.13.103.84/svn/135App/Demo" />
+                  <option value="https://10.13.103.84/svn/135App/JYJT" />
+                  <option value="https://10.13.103.84/svn/135App/Renting" />
+                  <option value="https://10.13.103.84/svn/135App/branches" />
+                  <option value="https://10.13.103.84/svn/135App/solftwaretools" />
+                  <option value="https://10.13.103.84/svn/135App/tags" />
+                  <option value="https://10.13.103.84/svn/135App/weixinjava" />
+                  <option value="https://10.13.103.84/svn/135App/workorder" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://10.13.103.84/svn/135App/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
 </project>
