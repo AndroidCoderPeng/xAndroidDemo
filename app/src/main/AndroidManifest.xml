@@ -2,17 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mutidemo">
 
-    <uses-feature android:name="android.hardware.usb.accessory" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".BaseApplication"
@@ -27,27 +21,17 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
-                android:resource="@xml/accessory_filter" />
         </activity>
 
-        <activity android:name=".ui.TimerActivity" />
         <activity android:name=".ui.SharedPreferencesActivity" />
         <activity android:name=".ui.AsyncTaskActivity" />
         <activity android:name=".ui.login.UserManagerActivity" />
-        <activity android:name=".ui.SlideMenuActivity" />
         <activity android:name=".ui.LineChartActivity" />
         <activity android:name=".ui.BarChartActivity" />
         <activity android:name=".ui.BottomDialogActivity" />
         <activity android:name=".ui.DatePikerDialogActivity" />
         <activity android:name=".ui.ReadAssetsActivity" />
         <activity android:name=".ui.ExpandableListViewActivity" />
-        <activity android:name=".ui.MultiListViewActivity" />
         <activity android:name=".ui.login.RegisterActivity" />
         <activity android:name=".ui.login.LoginOneKeyActivity" />
         <activity android:name=".ui.login.ResetPasswordActivity" />
@@ -55,10 +39,8 @@
         <activity android:name=".ui.zxing.scanner.CaptureActivity" />
         <activity android:name=".ui.MutiFragmentActivity" />
         <activity android:name=".ui.SwipeListViewActivity" />
-        <activity android:name=".ui.UsbDeviceActivity" />
         <activity android:name=".ui.CalculateDIPActivity" />
         <activity android:name=".ui.MVPActivity" />
-        <activity android:name=".ui.AutoCompleteActivity" />
         <activity android:name=".ui.AutoCreateFragmentActivity" />
     </application>
 </manifest>

@@ -32,7 +32,6 @@ public class MutiFragmentActivity extends BaseNormalActivity {
 
     private List<String> mTabName = Arrays.asList("订单跟踪", "查快递", "附近");
     private List<Fragment> list_fragment = new ArrayList<>();
-    private FragmentPagerAdapter FPAdapter;
 
     @Override
     public void initView() {
@@ -48,7 +47,7 @@ public class MutiFragmentActivity extends BaseNormalActivity {
 
     @Override
     public void initEvent() {
-        FPAdapter = new BaseFragmentAdapter(getSupportFragmentManager(), list_fragment);
+        FragmentPagerAdapter FPAdapter = new BaseFragmentAdapter(getSupportFragmentManager(), list_fragment);
         mViewPager.setAdapter(FPAdapter);
         mViewPager.setOffscreenPageLimit(3);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
