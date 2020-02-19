@@ -12,14 +12,5 @@
     <color name="bg_btn_press_color">#d81e06</color>
 
     <!--zxing-->
-    <color name="possible_result_points">#ffbd21</color>
-    <color name="result_view">#000000</color>
-    <color name="status_text">#ffffff</color>
-    <color name="viewfinder_mask">#50000000</color>
-    <color name="react">#ffffff</color>
-    <color name="scanLineColor">#ffffff</color>
-
-    <color name="tab_selected_txtcolor">#0094ff</color>
-    <color name="tab_txtcolor">#666666</color>
 
 </resources>

@@ -2,7 +2,6 @@ package com.example.mutidemo.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,9 +10,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mutidemo.R;
+import com.pengxh.app.multilib.utils.ColorUtil;
 
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Administrator on 2018/3/10.
@@ -21,14 +20,12 @@ import java.util.Random;
 
 public class MainAdapter extends RecyclerView.Adapter {
 
-    private Context mContext;
     private List<String> mItemList;
     private LayoutInflater inflater;
     private OnItemClickListener mOnItemClickListener;
 
 
     public MainAdapter(Context mContext, List<String> mItemList) {
-        this.mContext = mContext;
         this.mItemList = mItemList;
         inflater = LayoutInflater.from(mContext);
     }
@@ -69,16 +66,8 @@ public class MainAdapter extends RecyclerView.Adapter {
 
         public void bindHolder(String title) {
             mMainTextView.setText(title);
-            mMainTextView.setBackgroundColor(getRandomColor());
+            mMainTextView.setBackgroundColor(ColorUtil.getRandomColor());
         }
-    }
-
-    private int getRandomColor() {
-        Random random = new Random();
-        int red = random.nextInt(256);
-        int green = random.nextInt(256);
-        int blue = random.nextInt(256);
-        return Color.rgb(red, green, blue);
     }
 
     /**

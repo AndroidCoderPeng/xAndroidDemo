@@ -32,7 +32,7 @@ public class BottomDialogActivity extends BaseNormalActivity implements OnItemCl
     }
 
     @Override
-    public void init() {
+    public void initData() {
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         mAlertView = new AlertView("标题", "内容", "取消", new String[]{"确定"}, null, this, AlertView.Style.Alert, this).setCancelable(true).setOnDismissListener(this);
         //拓展窗口

@@ -7,7 +7,7 @@ import com.example.mutidemo.mvp.presenter.WeatherPresenterImpl;
 import com.example.mutidemo.mvp.view.IWeatherView;
 import com.google.gson.Gson;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
-import com.pengxh.app.multilib.utils.ToastUtil;
+import com.pengxh.app.multilib.widget.EasyToast;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView {
     }
 
     @Override
-    public void init() {
+    public void initData() {
         weatherPresenter = new WeatherPresenterImpl(this);
     }
 
@@ -53,7 +53,7 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView {
             List<WeatherBean.ResultBeanX.ResultBean.DailyBean> daily = weatherBean.getResult().getResult().getDaily();
             Gson gson = new Gson();
             String json = gson.toJson(daily);
-            ToastUtil.showBeautifulToast(json, 3);
+            EasyToast.showToast(json, EasyToast.SUCCESS);
         }
     }
 }

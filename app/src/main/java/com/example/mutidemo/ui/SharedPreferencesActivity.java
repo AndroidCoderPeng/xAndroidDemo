@@ -8,7 +8,7 @@ import android.widget.EditText;
 
 import com.example.mutidemo.R;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
-import com.pengxh.app.multilib.utils.ToastUtil;
+import com.pengxh.app.multilib.widget.EasyToast;
 
 import butterknife.BindView;
 
@@ -37,7 +37,7 @@ public class SharedPreferencesActivity extends BaseNormalActivity {
     }
 
     @Override
-    public void init() {
+    public void initData() {
         hasChecked();
     }
 
@@ -55,7 +55,7 @@ public class SharedPreferencesActivity extends BaseNormalActivity {
                     editor.putString(USER_PSWD, pswd);
                     editor.apply();
                 }
-                ToastUtil.showBeautifulToast("保存成功", 3);
+                EasyToast.showToast("保存成功", EasyToast.SUCCESS);
             }
         });
     }

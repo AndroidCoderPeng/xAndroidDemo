@@ -2,12 +2,12 @@ package com.example.mutidemo;
 
 import android.app.Application;
 
-import com.pengxh.app.multilib.utils.ToastUtil;
+import com.pengxh.app.multilib.widget.EasyToast;
 
 public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        ToastUtil.init(this);
+        EasyToast.init(this);
     }
 }
