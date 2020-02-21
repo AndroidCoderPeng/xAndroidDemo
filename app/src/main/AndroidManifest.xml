@@ -3,11 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.mutidemo">
 
+    <!--普通权限，无需手动申请-->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <!--危险权限，需要手动申请-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
         android:name=".BaseApplication"
@@ -26,12 +33,12 @@
         </activity>
 
         <activity android:name=".MainActivity" />
-        <activity android:name=".ui.SharedPreferencesActivity" />
         <activity android:name=".ui.login.UserManagerActivity" />
-        <activity android:name=".ui.BottomDialogActivity" />
         <activity android:name=".ui.login.RegisterActivity" />
         <activity android:name=".ui.login.LoginOneKeyActivity" />
         <activity android:name=".ui.login.ResetPasswordActivity" />
+        <activity android:name=".ui.SharedPreferencesActivity" />
+        <activity android:name=".ui.BottomDialogActivity" />
         <activity android:name=".ui.MVPActivity" />
         <activity android:name=".ui.BottomNavigationActivity" />
     </application>
