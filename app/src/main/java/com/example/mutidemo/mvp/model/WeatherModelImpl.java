@@ -36,7 +36,7 @@ public class WeatherModelImpl implements IWeatherModel {
         /**
          * 实体类写父类，一定不能详细到子类
          * */
-        Observable<WeatherBean> observable = RetrofitServiceManager.getWeatherData(Constant.WEATHER_URL, city, cityid, citycode);
+        Observable<WeatherBean> observable = RetrofitServiceManager.getWeatherData(Constant.BASE_URL, city, cityid, citycode);
         Subscription subscribe = observable
                 .subscribeOn(Schedulers.io())//在io线程获取数据
                 .observeOn(AndroidSchedulers.mainThread())//回调给主线程，异步;

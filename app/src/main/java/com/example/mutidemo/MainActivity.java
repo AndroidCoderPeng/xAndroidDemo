@@ -11,6 +11,7 @@ import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.ui.BottomDialogActivity;
 import com.example.mutidemo.ui.BottomNavigationActivity;
 import com.example.mutidemo.ui.MVPActivity;
+import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
 import com.example.mutidemo.ui.SharedPreferencesActivity;
 import com.example.mutidemo.ui.login.UserManagerActivity;
 import com.example.mutidemo.util.Constant;
@@ -35,7 +36,7 @@ public class MainActivity extends DoubleClickExitActivity {
 
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "BMOB_SDK登陆注册"
-            , "仿iOS风格对话框", "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫");
+            , "仿iOS风格对话框", "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新");
     private BroadcastManager broadcastManager;
 
     @Override
@@ -99,6 +100,10 @@ public class MainActivity extends DoubleClickExitActivity {
                             startScannerActivity();
                         }
                     }).start();
+                    break;
+                case 6:
+                    intent.setClass(mContext, RefreshAndLoadMoreActivity.class);
+                    startActivity(intent);
                     break;
                 default:
                     break;

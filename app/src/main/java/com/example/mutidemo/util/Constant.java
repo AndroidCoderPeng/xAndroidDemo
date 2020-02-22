@@ -9,5 +9,11 @@ public class Constant {
             WifiManager.NETWORK_STATE_CHANGED_ACTION};
 
     //retrofit请求baseurl只能是根url，不能带任何参数
-    public static final String WEATHER_URL = "https://way.jd.com/";
+    public static final String BASE_URL = "https://way.jd.com/";
+
+    //新闻api地址
+    /**
+     * https://way.jd.com/jisuapi/get?channel=头条&num=10&start=0&appkey=e957ed7ad90436a57e604127d9d8fa32
+     */
+    public static final String NEWS_URL = BASE_URL + "jisuapi/get?channel=头条&num=10&start=" + "pageNum" + "&appkey=e957ed7ad90436a57e604127d9d8fa32";
 }

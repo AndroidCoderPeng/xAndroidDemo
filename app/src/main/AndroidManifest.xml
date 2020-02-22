@@ -41,5 +41,6 @@
         <activity android:name=".ui.BottomDialogActivity" />
         <activity android:name=".ui.MVPActivity" />
         <activity android:name=".ui.BottomNavigationActivity" />
+        <activity android:name=".ui.RefreshAndLoadMoreActivity" />
     </application>
 </manifest>
