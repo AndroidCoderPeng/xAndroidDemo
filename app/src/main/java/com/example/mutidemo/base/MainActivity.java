@@ -1,4 +1,4 @@
-package com.example.mutidemo;
+package com.example.mutidemo.base;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
+import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.ui.BottomDialogActivity;
 import com.example.mutidemo.ui.BottomNavigationActivity;
@@ -35,8 +36,8 @@ public class MainActivity extends DoubleClickExitActivity {
     RecyclerView mMainRecyclerView;
 
     private Context mContext = MainActivity.this;
-    private List<String> mItemNameList = Arrays.asList("SharedPreferences", "BMOB_SDK登陆注册"
-            , "仿iOS风格对话框", "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新");
+    private List<String> mItemNameList = Arrays.asList("SharedPreferences", "BMOB_SDK登陆注册",
+            "仿iOS风格对话框", "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新");
     private BroadcastManager broadcastManager;
 
     @Override

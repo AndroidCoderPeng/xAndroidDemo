@@ -1,7 +1,6 @@
-package com.example.mutidemo;
+package com.example.mutidemo.base;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,7 +33,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
         super.onCreate(savedInstanceState);
         //判断是否有权限，如果版本大于5.1才需要判断（即6.0以上），其他则不需要判断。
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkPermission(this, USER_PERMISSIONS)) {
+            if (EasyPermissions.hasPermissions(this, USER_PERMISSIONS)) {
                 startMainActivity();
             } else {
                 new PermissionDialog.Builder()
@@ -73,17 +72,13 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
         finish();
     }
 
-    private boolean checkPermission(Activity mActivity, String[] perms) {
-        return EasyPermissions.hasPermissions(mActivity, perms);
-    }
-
     @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         startMainActivity();
     }
 
     @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
 
     }
 
