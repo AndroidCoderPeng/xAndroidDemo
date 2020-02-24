@@ -141,9 +141,7 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity {
                 }
                 isRefresh = false;
             } else if (isLoadMore) {
-                for (int i = 0; i < listBeans.size(); i++) {
-                    datas.add(listBeans.get(i));
-                }
+                datas.addAll(listBeans);
                 isLoadMore = false;
             } else {
                 datas = newsBean.getResult().getResult().getList();
