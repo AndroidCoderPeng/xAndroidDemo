@@ -4,6 +4,8 @@ buildscript {
     repositories {
         jcenter()
         google()
+        //Umeng远程库
+        maven { url 'https://dl.bintray.com/umsdk/release' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.0'
@@ -17,6 +19,9 @@ allprojects {
     repositories {
         google()
         jcenter()
+        //Umeng远程库
+        mavenCentral()
+        maven { url 'https://dl.bintray.com/umsdk/release' }
         maven { url "https://jitpack.io" }
     }
 }
