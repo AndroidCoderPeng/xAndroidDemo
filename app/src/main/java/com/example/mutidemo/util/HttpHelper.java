@@ -2,8 +2,10 @@ package com.example.mutidemo.util;
 
 import android.util.Log;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -34,15 +36,7 @@ public class HttpHelper {
         Observable.create(new Observable.OnSubscribe<Response>() {
             @Override
             public void call(Subscriber<? super Response> subscriber) {
-                Call call = new OkHttpClient.Builder()
-                        .connectTimeout(30, TimeUnit.SECONDS)
-                        .readTimeout(15, TimeUnit.SECONDS)
-                        .writeTimeout(15, TimeUnit.SECONDS)
-                        .build()
-                        .newCall(new Request.Builder()
-                                .url(replacePageNumber(pageNumber))
-                                .get()
-                                .build());
+                Call call = new OkHttpClient().newCall(new Request.Builder().url(replacePageNumber(pageNumber)).get().build());
                 call.enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
@@ -70,6 +64,38 @@ public class HttpHelper {
             public void onNext(Response response) {
                 try {
                     listener.onSuccess(response);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public static void captureHtmlData(String url, HttpCallBackListener listener) {
+        Observable.create(new Observable.OnSubscribe<Document>() {
+            @Override
+            public void call(Subscriber<? super Document> subscriber) {
+                try {
+                    subscriber.onNext(Jsoup.connect(url).timeout(30 * 1000).get());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Document>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(Document document) {
+                try {
+                    listener.onParserDone(document);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

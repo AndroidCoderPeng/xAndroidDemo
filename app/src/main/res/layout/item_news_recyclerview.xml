@@ -9,12 +9,11 @@
 
     <TextView
         android:id="@+id/newsTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="5dp"
         android:layout_toStartOf="@id/newsPicture"
         android:lines="3"
-        android:text="快递全面复工10天了 为何快递依然“睡”在路上？"
         android:textColor="#000"
         android:textSize="18sp" />
 
@@ -22,17 +21,15 @@
         android:id="@+id/newsSrc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="中新经纬" />
+        android:layout_alignParentBottom="true" />
 
     <TextView
         android:id="@+id/newsTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="10dp"
-        android:layout_toStartOf="@id/newsPicture"
-        android:text="2020-02-21 " />
+        android:layout_marginEnd="5dp"
+        android:layout_toStartOf="@id/newsPicture" />
 
     <ImageView
         android:id="@+id/newsPicture"

@@ -23,6 +23,8 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import org.jsoup.nodes.Document;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +81,11 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity {
             public void onFailure(Throwable throwable) {
                 handler.sendEmptyMessageDelayed(10001, 3000);
             }
+
+            @Override
+            public void onParserDone(Document document) throws IOException {
+
+            }
         });
     }
 
@@ -101,6 +108,11 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity {
                         refreshLayout.finishRefresh(3000);
                         handler.sendEmptyMessageDelayed(10002, 3000);
                     }
+
+                    @Override
+                    public void onParserDone(Document document) throws IOException {
+
+                    }
                 });
             }
         });
@@ -121,6 +133,11 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity {
                     public void onFailure(Throwable throwable) {
                         refreshLayout.finishLoadMore(3000);
                         handler.sendEmptyMessageDelayed(10002, 3000);
+                    }
+
+                    @Override
+                    public void onParserDone(Document document) throws IOException {
+
                     }
                 });
             }
@@ -158,22 +175,27 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity {
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what == 10000) {
-                if (isRefresh || isLoadMore) {
-                    newsAdapter.notifyDataSetChanged();
-                } else {
-                    OtherUtils.hideProgressDialog();
-                    //首次加载数据
-                    newsAdapter = new NewsAdapter(mContext, datas);
-                    newsRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-                    newsRecyclerView.setAdapter(newsAdapter);
-                }
-            } else if (msg.what == 10001) {
-                OtherUtils.hideProgressDialog();
-                EasyToast.showToast("获取数据失败", EasyToast.ERROR);
-            } else if (msg.what == 10002) {
-                EasyToast.showToast("刷新数据失败", EasyToast.ERROR);
+            switch (msg.what) {
+                case 10000:
+                    if (isRefresh || isLoadMore) {
+                        newsAdapter.notifyDataSetChanged();
+                    } else {
+                        //首次加载数据
+                        newsAdapter = new NewsAdapter(mContext, datas);
+                        newsRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+                        newsRecyclerView.setAdapter(newsAdapter);
+                    }
+                    break;
+                case 10001:
+                    EasyToast.showToast("获取数据失败", EasyToast.ERROR);
+                    break;
+                case 10002:
+                    EasyToast.showToast("刷新数据失败", EasyToast.ERROR);
+                    break;
+                default:
+                    break;
             }
+            OtherUtils.hideProgressDialog();
         }
     };
 }
