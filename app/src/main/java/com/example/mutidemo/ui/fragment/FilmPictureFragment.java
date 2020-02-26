@@ -1,6 +1,13 @@
 package com.example.mutidemo.ui.fragment;
 
-import com.example.mutidemo.base.BaseFragment;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.example.mutidemo.R;
 
 /**
  * @author: Pengxh
@@ -8,20 +15,10 @@ import com.example.mutidemo.base.BaseFragment;
  * @description: TODO
  * @date: 2020/2/25 19:50
  */
-public class FilmPictureFragment extends BaseFragment {
-
+public class FilmPictureFragment extends Fragment {
+    @Nullable
     @Override
-    protected void loadData() {
-
-    }
-
-    @Override
-    protected int getLayoutId() {
-        return 0;
-    }
-
-    @Override
-    protected void initData() {
-
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return LayoutInflater.from(this.getContext()).inflate(R.layout.fragment_first, null);
     }
 }

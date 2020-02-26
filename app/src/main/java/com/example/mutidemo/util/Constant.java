@@ -2,6 +2,9 @@ package com.example.mutidemo.util;
 
 import android.net.wifi.WifiManager;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Constant {
     public static final String[] NET_ACTION = {"android.net.ethernet.ETHERNET_STATE_CHANGED",
             "android.net.ethernet.STATE_CHANGE", "android.net.conn.CONNECTIVITY_CHANGE",
@@ -19,4 +22,18 @@ public class Constant {
      * https://way.jd.com/jisuapi/get?channel=头条&num=10&start=0&appkey=e957ed7ad90436a57e604127d9d8fa32
      */
     public static final String NEWS_URL = BASE_URL + "jisuapi/get?channel=头条&num=10&start=" + "pageNum" + "&appkey=e957ed7ad90436a57e604127d9d8fa32";
+
+    /**
+     * 测试图片地址
+     */
+    public static final List<String> IMAGE_URL = Arrays.asList("http://pic1.win4000.com/mobile/2020-02-25/5e54d31f9d31b.jpg",
+            "http://pic1.win4000.com/mobile/2020-02-25/5e54d3208c43c.jpg",
+            "http://pic1.win4000.com/mobile/2020-02-25/5e54d321a0997.jpg",
+            "http://pic1.win4000.com/mobile/2020-02-25/5e54d322bcc21.jpg",
+            "http://pic1.win4000.com/mobile/2020-02-25/5e54d32409642.jpg",
+            "http://pic1.win4000.com/mobile/2020-02-25/5e54d325c871e.jpg",
+            "http://pic1.win4000.com/mobile/2020-02-25/5e54d327691b3.jpg",
+            "http://pic1.win4000.com/mobile/2020-02-25/5e54d328b9b50.jpg",
+            "http://pic1.win4000.com/mobile/2020-02-25/5e54d32aac620.jpg",
+            "http://pic1.win4000.com/mobile/2020-02-06/5e3ba39a30f8b.jpg");
 }

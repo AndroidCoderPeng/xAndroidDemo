@@ -38,7 +38,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation files('libs/BmobSDK_V3.3.9_0612.jar')
     //控件注解
-    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
     //基础依赖库

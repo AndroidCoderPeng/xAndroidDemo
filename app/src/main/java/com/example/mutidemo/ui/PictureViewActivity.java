@@ -1,5 +1,6 @@
 package com.example.mutidemo.ui;
 
+import com.example.mutidemo.R;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 /**
@@ -10,14 +11,17 @@ import com.pengxh.app.multilib.base.BaseNormalActivity;
  */
 
 public class PictureViewActivity extends BaseNormalActivity {
+
+    private String childUrl;
+
     @Override
     public void initView() {
-
+        setContentView(R.layout.activity_picture);
     }
 
     @Override
     public void initData() {
-
+        childUrl = getIntent().getStringExtra("childUrl");
     }
 
     @Override

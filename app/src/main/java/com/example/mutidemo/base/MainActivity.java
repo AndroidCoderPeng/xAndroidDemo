@@ -12,6 +12,7 @@ import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.ui.BottomDialogActivity;
 import com.example.mutidemo.ui.BottomNavigationActivity;
 import com.example.mutidemo.ui.CaptureNetImageDataActivity;
+import com.example.mutidemo.ui.GalleryActivity;
 import com.example.mutidemo.ui.MVPActivity;
 import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
 import com.example.mutidemo.ui.SharedPreferencesActivity;
@@ -39,7 +40,7 @@ public class MainActivity extends DoubleClickExitActivity {
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "BMOB_SDK登陆注册",
             "仿iOS风格对话框", "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
-            "获取图片资源");
+            "获取图片资源", "3D画廊效果");
     private BroadcastManager broadcastManager;
 
     @Override
@@ -110,6 +111,10 @@ public class MainActivity extends DoubleClickExitActivity {
                     break;
                 case 7:
                     intent.setClass(mContext, CaptureNetImageDataActivity.class);
+                    startActivity(intent);
+                    break;
+                case 8:
+                    intent.setClass(mContext, GalleryActivity.class);
                     startActivity(intent);
                     break;
                 default:
