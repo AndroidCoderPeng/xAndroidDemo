@@ -9,8 +9,10 @@ import java.util.List;
  * @date: 2020/2/26 14:00
  */
 public class PhotoBean {
+
     private String photoTitle;//图片标题
-    private List<PhotoURL> urlList;//缩略图地址集合
+    private int photoNumber;
+    private List<Result> list;
 
     public String getPhotoTitle() {
         return photoTitle;
@@ -20,15 +22,23 @@ public class PhotoBean {
         this.photoTitle = photoTitle;
     }
 
-    public List<PhotoURL> getUrlList() {
-        return urlList;
+    public int getPhotoNumber() {
+        return photoNumber;
     }
 
-    public void setUrlList(List<PhotoURL> urlList) {
-        this.urlList = urlList;
+    public void setPhotoNumber(int photoNumber) {
+        this.photoNumber = photoNumber;
     }
 
-    private static class PhotoURL {
+    public List<Result> getList() {
+        return list;
+    }
+
+    public void setList(List<Result> list) {
+        this.list = list;
+    }
+
+    public static class Result {
         private String bigImageUrl;//大图地址
 
         public String getBigImageUrl() {

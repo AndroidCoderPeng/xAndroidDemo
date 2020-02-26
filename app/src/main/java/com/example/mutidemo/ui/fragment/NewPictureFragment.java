@@ -3,12 +3,14 @@ package com.example.mutidemo.ui.fragment;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.PictureAdapter;
 import com.example.mutidemo.base.BaseFragment;
 import com.example.mutidemo.bean.ResultBean;
 import com.example.mutidemo.ui.PictureViewActivity;
+import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ public class NewPictureFragment extends BaseFragment {
      */
     private int defaultPage = 0;
     private ResultBean.CategoryBean categoryBean;
-    private String categoryUrl;
+    private String categoryUrl;//用来实现刷新的地址
 
     public void setData(ResultBean.CategoryBean data, String url) {
         this.categoryBean = data;
@@ -58,13 +60,16 @@ public class NewPictureFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        PictureAdapter adapter = new PictureAdapter(getActivity(), categoryBean.getList());
+        List<ResultBean.CategoryBean.ListBean> list = categoryBean.getList();
+        Log.d(TAG, "initData: " + new Gson().toJson(list));
+        PictureAdapter adapter = new PictureAdapter(getActivity(), list);
         newPictureView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         newPictureView.setAdapter(adapter);
         adapter.setOnNewsItemClickListener(new PictureAdapter.OnItemClickListener() {
             @Override
             public void onClick(int position) {
-                String childUrl = categoryBean.getList().get(position).getChildUrl();
+                String childUrl = list.get(position).getChildUrl();
+                Log.d(TAG, "onClick: " + childUrl);
                 Intent intent = new Intent(getActivity(), PictureViewActivity.class);
                 intent.putExtra("childUrl", childUrl);
                 startActivity(intent);

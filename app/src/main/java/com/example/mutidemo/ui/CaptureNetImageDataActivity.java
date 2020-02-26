@@ -82,7 +82,7 @@ public class CaptureNetImageDataActivity extends BaseNormalActivity {
             public void onParserDone(Document document) throws IOException {
                 Message message = handler.obtainMessage();
                 message.what = 10000;
-                message.obj = HtmlParserHelper.HtmlToJson(document);
+                message.obj = HtmlParserHelper.getCategoryList(document);
                 handler.sendMessage(message);
             }
         });
@@ -111,7 +111,7 @@ public class CaptureNetImageDataActivity extends BaseNormalActivity {
                     ResultBean resultBean = JSONObject.parseObject(s, ResultBean.class);
                     List<ResultBean.CategoryBean> resultBeanList = resultBean.getBeanList();
                     for (ResultBean.CategoryBean bean : resultBeanList) {
-                        categoryUrl = bean.getUr();
+                        categoryUrl = bean.getUrl();
                         tabTitle.add(bean.getTitle());
                         categoryBeans.add(bean);
                     }

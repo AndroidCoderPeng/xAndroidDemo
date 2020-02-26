@@ -38,5 +38,4 @@ public class SpeedRecyclerView extends RecyclerView {
             return Math.max(velocity, -FLING_MAX_VELOCITY);
         }
     }
-
 }

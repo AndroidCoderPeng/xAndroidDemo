@@ -22,7 +22,7 @@ public class ResultBean {
 
     public static class CategoryBean {
         private String title;
-        private String ur;
+        private String url;
         private List<ListBean> list;
 
         public String getTitle() {
@@ -33,12 +33,12 @@ public class ResultBean {
             this.title = title;
         }
 
-        public String getUr() {
-            return ur;
+        public String getUrl() {
+            return url;
         }
 
-        public void setUr(String ur) {
-            this.ur = ur;
+        public void setUrl(String url) {
+            this.url = url;
         }
 
         public List<ListBean> getList() {

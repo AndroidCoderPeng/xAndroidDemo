@@ -1,6 +1,7 @@
 package com.example.mutidemo.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,10 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.aihook.alertview.library.AlertView;
+import com.aihook.alertview.library.OnItemClickListener;
 import com.bumptech.glide.Glide;
 import com.example.mutidemo.R;
+import com.example.mutidemo.bean.PhotoBean;
+import com.example.mutidemo.util.BitmapCallBackListener;
+import com.example.mutidemo.util.ImageUtil;
 import com.example.mutidemo.widget.CardAdapterHelper;
-import com.pengxh.app.multilib.widget.EasyToast;
 
 import java.util.List;
 
@@ -25,10 +30,10 @@ import java.util.List;
 public class PhotoViewAdapter extends RecyclerView.Adapter<PhotoViewAdapter.ViewHolder> {
 
     private Context context;
-    private List<String> mList;
+    private List<PhotoBean.Result> mList;
     private CardAdapterHelper mCardAdapterHelper = new CardAdapterHelper();
 
-    public PhotoViewAdapter(Context context, List<String> mList) {
+    public PhotoViewAdapter(Context context, List<PhotoBean.Result> mList) {
         this.context = context;
         this.mList = mList;
     }
@@ -42,17 +47,38 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<PhotoViewAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         mCardAdapterHelper.onBindViewHolder(holder.itemView, position, getItemCount());
-        Glide.with(context).load(mList.get(position)).placeholder(R.mipmap.noimage).into(holder.photoView);
-        holder.photoView.setOnClickListener(new View.OnClickListener() {
+        String bigImageUrl = mList.get(position).getBigImageUrl();
+        Glide.with(context).load(bigImageUrl).placeholder(R.mipmap.noimage).into(holder.photoView);
+        holder.photoView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View view) {
-                String s = mList.get(position);
-                Log.d("PhotoViewAdapter", "onClick: " + s);
-                EasyToast.showToast(s, EasyToast.SUCCESS);
+            public boolean onLongClick(View v) {
+                showDialog(bigImageUrl);
+                return false;
             }
         });
+    }
+
+    private void showDialog(String url) {
+        new AlertView("提示", "是否下载此张壁纸", "取消", new String[]{"确定"}, null, context, AlertView.Style.Alert, new OnItemClickListener() {
+            @Override
+            public void onItemClick(Object o, int position) {
+                if (position == 0) {
+                    ImageUtil.obtainBitmap(url, new BitmapCallBackListener() {
+                        @Override
+                        public void onSuccess(Bitmap bitmap) {
+                            ImageUtil.saveBitmap(context, bitmap);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+
+                        }
+                    });
+                }
+            }
+        }).setCancelable(false).show();
     }
 
     @Override

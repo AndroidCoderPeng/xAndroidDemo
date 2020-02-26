@@ -1,5 +1,6 @@
 package com.example.mutidemo.util;
 
+import com.example.mutidemo.bean.PhotoBean;
 import com.example.mutidemo.bean.ResultBean;
 import com.google.gson.Gson;
 
@@ -7,8 +8,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Response;
 
 /**
  * @author: Pengxh
@@ -21,7 +25,7 @@ public class HtmlParserHelper {
     /**
      * 解析Html数据
      */
-    public static String HtmlToJson(Document document) {
+    public static String getCategoryList(Document document) {
         Element parentTag = document.getElementsByClass("main_cont").first();//仅一个节点
         Elements elementsByClass = parentTag.getElementsByClass("list_cont list_cont2 w1180");
         ResultBean resultBean = new ResultBean();
@@ -49,12 +53,58 @@ public class HtmlParserHelper {
                 beanList.add(bean);
             }
             categoryBean.setTitle(title);
-            categoryBean.setUr(moreLinks);
+            categoryBean.setUrl(moreLinks);
             categoryBean.setList(beanList);
 
             categoryBeanList.add(categoryBean);
             resultBean.setBeanList(categoryBeanList);
         }
         return new Gson().toJson(resultBean);
+    }
+
+    public static void getPictureList(Document document, ParserCallBackListener listener) {
+        Element parentElement = document.getElementsByClass("scroll-img scroll-img02 clearfix").first();
+        Elements childElement = parentElement.getElementsByTag("li");
+
+        List<PhotoBean.Result> resultList = new ArrayList<>();
+        PhotoBean photoBean = new PhotoBean();
+        for (Element element : childElement) {
+            //获取大图的地址
+            String title = element.select("img[title]").first().attr("title");
+
+            //根据大图地址获取大图
+            PhotoBean.Result result = new PhotoBean.Result();
+            String s = element.select("a[href]").first().attr("href");
+
+            HttpHelper.captureHtmlData(s, new HttpCallBackListener() {
+                @Override
+                public void onSuccess(Response response) throws IOException {
+
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+
+                }
+
+                @Override
+                public void onParserDone(Document document) throws IOException {
+                    //解析大图地址
+                    Element bigPictureElement = document.getElementsByClass("pic-large").first();
+                    String bigPicture = bigPictureElement.select("img[src]").first().attr("src");
+
+                    result.setBigImageUrl(bigPicture);
+                    resultList.add(result);
+
+                    photoBean.setPhotoTitle(title);
+                    photoBean.setPhotoNumber(childElement.size());
+                    photoBean.setList(resultList);
+
+                    if (resultList.size() == childElement.size()) {
+                        listener.onPictureDone(photoBean);
+                    }
+                }
+            });
+        }
     }
 }

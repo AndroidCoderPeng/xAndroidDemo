@@ -25,7 +25,6 @@ public class CardScaleHelper {
     private CardLinearSnapHelper mLinearSnapHelper = new CardLinearSnapHelper();
 
     public void attachToRecyclerView(final RecyclerView mRecyclerView) {
-        // 开启log会影响滑动体验, 调试时才开启
         this.mRecyclerView = mRecyclerView;
         mContext = mRecyclerView.getContext();
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {

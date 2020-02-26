@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    tools:context=".ui.PictureViewActivity">
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/pictureBlurView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#3F000000"
+        android:scaleType="centerCrop" />
+
+    <com.example.mutidemo.widget.SpeedRecyclerView
+        android:id="@+id/pictureGalleryView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp" />
+</RelativeLayout>
