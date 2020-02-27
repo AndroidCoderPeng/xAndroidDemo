@@ -95,6 +95,8 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 isRefresh = true;
+                //刷新之后页码重置
+                defaultPage = 0;
                 HttpHelper.doHttpRequest(0, new HttpCallBackListener() {
                     @Override
                     public void onSuccess(Response response) throws IOException {

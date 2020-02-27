@@ -62,6 +62,42 @@ public class HtmlParserHelper {
         return new Gson().toJson(resultBean);
     }
 
+    /**
+     * 解析刷新或者加载更多的Html数据
+     * <p>
+     * 需要重新分析html解析
+     */
+    public static String getLoadMoreList(Document document) {
+        Element parentTag = document.getElementsByClass("main_cont").first();//仅一个节点
+        Elements elementsByClass = parentTag.getElementsByClass("list_cont Left_list_cont  Left_list_cont2");
+        ResultBean resultBean = new ResultBean();
+        List<ResultBean.CategoryBean> categoryBeanList = new ArrayList<>();
+        for (int i = 0; i < elementsByClass.size(); i++) {
+            ResultBean.CategoryBean categoryBean = new ResultBean.CategoryBean();
+            Element childListElement = elementsByClass.get(i).getElementsByClass("tab_tj").first();
+            Elements elementsByTag = childListElement.getElementsByTag("li");
+            List<ResultBean.CategoryBean.ListBean> beanList = new ArrayList<>();
+            for (Element e : elementsByTag) {
+                String childTitle = e.text();
+                String childPicture = e.select("img[data-original]").first().attr("data-original");
+                String childUrl = e.select("a[href]").first().attr("href");
+
+                ResultBean.CategoryBean.ListBean bean = new ResultBean.CategoryBean.ListBean();
+                bean.setChildTitle(childTitle);
+                bean.setChildPicture(childPicture);
+                bean.setChildUrl(childUrl);
+                beanList.add(bean);
+            }
+            categoryBean.setTitle("");
+            categoryBean.setUrl("");
+            categoryBean.setList(beanList);
+
+            categoryBeanList.add(categoryBean);
+            resultBean.setBeanList(categoryBeanList);
+        }
+        return new Gson().toJson(resultBean);
+    }
+
     public static void getPictureList(Document document, ParserCallBackListener listener) {
         Element parentElement = document.getElementsByClass("scroll-img scroll-img02 clearfix").first();
         Elements childElement = parentElement.getElementsByTag("li");
