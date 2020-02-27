@@ -51,12 +51,15 @@ public class PictureViewActivity extends BaseNormalActivity {
     ImageView mBlurView;
     @BindView(R.id.pictureGalleryView)
     RecyclerView pictureGalleryView;
+    @BindView(R.id.childNumberView)
+    TextView childNumberView;
 
     private Context mContext = PictureViewActivity.this;
     private List<PhotoBean.Result> photoBeanList = new ArrayList<>();
     private CardScaleHelper mCardScaleHelper;
     private Runnable mBlurRunnable;
     private int mLastPos = -1;
+    private int photoNumber;
 
     @Override
     public void initView() {
@@ -65,9 +68,9 @@ public class PictureViewActivity extends BaseNormalActivity {
 
     @Override
     public void initData() {
-        String childTitle = getIntent().getStringExtra("childTitle");
+        childTitleView.setText(getIntent().getStringExtra("childTitle"));
         String childUrl = getIntent().getStringExtra("childUrl");
-        childTitleView.setText(childTitle);
+
         OtherUtils.showProgressDialog(this, "数据加载中...");
         HttpHelper.captureHtmlData(childUrl, new HttpCallBackListener() {
             @Override
@@ -109,6 +112,7 @@ public class PictureViewActivity extends BaseNormalActivity {
                         @Override
                         public void onPictureDone(PhotoBean photoBean) {
                             photoBeanList = photoBean.getList();
+                            photoNumber = photoBean.getPhotoNumber();
 
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
                             pictureGalleryView.setLayoutManager(linearLayoutManager);
@@ -149,6 +153,8 @@ public class PictureViewActivity extends BaseNormalActivity {
             return;
         }
         mLastPos = mCardScaleHelper.getCurrentItemPos();
+        childNumberView.setText((mLastPos + 1) + "/" + photoNumber);//页码
+
         String itemURL = photoBeanList.get(mCardScaleHelper.getCurrentItemPos()).getBigImageUrl();
         ImageUtil.obtainBitmap(itemURL, new BitmapCallBackListener() {
             @Override
