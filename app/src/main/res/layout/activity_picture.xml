@@ -21,7 +21,7 @@
         android:textColor="#FFFFFF"
         android:textSize="18sp" />
 
-    <com.example.mutidemo.widget.SpeedRecyclerView
+    <com.example.mutidemo.widget.gallery3D.SpeedRecyclerView
         android:id="@+id/pictureGalleryView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

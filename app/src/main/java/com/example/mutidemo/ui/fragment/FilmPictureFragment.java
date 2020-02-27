@@ -16,9 +16,9 @@ import com.example.mutidemo.base.BaseFragment;
 import com.example.mutidemo.bean.ResultBean;
 import com.example.mutidemo.ui.PictureViewActivity;
 import com.example.mutidemo.util.HtmlParserHelper;
-import com.example.mutidemo.util.HttpCallBackListener;
 import com.example.mutidemo.util.HttpHelper;
 import com.example.mutidemo.util.OtherUtils;
+import com.example.mutidemo.util.callback.HtmlParserCallBackListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import okhttp3.Response;
 
 /**
  * @author: Pengxh
@@ -87,16 +86,7 @@ public class FilmPictureFragment extends BaseFragment {
                 isRefresh = true;
                 //刷新之后页码重置
                 defaultPage = 0;
-                HttpHelper.captureHtmlData(categoryUrl, new HttpCallBackListener() {
-                    @Override
-                    public void onSuccess(Response response) throws IOException {
-
-                    }
-
-                    @Override
-                    public void onFailure(Throwable throwable) {
-
-                    }
+                HttpHelper.captureHtmlData(categoryUrl, new HtmlParserCallBackListener() {
 
                     @Override
                     public void onParserDone(Document document) throws IOException {
@@ -118,16 +108,7 @@ public class FilmPictureFragment extends BaseFragment {
                 if (url.equals("")) {
                     return;
                 }
-                HttpHelper.captureHtmlData(url, new HttpCallBackListener() {
-                    @Override
-                    public void onSuccess(Response response) throws IOException {
-
-                    }
-
-                    @Override
-                    public void onFailure(Throwable throwable) {
-
-                    }
+                HttpHelper.captureHtmlData(url, new HtmlParserCallBackListener() {
 
                     @Override
                     public void onParserDone(Document document) throws IOException {

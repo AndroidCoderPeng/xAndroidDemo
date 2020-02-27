@@ -1,4 +1,4 @@
-package com.example.mutidemo.widget;
+package com.example.mutidemo.widget.gallery3D;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

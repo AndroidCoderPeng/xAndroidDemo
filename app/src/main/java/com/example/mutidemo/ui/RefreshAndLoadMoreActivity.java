@@ -13,17 +13,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.NewsAdapter;
 import com.example.mutidemo.bean.NewsBean;
-import com.example.mutidemo.util.HttpCallBackListener;
 import com.example.mutidemo.util.HttpHelper;
 import com.example.mutidemo.util.OtherUtils;
+import com.example.mutidemo.util.callback.HttpCallBackListener;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-
-import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,11 +79,6 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity {
             public void onFailure(Throwable throwable) {
                 handler.sendEmptyMessageDelayed(10001, 3000);
             }
-
-            @Override
-            public void onParserDone(Document document) throws IOException {
-
-            }
         });
     }
 
@@ -110,11 +103,6 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity {
                         refreshLayout.finishRefresh(3000);
                         handler.sendEmptyMessageDelayed(10002, 3000);
                     }
-
-                    @Override
-                    public void onParserDone(Document document) throws IOException {
-
-                    }
                 });
             }
         });
@@ -135,11 +123,6 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity {
                     public void onFailure(Throwable throwable) {
                         refreshLayout.finishLoadMore(3000);
                         handler.sendEmptyMessageDelayed(10002, 3000);
-                    }
-
-                    @Override
-                    public void onParserDone(Document document) throws IOException {
-
                     }
                 });
             }

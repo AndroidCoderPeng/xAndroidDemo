@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import com.example.mutidemo.MainActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.app.multilib.widget.dialog.PermissionDialog;
 

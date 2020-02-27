@@ -1,4 +1,4 @@
-package com.example.mutidemo.util;
+package com.example.mutidemo.util.callback;
 
 import com.example.mutidemo.bean.PhotoBean;
 
@@ -8,6 +8,6 @@ import com.example.mutidemo.bean.PhotoBean;
  * @description: TODO
  * @date: 2020/2/26 19:46
  */
-public interface ParserCallBackListener {
+public interface PhotoParserCallBackListener {
     void onPictureDone(PhotoBean photoBean);
 }

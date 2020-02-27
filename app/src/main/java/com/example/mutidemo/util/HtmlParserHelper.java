@@ -2,6 +2,8 @@ package com.example.mutidemo.util;
 
 import com.example.mutidemo.bean.PhotoBean;
 import com.example.mutidemo.bean.ResultBean;
+import com.example.mutidemo.util.callback.HtmlParserCallBackListener;
+import com.example.mutidemo.util.callback.PhotoParserCallBackListener;
 import com.google.gson.Gson;
 
 import org.jsoup.nodes.Document;
@@ -11,8 +13,6 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.Response;
 
 /**
  * @author: Pengxh
@@ -98,7 +98,7 @@ public class HtmlParserHelper {
         return new Gson().toJson(resultBean);
     }
 
-    public static void getPictureList(Document document, ParserCallBackListener listener) {
+    public static void getPictureList(Document document, PhotoParserCallBackListener listener) {
         Element parentElement = document.getElementsByClass("scroll-img scroll-img02 clearfix").first();
         Elements childElement = parentElement.getElementsByTag("li");
 
@@ -112,16 +112,7 @@ public class HtmlParserHelper {
             PhotoBean.Result result = new PhotoBean.Result();
             String s = element.select("a[href]").first().attr("href");
 
-            HttpHelper.captureHtmlData(s, new HttpCallBackListener() {
-                @Override
-                public void onSuccess(Response response) throws IOException {
-
-                }
-
-                @Override
-                public void onFailure(Throwable throwable) {
-
-                }
+            HttpHelper.captureHtmlData(s, new HtmlParserCallBackListener() {
 
                 @Override
                 public void onParserDone(Document document) throws IOException {

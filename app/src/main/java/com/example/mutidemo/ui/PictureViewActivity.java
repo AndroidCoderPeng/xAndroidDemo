@@ -14,16 +14,16 @@ import android.widget.TextView;
 import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.PhotoViewAdapter;
 import com.example.mutidemo.bean.PhotoBean;
-import com.example.mutidemo.util.BitmapCallBackListener;
 import com.example.mutidemo.util.HtmlParserHelper;
-import com.example.mutidemo.util.HttpCallBackListener;
 import com.example.mutidemo.util.HttpHelper;
 import com.example.mutidemo.util.ImageUtil;
 import com.example.mutidemo.util.OtherUtils;
-import com.example.mutidemo.util.ParserCallBackListener;
-import com.example.mutidemo.widget.BlurBitmapUtils;
-import com.example.mutidemo.widget.CardScaleHelper;
-import com.example.mutidemo.widget.ViewSwitchUtils;
+import com.example.mutidemo.util.callback.BitmapCallBackListener;
+import com.example.mutidemo.util.callback.HtmlParserCallBackListener;
+import com.example.mutidemo.util.callback.PhotoParserCallBackListener;
+import com.example.mutidemo.widget.gallery3D.BlurBitmapUtils;
+import com.example.mutidemo.widget.gallery3D.CardScaleHelper;
+import com.example.mutidemo.widget.gallery3D.ViewSwitchUtils;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
 
@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import okhttp3.Response;
 
 /**
  * @author: Pengxh
@@ -72,17 +71,7 @@ public class PictureViewActivity extends BaseNormalActivity {
         String childUrl = getIntent().getStringExtra("childUrl");
 
         OtherUtils.showProgressDialog(this, "数据加载中...");
-        HttpHelper.captureHtmlData(childUrl, new HttpCallBackListener() {
-            @Override
-            public void onSuccess(Response response) throws IOException {
-
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-
-            }
-
+        HttpHelper.captureHtmlData(childUrl, new HtmlParserCallBackListener() {
             @Override
             public void onParserDone(Document document) throws IOException {
                 Message message = handler.obtainMessage();
@@ -108,7 +97,7 @@ public class PictureViewActivity extends BaseNormalActivity {
             switch (msg.what) {
                 case 10000:
                     Document document = (Document) msg.obj;
-                    HtmlParserHelper.getPictureList(document, new ParserCallBackListener() {
+                    HtmlParserHelper.getPictureList(document, new PhotoParserCallBackListener() {
                         @Override
                         public void onPictureDone(PhotoBean photoBean) {
                             photoBeanList = photoBean.getList();

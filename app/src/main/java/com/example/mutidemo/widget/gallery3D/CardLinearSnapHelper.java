@@ -1,4 +1,4 @@
-package com.example.mutidemo.widget;
+package com.example.mutidemo.widget.gallery3D;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearSnapHelper;

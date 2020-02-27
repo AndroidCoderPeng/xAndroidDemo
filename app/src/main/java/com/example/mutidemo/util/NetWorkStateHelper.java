@@ -9,7 +9,7 @@ import android.telephony.TelephonyManager;
  * Created by Administrator on 2019/7/7.
  */
 
-public class NetWorkStateListener {
+public class NetWorkStateHelper {
     /**
      * 判断当前网络是否是移动网络
      *

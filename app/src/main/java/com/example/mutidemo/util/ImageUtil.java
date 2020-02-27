@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 
+import com.example.mutidemo.util.callback.BitmapCallBackListener;
 import com.pengxh.app.multilib.widget.EasyToast;
 
 import java.io.File;

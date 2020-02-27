@@ -1,4 +1,4 @@
-package com.example.mutidemo.widget;
+package com.example.mutidemo.widget.gallery3D;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;

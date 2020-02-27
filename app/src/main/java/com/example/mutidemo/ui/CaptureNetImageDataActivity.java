@@ -20,9 +20,9 @@ import com.example.mutidemo.ui.fragment.FilmPictureFragment;
 import com.example.mutidemo.ui.fragment.PictureFragment;
 import com.example.mutidemo.ui.fragment.StarPictureFragment;
 import com.example.mutidemo.util.HtmlParserHelper;
-import com.example.mutidemo.util.HttpCallBackListener;
 import com.example.mutidemo.util.HttpHelper;
 import com.example.mutidemo.util.OtherUtils;
+import com.example.mutidemo.util.callback.HtmlParserCallBackListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import okhttp3.Response;
 
 /**
  * @author: Pengxh
@@ -67,16 +66,7 @@ public class CaptureNetImageDataActivity extends BaseNormalActivity {
         OtherUtils.showProgressDialog(this, "数据加载中...");
         String url = dataBeanList.get(0).getUrl();
         Log.d(TAG, "抓取数据地址: " + url);
-        HttpHelper.captureHtmlData(url, new HttpCallBackListener() {
-            @Override
-            public void onSuccess(Response response) throws IOException {
-
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-
-            }
+        HttpHelper.captureHtmlData(url, new HtmlParserCallBackListener() {
 
             @Override
             public void onParserDone(Document document) throws IOException {

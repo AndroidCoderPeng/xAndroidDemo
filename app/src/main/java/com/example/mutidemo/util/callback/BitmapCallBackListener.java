@@ -1,4 +1,4 @@
-package com.example.mutidemo.util;
+package com.example.mutidemo.util.callback;
 
 import android.graphics.Bitmap;
 

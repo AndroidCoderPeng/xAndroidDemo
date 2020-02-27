@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +14,9 @@ import com.aihook.alertview.library.OnItemClickListener;
 import com.bumptech.glide.Glide;
 import com.example.mutidemo.R;
 import com.example.mutidemo.bean.PhotoBean;
-import com.example.mutidemo.util.BitmapCallBackListener;
 import com.example.mutidemo.util.ImageUtil;
-import com.example.mutidemo.widget.CardAdapterHelper;
+import com.example.mutidemo.util.callback.BitmapCallBackListener;
+import com.example.mutidemo.widget.gallery3D.CardAdapterHelper;
 
 import java.util.List;
 

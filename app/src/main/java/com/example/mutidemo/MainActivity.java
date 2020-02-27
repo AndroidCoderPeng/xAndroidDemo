@@ -1,4 +1,4 @@
-package com.example.mutidemo.base;
+package com.example.mutidemo;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
-import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.ui.BottomDialogActivity;
 import com.example.mutidemo.ui.BottomNavigationActivity;
@@ -17,7 +16,7 @@ import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
 import com.example.mutidemo.ui.SharedPreferencesActivity;
 import com.example.mutidemo.ui.login.UserManagerActivity;
 import com.example.mutidemo.util.Constant;
-import com.example.mutidemo.util.NetWorkStateListener;
+import com.example.mutidemo.util.NetWorkStateHelper;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.widget.EasyToast;
@@ -39,7 +38,7 @@ public class MainActivity extends DoubleClickExitActivity {
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "BMOB_SDK登陆注册",
             "仿iOS风格对话框", "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
-            "获取图片资源");
+            "爬虫抓取网页数据", "仿QQ侧滑菜单");
     private BroadcastManager broadcastManager;
 
     @Override
@@ -53,11 +52,11 @@ public class MainActivity extends DoubleClickExitActivity {
         broadcastManager.addAction(Constant.NET_ACTION, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                boolean isConnected = NetWorkStateListener.isNetworkConnected(context);
+                boolean isConnected = NetWorkStateHelper.isNetworkConnected(context);
                 if (isConnected) {
-                    if (NetWorkStateListener.isWiFi(context)) {
+                    if (NetWorkStateHelper.isWiFi(context)) {
                         EasyToast.showToast("已连上无线WiFi", EasyToast.SUCCESS);
-                    } else if (NetWorkStateListener.isMobileNet(context)) {
+                    } else if (NetWorkStateHelper.isMobileNet(context)) {
                         EasyToast.showToast("已连上移动4G网络", EasyToast.SUCCESS);
                     }
                 } else {

@@ -2,6 +2,9 @@ package com.example.mutidemo.util;
 
 import android.util.Log;
 
+import com.example.mutidemo.util.callback.HtmlParserCallBackListener;
+import com.example.mutidemo.util.callback.HttpCallBackListener;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -71,7 +74,7 @@ public class HttpHelper {
         });
     }
 
-    public static void captureHtmlData(String url, HttpCallBackListener listener) {
+    public static void captureHtmlData(String url, HtmlParserCallBackListener listener) {
         Observable.create(new Observable.OnSubscribe<Document>() {
             @Override
             public void call(Subscriber<? super Document> subscriber) {

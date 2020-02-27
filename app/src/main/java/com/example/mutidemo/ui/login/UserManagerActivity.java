@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.mutidemo.R;
-import com.example.mutidemo.base.MainActivity;
+import com.example.mutidemo.MainActivity;
 import com.example.mutidemo.bean.User;
 
 import cn.bmob.v3.Bmob;
