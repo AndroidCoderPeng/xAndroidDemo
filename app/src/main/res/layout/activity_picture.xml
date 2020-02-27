@@ -12,6 +12,15 @@
         android:background="#3F000000"
         android:scaleType="centerCrop" />
 
+    <TextView
+        android:id="@+id/childTitleView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp" />
+
     <com.example.mutidemo.widget.SpeedRecyclerView
         android:id="@+id/pictureGalleryView"
         android:layout_width="match_parent"

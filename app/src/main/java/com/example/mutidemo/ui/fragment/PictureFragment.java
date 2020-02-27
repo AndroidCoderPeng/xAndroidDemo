@@ -39,7 +39,7 @@ import okhttp3.Response;
  * @description: TODO
  * @date: 2020/2/25 19:50
  */
-public class NewPictureFragment extends BaseFragment {
+public class PictureFragment extends BaseFragment {
 
     private static final String TAG = "NewPictureFragment";
 
@@ -170,7 +170,9 @@ public class NewPictureFragment extends BaseFragment {
                     @Override
                     public void onClick(int position) {
                         String childUrl = listBeans.get(position).getChildUrl();
+                        String childTitle = listBeans.get(position).getChildTitle();
                         Intent intent = new Intent(getActivity(), PictureViewActivity.class);
+                        intent.putExtra("childTitle", childTitle);
                         intent.putExtra("childUrl", childUrl);
                         startActivity(intent);
                     }

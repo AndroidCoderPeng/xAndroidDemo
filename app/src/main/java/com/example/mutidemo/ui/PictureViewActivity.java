@@ -8,8 +8,8 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.PhotoViewAdapter;
@@ -45,6 +45,8 @@ import okhttp3.Response;
 
 public class PictureViewActivity extends BaseNormalActivity {
 
+    @BindView(R.id.childTitleView)
+    TextView childTitleView;
     @BindView(R.id.pictureBlurView)
     ImageView mBlurView;
     @BindView(R.id.pictureGalleryView)
@@ -63,7 +65,9 @@ public class PictureViewActivity extends BaseNormalActivity {
 
     @Override
     public void initData() {
+        String childTitle = getIntent().getStringExtra("childTitle");
         String childUrl = getIntent().getStringExtra("childUrl");
+        childTitleView.setText(childTitle);
         OtherUtils.showProgressDialog(this, "数据加载中...");
         HttpHelper.captureHtmlData(childUrl, new HttpCallBackListener() {
             @Override

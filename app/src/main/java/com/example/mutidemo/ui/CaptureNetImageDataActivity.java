@@ -17,7 +17,7 @@ import com.example.mutidemo.bean.LocalDataBean;
 import com.example.mutidemo.bean.ResultBean;
 import com.example.mutidemo.ui.fragment.BeautyPictureFragment;
 import com.example.mutidemo.ui.fragment.FilmPictureFragment;
-import com.example.mutidemo.ui.fragment.NewPictureFragment;
+import com.example.mutidemo.ui.fragment.PictureFragment;
 import com.example.mutidemo.ui.fragment.StarPictureFragment;
 import com.example.mutidemo.util.HtmlParserHelper;
 import com.example.mutidemo.util.HttpCallBackListener;
@@ -88,9 +88,9 @@ public class CaptureNetImageDataActivity extends BaseNormalActivity {
         });
     }
 
-    private List<String> tabTitle = new ArrayList<>();
-    private String categoryUrl;
     private List<ResultBean.CategoryBean> categoryBeans = new ArrayList<>();
+    private List<String> tabTitle = new ArrayList<>();
+    private List<String> categoryUrl = new ArrayList<>();
     private List<Fragment> fragments = new ArrayList<>();
 
     @Override
@@ -111,19 +111,28 @@ public class CaptureNetImageDataActivity extends BaseNormalActivity {
                     ResultBean resultBean = JSONObject.parseObject(s, ResultBean.class);
                     List<ResultBean.CategoryBean> resultBeanList = resultBean.getBeanList();
                     for (ResultBean.CategoryBean bean : resultBeanList) {
-                        categoryUrl = bean.getUrl();
+                        categoryUrl.add(bean.getUrl());
                         tabTitle.add(bean.getTitle());
                         categoryBeans.add(bean);
                     }
                     //最新手机壁纸, 美女手机壁纸, 明星手机壁纸, 影视手机壁纸
-//                    Log.d(TAG, "handleMessage: "+tabTitle);
-                    //TODO 绑定数据
-                    NewPictureFragment newPictureFragment = new NewPictureFragment();
-                    newPictureFragment.setData(categoryBeans.get(0), categoryUrl);
-                    fragments.add(newPictureFragment);
-                    fragments.add(new BeautyPictureFragment());
-                    fragments.add(new StarPictureFragment());
-                    fragments.add(new FilmPictureFragment());
+                    //不能共用一个Fragment，否则刷新会出现问题
+                    //页面不能公用，但是其他的可以共用
+                    PictureFragment pictureFragment = new PictureFragment();
+                    pictureFragment.setData(categoryBeans.get(0), categoryUrl.get(0));
+                    fragments.add(pictureFragment);
+
+                    BeautyPictureFragment beautyPictureFragment = new BeautyPictureFragment();
+                    beautyPictureFragment.setData(categoryBeans.get(1), categoryUrl.get(1));
+                    fragments.add(beautyPictureFragment);
+
+                    StarPictureFragment starPictureFragment = new StarPictureFragment();
+                    starPictureFragment.setData(categoryBeans.get(2), categoryUrl.get(2));
+                    fragments.add(starPictureFragment);
+
+                    FilmPictureFragment filmPictureFragment = new FilmPictureFragment();
+                    filmPictureFragment.setData(categoryBeans.get(3), categoryUrl.get(3));
+                    fragments.add(filmPictureFragment);
 
                     FragmentPagerAdapter adapter = new PicturePageAdapter(getSupportFragmentManager(), fragments, tabTitle);
                     pictureViewPager.setAdapter(adapter);
