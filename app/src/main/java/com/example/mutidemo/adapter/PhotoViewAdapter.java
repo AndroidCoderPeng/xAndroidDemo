@@ -16,7 +16,7 @@ import com.example.mutidemo.R;
 import com.example.mutidemo.bean.PhotoBean;
 import com.example.mutidemo.util.ImageUtil;
 import com.example.mutidemo.util.callback.BitmapCallBackListener;
-import com.example.mutidemo.widget.gallery3D.CardAdapterHelper;
+import com.pengxh.app.multilib.widget.gallery3d.CardAdapterHelper;
 
 import java.util.List;
 

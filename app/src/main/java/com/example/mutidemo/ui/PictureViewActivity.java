@@ -21,11 +21,11 @@ import com.example.mutidemo.util.OtherUtils;
 import com.example.mutidemo.util.callback.BitmapCallBackListener;
 import com.example.mutidemo.util.callback.HtmlParserCallBackListener;
 import com.example.mutidemo.util.callback.PhotoParserCallBackListener;
-import com.example.mutidemo.widget.gallery3D.BlurBitmapUtils;
-import com.example.mutidemo.widget.gallery3D.CardScaleHelper;
-import com.example.mutidemo.widget.gallery3D.ViewSwitchUtils;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.app.multilib.widget.gallery3d.BlurBitmapUtils;
+import com.pengxh.app.multilib.widget.gallery3d.CardScaleHelper;
+import com.pengxh.app.multilib.widget.gallery3d.ViewSwitchUtils;
 
 import org.jsoup.nodes.Document;
 

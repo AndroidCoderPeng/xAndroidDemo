@@ -11,6 +11,7 @@ android {
         ndk {
             abiFilters "armeabi-v7a"  // 指定要ndk需要兼容的架构(这样其他依赖包里mips,x86,armeabi,arm-v8之类的so会被过滤掉)
         }
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -42,7 +43,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
     //基础依赖库
-    implementation 'com.github.pengxianhong:Android-library:1.4.5'
+    implementation 'com.github.pengxianhong:Android-library:1.4.6'
     //阿里巴巴Json解析库
     implementation 'com.alibaba:fastjson:1.2.62'
     //MVP网络请求框架retrofit2+rxjava
