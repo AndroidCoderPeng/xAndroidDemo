@@ -75,6 +75,7 @@ public class HttpHelper {
     }
 
     public static void captureHtmlData(String url, HtmlParserCallBackListener listener) {
+        Log.d(TAG, "数据抓取地址: " + url);
         Observable.create(new Observable.OnSubscribe<Document>() {
             @Override
             public void call(Subscriber<? super Document> subscriber) {

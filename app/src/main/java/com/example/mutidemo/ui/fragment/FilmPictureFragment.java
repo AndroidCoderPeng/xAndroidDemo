@@ -85,7 +85,7 @@ public class FilmPictureFragment extends BaseFragment {
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 isRefresh = true;
                 //刷新之后页码重置
-                defaultPage = 0;
+                defaultPage = 1;
                 HttpHelper.captureHtmlData(categoryUrl, new HtmlParserCallBackListener() {
 
                     @Override

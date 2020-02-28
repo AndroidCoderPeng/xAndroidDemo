@@ -14,6 +14,7 @@ import com.example.mutidemo.ui.CaptureNetImageDataActivity;
 import com.example.mutidemo.ui.MVPActivity;
 import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
 import com.example.mutidemo.ui.SharedPreferencesActivity;
+import com.example.mutidemo.ui.SlideMenuActivity;
 import com.example.mutidemo.ui.login.UserManagerActivity;
 import com.example.mutidemo.util.Constant;
 import com.example.mutidemo.util.NetWorkStateHelper;
@@ -109,6 +110,10 @@ public class MainActivity extends DoubleClickExitActivity {
                     break;
                 case 7:
                     intent.setClass(mContext, CaptureNetImageDataActivity.class);
+                    startActivity(intent);
+                    break;
+                case 8:
+                    intent.setClass(mContext, SlideMenuActivity.class);
                     startActivity(intent);
                     break;
                 default:
