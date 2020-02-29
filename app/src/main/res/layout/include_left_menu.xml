@@ -16,11 +16,12 @@
             android:background="@drawable/bg_2" />
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/menuRecyclerView"
+    <ListView
+        android:id="@+id/menuListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
+        android:divider="@null"
         android:scrollbars="none" />
 
     <LinearLayout

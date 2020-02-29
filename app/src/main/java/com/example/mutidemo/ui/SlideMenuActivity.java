@@ -1,21 +1,19 @@
 package com.example.mutidemo.ui;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.mutidemo.R;
@@ -38,8 +36,8 @@ public class SlideMenuActivity extends BaseNormalActivity {
 
     private static final String TAG = "SlideMenuActivity";
 
-    @BindView(R.id.menuRecyclerView)
-    RecyclerView menuRecyclerView;
+    @BindView(R.id.menuListView)
+    ListView menuListView;
     @BindView(R.id.contentTabLayout)
     TabLayout contentTabLayout;
     @BindView(R.id.contentView)
@@ -62,11 +60,10 @@ public class SlideMenuActivity extends BaseNormalActivity {
     @Override
     public void initData() {
         SlideMenuAdapter menuAdapter = new SlideMenuAdapter(this);
-        menuRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        menuRecyclerView.setAdapter(menuAdapter);
-        menuAdapter.setOnItemClickListener(new SlideMenuAdapter.OnItemClickListener() {
+        menuListView.setAdapter(menuAdapter);
+        menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(int position) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 EasyToast.showToast(menuItemList.get(position), EasyToast.SUCCESS);
             }
         });
@@ -117,65 +114,54 @@ public class SlideMenuActivity extends BaseNormalActivity {
     }
 
     //侧滑菜单列表
-    static class SlideMenuAdapter extends RecyclerView.Adapter {
+    static class SlideMenuAdapter extends BaseAdapter {
 
         private LayoutInflater inflater;
-        private OnItemClickListener mOnItemClickListener;
 
         SlideMenuAdapter(Context mContext) {
             inflater = LayoutInflater.from(mContext);
         }
 
-        @NonNull
         @Override
-        public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-            return new ItemViewHolder(inflater.inflate(R.layout.item_menu_recyclerview, parent, false));
+        public int getCount() {
+            return menuImageList.size();
         }
 
         @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, @SuppressLint("RecyclerView") int position) {
-            ItemViewHolder itemHolder = (ItemViewHolder) viewHolder;
-            itemHolder.bindHolder(menuImageList.get(position), menuItemList.get(position));
-            if (mOnItemClickListener != null) {
-                itemHolder.itemLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mOnItemClickListener.onClick(position);
-                    }
-                });
+        public Object getItem(int position) {
+            return menuImageList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ItemViewHolder itemHolder;
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.item_menu_listview, null);
+                itemHolder = new ItemViewHolder();
+                itemHolder.itemView = convertView.findViewById(R.id.itemView);
+                itemHolder.itemTitle = convertView.findViewById(R.id.itemTitle);
+                convertView.setTag(itemHolder);
+            } else {
+                itemHolder = (ItemViewHolder) convertView.getTag();
             }
+            itemHolder.bindHolder(menuImageList.get(position), menuItemList.get(position));
+            return convertView;
         }
 
-        @Override
-        public int getItemCount() {
-            return menuItemList.size();
-        }
+        static class ItemViewHolder {
 
-        static class ItemViewHolder extends RecyclerView.ViewHolder {
-
-            private RelativeLayout itemLayout;
             private ImageView itemView;
             private TextView itemTitle;
-
-            private ItemViewHolder(View view) {
-                super(view);
-                itemLayout = view.findViewById(R.id.itemLayout);
-                itemView = view.findViewById(R.id.itemView);
-                itemTitle = view.findViewById(R.id.itemTitle);
-            }
 
             void bindHolder(int resId, String item) {
                 itemView.setBackgroundResource(resId);
                 itemTitle.setText(item);
             }
-        }
-
-        public interface OnItemClickListener {
-            void onClick(int position);
-        }
-
-        void setOnItemClickListener(OnItemClickListener listener) {
-            this.mOnItemClickListener = listener;
         }
     }
 }
