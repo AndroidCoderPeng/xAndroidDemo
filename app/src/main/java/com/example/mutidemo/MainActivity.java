@@ -14,7 +14,6 @@ import com.example.mutidemo.ui.CaptureNetImageDataActivity;
 import com.example.mutidemo.ui.MVPActivity;
 import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
 import com.example.mutidemo.ui.SharedPreferencesActivity;
-import com.example.mutidemo.ui.SlideMenuActivity;
 import com.example.mutidemo.ui.login.UserManagerActivity;
 import com.example.mutidemo.util.Constant;
 import com.example.mutidemo.util.NetWorkStateHelper;
@@ -39,7 +38,7 @@ public class MainActivity extends DoubleClickExitActivity {
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "BMOB_SDK登陆注册",
             "仿iOS风格对话框", "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
-            "爬虫抓取网页数据", "仿QQ侧滑菜单");
+            "爬虫抓取网页数据");
     private BroadcastManager broadcastManager;
 
     @Override
@@ -110,10 +109,6 @@ public class MainActivity extends DoubleClickExitActivity {
                     break;
                 case 7:
                     intent.setClass(mContext, CaptureNetImageDataActivity.class);
-                    startActivity(intent);
-                    break;
-                case 8:
-                    intent.setClass(mContext, SlideMenuActivity.class);
                     startActivity(intent);
                     break;
                 default:

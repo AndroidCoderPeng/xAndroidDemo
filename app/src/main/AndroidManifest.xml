@@ -45,6 +45,5 @@
         <activity android:name=".ui.RefreshAndLoadMoreActivity" />
         <activity android:name=".ui.CaptureNetImageDataActivity" />
         <activity android:name=".ui.PictureViewActivity" />
-        <activity android:name=".ui.SlideMenuActivity" />
     </application>
 </manifest>
