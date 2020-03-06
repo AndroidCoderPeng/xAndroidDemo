@@ -147,7 +147,7 @@ public class PictureViewActivity extends BaseNormalActivity {
         String itemURL = photoBeanList.get(mCardScaleHelper.getCurrentItemPos()).getBigImageUrl();
         ImageUtil.obtainBitmap(itemURL, new BitmapCallBackListener() {
             @Override
-            public void onSuccess(Bitmap bitmap) {
+            public void onSuccess(final Bitmap bitmap) {
                 mBlurView.removeCallbacks(mBlurRunnable);
                 mBlurRunnable = new Runnable() {
                     @Override

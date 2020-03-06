@@ -2,9 +2,11 @@ package com.example.mutidemo.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -86,7 +88,7 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity {
     public void initEvent() {
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
-            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+            public void onRefresh(@NonNull final RefreshLayout refreshLayout) {
                 isRefresh = true;
                 //刷新之后页码重置
                 defaultPage = 0;
@@ -108,7 +110,7 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity {
         });
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+            public void onLoadMore(@NonNull final RefreshLayout refreshLayout) {
                 isLoadMore = true;
                 defaultPage++;
                 HttpHelper.doHttpRequest(defaultPage, new HttpCallBackListener() {
@@ -167,8 +169,21 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity {
                     } else {
                         //首次加载数据
                         newsAdapter = new NewsAdapter(mContext, datas);
+                        newsRecyclerView.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
                         newsRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
                         newsRecyclerView.setAdapter(newsAdapter);
+                        newsAdapter.setOnNewsItemClickListener(new NewsAdapter.OnNewsItemClickListener() {
+                            @Override
+                            public void onClick(int position) {
+                                NewsBean.ResultBeanX.ResultBean.ListBean bean = datas.get(position);
+                                Intent intent = new Intent(mContext, NewsDetailsActivity.class);
+                                intent.putExtra("title", bean.getTitle());
+                                intent.putExtra("src", bean.getSrc());
+                                intent.putExtra("time", bean.getTime());
+                                intent.putExtra("content", bean.getContent());
+                                startActivity(intent);
+                            }
+                        });
                     }
                     break;
                 case 10001:

@@ -48,7 +48,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<PhotoViewAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         mCardAdapterHelper.onBindViewHolder(holder.itemView, position, getItemCount());
-        String bigImageUrl = mList.get(position).getBigImageUrl();
+        final String bigImageUrl = mList.get(position).getBigImageUrl();
         Glide.with(context).load(bigImageUrl).placeholder(R.mipmap.noimage).into(holder.photoView);
         holder.photoView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -59,7 +59,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<PhotoViewAdapter.View
         });
     }
 
-    private void showDialog(String url) {
+    private void showDialog(final String url) {
         new AlertView("提示", "是否下载此张壁纸", "取消", new String[]{"确定"}, null, context, AlertView.Style.Alert, new OnItemClickListener() {
             @Override
             public void onItemClick(Object o, int position) {

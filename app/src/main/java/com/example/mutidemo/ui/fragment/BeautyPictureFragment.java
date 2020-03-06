@@ -83,7 +83,7 @@ public class BeautyPictureFragment extends BaseFragment {
     protected void loadData() {
         newPictureRefresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
-            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+            public void onRefresh(@NonNull final RefreshLayout refreshLayout) {
                 isRefresh = true;
                 //刷新之后页码重置
                 defaultPage = 1;
@@ -101,7 +101,7 @@ public class BeautyPictureFragment extends BaseFragment {
         });
         newPictureRefresh.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+            public void onLoadMore(@NonNull final RefreshLayout refreshLayout) {
                 isLoadMore = true;
                 defaultPage++;
                 String url = replaceIndex(categoryUrl, defaultPage);

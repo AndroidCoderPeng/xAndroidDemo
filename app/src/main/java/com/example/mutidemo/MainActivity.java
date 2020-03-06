@@ -71,48 +71,51 @@ public class MainActivity extends DoubleClickExitActivity {
         MainAdapter adapter = new MainAdapter(this, mItemNameList);
         mMainRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         mMainRecyclerView.setAdapter(adapter);
-        adapter.setOnItemClickListener(position -> {
-            Intent intent = new Intent();
-            switch (position) {
-                case 0:
-                    intent.setClass(mContext, SharedPreferencesActivity.class);
-                    startActivity(intent);
-                    break;
-                case 1:
-                    intent.setClass(mContext, UserManagerActivity.class);
-                    startActivity(intent);
-                    break;
-                case 2:
-                    intent.setClass(mContext, BottomDialogActivity.class);
-                    startActivity(intent);
-                    break;
-                case 3:
-                    intent.setClass(mContext, MVPActivity.class);
-                    startActivity(intent);
-                    break;
-                case 4:
-                    intent.setClass(mContext, BottomNavigationActivity.class);
-                    startActivity(intent);
-                    break;
-                case 5:
-                    //开始扫一扫
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            startScannerActivity();
-                        }
-                    }).start();
-                    break;
-                case 6:
-                    intent.setClass(mContext, RefreshAndLoadMoreActivity.class);
-                    startActivity(intent);
-                    break;
-                case 7:
-                    intent.setClass(mContext, CaptureNetImageDataActivity.class);
-                    startActivity(intent);
-                    break;
-                default:
-                    break;
+        adapter.setOnItemClickListener(new MainAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(int position) {
+                Intent intent = new Intent();
+                switch (position) {
+                    case 0:
+                        intent.setClass(mContext, SharedPreferencesActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 1:
+                        intent.setClass(mContext, UserManagerActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 2:
+                        intent.setClass(mContext, BottomDialogActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 3:
+                        intent.setClass(mContext, MVPActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 4:
+                        intent.setClass(mContext, BottomNavigationActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 5:
+                        //开始扫一扫
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                startScannerActivity();
+                            }
+                        }).start();
+                        break;
+                    case 6:
+                        intent.setClass(mContext, RefreshAndLoadMoreActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 7:
+                        intent.setClass(mContext, CaptureNetImageDataActivity.class);
+                        startActivity(intent);
+                        break;
+                    default:
+                        break;
+                }
             }
         });
     }
@@ -140,7 +143,7 @@ public class MainActivity extends DoubleClickExitActivity {
                 .create();
         QrManager.getInstance().init(qrConfig).startScan(this, new QrManager.OnScanResultCallback() {
             @Override
-            public void onScanSuccess(ScanResult result) {
+            public void onScanSuccess(final ScanResult result) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

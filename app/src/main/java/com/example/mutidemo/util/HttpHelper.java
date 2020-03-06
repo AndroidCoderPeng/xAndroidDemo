@@ -35,10 +35,10 @@ public class HttpHelper {
         return Constant.NEWS_URL.replace("pageNum", String.valueOf(page));
     }
 
-    public static void doHttpRequest(int pageNumber, HttpCallBackListener listener) {
+    public static void doHttpRequest(final int pageNumber, final HttpCallBackListener listener) {
         Observable.create(new Observable.OnSubscribe<Response>() {
             @Override
-            public void call(Subscriber<? super Response> subscriber) {
+            public void call(final Subscriber<? super Response> subscriber) {
                 Call call = new OkHttpClient().newCall(new Request.Builder().url(replacePageNumber(pageNumber)).get().build());
                 call.enqueue(new Callback() {
                     @Override
@@ -74,7 +74,7 @@ public class HttpHelper {
         });
     }
 
-    public static void captureHtmlData(String url, HtmlParserCallBackListener listener) {
+    public static void captureHtmlData(final String url, final HtmlParserCallBackListener listener) {
         Log.d(TAG, "数据抓取地址: " + url);
         Observable.create(new Observable.OnSubscribe<Document>() {
             @Override

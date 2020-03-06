@@ -13,7 +13,6 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.mutidemo.R;
-import com.example.mutidemo.bean.LocalDataBean;
 import com.example.mutidemo.bean.ResultBean;
 import com.example.mutidemo.ui.fragment.BeautyPictureFragment;
 import com.example.mutidemo.ui.fragment.FilmPictureFragment;
@@ -23,10 +22,7 @@ import com.example.mutidemo.util.HtmlParserHelper;
 import com.example.mutidemo.util.HttpHelper;
 import com.example.mutidemo.util.OtherUtils;
 import com.example.mutidemo.util.callback.HtmlParserCallBackListener;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
-import com.pengxh.app.multilib.utils.StringUtil;
 import com.pengxh.app.multilib.widget.EasyToast;
 
 import org.jsoup.nodes.Document;
@@ -59,13 +55,8 @@ public class CaptureNetImageDataActivity extends BaseNormalActivity {
 
     @Override
     public void initData() {
-        String assetsData = StringUtil.getAssetsData(this, "resources.json");
-        List<LocalDataBean> dataBeanList = new Gson().fromJson(assetsData, new TypeToken<List<LocalDataBean>>() {
-        }.getType());
-
         OtherUtils.showProgressDialog(this, "数据加载中...");
-        String url = dataBeanList.get(0).getUrl();
-        Log.d(TAG, "抓取数据地址: " + url);
+        String url = "http://www.win4000.com/mobile.html";
         HttpHelper.captureHtmlData(url, new HtmlParserCallBackListener() {
 
             @Override
@@ -106,8 +97,6 @@ public class CaptureNetImageDataActivity extends BaseNormalActivity {
                         categoryBeans.add(bean);
                     }
                     //最新手机壁纸, 美女手机壁纸, 明星手机壁纸, 影视手机壁纸
-                    //不能共用一个Fragment，否则刷新会出现问题
-                    //页面不能公用，但是其他的可以共用
                     PictureFragment pictureFragment = new PictureFragment();
                     pictureFragment.setData(categoryBeans.get(0), categoryUrl.get(0));
                     fragments.add(pictureFragment);

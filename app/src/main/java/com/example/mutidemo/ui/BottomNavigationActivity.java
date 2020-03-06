@@ -95,7 +95,7 @@ public class BottomNavigationActivity extends BaseNormalActivity {
         mainViewPager.setAdapter(adapter);
     }
 
-    class ViewPagerAdapter extends FragmentPagerAdapter {
+    static class ViewPagerAdapter extends FragmentPagerAdapter {
 
         private List<Fragment> mFragments;
 

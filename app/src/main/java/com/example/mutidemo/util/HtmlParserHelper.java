@@ -98,18 +98,18 @@ public class HtmlParserHelper {
         return new Gson().toJson(resultBean);
     }
 
-    public static void getPictureList(Document document, PhotoParserCallBackListener listener) {
+    public static void getPictureList(Document document, final PhotoParserCallBackListener listener) {
         Element parentElement = document.getElementsByClass("scroll-img scroll-img02 clearfix").first();
-        Elements childElement = parentElement.getElementsByTag("li");
+        final Elements childElement = parentElement.getElementsByTag("li");
 
-        List<PhotoBean.Result> resultList = new ArrayList<>();
-        PhotoBean photoBean = new PhotoBean();
+        final List<PhotoBean.Result> resultList = new ArrayList<>();
+        final PhotoBean photoBean = new PhotoBean();
         for (Element element : childElement) {
             //获取大图的地址
-            String title = element.select("img[title]").first().attr("title");
+            final String title = element.select("img[title]").first().attr("title");
 
             //根据大图地址获取大图
-            PhotoBean.Result result = new PhotoBean.Result();
+            final PhotoBean.Result result = new PhotoBean.Result();
             String s = element.select("a[href]").first().attr("href");
 
             HttpHelper.captureHtmlData(s, new HtmlParserCallBackListener() {
