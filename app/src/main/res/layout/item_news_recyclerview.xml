@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="110dp"
+    android:layout_height="100dp"
     android:paddingStart="10dp"
     android:paddingTop="5dp"
     android:paddingEnd="10dp"
@@ -14,6 +14,7 @@
         android:layout_marginEnd="5dp"
         android:layout_toStartOf="@id/newsPicture"
         android:lines="3"
+        android:text="包子铺 | 你们该知道的米兰时装周美包top10来啦"
         android:textColor="#000"
         android:textSize="18sp" />
 
@@ -21,7 +22,8 @@
         android:id="@+id/newsSrc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:text="新浪时尚" />
 
     <TextView
         android:id="@+id/newsTime"
@@ -29,13 +31,15 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="5dp"
-        android:layout_toStartOf="@id/newsPicture" />
+        android:layout_toStartOf="@id/newsPicture"
+        android:text="2020-02-24 14:39:04" />
 
     <ImageView
         android:id="@+id/newsPicture"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
+        android:layout_width="120dp"
+        android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:scaleType="centerCrop" />
 
 </RelativeLayout>

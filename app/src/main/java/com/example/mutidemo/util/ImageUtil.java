@@ -133,9 +133,10 @@ public class ImageUtil {
      *
      * @param activity
      * @param textView
-     * @param sources
+     * @param sources  需要显示的带有html标签的文字
+     * @param width    设备屏幕像素宽度
      */
-    public static void setTextFromHtml(final Activity activity, final TextView textView, final String sources) {
+    public static void setTextFromHtml(final Activity activity, final TextView textView, final String sources, final float width) {
         if (activity == null || textView == null || TextUtils.isEmpty(sources)) {
             return;
         }
@@ -157,16 +158,10 @@ public class ImageUtil {
                                 Drawable drawable = new BitmapDrawable(activity.getResources(), bitmap);
                                 int w = drawable.getIntrinsicWidth();
                                 int h = drawable.getIntrinsicHeight();
-                                //对图片大小进行等比例放大
-                                if (w < h && h > 0) {
-                                    float scale = (720.0f / h);
-                                    w = (int) (scale * w);
-                                    h = (int) (scale * h);
-                                } else if (w > h && w > 0) {
-                                    float scale = (1280.0f / w);
-                                    w = (int) (scale * w);
-                                    h = (int) (scale * h);
-                                }
+                                //对图片改变尺寸
+                                float scale = width / w;
+                                w = (int) (scale * w);
+                                h = (int) (scale * h);
                                 drawable.setBounds(0, 0, w, h);
                                 return drawable;
                             } catch (ExecutionException e) {

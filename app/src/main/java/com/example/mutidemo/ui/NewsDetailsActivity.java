@@ -1,11 +1,13 @@
 package com.example.mutidemo.ui;
 
-import android.util.Log;
 import android.widget.TextView;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.util.ImageUtil;
+import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
+
+import java.util.HashMap;
 
 import butterknife.BindView;
 
@@ -44,7 +46,9 @@ public class NewsDetailsActivity extends BaseNormalActivity {
         newsSrc.setText(src);
         newsTime.setText(time);
 
-        ImageUtil.setTextFromHtml(this, newsContent, content);
+        HashMap<String, Integer> displaySize = OtherUtils.getDisplaySize(this);
+        float widthPx = displaySize.get("widthPx");
+        ImageUtil.setTextFromHtml(this, newsContent, content, widthPx);
     }
 
     @Override
