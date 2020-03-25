@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.example.mutidemo.ui.PhotoViewActivity;
 import com.example.mutidemo.util.callback.BitmapCallBackListener;
+import com.pengxh.app.multilib.utils.DensityUtil;
 import com.pengxh.app.multilib.widget.EasyToast;
 
 import org.xml.sax.XMLReader;
@@ -136,7 +137,7 @@ public class ImageUtil {
      * @param sources  需要显示的带有html标签的文字
      * @param width    设备屏幕像素宽度
      */
-    public static void setTextFromHtml(final Activity activity, final TextView textView, final String sources, final float width) {
+    public static void setTextFromHtml(final Activity activity, final TextView textView, final String sources, final float width, final int rightPadding) {
         if (activity == null || textView == null || TextUtils.isEmpty(sources)) {
             return;
         }
@@ -160,7 +161,7 @@ public class ImageUtil {
                                 int h = drawable.getIntrinsicHeight();
                                 //对图片改变尺寸
                                 float scale = width / w;
-                                w = (int) (scale * w);
+                                w = (int) (scale * (w - ((DensityUtil.dpToPx(activity, rightPadding) * scale))));
                                 h = (int) (scale * h);
                                 drawable.setBounds(0, 0, w, h);
                                 return drawable;

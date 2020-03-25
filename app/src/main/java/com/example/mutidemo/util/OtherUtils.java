@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.WindowManager;
 
 import java.util.HashMap;
@@ -43,12 +44,18 @@ public class OtherUtils {
         Resources res = context.getResources();
         //获取导航栏
         int navigationBarId = res.getIdentifier("navigation_bar_height", "dimen", "android");
-        int navigationBarHeight = res.getDimensionPixelSize(navigationBarId);
+        int navigationBarHeight = 0;
+        if (navigationBarId > 0) {
+            navigationBarHeight = res.getDimensionPixelSize(navigationBarId);
+        }
         int displayHeightPx = height + navigationBarHeight;
-
+        //获取手机dpi
+        int displayDpi = dm.densityDpi;
         HashMap<String, Integer> displaySizeMap = new HashMap<>();
         displaySizeMap.put("widthPx", displayWidthPx);
         displaySizeMap.put("heightPx", displayHeightPx);
+        displaySizeMap.put("dpi", displayDpi);
+        Log.d("TAG", "getDisplaySize: " + displaySizeMap);
         return displaySizeMap;
     }
 }

@@ -76,7 +76,7 @@ public class NewsAdapter extends RecyclerView.Adapter {
         }
 
         void bindHolder(NewsBean.ResultBeanX.ResultBean.ListBean listBean) {
-            Glide.with(context).load(listBean.getPic()).placeholder(R.mipmap.logo).into(newsPicture);
+            Glide.with(context).load(listBean.getPic()).placeholder(R.mipmap.noimage).into(newsPicture);
             newsTitle.setText(listBean.getTitle());
             newsSrc.setText(listBean.getSrc());
             newsTime.setText(listBean.getTime());

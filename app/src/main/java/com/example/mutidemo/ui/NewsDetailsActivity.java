@@ -1,5 +1,7 @@
 package com.example.mutidemo.ui;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.widget.TextView;
 
 import com.example.mutidemo.R;
@@ -8,6 +10,7 @@ import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import butterknife.BindView;
 
@@ -35,6 +38,7 @@ public class NewsDetailsActivity extends BaseNormalActivity {
         setContentView(R.layout.activity_news_details);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void initData() {
         String title = getIntent().getStringExtra("title");
@@ -47,8 +51,8 @@ public class NewsDetailsActivity extends BaseNormalActivity {
         newsTime.setText(time);
 
         HashMap<String, Integer> displaySize = OtherUtils.getDisplaySize(this);
-        float widthPx = displaySize.get("widthPx");
-        ImageUtil.setTextFromHtml(this, newsContent, content, widthPx);
+        float widthPx = Objects.requireNonNull(displaySize.get("widthPx"));
+        ImageUtil.setTextFromHtml(this, newsContent, content, widthPx, 10);
     }
 
     @Override

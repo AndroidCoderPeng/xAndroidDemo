@@ -16,7 +16,7 @@
         android:lines="3"
         android:text="包子铺 | 你们该知道的米兰时装周美包top10来啦"
         android:textColor="#000"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/newsSrc"

@@ -4,9 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
+import android.view.View;
 
+import com.aihook.alertview.library.AlertView;
 import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.ui.BottomDialogActivity;
 import com.example.mutidemo.ui.BottomNavigationActivity;
@@ -17,23 +23,29 @@ import com.example.mutidemo.ui.SharedPreferencesActivity;
 import com.example.mutidemo.ui.login.UserManagerActivity;
 import com.example.mutidemo.util.Constant;
 import com.example.mutidemo.util.NetWorkStateHelper;
+import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.widget.EasyToast;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import cn.bertsir.zbar.Qr.ScanResult;
 import cn.bertsir.zbar.QrConfig;
 import cn.bertsir.zbar.QrManager;
 import cn.bertsir.zbar.view.ScanLineView;
 
-public class MainActivity extends DoubleClickExitActivity {
+public class MainActivity extends DoubleClickExitActivity implements View.OnClickListener {
 
     @BindView(R.id.mMainRecyclerView)
     RecyclerView mMainRecyclerView;
+    @BindView(R.id.floatButton)
+    FloatingActionButton floatButton;
 
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "BMOB_SDK登陆注册",
@@ -158,5 +170,20 @@ public class MainActivity extends DoubleClickExitActivity {
     protected void onDestroy() {
         super.onDestroy();
         broadcastManager.destroy(Constant.NET_ACTION);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @OnClick(R.id.floatButton)
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.floatButton) {
+            HashMap<String, Integer> displaySize = OtherUtils.getDisplaySize(this);
+            int widthPx = Objects.requireNonNull(displaySize.get("widthPx"));
+            int heightPx = Objects.requireNonNull(displaySize.get("heightPx"));
+            int dpi = Objects.requireNonNull(displaySize.get("dpi"));
+
+            String size = "横向像素: " + widthPx + "Px\n纵向像素: " + heightPx + "Px\n屏幕像素密度: " + dpi + "Dpi";
+            new AlertView("当前手机屏幕参数", size, null, new String[]{"确定"}, null, this, AlertView.Style.Alert, null).setCancelable(false).show();
+        }
     }
 }
