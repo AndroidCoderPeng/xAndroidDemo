@@ -9,7 +9,6 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.View;
 
 import com.aihook.alertview.library.AlertView;
@@ -17,6 +16,7 @@ import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.ui.BottomDialogActivity;
 import com.example.mutidemo.ui.BottomNavigationActivity;
 import com.example.mutidemo.ui.CaptureNetImageDataActivity;
+import com.example.mutidemo.ui.GpsAndStationActivity;
 import com.example.mutidemo.ui.MVPActivity;
 import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
 import com.example.mutidemo.ui.SharedPreferencesActivity;
@@ -50,7 +50,7 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "BMOB_SDK登陆注册",
             "仿iOS风格对话框", "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
-            "爬虫抓取网页数据");
+            "爬虫抓取网页数据", "GPS与基站定位");
     private BroadcastManager broadcastManager;
 
     @Override
@@ -123,6 +123,10 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                         break;
                     case 7:
                         intent.setClass(mContext, CaptureNetImageDataActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 8:
+                        intent.setClass(mContext, GpsAndStationActivity.class);
                         startActivity(intent);
                         break;
                     default:

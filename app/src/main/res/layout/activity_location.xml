@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="GPS定位"
+        android:textColor="#000"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/gpsLatitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="纬度："
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/gpsLongitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="经度："
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/gpsLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="当前位置："
+        android:textSize="18sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="#ccc" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="基站定位"
+        android:textColor="#000"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/stationInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="基站信息："
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/stationLatitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="纬度："
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/stationLongitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="经度："
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/stationLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="当前位置："
+        android:textSize="18sp" />
+</LinearLayout>

@@ -27,7 +27,8 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
 
     private static final int PERMISSIONS_CODE = 999;
     private static final String[] USER_PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE
-            , Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+            , Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
