@@ -18,7 +18,7 @@ import android.support.v4.app.ActivityCompat;
  */
 public class LocationUtil {
 
-    private static final long REFRESH_TIME = 5000L;
+    private static final long REFRESH_TIME = 3000L;
     private static final float METER_POSITION = 0.0f;
     private static ILocationListener mLocationListener;
     private static LocationListener listener = new MyLocationListener();
