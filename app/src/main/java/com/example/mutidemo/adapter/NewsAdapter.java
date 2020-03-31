@@ -76,7 +76,13 @@ public class NewsAdapter extends RecyclerView.Adapter {
         }
 
         void bindHolder(NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean listBean) {
-            Glide.with(context).load(listBean.getImg()).placeholder(R.mipmap.noimage).into(newsPicture);
+            String img = listBean.getImg();
+            if (img == null || img.equals("") || img.endsWith(".gif")) {
+                //gif图片太小，不显示
+                newsPicture.setVisibility(View.GONE);
+            } else {
+                Glide.with(context).load(img).placeholder(R.mipmap.noimage).into(newsPicture);
+            }
             newsTitle.setText(listBean.getTitle());
             newsSrc.setText(listBean.getSource());
             newsTime.setText(listBean.getPubDate());

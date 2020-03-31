@@ -1,38 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="100dp"
+    android:orientation="horizontal"
     android:paddingStart="10dp"
     android:paddingTop="5dp"
     android:paddingEnd="10dp"
     android:paddingBottom="5dp">
 
-    <TextView
-        android:id="@+id/newsTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp"
-        android:layout_toStartOf="@id/newsPicture"
-        android:lines="3"
-        android:text="包子铺 | 你们该知道的米兰时装周美包top10来啦"
-        android:textColor="#000"
-        android:textSize="16sp" />
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
-    <TextView
-        android:id="@+id/newsSrc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="新浪时尚" />
+        <TextView
+            android:id="@+id/newsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:lines="3"
+            android:text="包子铺 | 你们该知道的米兰时装周美包top10来啦"
+            android:textColor="#000"
+            android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/newsTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="5dp"
-        android:layout_toStartOf="@id/newsPicture"
-        android:text="2020-02-24 14:39:04" />
+        <TextView
+            android:id="@+id/newsSrc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="新浪时尚" />
+
+        <TextView
+            android:id="@+id/newsTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="5dp"
+            android:text="2020-02-24 14:39:04" />
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/newsPicture"
@@ -42,4 +48,4 @@
         android:layout_centerVertical="true"
         android:scaleType="centerCrop" />
 
-</RelativeLayout>
+</LinearLayout>
