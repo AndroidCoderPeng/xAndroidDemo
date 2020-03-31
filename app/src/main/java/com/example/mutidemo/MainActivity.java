@@ -7,8 +7,8 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
 import com.aihook.alertview.library.AlertView;
@@ -81,7 +81,7 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     @Override
     public void initEvent() {
         MainAdapter adapter = new MainAdapter(this, mItemNameList);
-        mMainRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        mMainRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         mMainRecyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(new MainAdapter.OnItemClickListener() {
             @Override

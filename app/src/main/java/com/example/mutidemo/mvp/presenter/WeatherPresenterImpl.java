@@ -25,6 +25,11 @@ public class WeatherPresenterImpl extends BasePresenter implements IWeatherPrese
     }
 
     @Override
+    public void disposeRetrofitRequest() {
+        unSubscription();
+    }
+
+    @Override
     public void onSuccess(WeatherBean weatherBean) {
         iWeatherView.hideProgress();
         /**

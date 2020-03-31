@@ -25,11 +25,11 @@ import java.util.List;
 public class NewsAdapter extends RecyclerView.Adapter {
 
     private Context context;
-    private List<NewsBean.ResultBeanX.ResultBean.ListBean> mItemList;
+    private List<NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean> mItemList;
     private LayoutInflater inflater;
     private OnNewsItemClickListener mOnItemClickListener;
 
-    public NewsAdapter(Context mContext, List<NewsBean.ResultBeanX.ResultBean.ListBean> list) {
+    public NewsAdapter(Context mContext, List<NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean> list) {
         this.context = mContext;
         this.mItemList = list;
         inflater = LayoutInflater.from(mContext);
@@ -75,11 +75,11 @@ public class NewsAdapter extends RecyclerView.Adapter {
             newsTime = itemView.findViewById(R.id.newsTime);
         }
 
-        void bindHolder(NewsBean.ResultBeanX.ResultBean.ListBean listBean) {
-            Glide.with(context).load(listBean.getPic()).placeholder(R.mipmap.noimage).into(newsPicture);
+        void bindHolder(NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean listBean) {
+            Glide.with(context).load(listBean.getImg()).placeholder(R.mipmap.noimage).into(newsPicture);
             newsTitle.setText(listBean.getTitle());
-            newsSrc.setText(listBean.getSrc());
-            newsTime.setText(listBean.getTime());
+            newsSrc.setText(listBean.getSource());
+            newsTime.setText(listBean.getPubDate());
         }
     }
 

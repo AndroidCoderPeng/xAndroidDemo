@@ -161,7 +161,7 @@ public class ImageUtil {
                                 int h = drawable.getIntrinsicHeight();
                                 //对图片改变尺寸
                                 float scale = width / w;
-                                w = (int) (scale * (w - ((DensityUtil.dpToPx(activity, rightPadding) * scale))));
+                                w = (int) (scale * w - ((DensityUtil.dpToPx(activity, rightPadding))));
                                 h = (int) (scale * h);
                                 drawable.setBounds(0, 0, w, h);
                                 return drawable;

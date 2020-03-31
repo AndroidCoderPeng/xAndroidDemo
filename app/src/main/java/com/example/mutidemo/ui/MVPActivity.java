@@ -1,6 +1,5 @@
 package com.example.mutidemo.ui;
 
-import android.app.ProgressDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
@@ -10,6 +9,7 @@ import com.example.mutidemo.adapter.WeatherAdapter;
 import com.example.mutidemo.bean.WeatherBean;
 import com.example.mutidemo.mvp.presenter.WeatherPresenterImpl;
 import com.example.mutidemo.mvp.view.IWeatherView;
+import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import butterknife.BindView;
@@ -32,7 +32,6 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView {
     RecyclerView weatherRecyclerView;
 
     private WeatherPresenterImpl weatherPresenter;
-    private ProgressDialog progressDialog;
 
     @Override
     public void initView() {
@@ -42,28 +41,22 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView {
     @Override
     public void initData() {
         weatherPresenter = new WeatherPresenterImpl(this);
-    }
-
-    @Override
-    public void initEvent() {
         weatherPresenter.onReadyRetrofitRequest("北京", 1, 101010100);
     }
 
     @Override
+    public void initEvent() {
+
+    }
+
+    @Override
     public void showProgress() {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage("正在加载......");
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
-        }
+        OtherUtils.showProgressDialog(this, "数据加载中...");
     }
 
     @Override
     public void hideProgress() {
-        if (progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
+        OtherUtils.hideProgressDialog();
     }
 
     @Override
@@ -80,6 +73,14 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView {
             WeatherAdapter weatherAdapter = new WeatherAdapter(this, result.getDaily());
             weatherRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             weatherRecyclerView.setAdapter(weatherAdapter);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (weatherPresenter != null) {
+            weatherPresenter.disposeRetrofitRequest();
         }
     }
 }

@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.mutidemo.bean.WeatherBean;
 
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -15,7 +16,7 @@ public class RetrofitServiceManager {
 
     private static final String TAG = "RetrofitServiceManager";
 
-    public static Retrofit createRetrofit(String baseUrl) {
+    private static Retrofit createRetrofit(String baseUrl) {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())//Gson转换器
@@ -30,7 +31,7 @@ public class RetrofitServiceManager {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
-                Log.d(TAG, "OkHttp ======>" + message);
+                Log.d(TAG, "OkHttp返回值: " + message);
             }
         });
         interceptor.setLevel(level);
@@ -39,17 +40,15 @@ public class RetrofitServiceManager {
         return builder.build();
     }
 
-    /**
-     * 获取天气详情信息，
-     *
-     * @param city
-     * @param cityid
-     * @param citycode
-     * @return
-     */
-    public static Observable<WeatherBean> getWeatherData(String baseUrl, String city, int cityid, int citycode) {
+    public static Observable<WeatherBean> getWeatherData(String baseUrl, String city, int cityId, int cityCode) {
         Retrofit retrofit = createRetrofit(baseUrl);
         RetrofitService service = retrofit.create(RetrofitService.class);
-        return service.getData(city, cityid, citycode);
+        return service.getData(city, cityId, cityCode);
+    }
+
+    public static Observable<ResponseBody> getNewsData(String baseUrl, int page, long timestamp) {
+        Retrofit retrofit = createRetrofit(baseUrl);
+        RetrofitService service = retrofit.create(RetrofitService.class);
+        return service.getData(page, timestamp);
     }
 }

@@ -7,7 +7,7 @@ public class BasePresenter {
     private CompositeSubscription mCompositeSubscription;
 
     //RXjava注册
-    public void addSubscription(Subscription subscriber) {
+    protected void addSubscription(Subscription subscriber) {
         if (mCompositeSubscription == null) {
             mCompositeSubscription = new CompositeSubscription();
         }
@@ -15,7 +15,7 @@ public class BasePresenter {
     }
 
     //RXjava取消注册，以避免内存泄露
-    public void onUnsubscribe() {
+    protected void unSubscription() {
         if (mCompositeSubscription != null && mCompositeSubscription.hasSubscriptions()) {
             mCompositeSubscription.unsubscribe();
         }

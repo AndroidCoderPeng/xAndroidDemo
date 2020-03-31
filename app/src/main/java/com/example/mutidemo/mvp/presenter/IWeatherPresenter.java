@@ -6,5 +6,7 @@ public interface IWeatherPresenter {
      * <p>
      * https://way.jd.com/jisuapi/weather?city=北京&cityid=1&citycode=101010100&appkey=e957ed7ad90436a57e604127d9d8fa32
      */
-    void onReadyRetrofitRequest(String city, int cityid, int citycode);
+    void onReadyRetrofitRequest(String city, int cityId, int cityCode);
+
+    void disposeRetrofitRequest();
 }
