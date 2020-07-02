@@ -1,7 +1,6 @@
 package com.example.mutidemo.ui;
 
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.widget.TextView;
 
 import com.example.mutidemo.R;
@@ -12,6 +11,7 @@ import com.pengxh.app.multilib.base.BaseNormalActivity;
 import java.util.HashMap;
 import java.util.Objects;
 
+import androidx.annotation.RequiresApi;
 import butterknife.BindView;
 
 /**
@@ -34,8 +34,8 @@ public class NewsDetailsActivity extends BaseNormalActivity {
     TextView newsContent;
 
     @Override
-    public void initView() {
-        setContentView(R.layout.activity_news_details);
+    public int initLayoutView() {
+        return R.layout.activity_news_details;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

@@ -5,10 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
@@ -30,6 +26,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import okhttp3.ResponseBody;
 
@@ -64,8 +64,8 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
     private NewsPresenterImpl newsPresenter;
 
     @Override
-    public void initView() {
-        setContentView(R.layout.activity_refresh);
+    public int initLayoutView() {
+        return R.layout.activity_refresh;
     }
 
     @Override

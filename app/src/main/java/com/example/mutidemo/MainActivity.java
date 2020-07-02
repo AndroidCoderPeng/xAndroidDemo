@@ -4,11 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.aihook.alertview.library.AlertView;
@@ -33,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.bertsir.zbar.Qr.ScanResult;
@@ -44,18 +41,16 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
 
     @BindView(R.id.mMainRecyclerView)
     RecyclerView mMainRecyclerView;
-    @BindView(R.id.floatButton)
-    FloatingActionButton floatButton;
 
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "BMOB_SDK登陆注册",
             "仿iOS风格对话框", "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
-            "爬虫抓取网页数据", "GPS与基站定位");
+            "爬虫抓取网页数据", "GPS与基站定位", "各种通知效果");
     private BroadcastManager broadcastManager;
 
     @Override
-    public void initView() {
-        setContentView(R.layout.activity_main);
+    public int initLayoutView() {
+        return R.layout.activity_main;
     }
 
     @Override
@@ -176,7 +171,6 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
         broadcastManager.destroy(Constant.NET_ACTION);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @OnClick(R.id.floatButton)
     @Override
     public void onClick(View view) {

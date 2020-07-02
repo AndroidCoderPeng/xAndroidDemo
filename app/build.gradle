@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.example.mutidemo"
-        minSdkVersion 18
-        targetSdkVersion 28
+        minSdkVersion 21
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         ndk {
@@ -19,37 +19,41 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility(JavaVersion.VERSION_1_8)
+        targetCompatibility(JavaVersion.VERSION_1_8)
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.android.support:cardview-v7:28.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
     //Google官方授权库
     implementation 'pub.devrel:easypermissions:1.3.0'
     //仿iOS风格的dialog库
     implementation 'com.aihook:alertview:1.0.0'
     //图片加载库
-    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'com.github.bumptech.glide:glide:4.5.0'
     implementation files('libs/BmobSDK_V3.3.9_0612.jar')
     //控件注解
-    implementation 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     implementation 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
     //基础依赖库
-    implementation 'com.github.pengxianhong:Android-library:1.4.6'
+    implementation 'com.github.pengxianhong:Android-library:1.5'
     //阿里巴巴Json解析库
-    implementation 'com.alibaba:fastjson:1.2.62'
+    implementation 'com.alibaba:fastjson:1.2.68'
     //MVP网络请求框架retrofit2+rxjava
-    implementation 'io.reactivex:rxjava:1.2.4'
+    implementation 'io.reactivex:rxjava:1.3.8'
     implementation 'io.reactivex:rxandroid:1.2.1'
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.6.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
+    implementation 'com.squareup.retrofit2:adapter-rxjava:2.8.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.6.0'
     //ZBar扫一扫
     implementation 'cn.bertsir.zbarLibary:zbarlibary:1.4.2'
     //上拉加载下拉刷新
@@ -65,7 +69,7 @@ dependencies {
     //查看大图
     implementation 'com.github.chrisbanes:PhotoView:2.0.0'
     //经纬度距离计算
-    implementation group: 'org.gavaghan', name: 'geodesy', version: '1.1.3'
+    implementation 'org.gavaghan:geodesy:1.1.3'
     //高德2D地图
-    implementation 'com.amap.api:map2d:latest.integration'
+    implementation files('libs/map2d-6.0.0.jar')
 }

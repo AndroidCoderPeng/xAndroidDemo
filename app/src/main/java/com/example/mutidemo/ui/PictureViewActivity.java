@@ -5,9 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,6 +30,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
 /**
@@ -61,8 +61,8 @@ public class PictureViewActivity extends BaseNormalActivity {
     private int photoNumber;
 
     @Override
-    public void initView() {
-        setContentView(R.layout.activity_picture);
+    public int initLayoutView() {
+        return R.layout.activity_picture;
     }
 
     @Override

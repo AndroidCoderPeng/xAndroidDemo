@@ -32,8 +32,8 @@ public class SharedPreferencesActivity extends BaseNormalActivity {
     private final static String USER_PSWD = "u_pswd";
 
     @Override
-    public void initView() {
-        setContentView(R.layout.activity_sharedprefer);
+    public int initLayoutView() {
+        return R.layout.activity_sharedprefer;
     }
 
     @Override

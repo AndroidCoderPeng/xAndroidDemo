@@ -2,8 +2,8 @@ package com.example.mutidemo.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.mutidemo.R;
 import com.example.mutidemo.bean.ResultBean;
 
@@ -72,7 +73,7 @@ public class PictureAdapter extends RecyclerView.Adapter {
         }
 
         void bindHolder(ResultBean.CategoryBean.ListBean listBean) {
-            Glide.with(context).load(listBean.getChildPicture()).placeholder(R.mipmap.noimage).into(pictureView);
+            Glide.with(context).load(listBean.getChildPicture()).apply(RequestOptions.placeholderOf(R.mipmap.noimage)).into(pictureView);
             pictureTitle.setText(listBean.getChildTitle());
         }
     }

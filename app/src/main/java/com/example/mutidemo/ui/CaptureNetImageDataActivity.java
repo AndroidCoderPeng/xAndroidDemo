@@ -3,13 +3,6 @@ package com.example.mutidemo.ui;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.mutidemo.R;
@@ -22,6 +15,7 @@ import com.example.mutidemo.util.HtmlParserHelper;
 import com.example.mutidemo.util.HttpHelper;
 import com.example.mutidemo.util.OtherUtils;
 import com.example.mutidemo.util.callback.HtmlParserCallBackListener;
+import com.google.android.material.tabs.TabLayout;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
 
@@ -31,6 +25,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 
 /**
@@ -47,10 +46,9 @@ public class CaptureNetImageDataActivity extends BaseNormalActivity {
     @BindView(R.id.pictureViewPager)
     ViewPager pictureViewPager;
 
-
     @Override
-    public void initView() {
-        setContentView(R.layout.activity_capture_net);
+    public int initLayoutView() {
+        return R.layout.activity_capture_net;
     }
 
     @Override

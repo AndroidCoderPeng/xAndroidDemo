@@ -2,8 +2,8 @@ package com.example.mutidemo.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import com.aihook.alertview.library.AlertView;
 import com.aihook.alertview.library.OnItemClickListener;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.mutidemo.R;
 import com.example.mutidemo.bean.PhotoBean;
 import com.example.mutidemo.util.ImageUtil;
@@ -49,7 +50,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<PhotoViewAdapter.View
     public void onBindViewHolder(final ViewHolder holder, int position) {
         mCardAdapterHelper.onBindViewHolder(holder.itemView, position, getItemCount());
         final String bigImageUrl = mList.get(position).getBigImageUrl();
-        Glide.with(context).load(bigImageUrl).placeholder(R.mipmap.noimage).into(holder.photoView);
+        Glide.with(context).load(bigImageUrl).apply(RequestOptions.placeholderOf(R.mipmap.noimage)).into(holder.photoView);
         holder.photoView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {

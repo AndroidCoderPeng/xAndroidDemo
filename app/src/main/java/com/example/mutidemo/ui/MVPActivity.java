@@ -1,7 +1,5 @@
 package com.example.mutidemo.ui;
 
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
 import com.example.mutidemo.R;
@@ -12,6 +10,8 @@ import com.example.mutidemo.mvp.view.IWeatherView;
 import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
 public class MVPActivity extends BaseNormalActivity implements IWeatherView {
@@ -34,8 +34,8 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView {
     private WeatherPresenterImpl weatherPresenter;
 
     @Override
-    public void initView() {
-        setContentView(R.layout.activity_mvp);
+    public int initLayoutView() {
+        return R.layout.activity_mvp;
     }
 
     @Override

@@ -19,8 +19,8 @@ public class PhotoViewActivity extends BaseNormalActivity {
     PhotoView photoView;
 
     @Override
-    public void initView() {
-        setContentView(R.layout.activity_big_picture);
+    public int initLayoutView() {
+        return R.layout.activity_big_picture;
     }
 
     @Override

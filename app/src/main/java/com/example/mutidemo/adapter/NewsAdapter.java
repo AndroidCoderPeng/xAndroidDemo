@@ -2,8 +2,6 @@ package com.example.mutidemo.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.mutidemo.R;
 import com.example.mutidemo.bean.NewsBean;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author: Pengxh
@@ -81,7 +83,7 @@ public class NewsAdapter extends RecyclerView.Adapter {
                 //gif图片太小，不显示
                 newsPicture.setVisibility(View.GONE);
             } else {
-                Glide.with(context).load(img).placeholder(R.mipmap.noimage).into(newsPicture);
+                Glide.with(context).load(img).apply(RequestOptions.placeholderOf(R.mipmap.noimage)).into(newsPicture);
             }
             newsTitle.setText(listBean.getTitle());
             newsSrc.setText(listBean.getSource());

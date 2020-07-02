@@ -5,12 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
@@ -40,6 +38,7 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+import androidx.annotation.NonNull;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -152,11 +151,10 @@ public class ImageUtil {
                         @Override
                         public Drawable getDrawable(String source) {
                             try {
-                                Bitmap bitmap = Glide.with(activity).load(source).asBitmap().centerCrop().into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
-                                if (bitmap == null) {
+                                Drawable drawable = Glide.with(activity).asDrawable().load(source).into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).get();
+                                if (drawable == null) {
                                     return null;
                                 }
-                                Drawable drawable = new BitmapDrawable(activity.getResources(), bitmap);
                                 int w = drawable.getIntrinsicWidth();
                                 int h = drawable.getIntrinsicHeight();
                                 //对图片改变尺寸

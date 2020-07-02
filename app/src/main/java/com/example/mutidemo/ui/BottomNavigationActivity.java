@@ -1,11 +1,11 @@
 package com.example.mutidemo.ui;
 
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.NonNull;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import android.view.MenuItem;
 
 import com.example.mutidemo.R;
@@ -36,8 +36,8 @@ public class BottomNavigationActivity extends BaseNormalActivity {
     private List<Fragment> fragmentList;
 
     @Override
-    public void initView() {
-        setContentView(R.layout.activity_navigat);
+    public int initLayoutView() {
+        return R.layout.activity_navigat;
     }
 
     @Override

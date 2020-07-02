@@ -26,9 +26,10 @@ public class BottomDialogActivity extends BaseNormalActivity implements OnItemCl
     private EditText etName;//拓展View内容
     private InputMethodManager imm;
 
+
     @Override
-    public void initView() {
-        setContentView(R.layout.activity_bottomdialog);
+    public int initLayoutView() {
+        return R.layout.activity_bottomdialog;
     }
 
     @Override
