@@ -19,6 +19,7 @@ import com.example.mutidemo.ui.SharedPreferencesActivity;
 import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
+import com.tapadoo.alerter.Alerter;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "仿iOS风格对话框",
             "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
-            "爬虫抓取网页数据", "各种通知效果");
+            "爬虫抓取网页数据", "酷炫通知");
 
     @Override
     public int initLayoutView() {
@@ -89,6 +90,14 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                     case 6:
                         intent.setClass(mContext, CaptureNetImageDataActivity.class);
                         startActivity(intent);
+                        break;
+                    case 7:
+                        Alerter.create(MainActivity.this).setTitle("您有新的消息")
+                                .setText("超出安全距离，请注意")
+                                .setBackgroundColorRes(R.color.sky)
+                                .setDuration(5000)
+                                .enableSwipeToDismiss()
+                                .show();
                         break;
                     default:
                         break;

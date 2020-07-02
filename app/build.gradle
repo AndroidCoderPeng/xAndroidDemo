@@ -67,4 +67,6 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.12.2'
     //查看大图
     implementation 'com.github.chrisbanes:PhotoView:2.0.0'
+    //通知栏
+    implementation 'com.tapadoo.android:alerter:6.1.0'
 }
