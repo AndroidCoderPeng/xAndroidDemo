@@ -36,10 +36,6 @@
         </activity>
 
         <activity android:name=".MainActivity" />
-        <activity android:name=".ui.login.UserManagerActivity" />
-        <activity android:name=".ui.login.RegisterActivity" />
-        <activity android:name=".ui.login.LoginOneKeyActivity" />
-        <activity android:name=".ui.login.ResetPasswordActivity" />
         <activity android:name=".ui.SharedPreferencesActivity" />
         <activity android:name=".ui.BottomDialogActivity" />
         <activity android:name=".ui.MVPActivity" />
@@ -49,10 +45,5 @@
         <activity android:name=".ui.PictureViewActivity" />
         <activity android:name=".ui.NewsDetailsActivity" />
         <activity android:name=".ui.PhotoViewActivity" />
-        <activity android:name=".ui.GpsAndStationActivity" />
-
-        <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="56fa2f20eef95e6107f998a5b59f0e10" />
     </application>
 </manifest>

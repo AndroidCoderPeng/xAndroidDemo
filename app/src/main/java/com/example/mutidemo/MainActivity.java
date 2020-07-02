@@ -1,26 +1,23 @@
 package com.example.mutidemo;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.aihook.alertview.library.AlertView;
 import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.ui.BottomDialogActivity;
 import com.example.mutidemo.ui.BottomNavigationActivity;
 import com.example.mutidemo.ui.CaptureNetImageDataActivity;
-import com.example.mutidemo.ui.GpsAndStationActivity;
 import com.example.mutidemo.ui.MVPActivity;
 import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
 import com.example.mutidemo.ui.SharedPreferencesActivity;
-import com.example.mutidemo.ui.login.UserManagerActivity;
-import com.example.mutidemo.util.Constant;
-import com.example.mutidemo.util.NetWorkStateHelper;
 import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
-import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.widget.EasyToast;
 
 import java.util.Arrays;
@@ -28,8 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.bertsir.zbar.Qr.ScanResult;
@@ -43,10 +38,9 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     RecyclerView mMainRecyclerView;
 
     private Context mContext = MainActivity.this;
-    private List<String> mItemNameList = Arrays.asList("SharedPreferences", "BMOB_SDK登陆注册",
-            "仿iOS风格对话框", "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
-            "爬虫抓取网页数据", "GPS与基站定位", "各种通知效果");
-    private BroadcastManager broadcastManager;
+    private List<String> mItemNameList = Arrays.asList("SharedPreferences", "仿iOS风格对话框",
+            "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
+            "爬虫抓取网页数据", "各种通知效果");
 
     @Override
     public int initLayoutView() {
@@ -55,22 +49,7 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
 
     @Override
     public void initData() {
-        broadcastManager = BroadcastManager.getInstance(this);
-        broadcastManager.addAction(Constant.NET_ACTION, new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                boolean isConnected = NetWorkStateHelper.isNetworkConnected(context);
-                if (isConnected) {
-                    if (NetWorkStateHelper.isWiFi(context)) {
-                        EasyToast.showToast("已连上无线WiFi", EasyToast.SUCCESS);
-                    } else if (NetWorkStateHelper.isMobileNet(context)) {
-                        EasyToast.showToast("已连上移动4G网络", EasyToast.SUCCESS);
-                    }
-                } else {
-                    EasyToast.showToast("网络连接已断开", EasyToast.WARING);
-                }
-            }
-        });
+
     }
 
     @Override
@@ -88,40 +67,27 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                         startActivity(intent);
                         break;
                     case 1:
-                        intent.setClass(mContext, UserManagerActivity.class);
-                        startActivity(intent);
-                        break;
-                    case 2:
                         intent.setClass(mContext, BottomDialogActivity.class);
                         startActivity(intent);
                         break;
-                    case 3:
+                    case 2:
                         intent.setClass(mContext, MVPActivity.class);
                         startActivity(intent);
                         break;
-                    case 4:
+                    case 3:
                         intent.setClass(mContext, BottomNavigationActivity.class);
                         startActivity(intent);
                         break;
-                    case 5:
+                    case 4:
                         //开始扫一扫
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                startScannerActivity();
-                            }
-                        }).start();
+                        new Thread(() -> startScannerActivity()).start();
                         break;
-                    case 6:
+                    case 5:
                         intent.setClass(mContext, RefreshAndLoadMoreActivity.class);
                         startActivity(intent);
                         break;
-                    case 7:
+                    case 6:
                         intent.setClass(mContext, CaptureNetImageDataActivity.class);
-                        startActivity(intent);
-                        break;
-                    case 8:
-                        intent.setClass(mContext, GpsAndStationActivity.class);
                         startActivity(intent);
                         break;
                     default:
@@ -155,20 +121,9 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
         QrManager.getInstance().init(qrConfig).startScan(this, new QrManager.OnScanResultCallback() {
             @Override
             public void onScanSuccess(final ScanResult result) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        EasyToast.showToast("扫码结果: " + result.content, EasyToast.SUCCESS);
-                    }
-                });
+                runOnUiThread(() -> EasyToast.showToast("扫码结果: " + result.content, EasyToast.SUCCESS));
             }
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        broadcastManager.destroy(Constant.NET_ACTION);
     }
 
     @OnClick(R.id.floatButton)
