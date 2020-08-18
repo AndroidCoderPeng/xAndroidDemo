@@ -2,8 +2,6 @@ package com.example.mutidemo.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +18,9 @@ import com.example.mutidemo.util.callback.BitmapCallBackListener;
 import com.pengxh.app.multilib.widget.gallery3d.CardAdapterHelper;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author: Pengxh
@@ -51,12 +52,9 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<PhotoViewAdapter.View
         mCardAdapterHelper.onBindViewHolder(holder.itemView, position, getItemCount());
         final String bigImageUrl = mList.get(position).getBigImageUrl();
         Glide.with(context).load(bigImageUrl).apply(RequestOptions.placeholderOf(R.mipmap.noimage)).into(holder.photoView);
-        holder.photoView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                showDialog(bigImageUrl);
-                return false;
-            }
+        holder.photoView.setOnLongClickListener(v -> {
+            showDialog(bigImageUrl);
+            return false;
         });
     }
 
@@ -73,7 +71,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<PhotoViewAdapter.View
 
                         @Override
                         public void onFailure(Throwable t) {
-
+                            t.printStackTrace();
                         }
                     });
                 }

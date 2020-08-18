@@ -159,25 +159,18 @@ public class ImageUtil {
                                 int h = drawable.getIntrinsicHeight();
                                 //对图片改变尺寸
                                 float scale = width / w;
-                                w = (int) (scale * w - ((DensityUtil.dpToPx(activity, rightPadding))));
+                                w = (int) (scale * w - ((DensityUtil.dp2px(activity, rightPadding))));
                                 h = (int) (scale * h);
                                 drawable.setBounds(0, 0, w, h);
                                 return drawable;
-                            } catch (ExecutionException e) {
-                                e.printStackTrace();
-                            } catch (InterruptedException e) {
+                            } catch (ExecutionException | InterruptedException e) {
                                 e.printStackTrace();
                             }
                             return null;
                         }
                     };
                     final CharSequence charSequence = Html.fromHtml(sources, imageGetter, new ImageClickHandler(activity));
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            textView.setText(charSequence);
-                        }
-                    });
+                    activity.runOnUiThread(() -> textView.setText(charSequence));
                 }
             }).start();
         }
