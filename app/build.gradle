@@ -27,7 +27,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.android.material:material:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -57,12 +57,6 @@ dependencies {
     implementation 'cn.bertsir.zbarLibary:zbarlibary:1.4.2'
     //上拉加载下拉刷新
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0'
-    //PushSDK必须依赖基础组件库，所以需要加入对应依赖
-    implementation 'com.umeng.umsdk:common:2.1.0'
-    //PushSDK必须依赖utdid库，所以需要加入对应依赖
-    implementation 'com.umeng.umsdk:utdid:1.1.5.3'
-    //PushSDK
-    implementation 'com.umeng.umsdk:push:6.0.1'
     //解析Html
     implementation 'org.jsoup:jsoup:1.12.2'
     //查看大图

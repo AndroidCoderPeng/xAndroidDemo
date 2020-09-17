@@ -2,10 +2,9 @@
 
 buildscript {
     repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         jcenter()
         google()
-        //Umeng远程库
-        maven { url 'https://dl.bintray.com/umsdk/release' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.1'
@@ -17,11 +16,9 @@ buildscript {
 
 allprojects {
     repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         google()
         jcenter()
-        //Umeng远程库
-        mavenCentral()
-        maven { url 'https://dl.bintray.com/umsdk/release' }
         maven { url "https://jitpack.io" }
     }
 }
