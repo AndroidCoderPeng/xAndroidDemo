@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="CustomProgressBar">
-        <attr name="progressColor" format="color" />
-        <attr name="progressDescColor" format="color" />
-        <attr name="progressRadius" format="dimension" />
-        <attr name="max" format="integer" />
-        <attr name="progress" format="integer" />
-        <attr name="borderWidth" format="dimension" />
-        <attr name="progressDesc" format="string" />
-        <attr name="isShowDesc" format="boolean" />
-    </declare-styleable>
-
-    <declare-styleable name="GalleryView">
-        <attr name="animDuration" format="integer" />
-        <attr name="saveText" format="string" />
-        <attr name="saveTextSize" format="dimension" />
-        <attr name="saveTextColor" format="color" />
-    </declare-styleable>
-
-    <declare-styleable name="FramedGridView">
-        <attr name="border_width" format="dimension" />
-        <attr name="border_color" format="color" />
+    <declare-styleable name="WaterRippleView">
+        <!--中心圆颜色-->
+        <attr name="ripple_centerColor" format="color" />
+        <!--扩散圆颜色-->
+        <attr name="ripple_spreadColor" format="color" />
+        <!--扩散延迟间隔-->
+        <attr name="ripple_animDuration" format="integer" />
+        <!--中心圆半径-->
+        <attr name="ripple_radius" format="dimension" />
+        <!--扩散间距，值越大，扩散速度越快-->
+        <attr name="ripple_distance" format="dimension" />
+        <!--扩散最大半径，值越小，扩散效果越明显-->
+        <attr name="ripple_maxDistance" format="dimension" />
+        <!--文字大小-->
+        <attr name="ripple_textSize" format="dimension" />
+        <!--文字-->
+        <attr name="ripple_text" format="string" />
+        <!--文字颜色-->
+        <attr name="ripple_textColor" format="color" />
+        <!--图片资源-->
+        <attr name="ripple_image" format="reference" />
     </declare-styleable>
 </resources>

@@ -3,6 +3,7 @@ package com.example.mutidemo;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.view.View;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -16,6 +17,7 @@ import com.example.mutidemo.ui.CaptureNetImageDataActivity;
 import com.example.mutidemo.ui.MVPActivity;
 import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
 import com.example.mutidemo.ui.SharedPreferencesActivity;
+import com.example.mutidemo.ui.WaterRippleActivity;
 import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
@@ -41,7 +43,7 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "仿iOS风格对话框",
             "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
-            "爬虫抓取网页数据", "酷炫通知");
+            "爬虫抓取网页数据", "酷炫通知", "水涟漪控件");
 
     @Override
     public int initLayoutView() {
@@ -95,9 +97,14 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                         Alerter.create(MainActivity.this).setTitle("您有新的消息")
                                 .setText("超出安全距离，请注意")
                                 .setBackgroundColorRes(R.color.sky)
+                                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                                 .setDuration(5000)
                                 .enableSwipeToDismiss()
                                 .show();
+                        break;
+                    case 8:
+                        intent.setClass(mContext, WaterRippleActivity.class);
+                        startActivity(intent);
                         break;
                     default:
                         break;
@@ -115,6 +122,7 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                 .setCornerColor(Color.parseColor("#0094FF"))//设置扫描框颜色
                 .setLineColor(Color.parseColor("#0094FF"))//设置扫描线颜色
                 .setLineSpeed(QrConfig.LINE_MEDIUM)//设置扫描线速度
+                .setScanType(QrConfig.TYPE_ALL)//设置扫码类型（二维码，条形码，全部，自定义，默认为二维码）
                 .setDesText(null)//扫描框下文字
                 .setShowDes(true)//是否显示扫描框下面文字
                 .setPlaySound(true)//是否扫描成功后bi~的声音

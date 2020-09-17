@@ -45,5 +45,6 @@
         <activity android:name=".ui.PictureViewActivity" />
         <activity android:name=".ui.NewsDetailsActivity" />
         <activity android:name=".ui.PhotoViewActivity" />
+        <activity android:name=".ui.WaterRippleActivity" />
     </application>
 </manifest>
