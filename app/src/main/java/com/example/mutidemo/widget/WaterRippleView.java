@@ -249,6 +249,7 @@ public class WaterRippleView extends View implements View.OnClickListener {
     public void start() {
         Log.d(TAG, "start: 启动动画");
         this.isStart = true;
+        postInvalidate();
     }
 
     /**
@@ -269,8 +270,6 @@ public class WaterRippleView extends View implements View.OnClickListener {
         if (startListener != null) {
             startListener.onStart(this);
         }
-        //标志位改变之后手动刷新onDraw
-        postInvalidate();
     }
 
     private OnAnimationStartListener startListener;
