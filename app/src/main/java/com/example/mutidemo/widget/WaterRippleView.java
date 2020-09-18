@@ -43,7 +43,7 @@ public class WaterRippleView extends View implements View.OnClickListener {
     private List<Integer> spreadRadius = new ArrayList<>();//扩散圆层级数，元素为扩散的距离
     private List<Integer> alphas = new ArrayList<>();//对应每层圆的透明度
     private TextPaint textPaint;
-    private String text = "正在呼叫";
+    private String text = "呼叫设备";
     private int textSize;
     private int textColor;
     private int spreadColor;
@@ -248,6 +248,7 @@ public class WaterRippleView extends View implements View.OnClickListener {
      */
     public void start() {
         Log.d(TAG, "start: 启动动画");
+        text = "正在呼叫";
         this.isStart = true;
         postInvalidate();
     }
@@ -257,6 +258,7 @@ public class WaterRippleView extends View implements View.OnClickListener {
      */
     public void stop() {
         Log.d(TAG, "stop: 停止动画");
+        text = "停止呼叫";
         this.isStart = false;
         postInvalidate();
     }

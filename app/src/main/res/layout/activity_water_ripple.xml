@@ -17,7 +17,7 @@
         app:ripple_maxDistance="30dp"
         app:ripple_radius="50dp"
         app:ripple_spreadColor="@color/main_colcor_blue"
-        app:ripple_text="正在呼叫"
+        app:ripple_text="呼叫设备"
         app:ripple_textColor="@color/white"
         app:ripple_textSize="16sp" />
 
