@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.text.TextPaint;
@@ -79,7 +80,10 @@ public class CheckView extends View implements View.OnClickListener {
         //圆圈画笔
         ringPaint = new Paint();
         ringPaint.setColor(ringColor);
-        ringPaint.setStrokeWidth(10);
+        ringPaint.setStyle(Paint.Style.STROKE);
+        ringPaint.setPathEffect(new DashPathEffect(new float[]{3, 3}, 0));//虚线
+        ringPaint.setAlpha(90);
+        ringPaint.setStrokeWidth(dp2px(mContext, 5));
         ringPaint.setAntiAlias(true);
 
         //中心圆文字画笔
@@ -136,8 +140,16 @@ public class CheckView extends View implements View.OnClickListener {
         canvas.drawCircle(centerX, centerY, radius, centerPaint);
 
         //外层圆环
-        canvas.drawCircle(centerX, centerY, radius + 10, ringPaint);
-        canvas.drawCircle(centerX, centerY, radius + 20, ringPaint);
+        canvas.drawCircle(centerX, centerY, radius + dp2px(mContext, 10), ringPaint);
+        canvas.drawCircle(centerX, centerY, radius + dp2px(mContext, 20), ringPaint);
+
+        //圆环上面的小圆
+        /**
+         * 内层小圆点 X = centerX+中心圆半径+第一个圆环空白距离
+         * 外层小圆点 X = centerX-中心圆半径-第一个圆环空白距离
+         * */
+        canvas.drawCircle(centerX + radius + dp2px(mContext, 10), centerY, dp2px(mContext, 5), centerPaint);
+        canvas.drawCircle(centerX - radius - dp2px(mContext, 20), centerY, dp2px(mContext, 5), centerPaint);
 
         //绘制文字
         Rect textRect = new Rect();
