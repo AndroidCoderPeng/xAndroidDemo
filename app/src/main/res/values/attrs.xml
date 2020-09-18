@@ -22,4 +22,19 @@
         <!--图片资源-->
         <attr name="ripple_image" format="reference" />
     </declare-styleable>
+
+    <declare-styleable name="CheckView">
+        <!--中心圆颜色-->
+        <attr name="view_centerColor" format="color" />
+        <!--中心圆颜色-->
+        <attr name="view_ringColor" format="color" />
+        <!--中心圆半径-->
+        <attr name="view_radius" format="dimension" />
+        <!--文字大小-->
+        <attr name="view_textSize" format="dimension" />
+        <!--文字-->
+        <attr name="view_text" format="string" />
+        <!--文字颜色-->
+        <attr name="view_textColor" format="color" />
+    </declare-styleable>
 </resources>

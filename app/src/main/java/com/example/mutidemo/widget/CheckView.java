@@ -1,5 +1,6 @@
 package com.example.mutidemo.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -7,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -26,6 +28,7 @@ public class CheckView extends View implements View.OnClickListener {
     private Context mContext;
     private Paint centerPaint; //中心圆paint
     private int centerColor;
+    private int ringColor;
     private int radius; //中心圆半径
     private float centerX;//圆心x
     private float centerY;//圆心y
@@ -33,6 +36,7 @@ public class CheckView extends View implements View.OnClickListener {
     private String text = "开始自检";
     private int textSize;
     private int textColor;
+    private Paint ringPaint; //圆环paint
     private boolean isStart = false;
 
     public CheckView(Context context) {
@@ -46,15 +50,17 @@ public class CheckView extends View implements View.OnClickListener {
     public CheckView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.mContext = context;
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.WaterRippleView, defStyleAttr, 0);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CheckView, defStyleAttr, 0);
 
-        centerColor = a.getColor(R.styleable.WaterRippleView_ripple_centerColor
+        centerColor = a.getColor(R.styleable.CheckView_view_centerColor
                 , getResourcesColor(context, R.color.main_colcor_blue));
-        radius = a.getDimensionPixelOffset(R.styleable.WaterRippleView_ripple_radius, dp2px(context, 50));
-        textSize = a.getDimensionPixelOffset(R.styleable.WaterRippleView_ripple_textSize
-                , sp2px(context, 16));
-        text = a.getString(R.styleable.WaterRippleView_ripple_text);
-        textColor = a.getColor(R.styleable.WaterRippleView_ripple_textColor
+        ringColor = a.getColor(R.styleable.CheckView_view_ringColor
+                , getResourcesColor(context, R.color.main_colcor_blue));
+        radius = a.getDimensionPixelOffset(R.styleable.CheckView_view_radius, dp2px(context, 50));
+        textSize = a.getDimensionPixelOffset(R.styleable.CheckView_view_textSize
+                , sp2px(context, 18));
+        text = a.getString(R.styleable.CheckView_view_text);
+        textColor = a.getColor(R.styleable.CheckView_view_textColor
                 , getResourcesColor(context, R.color.white));
         a.recycle();
 
@@ -70,7 +76,11 @@ public class CheckView extends View implements View.OnClickListener {
         centerPaint.setColor(centerColor);
         centerPaint.setAntiAlias(true);
 
-        //扩散圆圈画笔
+        //圆圈画笔
+        ringPaint = new Paint();
+        ringPaint.setColor(ringColor);
+        ringPaint.setStrokeWidth(10);
+        ringPaint.setAntiAlias(true);
 
         //中心圆文字画笔
         textPaint = new TextPaint();
@@ -101,7 +111,7 @@ public class CheckView extends View implements View.OnClickListener {
             mWidth = widthSpecSize;
         } else {
             // wrap_content
-            mWidth = dp2px(mContext, 3 * radius);
+            mWidth = dp2px(mContext, 3 * radius >> 1);
         }
         // 获取高
         if (heightSpecMode == MeasureSpec.EXACTLY) {
@@ -109,12 +119,13 @@ public class CheckView extends View implements View.OnClickListener {
             mHeight = heightSpecSize;
         } else {
             // wrap_content
-            mHeight = dp2px(mContext, 3 * radius);
+            mHeight = dp2px(mContext, 3 * radius >> 1);
         }
         // 设置该view的宽高
         setMeasuredDimension(mWidth, mHeight);
     }
 
+    @SuppressLint("DrawAllocation")
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -124,6 +135,10 @@ public class CheckView extends View implements View.OnClickListener {
         //中间的圆
         canvas.drawCircle(centerX, centerY, radius, centerPaint);
 
+        //外层圆环
+        canvas.drawCircle(centerX, centerY, radius + 10, ringPaint);
+        canvas.drawCircle(centerX, centerY, radius + 20, ringPaint);
+
         //绘制文字
         Rect textRect = new Rect();
         textPaint.getTextBounds(text, 0, text.length(), textRect);
@@ -131,13 +146,49 @@ public class CheckView extends View implements View.OnClickListener {
         int textHeight = textRect.height();
         //计算文字左下角坐标
         float textX = centerX - (textWidth >> 1);
-        float textY = centerY + (4 * textHeight / 3);//让文字靠下点，所以Y坐标大一点
+        float textY = centerY + (textHeight >> 1);//让文字靠下点，所以Y坐标大一点
         canvas.drawText(text, textX, textY, textPaint);
     }
 
     @Override
     public void onClick(View v) {
+        if (isStart) {
+            Log.d(TAG, "onClick: 重复启动动画");
+            return;
+        }
+        if (startListener != null) {
+            startListener.onStart(this);
+        }
+    }
 
+    /**
+     * 启动动画
+     */
+    public void start() {
+        Log.d(TAG, "start: 启动动画");
+        text = "正在检测";
+        this.isStart = true;
+        postInvalidate();
+    }
+
+    /**
+     * 停止动画
+     */
+    public void stop() {
+        Log.d(TAG, "stop: 停止动画");
+        text = "检测完毕";
+        this.isStart = false;
+        postInvalidate();
+    }
+
+    private OnAnimationStartListener startListener;
+
+    public interface OnAnimationStartListener {
+        void onStart(CheckView view);
+    }
+
+    public void setOnAnimationStartListener(OnAnimationStartListener listener) {
+        this.startListener = listener;
     }
 
     /**
