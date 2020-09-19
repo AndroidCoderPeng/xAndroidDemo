@@ -7,6 +7,8 @@ import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -39,6 +41,9 @@ public class CheckView extends View implements View.OnClickListener {
     private int textColor;
     private Paint ringPaint; //圆环paint
     private boolean isStart = false;
+    private double degree;//小球每次运行的角度
+    private double speed = 0.04;//小球每次运行的速度
+    private int x1, y1, x2, y2;//两个小球的坐标
 
     public CheckView(Context context) {
         this(context, null, 0);
@@ -133,9 +138,6 @@ public class CheckView extends View implements View.OnClickListener {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (isStart) {
-
-        }
         //中间的圆
         canvas.drawCircle(centerX, centerY, radius, centerPaint);
 
@@ -143,13 +145,14 @@ public class CheckView extends View implements View.OnClickListener {
         canvas.drawCircle(centerX, centerY, radius + dp2px(mContext, 10), ringPaint);
         canvas.drawCircle(centerX, centerY, radius + dp2px(mContext, 20), ringPaint);
 
-        //圆环上面的小圆
-        /**
-         * 内层小圆点 X = centerX+中心圆半径+第一个圆环空白距离
-         * 外层小圆点 X = centerX-中心圆半径-第一个圆环空白距离
-         * */
-        canvas.drawCircle(centerX + radius + dp2px(mContext, 10), centerY, dp2px(mContext, 5), centerPaint);
-        canvas.drawCircle(centerX - radius - dp2px(mContext, 20), centerY, dp2px(mContext, 5), centerPaint);
+        if (isStart) {
+            handler.sendEmptyMessage(1);
+            //圆环上面的小圆
+            int ringRadius = dp2px(mContext, 5);
+            canvas.drawCircle(x1, y1, ringRadius, centerPaint);
+            canvas.drawCircle(x2, y2, ringRadius, centerPaint);
+            invalidate();
+        }
 
         //绘制文字
         Rect textRect = new Rect();
@@ -158,9 +161,30 @@ public class CheckView extends View implements View.OnClickListener {
         int textHeight = textRect.height();
         //计算文字左下角坐标
         float textX = centerX - (textWidth >> 1);
-        float textY = centerY + (textHeight >> 1);//让文字靠下点，所以Y坐标大一点
+        float textY = centerY + (textHeight >> 1);
         canvas.drawText(text, textX, textY, textPaint);
     }
+
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 1) {
+                degree = speed + degree;
+                if (degree >= 360) {
+                    degree = degree - 360;
+                }
+                //顺时针运动
+                x1 = (int) (centerX + (radius + dp2px(mContext, 10)) * Math.sin(degree));
+                y1 = (int) (centerY - (radius + dp2px(mContext, 10)) * Math.cos(degree));
+
+                //逆时针运动
+                x2 = (int) (centerX + (radius + dp2px(mContext, 20)) * Math.sin(-degree));
+                y2 = (int) (centerY - (radius + dp2px(mContext, 20)) * Math.cos(-degree));
+            }
+        }
+    };
 
     @Override
     public void onClick(View v) {

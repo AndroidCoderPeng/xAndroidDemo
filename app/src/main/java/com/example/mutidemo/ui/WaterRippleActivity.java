@@ -1,6 +1,8 @@
 package com.example.mutidemo.ui;
 
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.widget.WaterRippleView;
@@ -16,6 +18,8 @@ public class WaterRippleActivity extends BaseNormalActivity {
     private static final String TAG = "WaterRippleActivity";
     @BindView(R.id.waterRippleView)
     WaterRippleView waterRippleView;
+    @BindView(R.id.stopButton)
+    Button stopButton;
     private boolean isRunning = true;
     private ExecutorService singleThreadExecutor;
 
@@ -40,6 +44,12 @@ public class WaterRippleActivity extends BaseNormalActivity {
                 Log.d(TAG, "onStart: 开始线程");
                 singleThreadExecutor.execute(searchRunnable);
                 isRunning = true;
+            }
+        });
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                waterRippleView.stop();
             }
         });
     }

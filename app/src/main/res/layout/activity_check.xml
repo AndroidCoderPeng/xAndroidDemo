@@ -16,4 +16,10 @@
         app:view_text="开始自检"
         app:view_textColor="@color/white"
         app:view_textSize="20sp" />
+
+    <Button
+        android:id="@+id/stopButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="停止" />
 </LinearLayout>

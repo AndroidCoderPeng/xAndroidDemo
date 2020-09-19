@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:gravity="center_horizontal"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -9,7 +10,6 @@
         android:id="@+id/waterRippleView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         app:ripple_animDuration="35"
         app:ripple_centerColor="@color/main_colcor_blue"
         app:ripple_distance="3dp"
@@ -21,4 +21,9 @@
         app:ripple_textColor="@color/white"
         app:ripple_textSize="16sp" />
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/stopButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="停止" />
+</LinearLayout>
