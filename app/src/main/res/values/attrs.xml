@@ -37,4 +37,13 @@
         <!--文字颜色-->
         <attr name="view_textColor" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="RadarView">
+        <!--雷达线颜色-->
+        <attr name="radar_lineColor" format="color" />
+        <!--中心圆半径-->
+        <attr name="radar_radius" format="dimension" />
+        <!--圆环间距-->
+        <attr name="radar_distance" format="dimension" />
+    </declare-styleable>
 </resources>

@@ -47,5 +47,6 @@
         <activity android:name=".ui.PhotoViewActivity" />
         <activity android:name=".ui.WaterRippleActivity" />
         <activity android:name=".ui.CheckDeviceActivity" />
+        <activity android:name=".ui.RadarScannerActivity" />
     </application>
 </manifest>
