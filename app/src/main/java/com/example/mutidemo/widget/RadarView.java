@@ -41,8 +41,6 @@ public class RadarView extends View {
     private int maxRingRadius;//最外环的半径
     private Matrix matrix;
     private Paint sectorPaint;
-    private Paint pointPaint; //噪点paint
-    private int[] point = new int[]{0, 0};
 
     public RadarView(Context context) {
         this(context, null, 0);
@@ -68,8 +66,6 @@ public class RadarView extends View {
         initPaint();
         //扫描线动画线程
         new ScanThread(this).start();
-        //随机噪点线程
-        new PointThread(this).start();
     }
 
     private void initPaint() {
@@ -79,11 +75,6 @@ public class RadarView extends View {
         linePaint.setStyle(Paint.Style.STROKE);
         linePaint.setStrokeWidth(dp2px(mContext, 1));
         linePaint.setAntiAlias(true);
-
-        //噪点
-        pointPaint = new Paint();
-        pointPaint.setColor(lineColor);
-        pointPaint.setAntiAlias(true);
 
         //扫描线
         sectorPaint = new Paint();
@@ -110,9 +101,6 @@ public class RadarView extends View {
                 centerX, centerY + ringNumber * dp2px(mContext, 15),
                 linePaint);
 
-        //噪点
-        canvas.drawCircle(point[0], point[1], dp2px(mContext, 5), pointPaint);
-
         //扫描线动画
         Shader sectorShader = new SweepGradient(centerX, centerY,
                 new int[]{Color.TRANSPARENT, Color.GREEN},
@@ -120,31 +108,6 @@ public class RadarView extends View {
         sectorPaint.setShader(sectorShader);
         canvas.concat(matrix);
         canvas.drawCircle(centerX, centerY, maxRingRadius, sectorPaint);
-    }
-
-    class PointThread extends Thread {
-        private RadarView view;
-
-        PointThread(RadarView view) {
-            this.view = view;
-        }
-
-        @Override
-        public void run() {
-            super.run();
-            while (true) {
-                try {
-                    view.post(() -> {
-                        point[0] = getPointX();
-                        point[1] = getPointY();
-                        view.invalidate();
-                    });
-                    Thread.sleep(300);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     class ScanThread extends Thread {

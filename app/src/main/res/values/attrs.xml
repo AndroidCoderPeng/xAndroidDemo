@@ -46,4 +46,11 @@
         <!--圆环间距-->
         <attr name="radar_distance" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="SlideBarView">
+        <!--文字大小-->
+        <attr name="slide_textSize" format="dimension" />
+        <!--文字颜色-->
+        <attr name="slide_textColor" format="color" />
+    </declare-styleable>
 </resources>
