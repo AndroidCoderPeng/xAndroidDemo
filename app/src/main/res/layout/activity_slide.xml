@@ -6,15 +6,17 @@
     android:orientation="horizontal">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cityRecyclerView"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1" />
 
     <com.example.mutidemo.widget.SlideBarView
         android:id="@+id/slideBarView"
+        android:layout_marginVertical="30dp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@color/lightGray"
+        app:slide_circleColor="#43DB87"
         app:slide_textColor="@color/gray"
-        app:slide_textSize="16sp" />
+        app:slide_textSize="18sp" />
 </LinearLayout>

@@ -63,4 +63,6 @@ dependencies {
     implementation 'com.github.chrisbanes:PhotoView:2.0.0'
     //通知栏
     implementation 'com.tapadoo.android:alerter:6.1.0'
+    // https://mvnrepository.com/artifact/com.belerweb/pinyin4j
+    compile group: 'com.belerweb', name: 'pinyin4j', version: '2.5.0'
 }

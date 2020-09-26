@@ -48,9 +48,8 @@
     </declare-styleable>
 
     <declare-styleable name="SlideBarView">
-        <!--文字大小-->
         <attr name="slide_textSize" format="dimension" />
-        <!--文字颜色-->
         <attr name="slide_textColor" format="color" />
+        <attr name="slide_circleColor" format="color" />
     </declare-styleable>
 </resources>
