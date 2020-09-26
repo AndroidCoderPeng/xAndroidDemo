@@ -1,6 +1,10 @@
 package com.example.mutidemo.ui;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.CountDownTimer;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -47,6 +51,7 @@ public class SlideBarActivity extends BaseNormalActivity {
     public void initData() {
         CityAdapter cityAdapter = new CityAdapter(this, CITY);
         cityRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        cityRecyclerView.addItemDecoration(new VerticalItemDecoration(this));
         cityRecyclerView.setAdapter(cityAdapter);
         cityAdapter.setOnCityItemClickListener(new CityAdapter.OnCityItemClickListener() {
             @Override
@@ -120,6 +125,36 @@ public class SlideBarActivity extends BaseNormalActivity {
             }
         }
         return pinyinStr.toString();
+    }
+
+    private static class VerticalItemDecoration extends RecyclerView.ItemDecoration {
+
+        private Paint mLinePaint;
+
+        VerticalItemDecoration(Context context) {
+            mLinePaint = new Paint();
+            mLinePaint.setAntiAlias(true);
+            mLinePaint.setColor(Color.LTGRAY);
+        }
+
+        @Override
+        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+            outRect.bottom = 1;
+        }
+
+        @Override
+        public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+            int count = parent.getChildCount();
+            for (int i = 0; i < count; i++) {
+                View view = parent.getChildAt(i);
+                c.drawRect(0, view.getBottom(), parent.getWidth(), view.getBottom() + 1, mLinePaint);
+            }
+        }
+
+        @Override
+        public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+            super.onDrawOver(c, parent, state);
+        }
     }
 
     static class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
