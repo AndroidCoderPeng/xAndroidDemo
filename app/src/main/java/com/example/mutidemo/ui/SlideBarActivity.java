@@ -5,9 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.CountDownTimer;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -70,25 +73,25 @@ public class SlideBarActivity extends BaseNormalActivity {
         cityRecyclerView.setLayoutManager(layoutManager);
         cityRecyclerView.addItemDecoration(new VerticalItemDecoration(this));
         cityRecyclerView.setAdapter(cityAdapter);
+        cityRecyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+            }
+        });
         cityAdapter.setOnCityItemClickListener(new CityAdapter.OnCityItemClickListener() {
             @Override
             public void onClick(int position) {
                 EasyToast.showToast(CITY.get(position), EasyToast.DEFAULT);
             }
         });
-        slideBarView.setupWithRecyclerView(cityRecyclerView, CITY);
-    }
-
-    @Override
-    public void initEvent() {
-
     }
 
     /**
      * 点击某个字母将RecyclerView滑动到item顶部
      */
     static class TopLinearSmoothScroller extends LinearSmoothScroller {
-        public TopLinearSmoothScroller(Context context) {
+        TopLinearSmoothScroller(Context context) {
             super(context);
         }
 
@@ -98,25 +101,54 @@ public class SlideBarActivity extends BaseNormalActivity {
         }
     }
 
+    @Override
+    public void initEvent() {
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View rootView = layoutInflater.inflate(R.layout.activity_slide, null);
+        View contentView = layoutInflater.inflate(R.layout.layout_popup, null);
+        PopupWindow popupWindow = new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, false);
+        popupWindow.setContentView(contentView);
+        TextView letterView = contentView.findViewById(R.id.letterView);
+        CountDownTimer countDownTimer = new CountDownTimer(1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                popupWindow.dismiss();
+            }
+        };
+        slideBarView.setData(CITY);
+        slideBarView.setOnIndexChangeListener(new SlideBarView.OnIndexChangeListener() {
+            @Override
+            public void OnIndexChange(String letter) {
+                //在屏幕中间放大显示被按到的字母
+                letterView.setText(letter);
+                popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
+                countDownTimer.start();
+
+                //根据滑动显示的字母索引到城市名字第一个汉字
+                cityRecyclerView.smoothScrollToPosition(slideBarView.obtainFirstLetterIndex(letter));
+            }
+        });
+    }
+
     private static class VerticalItemDecoration extends RecyclerView.ItemDecoration {
 
         private Context context;
-        private Paint bottomLinePaint, topLinePaint;
+        private Paint mLinePaint;
 
         VerticalItemDecoration(Context ctx) {
             this.context = ctx;
-            bottomLinePaint = new Paint();
-            bottomLinePaint.setAntiAlias(true);
-            bottomLinePaint.setColor(Color.LTGRAY);
-
-            topLinePaint = new Paint();
-            topLinePaint.setAntiAlias(true);
-            topLinePaint.setColor(Color.parseColor("#F1F1F1"));
+            mLinePaint = new Paint();
+            mLinePaint.setAntiAlias(true);
+            mLinePaint.setColor(Color.LTGRAY);
         }
 
         @Override
         public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-            outRect.top = 50;
             outRect.bottom = 1;
         }
 
@@ -125,11 +157,7 @@ public class SlideBarActivity extends BaseNormalActivity {
             int count = parent.getChildCount();
             for (int i = 0; i < count; i++) {
                 View view = parent.getChildAt(i);
-                c.drawRect(DensityUtil.dp2px(context, 15), view.getBottom(), parent.getWidth(), view.getBottom() + 1, bottomLinePaint);
-            }
-            for (int i = 0; i < count; i++) {
-                View view = parent.getChildAt(i);
-                c.drawRect(0, view.getTop(), parent.getWidth(), view.getTop() + 50, topLinePaint);
+                c.drawRect(DensityUtil.dp2px(context, 75), view.getBottom(), parent.getWidth(), view.getBottom() + 1, mLinePaint);
             }
         }
 

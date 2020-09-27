@@ -7,20 +7,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.os.CountDownTimer;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.R;
 
@@ -43,7 +36,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
     private static final String TAG = "SlideBarView";
     private static final int viewWidth = 20;
     private List<String> data = new ArrayList<>();
-    private String[] letterArray;
+    private String[] LETTER;
     private Context mContext;
     private float centerX;//中心x
     private int textSize;
@@ -76,6 +69,21 @@ public class SlideBarView extends View implements View.OnTouchListener {
         initPaint();
         //触摸事件
         setOnTouchListener(this);
+    }
+
+    public void setData(List<String> cities) {
+        this.data = cities;
+        //先将数据按照字母排序
+        Comparator<Object> comparator = Collator.getInstance(Locale.CHINA);
+        Collections.sort(cities, comparator);
+        //将中文转化为大写字母
+        HashSet<String> letterSet = new HashSet<>();
+        for (String city : cities) {
+            String firstLetter = obtainHanYuPinyin(city).substring(0, 1);//取每个城市的首字母
+            letterSet.add(firstLetter);
+        }
+        //将letterSet转为String[]
+        LETTER = letterSet.toArray(new String[0]);
     }
 
     private void initPaint() {
@@ -112,11 +120,11 @@ public class SlideBarView extends View implements View.OnTouchListener {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        letterHeight = mHeight / letterArray.length;
+        letterHeight = mHeight / LETTER.length;
         if (showBackground) {
             canvas.drawColor(Color.parseColor("#F1F1F1"));
         }
-        for (int i = 0; i < letterArray.length; i++) {
+        for (int i = 0; i < LETTER.length; i++) {
             int y = (i + 1) * letterHeight;//每个字母的占位高度(不是字体高度)
 
             //字母变色
@@ -131,7 +139,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
             }
 
             //绘制文字
-            String letter = letterArray[i];
+            String letter = LETTER[i];
             Rect textRect = new Rect();
             textPaint.getTextBounds(letter, 0, letter.length(), textRect);
             int textWidth = textRect.width();
@@ -153,12 +161,11 @@ public class SlideBarView extends View implements View.OnTouchListener {
                 float y = Math.abs(event.getY());//取绝对值，不然y可能会取到负值
                 int index = (int) (y / letterHeight);//字母的索引
                 if (index != touchIndex) {
-                    touchIndex = Math.min(index, letterArray.length - 1);
+                    touchIndex = Math.min(index, LETTER.length - 1);
                     //点击设置中间字母
-                    String letter = letterArray[touchIndex];
-                    showPopupWindow(letter);
-                    //根据滑动显示的字母索引到城市名字第一个汉字
-                    recyclerView.smoothScrollToPosition(obtainFirstLetterIndex(letter));
+                    if (onIndexChangeListener != null) {
+                        onIndexChangeListener.OnIndexChange(LETTER[touchIndex]);
+                    }
                     invalidate();
                 }
                 showBackground = true;
@@ -174,23 +181,16 @@ public class SlideBarView extends View implements View.OnTouchListener {
         return true;
     }
 
-    private RecyclerView recyclerView;
+    private OnIndexChangeListener onIndexChangeListener;
 
-    public void setupWithRecyclerView(RecyclerView recyclerView, List<String> cities) {
-        this.recyclerView = recyclerView;
-        this.data = cities;
-        //先将数据按照字母排序
-        Comparator<Object> comparator = Collator.getInstance(Locale.CHINA);
-        Collections.sort(cities, comparator);
-        //将中文转化为大写字母
-        HashSet<String> letterSet = new HashSet<>();
-        for (String city : cities) {
-            String firstLetter = obtainHanYuPinyin(city).substring(0, 1);//取每个城市的首字母
-            letterSet.add(firstLetter);
-        }
-        //将letterSet转为String[]
-        letterArray = letterSet.toArray(new String[0]);
+    public void setOnIndexChangeListener(OnIndexChangeListener listener) {
+        onIndexChangeListener = listener;
     }
+
+    public interface OnIndexChangeListener {
+        void OnIndexChange(String letter);
+    }
+
 
     /**
      * sp转换成px
@@ -207,10 +207,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, context.getResources().getDisplayMetrics());
     }
 
-    /**
-     * 获取首字母位于城市数据的角标
-     */
-    private int obtainFirstLetterIndex(String letter) {
+    public int obtainFirstLetterIndex(String letter) {
         int index = 0;
         for (int i = 0; i < data.size(); i++) {
             String firstLetter = obtainHanYuPinyin(data.get(i)).substring(0, 1);
@@ -247,27 +244,5 @@ public class SlideBarView extends View implements View.OnTouchListener {
             }
         }
         return pinyinStr.toString();
-    }
-
-    private void showPopupWindow(String letter) {
-        LayoutInflater layoutInflater = LayoutInflater.from(mContext);
-        View rootView = layoutInflater.inflate(R.layout.activity_slide, null);
-        View contentView = layoutInflater.inflate(R.layout.layout_popup, null);
-        PopupWindow popupWindow = new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, false);
-        popupWindow.setContentView(contentView);
-        TextView letterView = contentView.findViewById(R.id.letterView);
-        letterView.setText(letter);
-        popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
-        new CountDownTimer(1000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
-                popupWindow.dismiss();
-            }
-        }.start();
     }
 }
