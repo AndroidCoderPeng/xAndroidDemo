@@ -15,11 +15,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.widget.SlideBarView;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
+import com.pengxh.app.multilib.utils.DensityUtil;
 import com.pengxh.app.multilib.widget.EasyToast;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
@@ -28,15 +30,31 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
+import java.util.Arrays;
+import java.util.List;
+
 import butterknife.BindView;
 
 public class SlideBarActivity extends BaseNormalActivity {
 
     private static final String TAG = "SlideBarActivity";
-    private static final String[] CITY = new String[]{"安国市", "霸州市", "保定市", "泊头市", "沧州市",
-            "承德市", "定州市", "高碑店市", "邯郸市", "河间市", "衡水市", "黄骅市", "冀州市", "晋州市",
-            "廊坊市", "南宫市", "迁安市", "秦皇岛市", "任丘市", "三河市", "沙河市", "深州市", "石家庄市",
-            "唐山市", "武安市", "辛集市", "新乐市", "邢台市", "张家口市", "遵化市", "涿州市"};
+    private static final List<String> CITY = Arrays.asList("安徽"
+            , "北京", "滨海"
+            , "重庆"
+            , "大连"
+            , "恩施"
+            , "福建"
+            , "甘肃", "广东", "广西", "贵州"
+            , "海南", "河北", "河南", "黑龙江", "湖北", "湖南", "黄石"
+            , "吉林", "江苏", "江西", "锦州", "荆门", "九江"
+            , "辽宁", "洛阳"
+            , "内蒙古", "宁波", "宁夏"
+            , "青岛", "青海"
+            , "三亚", "山东", "山西", "陕西", "上海", "深圳", "十堰", "四川"
+            , "天津"
+            , "西藏", "厦门", "襄阳", "孝感", "新疆", "新乡", "忻州"
+            , "宜昌", "云南"
+            , "湛江", "浙江", "珠海");
     @BindView(R.id.cityRecyclerView)
     RecyclerView cityRecyclerView;
     @BindView(R.id.slideBarView)
@@ -50,15 +68,43 @@ public class SlideBarActivity extends BaseNormalActivity {
     @Override
     public void initData() {
         CityAdapter cityAdapter = new CityAdapter(this, CITY);
-        cityRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this) {
+            @Override
+            public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
+                TopLinearSmoothScroller scroller = new TopLinearSmoothScroller(recyclerView.getContext());
+                scroller.setTargetPosition(position);
+                startSmoothScroll(scroller);
+            }
+        };
+        cityRecyclerView.setLayoutManager(layoutManager);
         cityRecyclerView.addItemDecoration(new VerticalItemDecoration(this));
         cityRecyclerView.setAdapter(cityAdapter);
+        cityRecyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+            }
+        });
         cityAdapter.setOnCityItemClickListener(new CityAdapter.OnCityItemClickListener() {
             @Override
             public void onClick(int position) {
-                EasyToast.showToast(CITY[position], EasyToast.DEFAULT);
+                EasyToast.showToast(CITY.get(position), EasyToast.DEFAULT);
             }
         });
+    }
+
+    /**
+     * 点击某个字母将RecyclerView滑动到item顶部
+     */
+    static class TopLinearSmoothScroller extends LinearSmoothScroller {
+        public TopLinearSmoothScroller(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected int getVerticalSnapPreference() {
+            return SNAP_TO_START;
+        }
     }
 
     @Override
@@ -96,8 +142,8 @@ public class SlideBarActivity extends BaseNormalActivity {
 
     private int obtainFirstLetterIndex(String letter) {
         int index = 0;
-        for (int i = 0; i < CITY.length; i++) {
-            String firstWord = CITY[i].substring(0, 1);
+        for (int i = 0; i < CITY.size(); i++) {
+            String firstWord = CITY.get(i).substring(0, 1);
             //转拼音
             String firstLetter = getFirstLetter(firstWord);
             if (letter.equals(firstLetter)) {
@@ -129,9 +175,11 @@ public class SlideBarActivity extends BaseNormalActivity {
 
     private static class VerticalItemDecoration extends RecyclerView.ItemDecoration {
 
+        private Context context;
         private Paint mLinePaint;
 
-        VerticalItemDecoration(Context context) {
+        VerticalItemDecoration(Context ctx) {
+            this.context = ctx;
             mLinePaint = new Paint();
             mLinePaint.setAntiAlias(true);
             mLinePaint.setColor(Color.LTGRAY);
@@ -147,7 +195,7 @@ public class SlideBarActivity extends BaseNormalActivity {
             int count = parent.getChildCount();
             for (int i = 0; i < count; i++) {
                 View view = parent.getChildAt(i);
-                c.drawRect(0, view.getBottom(), parent.getWidth(), view.getBottom() + 1, mLinePaint);
+                c.drawRect(DensityUtil.dp2px(context, 75), view.getBottom(), parent.getWidth(), view.getBottom() + 1, mLinePaint);
             }
         }
 
@@ -160,10 +208,10 @@ public class SlideBarActivity extends BaseNormalActivity {
     static class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
 
         private LayoutInflater inflater;
-        private String[] mCityItem;
+        private List<String> mCityItem;
 
-        CityAdapter(Context mContext, String[] array) {
-            this.mCityItem = array;
+        CityAdapter(Context mContext, List<String> list) {
+            this.mCityItem = list;
             inflater = LayoutInflater.from(mContext);
         }
 
@@ -175,7 +223,7 @@ public class SlideBarActivity extends BaseNormalActivity {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.bindHolder(mCityItem[position]);
+            holder.bindHolder(mCityItem.get(position));
             if (mOnItemClickListener != null) {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -188,7 +236,7 @@ public class SlideBarActivity extends BaseNormalActivity {
 
         @Override
         public int getItemCount() {
-            return mCityItem == null ? 0 : mCityItem.length;
+            return mCityItem == null ? 0 : mCityItem.size();
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {

@@ -33,6 +33,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
     private int touchIndex = -1;
     private int letterHeight;
     private Paint paint;
+    private boolean showBackground = false;
 
     public SlideBarView(Context context) {
         this(context, null, 0);
@@ -99,6 +100,9 @@ public class SlideBarView extends View implements View.OnTouchListener {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         letterHeight = mHeight / LETTER.length;
+        if (showBackground) {
+            canvas.drawColor(Color.parseColor("#F1F1F1"));
+        }
         for (int i = 0; i < LETTER.length; i++) {
             int y = (i + 1) * letterHeight;//每个字母的占位高度(不是字体高度)
 
@@ -142,8 +146,10 @@ public class SlideBarView extends View implements View.OnTouchListener {
                     }
                     invalidate();
                 }
+                showBackground = true;
                 break;
             case MotionEvent.ACTION_UP:
+                showBackground = false;
                 touchIndex = -1;
                 invalidate();
                 break;
