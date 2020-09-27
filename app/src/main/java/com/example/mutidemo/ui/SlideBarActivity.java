@@ -101,17 +101,22 @@ public class SlideBarActivity extends BaseNormalActivity {
     private static class VerticalItemDecoration extends RecyclerView.ItemDecoration {
 
         private Context context;
-        private Paint mLinePaint;
+        private Paint bottomLinePaint, topLinePaint;
 
         VerticalItemDecoration(Context ctx) {
             this.context = ctx;
-            mLinePaint = new Paint();
-            mLinePaint.setAntiAlias(true);
-            mLinePaint.setColor(Color.LTGRAY);
+            bottomLinePaint = new Paint();
+            bottomLinePaint.setAntiAlias(true);
+            bottomLinePaint.setColor(Color.LTGRAY);
+
+            topLinePaint = new Paint();
+            topLinePaint.setAntiAlias(true);
+            topLinePaint.setColor(Color.parseColor("#F1F1F1"));
         }
 
         @Override
         public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+            outRect.top = 50;
             outRect.bottom = 1;
         }
 
@@ -120,7 +125,11 @@ public class SlideBarActivity extends BaseNormalActivity {
             int count = parent.getChildCount();
             for (int i = 0; i < count; i++) {
                 View view = parent.getChildAt(i);
-                c.drawRect(DensityUtil.dp2px(context, 75), view.getBottom(), parent.getWidth(), view.getBottom() + 1, mLinePaint);
+                c.drawRect(DensityUtil.dp2px(context, 15), view.getBottom(), parent.getWidth(), view.getBottom() + 1, bottomLinePaint);
+            }
+            for (int i = 0; i < count; i++) {
+                View view = parent.getChildAt(i);
+                c.drawRect(0, view.getTop(), parent.getWidth(), view.getTop() + 50, topLinePaint);
             }
         }
 
@@ -166,17 +175,14 @@ public class SlideBarActivity extends BaseNormalActivity {
 
         static class ViewHolder extends RecyclerView.ViewHolder {
 
-            private TextView cityNameTag;
             private TextView cityName;
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
-                cityNameTag = itemView.findViewById(R.id.cityNameTag);
                 cityName = itemView.findViewById(R.id.cityName);
             }
 
             void bindHolder(String city) {
-                cityNameTag.setText(city.substring(0, 1));
                 cityName.setText(city);
             }
         }

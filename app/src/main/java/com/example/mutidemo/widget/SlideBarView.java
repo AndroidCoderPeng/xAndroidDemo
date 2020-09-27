@@ -185,7 +185,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
         //将中文转化为大写字母
         HashSet<String> letterSet = new HashSet<>();
         for (String city : cities) {
-            String firstLetter = getFirstLetter(city.substring(0, 1));//取每个城市的首字母
+            String firstLetter = obtainHanYuPinyin(city).substring(0, 1);//取每个城市的首字母
             letterSet.add(firstLetter);
         }
         //将letterSet转为String[]
@@ -213,9 +213,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
     private int obtainFirstLetterIndex(String letter) {
         int index = 0;
         for (int i = 0; i < data.size(); i++) {
-            String firstWord = data.get(i).substring(0, 1);
-            //转拼音
-            String firstLetter = getFirstLetter(firstWord);
+            String firstLetter = obtainHanYuPinyin(data.get(i)).substring(0, 1);
             if (letter.equals(firstLetter)) {
                 index = i;
             }
@@ -224,23 +222,28 @@ public class SlideBarView extends View implements View.OnTouchListener {
     }
 
     /**
-     * 获取首字母
+     * 获取汉语拼音
      */
-    private String getFirstLetter(String chinese) {
+    public static String obtainHanYuPinyin(String chinese) {
         StringBuilder pinyinStr = new StringBuilder();
-        char[] newChar = chinese.toCharArray();  //转为单个字符
-        HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
-        defaultFormat.setCaseType(HanyuPinyinCaseType.UPPERCASE);
-        defaultFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
-        for (char c : newChar) {
-            if (c > 128) {
-                try {
-                    pinyinStr.append(PinyinHelper.toHanyuPinyinStringArray(c, defaultFormat)[0].charAt(0));
-                } catch (BadHanyuPinyinOutputFormatCombination e) {
-                    e.printStackTrace();
+        //如果是多音字需要手动纠正
+        if (chinese.equals("重庆")) {
+            pinyinStr.append("CHONGQING");
+        } else {
+            char[] newChar = chinese.toCharArray();  //转为单个字符
+            HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
+            defaultFormat.setCaseType(HanyuPinyinCaseType.UPPERCASE);
+            defaultFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+            for (char c : newChar) {
+                if (c > 128) {
+                    try {
+                        pinyinStr.append(PinyinHelper.toHanyuPinyinStringArray(c, defaultFormat)[0].charAt(0));
+                    } catch (BadHanyuPinyinOutputFormatCombination e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    pinyinStr.append(c);
                 }
-            } else {
-                pinyinStr.append(c);
             }
         }
         return pinyinStr.toString();
