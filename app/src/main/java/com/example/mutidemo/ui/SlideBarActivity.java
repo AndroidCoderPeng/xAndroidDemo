@@ -1,11 +1,7 @@
 package com.example.mutidemo.ui;
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,21 +9,26 @@ import android.view.ViewGroup;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.R;
+import com.example.mutidemo.adapter.CityAdapter;
+import com.example.mutidemo.bean.CityBean;
+import com.example.mutidemo.util.VerticalItemDecoration;
+import com.example.mutidemo.util.callback.DecorationCallback;
 import com.example.mutidemo.widget.SlideBarView;
+import com.google.gson.Gson;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
-import com.pengxh.app.multilib.utils.DensityUtil;
 import com.pengxh.app.multilib.widget.EasyToast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
+
+import static com.example.mutidemo.widget.SlideBarView.obtainHanYuPinyin;
 
 public class SlideBarActivity extends BaseNormalActivity {
 
@@ -61,17 +62,28 @@ public class SlideBarActivity extends BaseNormalActivity {
 
     @Override
     public void initData() {
-        CityAdapter cityAdapter = new CityAdapter(this, CITY);
+        List<CityBean> cityBeans = obtainCityData();
+        CityAdapter cityAdapter = new CityAdapter(this, cityBeans);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this) {
             @Override
             public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
-                TopLinearSmoothScroller scroller = new TopLinearSmoothScroller(recyclerView.getContext());
+                VerticalItemDecoration.TopSmoothScroller scroller = new VerticalItemDecoration.TopSmoothScroller(recyclerView.getContext());
                 scroller.setTargetPosition(position);
                 startSmoothScroll(scroller);
             }
         };
         cityRecyclerView.setLayoutManager(layoutManager);
-        cityRecyclerView.addItemDecoration(new VerticalItemDecoration(this));
+        cityRecyclerView.addItemDecoration(new VerticalItemDecoration(this, new DecorationCallback() {
+            @Override
+            public long getGroupTag(int position) {
+                return cityBeans.get(position).getTag().charAt(0);
+            }
+
+            @Override
+            public String getGroupFirstLetter(int position) {
+                return cityBeans.get(position).getTag();
+            }
+        }));
         cityRecyclerView.setAdapter(cityAdapter);
         cityRecyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
             @Override
@@ -88,17 +100,21 @@ public class SlideBarActivity extends BaseNormalActivity {
     }
 
     /**
-     * 点击某个字母将RecyclerView滑动到item顶部
-     */
-    static class TopLinearSmoothScroller extends LinearSmoothScroller {
-        TopLinearSmoothScroller(Context context) {
-            super(context);
-        }
+     * 将城市整理成分组数据
+     * */
+    private List<CityBean> obtainCityData() {
+        List<CityBean> cityBeans = new ArrayList<>();
+        for (String city : CITY) {
+            CityBean cityBean = new CityBean();
+            cityBean.setCity(city);
 
-        @Override
-        protected int getVerticalSnapPreference() {
-            return SNAP_TO_START;
+            String firstLetter = obtainHanYuPinyin(city).substring(0, 1);
+            cityBean.setTag(firstLetter);
+
+            cityBeans.add(cityBean);
         }
+        Log.d(TAG, "obtainCityData: " + new Gson().toJson(cityBeans));
+        return cityBeans;
     }
 
     @Override
@@ -133,96 +149,5 @@ public class SlideBarActivity extends BaseNormalActivity {
                 cityRecyclerView.smoothScrollToPosition(slideBarView.obtainFirstLetterIndex(letter));
             }
         });
-    }
-
-    private static class VerticalItemDecoration extends RecyclerView.ItemDecoration {
-
-        private Context context;
-        private Paint mLinePaint;
-
-        VerticalItemDecoration(Context ctx) {
-            this.context = ctx;
-            mLinePaint = new Paint();
-            mLinePaint.setAntiAlias(true);
-            mLinePaint.setColor(Color.LTGRAY);
-        }
-
-        @Override
-        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-            outRect.bottom = 1;
-        }
-
-        @Override
-        public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-            int count = parent.getChildCount();
-            for (int i = 0; i < count; i++) {
-                View view = parent.getChildAt(i);
-                c.drawRect(DensityUtil.dp2px(context, 75), view.getBottom(), parent.getWidth(), view.getBottom() + 1, mLinePaint);
-            }
-        }
-
-        @Override
-        public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-            super.onDrawOver(c, parent, state);
-        }
-    }
-
-    static class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
-
-        private LayoutInflater inflater;
-        private List<String> mCityItem;
-
-        CityAdapter(Context mContext, List<String> list) {
-            this.mCityItem = list;
-            inflater = LayoutInflater.from(mContext);
-        }
-
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ViewHolder(inflater.inflate(R.layout.item_city_recyclerview, parent, false));
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.bindHolder(mCityItem.get(position));
-            if (mOnItemClickListener != null) {
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mOnItemClickListener.onClick(position);
-                    }
-                });
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return mCityItem == null ? 0 : mCityItem.size();
-        }
-
-        static class ViewHolder extends RecyclerView.ViewHolder {
-
-            private TextView cityName;
-
-            ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                cityName = itemView.findViewById(R.id.cityName);
-            }
-
-            void bindHolder(String city) {
-                cityName.setText(city);
-            }
-        }
-
-        private OnCityItemClickListener mOnItemClickListener;
-
-        public interface OnCityItemClickListener {
-            void onClick(int position);
-        }
-
-        void setOnCityItemClickListener(OnCityItemClickListener listener) {
-            this.mOnItemClickListener = listener;
-        }
     }
 }

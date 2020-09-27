@@ -34,9 +34,9 @@ import java.util.Locale;
 public class SlideBarView extends View implements View.OnTouchListener {
 
     private static final String TAG = "SlideBarView";
-    private static final int viewWidth = 20;
+    private static final int viewWidth = 25;
     private List<String> data = new ArrayList<>();
-    private String[] LETTER;
+    private String[] letterArray;
     private Context mContext;
     private float centerX;//中心x
     private int textSize;
@@ -83,7 +83,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
             letterSet.add(firstLetter);
         }
         //将letterSet转为String[]
-        LETTER = letterSet.toArray(new String[0]);
+        letterArray = letterSet.toArray(new String[0]);
     }
 
     private void initPaint() {
@@ -120,11 +120,11 @@ public class SlideBarView extends View implements View.OnTouchListener {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        letterHeight = mHeight / LETTER.length;
+        letterHeight = mHeight / letterArray.length;
         if (showBackground) {
             canvas.drawColor(Color.parseColor("#F1F1F1"));
         }
-        for (int i = 0; i < LETTER.length; i++) {
+        for (int i = 0; i < letterArray.length; i++) {
             int y = (i + 1) * letterHeight;//每个字母的占位高度(不是字体高度)
 
             //字母变色
@@ -139,7 +139,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
             }
 
             //绘制文字
-            String letter = LETTER[i];
+            String letter = letterArray[i];
             Rect textRect = new Rect();
             textPaint.getTextBounds(letter, 0, letter.length(), textRect);
             int textWidth = textRect.width();
@@ -161,10 +161,10 @@ public class SlideBarView extends View implements View.OnTouchListener {
                 float y = Math.abs(event.getY());//取绝对值，不然y可能会取到负值
                 int index = (int) (y / letterHeight);//字母的索引
                 if (index != touchIndex) {
-                    touchIndex = Math.min(index, LETTER.length - 1);
+                    touchIndex = Math.min(index, letterArray.length - 1);
                     //点击设置中间字母
                     if (onIndexChangeListener != null) {
-                        onIndexChangeListener.OnIndexChange(LETTER[touchIndex]);
+                        onIndexChangeListener.OnIndexChange(letterArray[touchIndex]);
                     }
                     invalidate();
                 }
@@ -191,7 +191,6 @@ public class SlideBarView extends View implements View.OnTouchListener {
         void OnIndexChange(String letter);
     }
 
-
     /**
      * sp转换成px
      */
@@ -213,6 +212,8 @@ public class SlideBarView extends View implements View.OnTouchListener {
             String firstLetter = obtainHanYuPinyin(data.get(i)).substring(0, 1);
             if (letter.equals(firstLetter)) {
                 index = i;
+                //当有相同的首字母之后就跳出循环
+                break;
             }
         }
         return index;
