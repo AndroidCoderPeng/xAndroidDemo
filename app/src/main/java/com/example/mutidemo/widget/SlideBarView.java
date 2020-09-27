@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -17,22 +17,34 @@ import androidx.annotation.Nullable;
 
 import com.example.mutidemo.R;
 
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
+import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
+import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
+
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+
 public class SlideBarView extends View implements View.OnTouchListener {
 
     private static final String TAG = "SlideBarView";
-    private static final String[] LETTER = {"A", "B", "C", "D", "E", "F", "G", "H",
-            "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "#"};
     private static final int viewWidth = 20;
+    private List<String> data = new ArrayList<>();
+    private String[] LETTER;
     private Context mContext;
     private float centerX;//中心x
     private int textSize;
     private int textColor;
-    private int circleColor;
     private TextPaint textPaint;//文字画笔
     private int mHeight;//控件的实际尺寸
     private int touchIndex = -1;
     private int letterHeight;
-    private Paint paint;
     private boolean showBackground = false;
 
     public SlideBarView(Context context) {
@@ -51,7 +63,6 @@ public class SlideBarView extends View implements View.OnTouchListener {
         textSize = a.getDimensionPixelOffset(R.styleable.SlideBarView_slide_textSize
                 , sp2px(context, 18));
         textColor = a.getColor(R.styleable.SlideBarView_slide_textColor, Color.LTGRAY);
-        circleColor = a.getColor(R.styleable.SlideBarView_slide_circleColor, Color.parseColor("#43DB87"));
         a.recycle();
 
         //初始化画笔
@@ -60,17 +71,27 @@ public class SlideBarView extends View implements View.OnTouchListener {
         setOnTouchListener(this);
     }
 
+    public void setData(List<String> cities) {
+        this.data = cities;
+        //先将数据按照字母排序
+        Comparator<Object> comparator = Collator.getInstance(Locale.CHINA);
+        Collections.sort(cities, comparator);
+        //将中文转化为大写字母
+        HashSet<String> letterSet = new HashSet<>();
+        for (String city : cities) {
+            String firstLetter = getFirstLetter(city.substring(0, 1));//取每个城市的首字母
+            letterSet.add(firstLetter);
+        }
+        //将letterSet转为String[]
+        LETTER = letterSet.toArray(new String[0]);
+    }
+
     private void initPaint() {
         //文字画笔
         textPaint = new TextPaint();
         textPaint.setAntiAlias(true);
         textPaint.setTextSize(textSize);
         textPaint.setColor(textColor);
-
-        //被按到的字母底部背景
-        paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setColor(circleColor);
     }
 
     @Override
@@ -109,11 +130,12 @@ public class SlideBarView extends View implements View.OnTouchListener {
             //字母变色
             if (touchIndex == i) {
                 //让当前字母变色
-                textPaint.setColor(Color.WHITE);
-                canvas.drawCircle(centerX, (float) ((i + 0.4) * letterHeight), dp2px(mContext, 10.0f), paint);
+                textPaint.setColor(Color.parseColor("#00CB87"));
+                textPaint.setTypeface(Typeface.DEFAULT_BOLD);
             } else {
                 //其他字母不变色
                 textPaint.setColor(textColor);
+                textPaint.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
             }
 
             //绘制文字
@@ -183,5 +205,38 @@ public class SlideBarView extends View implements View.OnTouchListener {
      */
     private int dp2px(Context context, float dpValue) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, context.getResources().getDisplayMetrics());
+    }
+
+    public int obtainFirstLetterIndex(String letter) {
+        int index = 0;
+        for (int i = 0; i < data.size(); i++) {
+            String firstWord = data.get(i).substring(0, 1);
+            //转拼音
+            String firstLetter = getFirstLetter(firstWord);
+            if (letter.equals(firstLetter)) {
+                index = i;
+            }
+        }
+        return index;
+    }
+
+    private String getFirstLetter(String chinese) {
+        StringBuilder pinyinStr = new StringBuilder();
+        char[] newChar = chinese.toCharArray();  //转为单个字符
+        HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
+        defaultFormat.setCaseType(HanyuPinyinCaseType.UPPERCASE);
+        defaultFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+        for (char c : newChar) {
+            if (c > 128) {
+                try {
+                    pinyinStr.append(PinyinHelper.toHanyuPinyinStringArray(c, defaultFormat)[0].charAt(0));
+                } catch (BadHanyuPinyinOutputFormatCombination e) {
+                    e.printStackTrace();
+                }
+            } else {
+                pinyinStr.append(c);
+            }
+        }
+        return pinyinStr.toString();
     }
 }

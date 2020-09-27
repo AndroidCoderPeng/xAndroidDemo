@@ -24,12 +24,6 @@ import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.utils.DensityUtil;
 import com.pengxh.app.multilib.widget.EasyToast;
 
-import net.sourceforge.pinyin4j.PinyinHelper;
-import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
-import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
-import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
-import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -126,6 +120,7 @@ public class SlideBarActivity extends BaseNormalActivity {
                 popupWindow.dismiss();
             }
         };
+        slideBarView.setData(CITY);
         slideBarView.setOnIndexChangeListener(new SlideBarView.OnIndexChangeListener() {
             @Override
             public void OnIndexChange(String letter) {
@@ -135,42 +130,9 @@ public class SlideBarActivity extends BaseNormalActivity {
                 countDownTimer.start();
 
                 //根据滑动显示的字母索引到城市名字第一个汉字
-                cityRecyclerView.smoothScrollToPosition(obtainFirstLetterIndex(letter));
+                cityRecyclerView.smoothScrollToPosition(slideBarView.obtainFirstLetterIndex(letter));
             }
         });
-    }
-
-    private int obtainFirstLetterIndex(String letter) {
-        int index = 0;
-        for (int i = 0; i < CITY.size(); i++) {
-            String firstWord = CITY.get(i).substring(0, 1);
-            //转拼音
-            String firstLetter = getFirstLetter(firstWord);
-            if (letter.equals(firstLetter)) {
-                index = i;
-            }
-        }
-        return index;
-    }
-
-    public static String getFirstLetter(String chinese) {
-        StringBuilder pinyinStr = new StringBuilder();
-        char[] newChar = chinese.toCharArray();  //转为单个字符
-        HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
-        defaultFormat.setCaseType(HanyuPinyinCaseType.UPPERCASE);
-        defaultFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
-        for (char c : newChar) {
-            if (c > 128) {
-                try {
-                    pinyinStr.append(PinyinHelper.toHanyuPinyinStringArray(c, defaultFormat)[0].charAt(0));
-                } catch (BadHanyuPinyinOutputFormatCombination e) {
-                    e.printStackTrace();
-                }
-            } else {
-                pinyinStr.append(c);
-            }
-        }
-        return pinyinStr.toString();
     }
 
     private static class VerticalItemDecoration extends RecyclerView.ItemDecoration {

@@ -50,6 +50,5 @@
     <declare-styleable name="SlideBarView">
         <attr name="slide_textSize" format="dimension" />
         <attr name="slide_textColor" format="color" />
-        <attr name="slide_circleColor" format="color" />
     </declare-styleable>
 </resources>

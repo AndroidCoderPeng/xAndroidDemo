@@ -13,10 +13,9 @@
 
     <com.example.mutidemo.widget.SlideBarView
         android:id="@+id/slideBarView"
-        android:layout_marginVertical="30dp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:slide_circleColor="#43DB87"
+        android:layout_marginVertical="30dp"
         app:slide_textColor="@color/gray"
         app:slide_textSize="18sp" />
 </LinearLayout>
