@@ -5,12 +5,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.os.CountDownTimer;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -73,18 +70,18 @@ public class SlideBarActivity extends BaseNormalActivity {
         cityRecyclerView.setLayoutManager(layoutManager);
         cityRecyclerView.addItemDecoration(new VerticalItemDecoration(this));
         cityRecyclerView.setAdapter(cityAdapter);
-        cityRecyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-
-            }
-        });
         cityAdapter.setOnCityItemClickListener(new CityAdapter.OnCityItemClickListener() {
             @Override
             public void onClick(int position) {
                 EasyToast.showToast(CITY.get(position), EasyToast.DEFAULT);
             }
         });
+        slideBarView.setupWithRecyclerView(cityRecyclerView, CITY);
+    }
+
+    @Override
+    public void initEvent() {
+
     }
 
     /**
@@ -99,40 +96,6 @@ public class SlideBarActivity extends BaseNormalActivity {
         protected int getVerticalSnapPreference() {
             return SNAP_TO_START;
         }
-    }
-
-    @Override
-    public void initEvent() {
-        LayoutInflater layoutInflater = LayoutInflater.from(this);
-        View rootView = layoutInflater.inflate(R.layout.activity_slide, null);
-        View contentView = layoutInflater.inflate(R.layout.layout_popup, null);
-        PopupWindow popupWindow = new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, false);
-        popupWindow.setContentView(contentView);
-        TextView letterView = contentView.findViewById(R.id.letterView);
-        CountDownTimer countDownTimer = new CountDownTimer(1000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
-                popupWindow.dismiss();
-            }
-        };
-        slideBarView.setData(CITY);
-        slideBarView.setOnIndexChangeListener(new SlideBarView.OnIndexChangeListener() {
-            @Override
-            public void OnIndexChange(String letter) {
-                //在屏幕中间放大显示被按到的字母
-                letterView.setText(letter);
-                popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
-                countDownTimer.start();
-
-                //根据滑动显示的字母索引到城市名字第一个汉字
-                cityRecyclerView.smoothScrollToPosition(slideBarView.obtainFirstLetterIndex(letter));
-            }
-        });
     }
 
     private static class VerticalItemDecoration extends RecyclerView.ItemDecoration {
