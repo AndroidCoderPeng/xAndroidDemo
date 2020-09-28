@@ -29,7 +29,7 @@ public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
     private Paint topLinePaint, bottomLinePaint;
     private TextPaint textPaint;
     private DecorationCallback callback;
-    private final int topGap;
+    private int topGap;
 
     public VerticalItemDecoration(Context ctx, DecorationCallback decorationCallback) {
         this.context = ctx;
@@ -45,8 +45,8 @@ public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
 
         textPaint = new TextPaint();
         textPaint.setAntiAlias(true);
-        textPaint.setTextSize(80);
-        textPaint.setColor(Color.GRAY);
+        textPaint.setTextSize(sp2px(ctx, 20));
+        textPaint.setColor(Color.BLACK);
         textPaint.setTextAlign(Paint.Align.LEFT);
         topGap = DensityUtil.dp2px(ctx, 30);
     }
@@ -63,6 +63,9 @@ public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
         }
     }
 
+    /**
+     * 判断是否为同组数据
+     */
     private boolean isFirstInGroup(int pos) {
         if (pos == 0) {
             return true;
@@ -73,34 +76,23 @@ public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
         }
     }
 
+    //画分割线
     @Override
     public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-        int left = parent.getPaddingLeft() + DensityUtil.dp2px(context, 5);
-        int right = parent.getWidth();
         int childCount = parent.getChildCount();
         for (int i = 0; i < childCount; i++) {
             View view = parent.getChildAt(i);
-            int position = parent.getChildAdapterPosition(view);
-            long groupId = callback.getGroupTag(position);
-            if (groupId < 0) return;
-            String firstLetter = callback.getGroupFirstLetter(position).toUpperCase();
-            if (position == 0 || isFirstInGroup(position)) {
-                float top = view.getTop() - topGap;
-                float bottom = view.getTop();
-                c.drawRect(0, top, right, bottom, topLinePaint);//绘制灰色矩形
-                c.drawText(firstLetter, left, bottom, textPaint);//绘制文本
-            }
-            //划分割线
             c.drawRect(DensityUtil.dp2px(context, 15), view.getBottom(), parent.getWidth(), view.getBottom() + 1, bottomLinePaint);
         }
     }
 
+    //吸顶效果
     @Override
     public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         super.onDrawOver(c, parent, state);
         int itemCount = state.getItemCount();
         int childCount = parent.getChildCount();
-        int left = parent.getPaddingLeft();
+        int left = parent.getPaddingLeft() + DensityUtil.dp2px(context, 15);
         int right = parent.getWidth();
 
         long preGroupId, groupId = -1;
@@ -123,8 +115,8 @@ public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
                     textY = viewBottom;
                 }
             }
-            c.drawRect(left, textY - topGap, right, textY, topLinePaint);
-            c.drawText(firstLetter, left, textY, textPaint);
+            c.drawRect(0, textY - topGap, right, textY, topLinePaint);
+            c.drawText(firstLetter, left, textY - (DensityUtil.dp2px(context, 7)), textPaint);
         }
     }
 
@@ -140,5 +132,13 @@ public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
         protected int getVerticalSnapPreference() {
             return SNAP_TO_START;
         }
+    }
+
+    /**
+     * sp转换成px
+     */
+    private int sp2px(Context context, float spValue) {
+        float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
     }
 }

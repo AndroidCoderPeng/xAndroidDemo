@@ -16,12 +16,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.example.mutidemo.R;
-
-import net.sourceforge.pinyin4j.PinyinHelper;
-import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
-import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
-import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
-import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
+import com.example.mutidemo.util.StringHelper;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -79,7 +74,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
         //将中文转化为大写字母
         HashSet<String> letterSet = new HashSet<>();
         for (String city : cities) {
-            String firstLetter = obtainHanYuPinyin(city).substring(0, 1);//取每个城市的首字母
+            String firstLetter = StringHelper.obtainHanYuPinyin(city).substring(0, 1);//取每个城市的首字母
             letterSet.add(firstLetter);
         }
         //将letterSet转为String[]
@@ -209,7 +204,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
     public int obtainFirstLetterIndex(String letter) {
         int index = 0;
         for (int i = 0; i < data.size(); i++) {
-            String firstLetter = obtainHanYuPinyin(data.get(i)).substring(0, 1);
+            String firstLetter = StringHelper.obtainHanYuPinyin(data.get(i)).substring(0, 1);
             if (letter.equals(firstLetter)) {
                 index = i;
                 //当有相同的首字母之后就跳出循环
@@ -217,33 +212,5 @@ public class SlideBarView extends View implements View.OnTouchListener {
             }
         }
         return index;
-    }
-
-    /**
-     * 获取汉语拼音
-     */
-    public static String obtainHanYuPinyin(String chinese) {
-        StringBuilder pinyinStr = new StringBuilder();
-        //如果是多音字需要手动纠正
-        if (chinese.equals("重庆")) {
-            pinyinStr.append("CHONGQING");
-        } else {
-            char[] newChar = chinese.toCharArray();  //转为单个字符
-            HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
-            defaultFormat.setCaseType(HanyuPinyinCaseType.UPPERCASE);
-            defaultFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
-            for (char c : newChar) {
-                if (c > 128) {
-                    try {
-                        pinyinStr.append(PinyinHelper.toHanyuPinyinStringArray(c, defaultFormat)[0].charAt(0));
-                    } catch (BadHanyuPinyinOutputFormatCombination e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    pinyinStr.append(c);
-                }
-            }
-        }
-        return pinyinStr.toString();
     }
 }

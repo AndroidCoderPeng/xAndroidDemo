@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.CityAdapter;
 import com.example.mutidemo.bean.CityBean;
+import com.example.mutidemo.util.StringHelper;
 import com.example.mutidemo.util.VerticalItemDecoration;
 import com.example.mutidemo.util.callback.DecorationCallback;
 import com.example.mutidemo.widget.SlideBarView;
@@ -28,7 +29,6 @@ import java.util.List;
 
 import butterknife.BindView;
 
-import static com.example.mutidemo.widget.SlideBarView.obtainHanYuPinyin;
 
 public class SlideBarActivity extends BaseNormalActivity {
 
@@ -101,14 +101,14 @@ public class SlideBarActivity extends BaseNormalActivity {
 
     /**
      * 将城市整理成分组数据
-     * */
+     */
     private List<CityBean> obtainCityData() {
         List<CityBean> cityBeans = new ArrayList<>();
         for (String city : CITY) {
             CityBean cityBean = new CityBean();
             cityBean.setCity(city);
 
-            String firstLetter = obtainHanYuPinyin(city).substring(0, 1);
+            String firstLetter = StringHelper.obtainHanYuPinyin(city).substring(0, 1);
             cityBean.setTag(firstLetter);
 
             cityBeans.add(cityBean);
