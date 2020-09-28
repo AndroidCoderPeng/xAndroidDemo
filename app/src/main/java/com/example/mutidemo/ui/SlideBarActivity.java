@@ -23,9 +23,13 @@ import com.google.gson.Gson;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 
@@ -103,6 +107,10 @@ public class SlideBarActivity extends BaseNormalActivity {
      * 将城市整理成分组数据
      */
     private List<CityBean> obtainCityData() {
+        //先将数据按照字母排序
+        Comparator<Object> comparator = Collator.getInstance(Locale.CHINA);
+        Collections.sort(CITY, comparator);
+        //格式化数据
         List<CityBean> cityBeans = new ArrayList<>();
         for (String city : CITY) {
             CityBean cityBean = new CityBean();
