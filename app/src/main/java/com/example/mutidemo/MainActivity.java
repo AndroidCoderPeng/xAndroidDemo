@@ -16,7 +16,7 @@ import com.example.mutidemo.ui.BottomNavigationActivity;
 import com.example.mutidemo.ui.CaptureNetImageDataActivity;
 import com.example.mutidemo.ui.CheckDeviceActivity;
 import com.example.mutidemo.ui.MVPActivity;
-import com.example.mutidemo.ui.RadarScannerActivity;
+import com.example.mutidemo.ui.OcrNumberActivity;
 import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
 import com.example.mutidemo.ui.SharedPreferencesActivity;
 import com.example.mutidemo.ui.SlideBarActivity;
@@ -46,7 +46,8 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "仿iOS风格对话框",
             "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
-            "爬虫抓取网页数据", "酷炫通知", "水波纹扩散动画", "设备自检动画", "雷达扫描图", "联系人侧边滑动控件");
+            "爬虫抓取网页数据", "酷炫通知", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件",
+            "OCR识别数字");
 
     @Override
     public int initLayoutView() {
@@ -114,11 +115,11 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                         startActivity(intent);
                         break;
                     case 10:
-                        intent.setClass(mContext, RadarScannerActivity.class);
+                        intent.setClass(mContext, SlideBarActivity.class);
                         startActivity(intent);
                         break;
                     case 11:
-                        intent.setClass(mContext, SlideBarActivity.class);
+                        intent.setClass(mContext, OcrNumberActivity.class);
                         startActivity(intent);
                         break;
                     default:

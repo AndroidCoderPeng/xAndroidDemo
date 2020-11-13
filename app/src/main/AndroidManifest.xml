@@ -47,7 +47,7 @@
         <activity android:name=".ui.PhotoViewActivity" />
         <activity android:name=".ui.WaterRippleActivity" />
         <activity android:name=".ui.CheckDeviceActivity" />
-        <activity android:name=".ui.RadarScannerActivity" />
         <activity android:name=".ui.SlideBarActivity" />
+        <activity android:name=".ui.OcrNumberActivity" />
     </application>
 </manifest>
