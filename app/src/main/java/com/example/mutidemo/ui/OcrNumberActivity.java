@@ -2,7 +2,7 @@ package com.example.mutidemo.ui;
 
 import android.graphics.Bitmap;
 import android.util.Log;
-import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,7 +21,7 @@ import butterknife.OnClick;
 public class OcrNumberActivity extends BaseNormalActivity implements View.OnClickListener {
 
     @BindView(R.id.targetPreView)
-    SurfaceView targetPreView;
+    TextureView targetPreView;
     @BindView(R.id.captureImageView)
     ImageView captureImageView;
     @BindView(R.id.resultTextView)
@@ -29,8 +29,6 @@ public class OcrNumberActivity extends BaseNormalActivity implements View.OnClic
 
     private static final String TAG = "OcrNumberActivity";
     private static final String dataPath = "/storage/sdcard0/tesseract/"; //训练数据路径
-    private static final String cameraId = "0";
-
 
     private CameraPreviewHelper cameraPreviewHelper;
 
@@ -41,12 +39,39 @@ public class OcrNumberActivity extends BaseNormalActivity implements View.OnClic
 
     @Override
     public void initData() {
-        cameraPreviewHelper = new CameraPreviewHelper(this, targetPreView, cameraId);
+
     }
 
     @Override
     public void initEvent() {
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cameraPreviewHelper = new CameraPreviewHelper(this, targetPreView);
+    }
+
+    @OnClick({R.id.takePhoto, R.id.startScanner})
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        switch (id) {
+            case R.id.takePhoto:
+                cameraPreviewHelper.takePicture(new CameraPreviewHelper.OnCaptureImageCallback() {
+                    @Override
+                    public void captureImage(Bitmap bitmap) {
+                        captureImageView.setImageBitmap(bitmap);
+                    }
+                });
+                break;
+            case R.id.startScanner:
+
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -71,21 +96,5 @@ public class OcrNumberActivity extends BaseNormalActivity implements View.OnClic
     protected void onDestroy() {
         super.onDestroy();
         cameraPreviewHelper.stopPreview();
-    }
-
-    @OnClick({R.id.takePhoto, R.id.startScanner})
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        switch (id) {
-            case R.id.takePhoto:
-
-                break;
-            case R.id.startScanner:
-
-                break;
-            default:
-                break;
-        }
     }
 }
