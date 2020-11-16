@@ -51,6 +51,13 @@ public class OcrNumberActivity extends BaseNormalActivity implements View.OnClic
     protected void onResume() {
         super.onResume();
         cameraPreviewHelper = new CameraPreviewHelper(this, targetPreView);
+        cameraPreviewHelper.setImageCallback(new CameraPreviewHelper.OnCaptureImageCallback() {
+            @Override
+            public void captureImage(Bitmap bitmap) {
+                //需要切换为主线程
+                runOnUiThread(() -> captureImageView.setImageBitmap(bitmap));
+            }
+        });
     }
 
     @OnClick({R.id.takePhoto, R.id.startScanner})
@@ -59,12 +66,7 @@ public class OcrNumberActivity extends BaseNormalActivity implements View.OnClic
         int id = view.getId();
         switch (id) {
             case R.id.takePhoto:
-                cameraPreviewHelper.takePicture(new CameraPreviewHelper.OnCaptureImageCallback() {
-                    @Override
-                    public void captureImage(Bitmap bitmap) {
-                        captureImageView.setImageBitmap(bitmap);
-                    }
-                });
+                cameraPreviewHelper.takePicture();
                 break;
             case R.id.startScanner:
 
