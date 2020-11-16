@@ -30,6 +30,9 @@ import androidx.core.content.ContextCompat;
 
 import com.pengxh.app.multilib.widget.EasyToast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
@@ -231,8 +234,35 @@ public class CameraPreviewHelper {
             byte[] bytes = new byte[byteBuffer.remaining()];
             byteBuffer.get(bytes);
             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            //这里可以改为存本地
+            /**
+             * 图片处理
+             * */
+            //直接将bitmap回调到需要的地方
             imageCallback.captureImage(bitmap);
+            //存本地，并且返回本地路径
+            String parentPath = mContext.getFilesDir() + File.separator;
+            File file = new File(parentPath);
+            if (!file.exists()) {
+                file.mkdir();
+            }
+            File mPictureFile = new File(parentPath, System.currentTimeMillis() + ".jpg");
+            FileOutputStream outputStream = null;
+            try {
+                outputStream = new FileOutputStream(mPictureFile);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream);//压缩
+                outputStream.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (outputStream != null) {
+                    try {
+                        outputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                imageCallback.saveImage(mPictureFile.getAbsolutePath());
+            }
             image.close();
         }
     };
@@ -242,6 +272,8 @@ public class CameraPreviewHelper {
      */
     public interface OnCaptureImageCallback {
         void captureImage(Bitmap bitmap);
+
+        void saveImage(String localPath);
     }
 
     /**

@@ -29,8 +29,8 @@ public class OcrNumberActivity extends BaseNormalActivity implements View.OnClic
 
     private static final String TAG = "OcrNumberActivity";
     private static final String dataPath = "/storage/sdcard0/tesseract/"; //训练数据路径
-
     private CameraPreviewHelper cameraPreviewHelper;
+    private String path;
 
     @Override
     public int initLayoutView() {
@@ -56,6 +56,12 @@ public class OcrNumberActivity extends BaseNormalActivity implements View.OnClic
             public void captureImage(Bitmap bitmap) {
                 //需要切换为主线程
                 runOnUiThread(() -> captureImageView.setImageBitmap(bitmap));
+            }
+
+            @Override
+            public void saveImage(String localPath) {
+                Log.d(TAG, "saveImage: " + localPath);
+                path = localPath;
             }
         });
     }
