@@ -7,10 +7,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.baidu.ocr.sdk.OCR;
+import com.baidu.ocr.sdk.OnResultListener;
+import com.baidu.ocr.sdk.exception.OCRError;
+import com.baidu.ocr.sdk.model.AccessToken;
+import com.baidu.ocr.sdk.model.BankCardParams;
+import com.baidu.ocr.sdk.model.BankCardResult;
 import com.example.mutidemo.R;
 import com.example.mutidemo.util.CameraPreviewHelper;
-import com.googlecode.tesseract.android.TessBaseAPI;
+import com.google.gson.Gson;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -28,9 +36,9 @@ public class OcrNumberActivity extends BaseNormalActivity implements View.OnClic
     TextView resultTextView;
 
     private static final String TAG = "OcrNumberActivity";
-    private static final String dataPath = "/storage/sdcard0/tesseract/"; //训练数据路径
     private CameraPreviewHelper cameraPreviewHelper;
     private String path;
+    private OCR ocr;
 
     @Override
     public int initLayoutView() {
@@ -39,7 +47,19 @@ public class OcrNumberActivity extends BaseNormalActivity implements View.OnClic
 
     @Override
     public void initData() {
+        ocr = OCR.getInstance(this);
+        ocr.initAccessToken(new OnResultListener<AccessToken>() {
+            @Override
+            public void onResult(AccessToken result) {
+                String token = result.getAccessToken();
+                Log.d(TAG, "onResult: " + token);
+            }
 
+            @Override
+            public void onError(OCRError ocrError) {
+
+            }
+        }, this);
     }
 
     @Override
@@ -75,29 +95,24 @@ public class OcrNumberActivity extends BaseNormalActivity implements View.OnClic
                 cameraPreviewHelper.takePicture();
                 break;
             case R.id.startScanner:
+                BankCardParams param = new BankCardParams();
+                param.setImageFile(new File(path));
+                ocr.recognizeBankCard(param, new OnResultListener<BankCardResult>() {
+                    @Override
+                    public void onResult(BankCardResult bankCardResult) {
+                        Log.d(TAG, "onResult: " + new Gson().toJson(bankCardResult));
+                        resultTextView.setText(bankCardResult.getBankCardNumber());
+                    }
 
+                    @Override
+                    public void onError(OCRError ocrError) {
+                        Log.d(TAG, "onError: " + ocrError);
+                    }
+                });
                 break;
             default:
                 break;
         }
-    }
-
-    /**
-     * 识别数字
-     */
-    private String detectText(Bitmap bitmap) {
-        TessBaseAPI baseAPI = new TessBaseAPI();
-        Log.d(TAG, "Tess folder: " + dataPath);
-        baseAPI.setDebug(true);
-        baseAPI.init(dataPath, "eng"); //eng为识别语言
-        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"); // 识别白名单
-        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST, "!@#$%^&*()_+=-[]}{;:'\"\\|~`,./<>?"); // 识别黑名单
-        baseAPI.setPageSegMode(TessBaseAPI.PageSegMode.PSM_AUTO_OSD);//设置识别模式
-
-        baseAPI.setImage(bitmap); //设置需要识别图片的bitmap
-        String inspection = baseAPI.getHOCRText(0);
-        baseAPI.end();
-        return inspection;
     }
 
     @Override

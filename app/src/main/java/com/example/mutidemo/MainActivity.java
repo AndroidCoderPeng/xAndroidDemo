@@ -47,7 +47,7 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "仿iOS风格对话框",
             "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
             "爬虫抓取网页数据", "酷炫通知", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件",
-            "OCR识别数字");
+            "OCR识别银行卡");
 
     @Override
     public int initLayoutView() {

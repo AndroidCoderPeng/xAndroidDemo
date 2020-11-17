@@ -9,7 +9,8 @@ android {
         versionCode 1
         versionName "1.0"
         ndk {
-            abiFilters 'armeabi-v7a', 'arm64-v8a'  // 指定要ndk需要兼容的架构(这样其他依赖包里mips,x86,armeabi,arm-v8之类的so会被过滤掉)
+            // 指定要ndk需要兼容的架构(这样其他依赖包里mips,x86,armeabi,arm-v8之类的so会被过滤掉)
+            abiFilters 'arm64-v8a', 'armeabi', 'armeabi-v7a', 'x86'
         }
         multiDexEnabled true
     }
@@ -39,6 +40,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.5.0'
     //控件注解
     implementation 'com.jakewharton:butterknife:10.2.1'
+    implementation files('libs/ocr-sdk.jar')
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     implementation 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
     //基础依赖库
@@ -67,5 +69,4 @@ dependencies {
     implementation group: 'com.belerweb', name: 'pinyin4j', version: '2.5.0'
     // https://mvnrepository.com/artifact/com.rmtheis/tess-two
     implementation group: 'com.rmtheis', name: 'tess-two', version: '9.1.0'
-
 }
