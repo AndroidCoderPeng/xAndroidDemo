@@ -3,14 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextureView
-        android:id="@+id/targetPreView"
-        android:layout_width="match_parent"
+    <FrameLayout
         android:layout_height="match_parent"
         android:layout_above="@id/v"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginBottom="30dp" />
+        android:layout_width="match_parent"
+        android:layout_marginBottom="30dp">
+
+        <TextureView
+            android:id="@+id/targetPreView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.example.mutidemo.widget.BorderView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
 
     <View
         android:id="@+id/v"

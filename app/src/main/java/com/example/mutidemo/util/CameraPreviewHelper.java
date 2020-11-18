@@ -46,7 +46,7 @@ import java.util.List;
 public class CameraPreviewHelper {
     private static final String TAG = "CameraPreviewHelper";
     private static final int mCameraFacing = CameraCharacteristics.LENS_FACING_BACK;//默认使用后置摄像头
-    private static final Size mPreviewSize = new Size(1280, 720);//预览大小
+    private static final Size mPreviewSize = new Size(1080, 1920);//预览大小
     private Activity mActivity;
     private Context mContext;
     private TextureView mTextureView;
@@ -125,7 +125,7 @@ public class CameraPreviewHelper {
         //获取摄像头方向
         mSensorOrientation = mCharacteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
         mTextureView.getSurfaceTexture().setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
-        mImageReader = ImageReader.newInstance(mPreviewSize.getHeight(), mPreviewSize.getWidth(), ImageFormat.JPEG, 1);
+        mImageReader = ImageReader.newInstance(mPreviewSize.getWidth(), mPreviewSize.getHeight(), ImageFormat.JPEG, 1);
         mImageReader.setOnImageAvailableListener(mImageAvailableListener, mPreviewHandler);
         //打开箱机
         if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
