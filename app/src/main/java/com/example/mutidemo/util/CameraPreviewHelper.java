@@ -45,16 +45,15 @@ import java.util.List;
  */
 public class CameraPreviewHelper {
     private static final String TAG = "CameraPreviewHelper";
-
+    private static final int mCameraFacing = CameraCharacteristics.LENS_FACING_BACK;//默认使用后置摄像头
+    private static final Size mPreviewSize = new Size(1280, 720);//预览大小
     private Activity mActivity;
     private Context mContext;
     private TextureView mTextureView;
     private Handler mPreviewHandler;
     private String mCameraId = "0";
-    private static final int mCameraFacing = CameraCharacteristics.LENS_FACING_BACK;//默认使用后置摄像头
     private CameraCharacteristics mCharacteristics;
     private Integer mSensorOrientation;
-    private Size mPreviewSize = new Size(720, 1280);//预览大小
     private ImageReader mImageReader;
     private CameraDevice mCameraDevice;
     private CameraCaptureSession mCaptureSession;
@@ -126,7 +125,7 @@ public class CameraPreviewHelper {
         //获取摄像头方向
         mSensorOrientation = mCharacteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
         mTextureView.getSurfaceTexture().setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
-        mImageReader = ImageReader.newInstance(mPreviewSize.getWidth(), mPreviewSize.getHeight(), ImageFormat.JPEG, 1);
+        mImageReader = ImageReader.newInstance(mPreviewSize.getHeight(), mPreviewSize.getWidth(), ImageFormat.JPEG, 1);
         mImageReader.setOnImageAvailableListener(mImageAvailableListener, mPreviewHandler);
         //打开箱机
         if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -237,9 +236,6 @@ public class CameraPreviewHelper {
             /**
              * 图片处理
              * */
-            //直接将bitmap回调到需要的地方
-            imageCallback.captureImage(bitmap);
-            //存本地，并且返回本地路径
             String parentPath = mContext.getFilesDir() + File.separator;
             File file = new File(parentPath);
             if (!file.exists()) {
@@ -261,19 +257,18 @@ public class CameraPreviewHelper {
                         e.printStackTrace();
                     }
                 }
-                imageCallback.saveImage(mPictureFile.getAbsolutePath());
             }
+            //直接将bitmap回调到需要的地方
+            imageCallback.captureImage(mPictureFile.getAbsolutePath(), bitmap);
             image.close();
         }
     };
 
     /**
-     * 回调拍照Bitmap
+     * 回调拍照本地路径和Bitmap
      */
     public interface OnCaptureImageCallback {
-        void captureImage(Bitmap bitmap);
-
-        void saveImage(String localPath);
+        void captureImage(String localPath, Bitmap bitmap);
     }
 
     /**

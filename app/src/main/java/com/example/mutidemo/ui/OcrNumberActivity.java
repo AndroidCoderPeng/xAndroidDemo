@@ -26,7 +26,7 @@ import butterknife.OnClick;
 /***
  * 数字识别
  * */
-public class OcrNumberActivity extends BaseNormalActivity implements View.OnClickListener {
+public class OcrNumberActivity extends BaseNormalActivity implements View.OnClickListener, CameraPreviewHelper.OnCaptureImageCallback {
 
     @BindView(R.id.targetPreView)
     TextureView targetPreView;
@@ -71,19 +71,7 @@ public class OcrNumberActivity extends BaseNormalActivity implements View.OnClic
     protected void onResume() {
         super.onResume();
         cameraPreviewHelper = new CameraPreviewHelper(this, targetPreView);
-        cameraPreviewHelper.setImageCallback(new CameraPreviewHelper.OnCaptureImageCallback() {
-            @Override
-            public void captureImage(Bitmap bitmap) {
-                //需要切换为主线程
-                runOnUiThread(() -> captureImageView.setImageBitmap(bitmap));
-            }
-
-            @Override
-            public void saveImage(String localPath) {
-                Log.d(TAG, "saveImage: " + localPath);
-                path = localPath;
-            }
-        });
+        cameraPreviewHelper.setImageCallback(this);
     }
 
     @OnClick({R.id.takePhoto, R.id.startScanner})
@@ -119,5 +107,13 @@ public class OcrNumberActivity extends BaseNormalActivity implements View.OnClic
     protected void onDestroy() {
         super.onDestroy();
         cameraPreviewHelper.stopPreview();
+    }
+
+    @Override
+    public void captureImage(String localPath, Bitmap bitmap) {
+        Log.d(TAG, "saveImage: " + localPath);
+        path = localPath;
+        //需要切换为主线程
+        runOnUiThread(() -> captureImageView.setImageBitmap(bitmap));
     }
 }
