@@ -59,9 +59,9 @@ public class CheckView extends View implements View.OnClickListener {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CheckView, defStyleAttr, 0);
 
         centerColor = a.getColor(R.styleable.CheckView_view_centerColor
-                , getResourcesColor(context, R.color.main_colcor_blue));
+                , getResourcesColor(context, R.color.mainColor));
         ringColor = a.getColor(R.styleable.CheckView_view_ringColor
-                , getResourcesColor(context, R.color.main_colcor_blue));
+                , getResourcesColor(context, R.color.mainColor));
         radius = a.getDimensionPixelOffset(R.styleable.CheckView_view_radius, dp2px(context, 50));
         textSize = a.getDimensionPixelOffset(R.styleable.CheckView_view_textSize
                 , sp2px(context, 18));

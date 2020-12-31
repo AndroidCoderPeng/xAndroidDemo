@@ -66,9 +66,9 @@ public class WaterRippleView extends View implements View.OnClickListener {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.WaterRippleView, defStyleAttr, 0);
 
         centerColor = a.getColor(R.styleable.WaterRippleView_ripple_centerColor
-                , getResourcesColor(context, R.color.main_colcor_blue));
+                , getResourcesColor(context, R.color.mainColor));
         spreadColor = a.getColor(R.styleable.WaterRippleView_ripple_spreadColor
-                , getResourcesColor(context, R.color.main_colcor_blue));
+                , getResourcesColor(context, R.color.mainColor));
         animDuration = a.getInteger(R.styleable.WaterRippleView_ripple_animDuration, animDuration);
         radius = a.getDimensionPixelOffset(R.styleable.WaterRippleView_ripple_radius, dp2px(context, 50));
         distance = a.getDimensionPixelOffset(R.styleable.WaterRippleView_ripple_distance

@@ -10,9 +10,9 @@
         android:id="@+id/checkView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:view_centerColor="@color/main_colcor_blue"
+        app:view_centerColor="@color/mainColor"
         app:view_radius="60dp"
-        app:view_ringColor="@color/main_colcor_blue"
+        app:view_ringColor="@color/mainColor"
         app:view_text="开始自检"
         app:view_textColor="@color/white"
         app:view_textSize="20sp" />

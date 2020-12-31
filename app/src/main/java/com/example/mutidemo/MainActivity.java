@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.RingtoneManager;
+import android.os.CountDownTimer;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,7 +50,7 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "仿iOS风格对话框",
             "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
             "爬虫抓取网页数据", "酷炫通知", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件",
-            "OCR识别银行卡", "自定义进度条");
+            "OCR识别银行卡", "自定义进度条", "切换模式");
 
     @Override
     public int initLayoutView() {
@@ -127,6 +129,27 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                         intent.setClass(mContext, ProcessBarActivity.class);
                         startActivity(intent);
                         break;
+                    case 13:
+                        startActivity(new Intent(MainActivity.this, SwitchModeActivity.class));
+                        overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+                        new CountDownTimer(1000, 1000) {
+
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                                } else {
+                                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                                }
+                                recreate();
+                            }
+                        }.start();
+                        break;
                     default:
                         break;
                 }
@@ -136,7 +159,7 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
 
     private void startScannerActivity() {
         QrConfig qrConfig = new QrConfig.Builder()
-                .setTitleText("扫一扫")//设置Tilte文字
+                .setTitleText("扫一扫")//设置Title文字
                 .setShowLight(true)//显示手电筒按钮
                 .setShowTitle(true)//显示Title
                 .setShowAlbum(true)//显示从相册选择按钮
