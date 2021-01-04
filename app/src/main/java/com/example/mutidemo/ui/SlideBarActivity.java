@@ -116,7 +116,7 @@ public class SlideBarActivity extends BaseNormalActivity {
             CityBean cityBean = new CityBean();
             cityBean.setCity(city);
 
-            String firstLetter = StringHelper.obtainHanYuPinyin(city).substring(0, 1);
+            String firstLetter = StringHelper.obtainHanYuPinyin(city);
             cityBean.setTag(firstLetter);
 
             cityBeans.add(cityBean);
