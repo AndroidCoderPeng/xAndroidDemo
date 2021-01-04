@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.util.AttributeSet;
@@ -37,10 +39,12 @@ public class SlideBarView extends View implements View.OnTouchListener {
     private int textSize;
     private int textColor;
     private TextPaint textPaint;//文字画笔
+    private Paint backgroundPaint;
     private int mHeight;//控件的实际尺寸
     private int touchIndex = -1;
     private int letterHeight;
     private boolean showBackground = false;
+    private float radius = 0f;//圆角半径
 
     public SlideBarView(Context context) {
         this(context, null, 0);
@@ -74,7 +78,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
         //将中文转化为大写字母
         HashSet<String> letterSet = new HashSet<>();
         for (String city : cities) {
-            String firstLetter = StringHelper.obtainHanYuPinyin(city).substring(0, 1);//取每个城市的首字母
+            String firstLetter = StringHelper.obtainHanYuPinyin(city);
             letterSet.add(firstLetter);
         }
         //将letterSet转为String[]
@@ -82,6 +86,11 @@ public class SlideBarView extends View implements View.OnTouchListener {
     }
 
     private void initPaint() {
+        //背景色画笔
+        backgroundPaint = new Paint();
+        backgroundPaint.setColor(Color.parseColor("#3F3F3F"));
+        backgroundPaint.setAntiAlias(true);
+
         //文字画笔
         textPaint = new TextPaint();
         textPaint.setAntiAlias(true);
@@ -107,6 +116,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
             // match_parent/精确值
             mHeight = heightSpecSize;
         }
+        this.radius = mWidth >> 1;
         // 设置该view的宽高
         setMeasuredDimension(mWidth, mHeight);
     }
@@ -117,7 +127,13 @@ public class SlideBarView extends View implements View.OnTouchListener {
         super.onDraw(canvas);
         letterHeight = mHeight / letterArray.length;
         if (showBackground) {
-            canvas.drawColor(Color.parseColor("#F1F1F1"));
+            //绘制进度条背景，圆角矩形
+            RectF bgRectF = new RectF();
+            bgRectF.left = (centerX - radius) * 2;
+            bgRectF.top = 0f;
+            bgRectF.right = centerX * 2;
+            bgRectF.bottom = mHeight;
+            canvas.drawRoundRect(bgRectF, radius, radius, backgroundPaint);
         }
         for (int i = 0; i < letterArray.length; i++) {
             int y = (i + 1) * letterHeight;//每个字母的占位高度(不是字体高度)
@@ -204,7 +220,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
     public int obtainFirstLetterIndex(String letter) {
         int index = 0;
         for (int i = 0; i < data.size(); i++) {
-            String firstLetter = StringHelper.obtainHanYuPinyin(data.get(i)).substring(0, 1);
+            String firstLetter = StringHelper.obtainHanYuPinyin(data.get(i));
             if (letter.equals(firstLetter)) {
                 index = i;
                 //当有相同的首字母之后就跳出循环
