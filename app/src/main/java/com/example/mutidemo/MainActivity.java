@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.RingtoneManager;
-import android.os.CountDownTimer;
 import android.view.View;
 
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,7 +13,6 @@ import com.aihook.alertview.library.AlertView;
 import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.ui.BottomDialogActivity;
 import com.example.mutidemo.ui.BottomNavigationActivity;
-import com.example.mutidemo.ui.CaptureNetImageDataActivity;
 import com.example.mutidemo.ui.CheckDeviceActivity;
 import com.example.mutidemo.ui.MVPActivity;
 import com.example.mutidemo.ui.OcrNumberActivity;
@@ -49,8 +46,8 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "仿iOS风格对话框",
             "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
-            "爬虫抓取网页数据", "酷炫通知", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件",
-            "OCR识别银行卡", "自定义进度条", "切换模式");
+            "酷炫通知", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
+            "自定义进度条");
 
     @Override
     public int initLayoutView() {
@@ -97,10 +94,6 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                         startActivity(intent);
                         break;
                     case 6:
-                        intent.setClass(mContext, CaptureNetImageDataActivity.class);
-                        startActivity(intent);
-                        break;
-                    case 7:
                         Alerter.create(MainActivity.this).setTitle("您有新的消息")
                                 .setText("超出安全距离，请注意")
                                 .setBackgroundColorRes(R.color.sky)
@@ -109,46 +102,25 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                                 .enableSwipeToDismiss()
                                 .show();
                         break;
-                    case 8:
+                    case 7:
                         intent.setClass(mContext, WaterRippleActivity.class);
                         startActivity(intent);
                         break;
-                    case 9:
+                    case 8:
                         intent.setClass(mContext, CheckDeviceActivity.class);
                         startActivity(intent);
                         break;
-                    case 10:
+                    case 9:
                         intent.setClass(mContext, SlideBarActivity.class);
                         startActivity(intent);
                         break;
-                    case 11:
+                    case 10:
                         intent.setClass(mContext, OcrNumberActivity.class);
                         startActivity(intent);
                         break;
-                    case 12:
+                    case 11:
                         intent.setClass(mContext, ProcessBarActivity.class);
                         startActivity(intent);
-                        break;
-                    case 13:
-                        startActivity(new Intent(MainActivity.this, SwitchModeActivity.class));
-                        overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
-                        new CountDownTimer(1000, 1000) {
-
-                            @Override
-                            public void onTick(long millisUntilFinished) {
-
-                            }
-
-                            @Override
-                            public void onFinish() {
-                                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-                                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                                } else {
-                                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                                }
-                                recreate();
-                            }
-                        }.start();
                         break;
                     default:
                         break;
