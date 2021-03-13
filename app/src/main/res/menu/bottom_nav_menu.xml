@@ -10,21 +10,21 @@
     <item
         android:id="@+id/navigation_home"
         android:enabled="true"
-        android:icon="@drawable/home"
+        android:icon="@mipmap/home"
         android:title="首页"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navigation_dashboard"
         android:enabled="true"
-        android:icon="@drawable/dashboard"
+        android:icon="@mipmap/dashboard"
         android:title="消息"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navigation_mine"
         android:enabled="true"
-        android:icon="@drawable/mine"
+        android:icon="@mipmap/mine"
         android:title="我的"
         app:showAsAction="ifRoom" />
 </menu>
