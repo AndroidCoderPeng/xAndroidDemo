@@ -44,7 +44,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     implementation 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
     //基础依赖库
-    implementation 'com.github.AndroidCoderPeng:Android-library:1.5.1'
+    implementation 'com.github.AndroidCoderPeng:Android-library:1.5.3'
     //阿里巴巴Json解析库
     implementation 'com.alibaba:fastjson:1.2.68'
     //MVP网络请求框架retrofit2+rxjava
@@ -69,4 +69,5 @@ dependencies {
     implementation group: 'com.belerweb', name: 'pinyin4j', version: '2.5.0'
     // https://mvnrepository.com/artifact/com.rmtheis/tess-two
     implementation group: 'com.rmtheis', name: 'tess-two', version: '9.1.0'
+    implementation 'com.amap.api:map2d:6.0.0'
 }

@@ -48,5 +48,7 @@
         <activity android:name=".ui.SlideBarActivity" />
         <activity android:name=".ui.OcrNumberActivity" />
         <activity android:name=".ui.ProcessBarActivity" />
+
+        <activity android:name=".ui.GPSActivity" />
     </application>
 </manifest>

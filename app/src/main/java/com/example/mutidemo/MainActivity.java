@@ -14,6 +14,7 @@ import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.ui.BottomDialogActivity;
 import com.example.mutidemo.ui.BottomNavigationActivity;
 import com.example.mutidemo.ui.CheckDeviceActivity;
+import com.example.mutidemo.ui.GPSActivity;
 import com.example.mutidemo.ui.MVPActivity;
 import com.example.mutidemo.ui.OcrNumberActivity;
 import com.example.mutidemo.ui.ProcessBarActivity;
@@ -45,9 +46,9 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
 
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "仿iOS风格对话框",
-            "MVP网络请求框架", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
+            "MVP架构", "BottomNavigationView", "ZBar扫一扫", "上拉加载下拉刷新",
             "酷炫通知", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
-            "自定义进度条");
+            "自定义进度条", "MVVM架构", "GPS位置信息");
 
     @Override
     public int initLayoutView() {
@@ -120,6 +121,13 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                         break;
                     case 11:
                         intent.setClass(mContext, ProcessBarActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 12:
+
+                        break;
+                    case 13:
+                        intent.setClass(mContext, GPSActivity.class);
                         startActivity(intent);
                         break;
                     default:
