@@ -4,6 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
+import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
@@ -15,6 +20,7 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -29,15 +35,91 @@ import com.pengxh.app.multilib.widget.EasyToast;
 
 import org.xml.sax.XMLReader;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class ImageUtil {
 
     private static final String TAG = "ImageUtil";
+
+    public static Bitmap nv21ToBitmap(byte[] nv21, int width, int height) {
+        Bitmap bitmap = null;
+        try {
+            final YuvImage image = new YuvImage(nv21, ImageFormat.NV21, width, height, null);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            image.compressToJpeg(new Rect(0, 0, width, height), 80, outputStream);
+            final Bitmap bmp = BitmapFactory.decodeByteArray(outputStream.toByteArray(), 0, outputStream.size());
+            bitmap = rotateImageView(-90, bmp);
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+    public static Bitmap rotateImageView(int angle, Bitmap bitmap) {
+        //旋转图片 动作
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        // 创建新的图片
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+    /**
+     * 获取图片base64编码
+     */
+    public static String imageToBase64(File file) {
+        if (file == null) {
+            return null;
+        }
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] b = new byte[1024];
+            int n;
+            while ((n = fis.read(b)) != -1) {
+                bos.write(b, 0, n);
+            }
+            fis.close();
+            bos.close();
+
+            byte[] imgBytes = bos.toByteArray();
+            String result = Base64.encodeToString(imgBytes, Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING);
+            return result.replace("-", "+")
+                    .replace("_", "/");
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * 获取图片base64编码
+     */
+    public static String imageToBase64(Bitmap bitmap) {
+        if (bitmap == null) {
+            return null;
+        }
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream);//压缩质量
+
+            outputStream.flush();
+            outputStream.close();
+
+            byte[] bitmapBytes = outputStream.toByteArray();
+            String result = Base64.encodeToString(bitmapBytes, Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING);
+            return result.replace("-", "+")
+                    .replace("_", "/");
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
     /**
      * 保存bitmap到本地

@@ -1,0 +1,175 @@
+package com.example.mutidemo.ui;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.ImageFormat;
+import android.hardware.Camera;
+import android.media.FaceDetector;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+
+import com.example.mutidemo.R;
+import com.example.mutidemo.util.ImageUtil;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Stack;
+
+import butterknife.BindView;
+
+public class FacePreViewActivity extends BaseNormalActivity implements Camera.PreviewCallback {
+
+    private static final String TAG = "FacePreViewActivity";
+    @BindView(R.id.surfaceView)
+    SurfaceView surfaceView;
+    @BindView(R.id.faceTipsView)
+    TextView faceTipsView;
+    private SurfaceHolder mSurfaceHolder;
+    private Camera mCamera;
+    private Stack<Bitmap> bitmapStack;
+
+    @Override
+    public int initLayoutView() {
+        return R.layout.activity_face;
+    }
+
+    @Override
+    public void initData() {
+        bitmapStack = new Stack<>();
+    }
+
+    @Override
+    public void initEvent() {
+        // 绑定SurfaceView，取得SurfaceHolder对象
+        mSurfaceHolder = surfaceView.getHolder();
+        mSurfaceHolder.addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(@NonNull SurfaceHolder holder) {
+                if (mCamera == null) {
+                    //打开相机
+                    openCamera();
+                }
+                try {
+                    //预览画面
+                    mCamera.setPreviewDisplay(mSurfaceHolder);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //开始预览
+                mCamera.startPreview();
+            }
+
+            @Override
+            public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+                releaseCamera(); //释放相机资源
+            }
+        });
+        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);// setType必须设置
+    }
+
+
+    @Override
+    public void onPreviewFrame(byte[] data, Camera camera) {
+        camera.addCallbackBuffer(data);
+        Camera.Size size = camera.getParameters().getPreviewSize();//必须是相机支持的预览尺寸，否则颜色YUV空间会错位
+        Bitmap originBitmap = ImageUtil.nv21ToBitmap(data, size.width, size.height);
+        //要使用Android内置的人脸识别，需要将Bitmap对象转为RGB_565格式，否则无法识别
+        Bitmap faceDetectorBitmap = originBitmap.copy(Bitmap.Config.RGB_565, true);
+        FaceDetector.Face[] faces = new FaceDetector.Face[1];
+        FaceDetector faceDetector = new FaceDetector(faceDetectorBitmap.getWidth(), faceDetectorBitmap.getHeight(), 1);
+        int faceSum = faceDetector.findFaces(faceDetectorBitmap, faces);
+        if (faceSum == 1) {
+            faceTipsView.setText("已检测到人脸，识别中");
+            faceTipsView.setTextColor(Color.GREEN);
+            bitmapStack.push(originBitmap);
+            if (bitmapStack.size() >= 3) {//当栈里有3张bitmap之后才开始识别
+                Bitmap bitmap = bitmapStack.pop();
+                Intent intent = new Intent();
+                intent.putExtra("imageToBase64", ImageUtil.imageToBase64(bitmap));
+                setResult(Activity.RESULT_OK, intent);
+                finish();
+            }
+        }
+    }
+
+    /**
+     * 打开相机
+     */
+    private void openCamera() {
+        try {
+            mCamera = Camera.open(1);
+            initParameters(mCamera);        //初始化相机配置信息
+            mCamera.setPreviewCallback(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 初始化相机属性
+     */
+    private void initParameters(Camera camera) {
+        try {
+            Camera.Parameters mParameters = camera.getParameters();
+            mParameters.setPreviewFormat(ImageFormat.NV21);  //设置预览图片的格式
+            //获取与指定宽高相等或最接近的尺寸
+            //设置预览尺寸
+            Camera.Size bestPreviewSize = obtainBestSize(surfaceView.getWidth(), surfaceView.getHeight(), mParameters.getSupportedPreviewSizes());
+            mParameters.setPreviewSize(bestPreviewSize.width, bestPreviewSize.height);
+            //设置保存图片尺寸
+//            Camera.Size bestPicSize = obtainBestSize(picWidth, picHeight, mParameters.getSupportedPictureSizes());
+//            mParameters.setPictureSize(bestPicSize.width, bestPicSize.height);
+            //对焦模式
+            mParameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            camera.setDisplayOrientation(90);
+            camera.setParameters(mParameters);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 获取最合适的尺寸
+     */
+    private Camera.Size obtainBestSize(int targetWidth, int targetHeight, List<Camera.Size> sizeList) {
+        Camera.Size bestSize = null;
+        int targetRatio = targetHeight / targetWidth;//目标大小的宽高比
+        int minDiff = targetRatio;
+
+        for (Camera.Size size : sizeList) {
+            if (size.width == targetHeight && size.height == targetWidth) {
+                bestSize = size;
+                break;
+            }
+            int supportedRatio = (size.width / size.height);
+            if (Math.abs(supportedRatio - targetRatio) < minDiff) {
+                minDiff = Math.abs(supportedRatio - targetRatio);
+                bestSize = size;
+            }
+        }
+        return bestSize;
+    }
+
+    /**
+     * 释放相机资源
+     */
+    private void releaseCamera() {
+        if (mCamera != null) {
+            mCamera.stopPreview();
+            mCamera.setPreviewCallback(null);
+            mCamera.release();
+            mCamera = null;
+        }
+    }
+}
