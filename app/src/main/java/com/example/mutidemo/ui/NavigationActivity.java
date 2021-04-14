@@ -1,18 +1,20 @@
 package com.example.mutidemo.ui;
 
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import android.view.MenuItem;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.ui.fragment.FirstFragment;
 import com.example.mutidemo.ui.fragment.SecondFragment;
 import com.example.mutidemo.ui.fragment.ThirdFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
+import com.pengxh.app.multilib.widget.NoScrollViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +27,10 @@ import butterknife.BindView;
  * @description: TODO
  * @date: 2020/2/19 16:28
  */
-public class BottomNavigationActivity extends BaseNormalActivity {
+public class NavigationActivity extends BaseNormalActivity {
 
     @BindView(R.id.mainViewPager)
-    ViewPager mainViewPager;
+    NoScrollViewPager mainViewPager;
     @BindView(R.id.bottomNavigation)
     BottomNavigationView bottomNavigation;
 

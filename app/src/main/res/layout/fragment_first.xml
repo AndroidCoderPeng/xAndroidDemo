@@ -1,13 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/topTabLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="FirstFragment" />
+        android:layout_height="wrap_content"
+        app:tabIndicatorColor="@color/sky"
+        app:tabIndicatorHeight="3dp"
+        app:tabSelectedTextColor="@color/sky"
+        app:tabTextColor="@color/colorText" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#878787" />
+
+    <com.pengxh.app.multilib.widget.NoScrollViewPager
+        android:id="@+id/subViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 </LinearLayout>

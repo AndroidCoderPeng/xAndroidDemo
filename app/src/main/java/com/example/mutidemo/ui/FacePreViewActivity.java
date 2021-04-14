@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.media.FaceDetector;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
@@ -15,6 +18,7 @@ import androidx.annotation.NonNull;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.util.ImageUtil;
+import com.example.mutidemo.widget.FaceDetectView;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import java.io.IOException;
@@ -28,6 +32,8 @@ public class FacePreViewActivity extends BaseNormalActivity implements Camera.Pr
     private static final String TAG = "FacePreViewActivity";
     @BindView(R.id.surfaceView)
     SurfaceView surfaceView;
+    @BindView(R.id.faceDetectView)
+    FaceDetectView faceDetectView;
     @BindView(R.id.faceTipsView)
     TextView faceTipsView;
     private SurfaceHolder mSurfaceHolder;
@@ -63,6 +69,28 @@ public class FacePreViewActivity extends BaseNormalActivity implements Camera.Pr
                 }
                 //开始预览
                 mCamera.startPreview();
+                //人脸检测
+                mCamera.startFaceDetection();
+                mCamera.setFaceDetectionListener(new Camera.FaceDetectionListener() {
+                    @Override
+                    public void onFaceDetection(Camera.Face[] faces, Camera camera) {
+                        if (faces.length > 0) {
+                            Camera.Face face = faces[0];
+                            Rect rect = face.rect;
+                            Log.d(TAG, "可信度：" + face.score +
+                                    " ,face detected: " + faces.length +
+                                    " ,X: " + rect.centerX() +
+                                    " ,Y: " + rect.centerY() +
+                                    " ,[" + rect.left + "," + rect.top + "," + rect.right + "," + rect.bottom + "]");
+                            Matrix matrix = updateFaceRect();
+                            faceDetectView.updateFace(matrix, faces);
+                            faceTipsView.setText("已检测到人脸，识别中");
+                            faceTipsView.setTextColor(Color.GREEN);
+                        } else {
+                            faceDetectView.removeRect();
+                        }
+                    }
+                });
             }
 
             @Override
@@ -78,6 +106,21 @@ public class FacePreViewActivity extends BaseNormalActivity implements Camera.Pr
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);// setType必须设置
     }
 
+    private Matrix updateFaceRect() {
+        Matrix matrix = new Matrix();
+        Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
+        // Need mirror for front camera.
+        boolean mirror = (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT);
+        matrix.setScale(mirror ? -1 : 1, 1);
+        // This is the value for android.hardware.Camera.setDisplayOrientation.
+        // 刚才我们设置了camera的旋转参数，所以这里也要设置一下
+        matrix.postRotate(90);
+        // Camera driver coordinates range from (-1000, -1000) to (1000, 1000).
+        // UI coordinates range from (0, 0) to (width, height).
+        matrix.postScale(surfaceView.getWidth() / 2000f, surfaceView.getHeight() / 2000f);
+        matrix.postTranslate(surfaceView.getWidth() / 2f, surfaceView.getHeight() / 2f);
+        return matrix;
+    }
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
@@ -90,8 +133,6 @@ public class FacePreViewActivity extends BaseNormalActivity implements Camera.Pr
         FaceDetector faceDetector = new FaceDetector(faceDetectorBitmap.getWidth(), faceDetectorBitmap.getHeight(), 1);
         int faceSum = faceDetector.findFaces(faceDetectorBitmap, faces);
         if (faceSum == 1) {
-            faceTipsView.setText("已检测到人脸，识别中");
-            faceTipsView.setTextColor(Color.GREEN);
             bitmapStack.push(originBitmap);
             if (bitmapStack.size() >= 3) {//当栈里有3张bitmap之后才开始识别
                 Bitmap bitmap = bitmapStack.pop();

@@ -16,6 +16,11 @@
             android:layout_height="match_parent"
             android:layout_gravity="center" />
 
+        <com.example.mutidemo.widget.FaceDetectView
+            android:id="@+id/faceDetectView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <TextView
             android:id="@+id/faceTipsView"
             android:layout_width="wrap_content"

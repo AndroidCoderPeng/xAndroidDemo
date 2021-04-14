@@ -1,25 +1,72 @@
 package com.example.mutidemo.ui.fragment;
 
-import android.os.Bundle;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.mutidemo.R;
+import com.google.android.material.tabs.TabLayout;
+import com.pengxh.app.multilib.base.BaseFragment;
+import com.pengxh.app.multilib.widget.NoScrollViewPager;
 
-public class FirstFragment extends Fragment {
+import org.jetbrains.annotations.NotNull;
 
-    @Nullable
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+
+public class FirstFragment extends BaseFragment {
+
+    private static final String[] pageTitles = {"未读", "已读"};
+    @BindView(R.id.topTabLayout)
+    TabLayout topTabLayout;
+    @BindView(R.id.subViewPager)
+    NoScrollViewPager subViewPager;
+
+    private List<Fragment> fragmentList;
+
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = LayoutInflater.from(this.getContext()).inflate(R.layout.fragment_first, null);
-        initEvent();
-        return view;
+    protected int initLayoutView() {
+        return R.layout.fragment_first;
     }
 
-    private void initEvent() {
+    @Override
+    protected void initData() {
+        fragmentList = new ArrayList<>();
+        fragmentList.add(new UnreadFragment());
+        fragmentList.add(new ReadFragment());
+        SubViewPagerAdapter adapter = new SubViewPagerAdapter(getChildFragmentManager());
+        subViewPager.setAdapter(adapter);
+        //绑定
+        topTabLayout.setupWithViewPager(subViewPager);
+    }
 
+    @Override
+    protected void initEvent() {
+
+    }
+
+    class SubViewPagerAdapter extends FragmentPagerAdapter {
+
+        SubViewPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @NotNull
+        @Override
+        public Fragment getItem(int position) {
+            return fragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragmentList.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return pageTitles[position];
+        }
     }
 }

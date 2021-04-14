@@ -70,4 +70,7 @@ dependencies {
     // https://mvnrepository.com/artifact/com.rmtheis/tess-two
     implementation group: 'com.rmtheis', name: 'tess-two', version: '9.1.0'
     implementation 'com.amap.api:map2d:6.0.0'
+    //腾讯Android UI框架
+    implementation 'com.qmuiteam:qmui:2.0.0-alpha10'
+    implementation 'com.qmuiteam:arch:0.3.1'
 }
