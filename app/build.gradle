@@ -1,17 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     defaultConfig {
         applicationId "com.example.mutidemo"
         minSdkVersion 23
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-        ndk {
-            // 指定要ndk需要兼容的架构(这样其他依赖包里mips,x86,armeabi,arm-v8之类的so会被过滤掉)
-            abiFilters 'arm64-v8a', 'armeabi', 'armeabi-v7a', 'x86'
-        }
+        ndk { abiFilters "armeabi", "armeabi-v7a", "x86_64", "x86" }
+        manifestPlaceholders = [GETUI_APPID: "K8sjmN53eg7c3nK2xd5SX9"]
         multiDexEnabled true
     }
     buildTypes {
@@ -73,4 +71,6 @@ dependencies {
     //腾讯Android UI框架
     implementation 'com.qmuiteam:qmui:2.0.0-alpha10'
     implementation 'com.qmuiteam:arch:0.3.1'
+    implementation 'com.getui:gtsdk:3.1.4.0'  //个推SDK
+    implementation 'com.getui:gtc:3.1.0.0'  //个推核心组件
 }

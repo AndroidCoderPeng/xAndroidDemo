@@ -3,6 +3,7 @@ package com.example.mutidemo.ui.fragment;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,13 +34,12 @@ public class UnreadFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-
+        swipeViewAdapter = new SwipeViewAdapter(getContext());
+        swipeViewAdapter.setData(data);
     }
 
     @Override
     protected void initEvent() {
-        swipeViewAdapter = new SwipeViewAdapter(getContext());
-        swipeViewAdapter.setData(data);
         QMUIRVItemSwipeAction swipeAction = new QMUIRVItemSwipeAction(true, new QMUIRVItemSwipeAction.Callback() {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
@@ -65,6 +65,7 @@ public class UnreadFragment extends BaseFragment {
                         ViewGroup.LayoutParams.WRAP_CONTENT);
             }
         });
+        swipeRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         swipeRecyclerView.setAdapter(swipeViewAdapter);
     }
 }

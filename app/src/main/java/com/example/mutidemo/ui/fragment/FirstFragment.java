@@ -1,5 +1,8 @@
 package com.example.mutidemo.ui.fragment;
 
+import android.widget.LinearLayout;
+
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -18,7 +21,7 @@ import butterknife.BindView;
 
 public class FirstFragment extends BaseFragment {
 
-    private static final String[] pageTitles = {"未读", "已读"};
+    private static final String[] pageTitles = {"未读消息", "已读消息"};
     @BindView(R.id.topTabLayout)
     TabLayout topTabLayout;
     @BindView(R.id.subViewPager)
@@ -40,6 +43,9 @@ public class FirstFragment extends BaseFragment {
         subViewPager.setAdapter(adapter);
         //绑定
         topTabLayout.setupWithViewPager(subViewPager);
+        LinearLayout linearLayout = (LinearLayout) topTabLayout.getChildAt(0);
+        linearLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+        linearLayout.setDividerDrawable(ContextCompat.getDrawable(getContext(), R.drawable.layout_divider_vertical));
     }
 
     @Override

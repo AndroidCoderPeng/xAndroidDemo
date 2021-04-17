@@ -51,5 +51,19 @@
         <activity android:name=".ui.FacePreViewActivity" />
 
         <activity android:name=".ui.GPSActivity" />
+
+        <meta-data
+            android:name="PUSH_APPID"
+            android:value="${GETUI_APPID}" />
+
+        <service
+            android:name=".service.GeTuiPushService"
+            android:exported="true"
+            android:label="PushService"
+            android:process=":pushservice" />
+
+        <service
+            android:name=".service.GeTuiIntentService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 </manifest>

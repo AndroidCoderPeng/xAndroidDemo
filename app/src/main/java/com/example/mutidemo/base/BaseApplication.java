@@ -3,6 +3,7 @@ package com.example.mutidemo.base;
 import android.app.Application;
 import android.util.Log;
 
+import com.igexin.sdk.IUserLoggerInterface;
 import com.pengxh.app.multilib.widget.EasyToast;
 
 public class BaseApplication extends Application {
@@ -12,7 +13,14 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate: 应用启动");
         EasyToast.init(this);
+        //个推初始化
+        com.igexin.sdk.PushManager.getInstance().initialize(this);
+        com.igexin.sdk.PushManager.getInstance().setDebugLogger(this, new IUserLoggerInterface() {
+            @Override
+            public void log(String s) {
+                Log.d(TAG, s);
+            }
+        });
     }
 }

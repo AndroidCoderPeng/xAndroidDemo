@@ -58,7 +58,8 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
 
     @Override
     public void initData() {
-
+        //个推初始化
+        com.igexin.sdk.PushManager.getInstance().initialize(this);
     }
 
     @Override
