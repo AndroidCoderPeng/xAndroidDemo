@@ -61,12 +61,7 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.12.2'
     //查看大图
     implementation 'com.github.chrisbanes:PhotoView:2.0.0'
-    //通知栏
-    implementation 'com.tapadoo.android:alerter:6.1.0'
-    // https://mvnrepository.com/artifact/com.belerweb/pinyin4j
     implementation group: 'com.belerweb', name: 'pinyin4j', version: '2.5.0'
-    // https://mvnrepository.com/artifact/com.rmtheis/tess-two
-    implementation group: 'com.rmtheis', name: 'tess-two', version: '9.1.0'
     implementation 'com.amap.api:map2d:6.0.0'
     //腾讯Android UI框架
     implementation 'com.qmuiteam:qmui:2.0.0-alpha10'

@@ -3,7 +3,6 @@ package com.example.mutidemo;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.view.View;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -19,6 +18,7 @@ import com.example.mutidemo.ui.MVPActivity;
 import com.example.mutidemo.ui.NavigationActivity;
 import com.example.mutidemo.ui.OcrNumberActivity;
 import com.example.mutidemo.ui.ProcessBarActivity;
+import com.example.mutidemo.ui.RecodeAudioActivity;
 import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
 import com.example.mutidemo.ui.SharedPreferencesActivity;
 import com.example.mutidemo.ui.SlideBarActivity;
@@ -26,7 +26,6 @@ import com.example.mutidemo.ui.WaterRippleActivity;
 import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
-import com.tapadoo.alerter.Alerter;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -47,9 +46,8 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
 
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "仿iOS风格对话框",
-            "MVP架构", "顶/底部导航栏", "ZBar扫一扫", "上拉加载下拉刷新",
-            "酷炫通知", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
-            "自定义进度条", "GPS位置信息", "Camera人脸检测");
+            "MVP架构", "顶/底部导航栏", "ZBar扫一扫", "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画",
+            "联系人侧边滑动控件", "OCR识别银行卡", "自定义进度条", "GPS位置信息", "Camera人脸检测", "录音动画");
 
     @Override
     public int initLayoutView() {
@@ -97,40 +95,35 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                         startActivity(intent);
                         break;
                     case 6:
-                        Alerter.create(MainActivity.this).setTitle("您有新的消息")
-                                .setText("超出安全距离，请注意")
-                                .setBackgroundColorRes(R.color.sky)
-                                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                                .setDuration(5000)
-                                .enableSwipeToDismiss()
-                                .show();
-                        break;
-                    case 7:
                         intent.setClass(mContext, WaterRippleActivity.class);
                         startActivity(intent);
                         break;
-                    case 8:
+                    case 7:
                         intent.setClass(mContext, CheckDeviceActivity.class);
                         startActivity(intent);
                         break;
-                    case 9:
+                    case 8:
                         intent.setClass(mContext, SlideBarActivity.class);
                         startActivity(intent);
                         break;
-                    case 10:
+                    case 9:
                         intent.setClass(mContext, OcrNumberActivity.class);
                         startActivity(intent);
                         break;
-                    case 11:
+                    case 10:
                         intent.setClass(mContext, ProcessBarActivity.class);
                         startActivity(intent);
                         break;
-                    case 12:
+                    case 11:
                         intent.setClass(mContext, GPSActivity.class);
                         startActivity(intent);
                         break;
-                    case 13:
+                    case 12:
                         intent.setClass(mContext, FacePreViewActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 13:
+                        intent.setClass(mContext, RecodeAudioActivity.class);
                         startActivity(intent);
                         break;
                     default:

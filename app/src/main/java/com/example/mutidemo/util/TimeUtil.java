@@ -15,9 +15,17 @@ import java.util.Date;
 public class TimeUtil {
 
     private static final String FORMAT_ONE = "yyyyMMddHHmmss";
+    private static final SimpleDateFormat millsFormat = new SimpleDateFormat("mm:ss");
 
     public static long transformTime() {
         String format = new SimpleDateFormat(FORMAT_ONE).format(new Date());
         return Long.parseLong(format);
+    }
+
+    /**
+     * 时间戳转时间
+     */
+    public static String millsToTime(long millSeconds) {
+        return millsFormat.format(new Date(millSeconds));
     }
 }

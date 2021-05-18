@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -23,6 +24,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/launcher_logo"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/QMUI.Compat.NoActionBar"
         android:usesCleartextTraffic="true"
@@ -49,7 +51,7 @@
         <activity android:name=".ui.OcrNumberActivity" />
         <activity android:name=".ui.ProcessBarActivity" />
         <activity android:name=".ui.FacePreViewActivity" />
-
+        <activity android:name=".ui.RecodeAudioActivity" />
         <activity android:name=".ui.GPSActivity" />
 
         <meta-data
