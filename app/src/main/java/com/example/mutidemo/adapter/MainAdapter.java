@@ -1,13 +1,13 @@
 package com.example.mutidemo.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.R;
 import com.pengxh.app.multilib.utils.ColorUtil;
@@ -18,7 +18,7 @@ import java.util.List;
  * Created by Administrator on 2018/3/10.
  */
 
-public class MainAdapter extends RecyclerView.Adapter {
+public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainRecyclerViewHolder> {
 
     private List<String> mItemList;
     private LayoutInflater inflater;
@@ -42,9 +42,8 @@ public class MainAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
-        MainRecyclerViewHolder itemHolder = (MainRecyclerViewHolder) holder;
-        itemHolder.bindHolder(mItemList.get(position));
+    public void onBindViewHolder(@NonNull MainRecyclerViewHolder holder, int position) {
+        holder.bindHolder(mItemList.get(position));
         if (mOnItemClickListener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -55,7 +54,7 @@ public class MainAdapter extends RecyclerView.Adapter {
         }
     }
 
-    class MainRecyclerViewHolder extends RecyclerView.ViewHolder {
+    static class MainRecyclerViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mMainTextView;
 
@@ -64,7 +63,7 @@ public class MainAdapter extends RecyclerView.Adapter {
             mMainTextView = itemView.findViewById(R.id.mMainTextView);
         }
 
-        public void bindHolder(String title) {
+        void bindHolder(String title) {
             mMainTextView.setText(title);
             mMainTextView.setBackgroundColor(ColorUtil.getRandomColor());
         }

@@ -2,12 +2,13 @@ package com.example.mutidemo.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.bean.WeatherBean;
@@ -20,7 +21,7 @@ import java.util.List;
  * @description: TODO
  * @date: 2020/2/21 23:04
  */
-public class WeatherAdapter extends RecyclerView.Adapter {
+public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder> {
 
     private List<WeatherBean.ResultBeanX.ResultBean.DailyBean> mItemList;
     private LayoutInflater inflater;
@@ -42,35 +43,35 @@ public class WeatherAdapter extends RecyclerView.Adapter {
         return new WeatherViewHolder(inflater.inflate(R.layout.item_weather_recyclerview, parent, false));
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        WeatherViewHolder itemHolder = (WeatherViewHolder) holder;
+    public void onBindViewHolder(@NonNull WeatherViewHolder holder, int position) {
         if (position == 0) {
             WeatherBean.ResultBeanX.ResultBean.DailyBean dailyBean = mItemList.get(position);
             WeatherBean.ResultBeanX.ResultBean.DailyBean.DayBean dayBean = dailyBean.getDay();
             WeatherBean.ResultBeanX.ResultBean.DailyBean.NightBean nightBean = dailyBean.getNight();
-            itemHolder.weatherWeek.setText("今天");
-            itemHolder.weatherLow.setText(nightBean.getTemplow() + "°");
-            itemHolder.weatherHigh.setText(dayBean.getTemphigh() + "°");
+            holder.weatherWeek.setText("今天");
+            holder.weatherLow.setText(nightBean.getTemplow() + "°");
+            holder.weatherHigh.setText(dayBean.getTemphigh() + "°");
         } else if (position == 1) {
             WeatherBean.ResultBeanX.ResultBean.DailyBean dailyBean = mItemList.get(position);
             WeatherBean.ResultBeanX.ResultBean.DailyBean.DayBean dayBean = dailyBean.getDay();
             WeatherBean.ResultBeanX.ResultBean.DailyBean.NightBean nightBean = dailyBean.getNight();
-            itemHolder.weatherWeek.setText("明天");
-            itemHolder.weatherLow.setText(nightBean.getTemplow() + "°");
-            itemHolder.weatherHigh.setText(dayBean.getTemphigh() + "°");
+            holder.weatherWeek.setText("明天");
+            holder.weatherLow.setText(nightBean.getTemplow() + "°");
+            holder.weatherHigh.setText(dayBean.getTemphigh() + "°");
         } else {
             WeatherBean.ResultBeanX.ResultBean.DailyBean dailyBean = mItemList.get(position);
             WeatherBean.ResultBeanX.ResultBean.DailyBean.DayBean dayBean = dailyBean.getDay();
             WeatherBean.ResultBeanX.ResultBean.DailyBean.NightBean nightBean = dailyBean.getNight();
 
-            itemHolder.weatherWeek.setText(dailyBean.getWeek());
-            itemHolder.weatherLow.setText(nightBean.getTemplow() + "°");
-            itemHolder.weatherHigh.setText(dayBean.getTemphigh() + "°");
+            holder.weatherWeek.setText(dailyBean.getWeek());
+            holder.weatherLow.setText(nightBean.getTemplow() + "°");
+            holder.weatherHigh.setText(dayBean.getTemphigh() + "°");
         }
     }
 
-    private static class WeatherViewHolder extends RecyclerView.ViewHolder {
+    static class WeatherViewHolder extends RecyclerView.ViewHolder {
 
         private TextView weatherWeek;
         private TextView weatherLow;

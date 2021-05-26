@@ -93,7 +93,7 @@ public class FileUtils {
         return imageDir.toString();
     }
 
-    public static File getOutputAudioFile() {
+    static File getOutputAudioFile() {
         File audioDir = new File(Environment.getExternalStorageDirectory(), "AudioFile");
         if (!audioDir.exists()) {
             audioDir.mkdir();

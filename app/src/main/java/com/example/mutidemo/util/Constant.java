@@ -1,9 +1,6 @@
 package com.example.mutidemo.util;
 
 public class Constant {
-    public static final String APP_KEY = "5e413d150cafb2802f00000d";
-    public static final String UMENG_MESSAGE_SECRET = "28f5f328182850764fb00a940c7943af";
-
     //retrofit请求baseurl只能是根url，不能带任何参数
     public static final String BASE_WEATHER_URL = "https://way.jd.com/";
 
