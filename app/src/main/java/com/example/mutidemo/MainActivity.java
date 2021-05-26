@@ -3,12 +3,10 @@ package com.example.mutidemo;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.view.View;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.aihook.alertview.library.AlertView;
 import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.ui.BottomDialogActivity;
 import com.example.mutidemo.ui.CheckDeviceActivity;
@@ -22,24 +20,21 @@ import com.example.mutidemo.ui.RecodeAudioActivity;
 import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
 import com.example.mutidemo.ui.SharedPreferencesActivity;
 import com.example.mutidemo.ui.SlideBarActivity;
+import com.example.mutidemo.ui.WaterMarkerActivity;
 import com.example.mutidemo.ui.WaterRippleActivity;
-import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 import cn.bertsir.zbar.Qr.ScanResult;
 import cn.bertsir.zbar.QrConfig;
 import cn.bertsir.zbar.QrManager;
 import cn.bertsir.zbar.view.ScanLineView;
 
-public class MainActivity extends DoubleClickExitActivity implements View.OnClickListener {
+public class MainActivity extends DoubleClickExitActivity {
 
     @BindView(R.id.mMainRecyclerView)
     RecyclerView mMainRecyclerView;
@@ -47,7 +42,8 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "仿iOS风格对话框",
             "MVP架构", "顶/底部导航栏", "ZBar扫一扫", "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画",
-            "联系人侧边滑动控件", "OCR识别银行卡", "自定义进度条", "GPS位置信息", "Camera人脸检测", "录音动画");
+            "联系人侧边滑动控件", "OCR识别银行卡", "自定义进度条", "GPS位置信息", "Camera人脸检测", "录音动画",
+            "图片添加水印");
 
     @Override
     public int initLayoutView() {
@@ -126,6 +122,10 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                         intent.setClass(mContext, RecodeAudioActivity.class);
                         startActivity(intent);
                         break;
+                    case 14:
+                        intent.setClass(mContext, WaterMarkerActivity.class);
+                        startActivity(intent);
+                        break;
                     default:
                         break;
                 }
@@ -161,19 +161,5 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                 runOnUiThread(() -> EasyToast.showToast("扫码结果: " + result.content, EasyToast.SUCCESS));
             }
         });
-    }
-
-    @OnClick(R.id.floatButton)
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.floatButton) {
-            HashMap<String, Integer> displaySize = OtherUtils.getDisplaySize(this);
-            int widthPx = Objects.requireNonNull(displaySize.get("widthPx"));
-            int heightPx = Objects.requireNonNull(displaySize.get("heightPx"));
-            int dpi = Objects.requireNonNull(displaySize.get("dpi"));
-
-            String size = "横向像素: " + widthPx + "Px\n纵向像素: " + heightPx + "Px\n屏幕像素密度: " + dpi + "Dpi";
-            new AlertView("当前手机屏幕参数", size, null, new String[]{"确定"}, null, this, AlertView.Style.Alert, null).setCancelable(false).show();
-        }
     }
 }

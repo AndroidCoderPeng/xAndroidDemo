@@ -53,6 +53,7 @@
         <activity android:name=".ui.FacePreViewActivity" />
         <activity android:name=".ui.RecodeAudioActivity" />
         <activity android:name=".ui.GPSActivity" />
+        <activity android:name=".ui.WaterMarkerActivity" />
 
         <meta-data
             android:name="PUSH_APPID"
@@ -67,5 +68,26 @@
         <service
             android:name=".service.GeTuiIntentService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <!-- 拍照压缩图片用 FileProvider -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.mutidemo.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <provider
+            android:name=".util.WaterImageFileProvider"
+            android:authorities="com.example.mutidemo.water.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 </manifest>

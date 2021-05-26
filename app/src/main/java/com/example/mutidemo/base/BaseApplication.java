@@ -3,6 +3,7 @@ package com.example.mutidemo.base;
 import android.app.Application;
 import android.util.Log;
 
+import com.example.mutidemo.util.FileUtils;
 import com.igexin.sdk.IUserLoggerInterface;
 import com.pengxh.app.multilib.widget.EasyToast;
 
@@ -22,5 +23,6 @@ public class BaseApplication extends Application {
                 Log.d(TAG, s);
             }
         });
+        FileUtils.initFileConfig(this);
     }
 }

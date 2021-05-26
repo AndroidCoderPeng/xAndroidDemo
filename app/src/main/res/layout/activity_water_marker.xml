@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/originalImageView"
+        android:layout_width="180dp"
+        android:layout_height="270dp"
+        android:background="#0D000000" />
+
+    <Button
+        android:id="@+id/selectImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="选择图片" />
+
+    <Button
+        android:id="@+id/addMarkerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="添加水印" />
+
+    <ImageView
+        android:id="@+id/markerImageView"
+        android:layout_width="180dp"
+        android:layout_height="270dp"
+        android:background="#0D000000" />
+</LinearLayout>

@@ -68,4 +68,6 @@ dependencies {
     implementation 'com.qmuiteam:arch:0.3.1'
     implementation 'com.getui:gtsdk:3.1.4.0'  //个推SDK
     implementation 'com.getui:gtc:3.1.0.0'  //个推核心组件
+    //图片选择框架
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.6.0'
 }

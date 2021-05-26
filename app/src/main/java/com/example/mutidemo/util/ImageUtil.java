@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.graphics.drawable.Drawable;
@@ -32,6 +35,7 @@ import com.bumptech.glide.request.target.Target;
 import com.example.mutidemo.ui.PhotoViewActivity;
 import com.pengxh.app.multilib.utils.DensityUtil;
 import com.pengxh.app.multilib.widget.EasyToast;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 
 import org.xml.sax.XMLReader;
 
@@ -152,6 +156,55 @@ public class ImageUtil {
         }
         // 通知图库更新
         context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + "/sdcard/namecard/")));
+    }
+
+    /**
+     * 绘制文字到右下角
+     */
+    public static String drawTextToRightBottom(Context context, Bitmap bitmap, String name, String date, String time) {
+        //初始化画笔
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Color.RED);
+        paint.setDither(true); // 获取跟清晰的图像采样
+        paint.setFilterBitmap(true);// 过滤一些
+        paint.setTextSize(QMUIDisplayHelper.dp2px(context, 20));
+        Rect nameBounds = new Rect();
+        paint.getTextBounds(name, 0, name.length(), nameBounds);
+        Rect dateBounds = new Rect();
+        paint.getTextBounds(date, 0, date.length(), dateBounds);
+        Rect timeBounds = new Rect();
+        paint.getTextBounds(time, 0, time.length(), timeBounds);
+
+        //添加水印
+        android.graphics.Bitmap.Config bitmapConfig = bitmap.getConfig();
+        if (bitmapConfig == null) {
+            bitmapConfig = Bitmap.Config.RGB_565;
+        }
+        bitmap = bitmap.copy(bitmapConfig, true);
+
+        Canvas canvas = new Canvas(bitmap);
+        final int bitmapWidth = bitmap.getWidth();
+        final int bitmapHeight = bitmap.getHeight();
+        final int paddingRight = QMUIDisplayHelper.dp2px(context, 10);
+        //有几行就写几行
+        canvas.drawText(name, bitmapWidth - nameBounds.width() - paddingRight,
+                bitmapHeight - QMUIDisplayHelper.dp2px(context, 55), paint);
+        canvas.drawText(date, bitmapWidth - dateBounds.width() - paddingRight,
+                bitmapHeight - QMUIDisplayHelper.dp2px(context, 30), paint);
+        canvas.drawText(time, bitmapWidth - timeBounds.width() - paddingRight,
+                bitmapHeight - QMUIDisplayHelper.dp2px(context, 10), paint);
+
+        //将带有水印的图片保存
+        File file = FileUtils.getWaterImageFile();
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return file.getAbsolutePath();
     }
 
     /**
