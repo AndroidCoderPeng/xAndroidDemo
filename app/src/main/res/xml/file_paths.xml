@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
+    <external-path
+        name="camera_image"
+        path="DCIM/Camera" />
+
     <!--name是临时分享路径-->
     <files-path
         name="image"
