@@ -31,7 +31,7 @@ public class NewsModelImpl implements INewsModel {
     @Override
     public Subscription sendRetrofitRequest(int page, long timestamp) {
         Observable<ResponseBody> observable = RetrofitServiceManager.getNewsData(Constant.BASE_NEWS_URL, page, timestamp);
-        Subscription subscribe = observable
+        return observable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
@@ -55,6 +55,5 @@ public class NewsModelImpl implements INewsModel {
                         Log.d(TAG, "onCompleted ===============> 数据请求完毕");
                     }
                 });
-        return subscribe;
     }
 }

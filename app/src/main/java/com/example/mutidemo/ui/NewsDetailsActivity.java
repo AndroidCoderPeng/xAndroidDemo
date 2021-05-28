@@ -3,15 +3,13 @@ package com.example.mutidemo.ui;
 import android.os.Build;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
+
 import com.example.mutidemo.R;
 import com.example.mutidemo.util.ImageUtil;
-import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 
-import java.util.HashMap;
-import java.util.Objects;
-
-import androidx.annotation.RequiresApi;
 import butterknife.BindView;
 
 /**
@@ -21,8 +19,6 @@ import butterknife.BindView;
  * @date: 2020/3/5 20:18
  */
 public class NewsDetailsActivity extends BaseNormalActivity {
-
-    private static final String TAG = "NewsDetailsActivity";
 
     @BindView(R.id.newsTitle)
     TextView newsTitle;
@@ -50,9 +46,8 @@ public class NewsDetailsActivity extends BaseNormalActivity {
         newsSrc.setText(src);
         newsTime.setText(time);
 
-        HashMap<String, Integer> displaySize = OtherUtils.getDisplaySize(this);
-        float widthPx = Objects.requireNonNull(displaySize.get("widthPx"));
-        ImageUtil.setTextFromHtml(this, newsContent, content, widthPx, 10);
+        ImageUtil.setTextFromHtml(this, newsContent, content,
+                QMUIDisplayHelper.getScreenWidth(this), 10);
     }
 
     @Override

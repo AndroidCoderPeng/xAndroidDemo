@@ -1,17 +1,19 @@
 package com.example.mutidemo.ui;
 
+import android.annotation.SuppressLint;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.WeatherAdapter;
 import com.example.mutidemo.bean.WeatherBean;
 import com.example.mutidemo.mvp.presenter.WeatherPresenterImpl;
 import com.example.mutidemo.mvp.view.IWeatherView;
-import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
+import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
 public class MVPActivity extends BaseNormalActivity implements IWeatherView {
@@ -32,6 +34,7 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView {
     RecyclerView weatherRecyclerView;
 
     private WeatherPresenterImpl weatherPresenter;
+    private QMUITipDialog loadingDialog;
 
     @Override
     public int initLayoutView() {
@@ -40,25 +43,29 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView {
 
     @Override
     public void initData() {
+        loadingDialog = new QMUITipDialog.Builder(this)
+                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
+                .setTipWord("加载数据中，请稍后...")
+                .create();
         weatherPresenter = new WeatherPresenterImpl(this);
-        weatherPresenter.onReadyRetrofitRequest("北京", 1, 101010100);
     }
 
     @Override
     public void initEvent() {
-
+        weatherPresenter.onReadyRetrofitRequest("北京", 1, 101010100);
     }
 
     @Override
     public void showProgress() {
-        OtherUtils.showProgressDialog(this, "数据加载中...");
+        loadingDialog.show();
     }
 
     @Override
     public void hideProgress() {
-        OtherUtils.hideProgressDialog();
+        loadingDialog.dismiss();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void showNetWorkData(WeatherBean weatherBean) {
         if (weatherBean != null) {

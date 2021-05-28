@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -16,6 +15,7 @@ import com.example.mutidemo.R;
 import com.example.mutidemo.util.FileUtils;
 import com.example.mutidemo.util.GlideLoadEngine;
 import com.example.mutidemo.util.ImageUtil;
+import com.example.mutidemo.util.TimeUtil;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -66,10 +66,11 @@ public class WaterMarkerActivity extends BaseNormalActivity implements View.OnCl
                 break;
             case R.id.addMarkerButton:
                 if (!TextUtils.isEmpty(mediaCompressPath)) {
-                    Log.d("TAG", "mediaCompressPath: " + mediaCompressPath);
                     Bitmap bitmap = BitmapFactory.decodeFile(mediaCompressPath);
-                    String path = ImageUtil.drawTextToRightBottom(this, bitmap, "cgjd01", "20210525", "17:55:55");
-                    Log.d("TAG", "path: " + path);
+                    String path = ImageUtil.drawTextToRightBottom(this, bitmap,
+                            getString(R.string.app_name),
+                            TimeUtil.millsToTime("yyyy-MM-dd"),
+                            TimeUtil.millsToTime("HH:mm:ss"));
                     Glide.with(this).load(path)
                             .apply(new RequestOptions().error(R.drawable.ic_load_error))
                             .into(markerImageView);

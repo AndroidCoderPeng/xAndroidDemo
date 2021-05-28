@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.example.mutidemo.bean.WeatherBean;
 
+import org.jetbrains.annotations.NotNull;
+
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -30,7 +32,7 @@ public class RetrofitServiceManager {
         HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BODY;
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
-            public void log(String message) {
+            public void log(@NotNull String message) {
                 Log.d(TAG, "OkHttp返回值: " + message);
             }
         });

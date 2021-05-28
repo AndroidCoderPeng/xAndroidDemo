@@ -1,11 +1,13 @@
 package com.example.mutidemo.ui;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.mutidemo.R;
@@ -13,23 +15,19 @@ import com.example.mutidemo.adapter.NewsAdapter;
 import com.example.mutidemo.bean.NewsBean;
 import com.example.mutidemo.mvp.presenter.NewsPresenterImpl;
 import com.example.mutidemo.mvp.view.INewsView;
-import com.example.mutidemo.util.OtherUtils;
-import com.example.mutidemo.util.TimeUtil;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
+import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import okhttp3.ResponseBody;
 
@@ -41,8 +39,6 @@ import okhttp3.ResponseBody;
  */
 public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements INewsView {
 
-    private static final String TAG = "RefreshAndLoadMore";
-    private Context mContext = RefreshAndLoadMoreActivity.this;
     @BindView(R.id.newsRecyclerView)
     RecyclerView newsRecyclerView;
     @BindView(R.id.refreshLayout)
@@ -51,7 +47,7 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
     /**
      * 设置一个集合，用来存储网络请求到的数据
      */
-    private List<NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean> datas = new ArrayList<>();
+    private List<NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean> dataBeans = new ArrayList<>();
     /**
      * 自定义刷新和加载的标识，默认为false
      */
@@ -62,6 +58,8 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
     private int defaultPage = 1;
     private NewsAdapter newsAdapter;
     private NewsPresenterImpl newsPresenter;
+    private QMUITipDialog loadingDialog;
+    private static WeakReferenceHandler weakReferenceHandler;
 
     @Override
     public int initLayoutView() {
@@ -70,8 +68,13 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
 
     @Override
     public void initData() {
+        loadingDialog = new QMUITipDialog.Builder(this)
+                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
+                .setTipWord("加载数据中，请稍后...")
+                .create();
+        weakReferenceHandler = new WeakReferenceHandler(this);
         newsPresenter = new NewsPresenterImpl(this);
-        newsPresenter.onReadyRetrofitRequest(defaultPage, TimeUtil.transformTime());
+        newsPresenter.onReadyRetrofitRequest(defaultPage, System.currentTimeMillis());
     }
 
     @Override
@@ -82,7 +85,7 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
                 isRefresh = true;
                 //刷新之后页码重置
                 defaultPage = 1;
-                newsPresenter.onReadyRetrofitRequest(defaultPage, TimeUtil.transformTime());
+                newsPresenter.onReadyRetrofitRequest(defaultPage, System.currentTimeMillis());
             }
         });
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -90,38 +93,41 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
             public void onLoadMore(@NonNull final RefreshLayout refreshLayout) {
                 isLoadMore = true;
                 defaultPage++;
-                newsPresenter.onReadyRetrofitRequest(defaultPage, TimeUtil.transformTime());
+                newsPresenter.onReadyRetrofitRequest(defaultPage, System.currentTimeMillis());
             }
         });
     }
 
-    /**
-     * 使用handler请求网络数据并在handleMessage里面处理返回操作
-     */
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
+    private static class WeakReferenceHandler extends Handler {
+        private WeakReference<RefreshAndLoadMoreActivity> reference;
+
+        private WeakReferenceHandler(RefreshAndLoadMoreActivity activity) {
+            reference = new WeakReference<>(activity);
+        }
+
         @Override
         public void handleMessage(Message msg) {
+            RefreshAndLoadMoreActivity activity = reference.get();
             switch (msg.what) {
                 case 10000:
-                    if (isRefresh || isLoadMore) {
-                        newsAdapter.notifyDataSetChanged();
+                    if (activity.isRefresh || activity.isLoadMore) {
+                        activity.newsAdapter.notifyDataSetChanged();
                     } else {
                         //首次加载数据
-                        newsAdapter = new NewsAdapter(mContext, datas);
-                        newsRecyclerView.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
-                        newsRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-                        newsRecyclerView.setAdapter(newsAdapter);
-                        newsAdapter.setOnNewsItemClickListener(new NewsAdapter.OnNewsItemClickListener() {
+                        activity.newsAdapter = new NewsAdapter(activity, activity.dataBeans);
+                        activity.newsRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
+                        activity.newsRecyclerView.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
+                        activity.newsRecyclerView.setAdapter(activity.newsAdapter);
+                        activity.newsAdapter.setOnNewsItemClickListener(new NewsAdapter.OnNewsItemClickListener() {
                             @Override
                             public void onClick(int position) {
-                                NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean bean = datas.get(position);
-                                Intent intent = new Intent(mContext, NewsDetailsActivity.class);
+                                NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean bean = activity.dataBeans.get(position);
+                                Intent intent = new Intent(activity, NewsDetailsActivity.class);
                                 intent.putExtra("title", bean.getTitle());
                                 intent.putExtra("src", bean.getSource());
                                 intent.putExtra("time", bean.getPubDate());
                                 intent.putExtra("content", bean.getHtml());
-                                startActivity(intent);
+                                activity.startActivity(intent);
                             }
                         });
                     }
@@ -136,20 +142,16 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
                     break;
             }
         }
-    };
-
-    private boolean isFirstLoading = true;
+    }
 
     @Override
     public void showProgress() {
-        if (isFirstLoading) {
-            OtherUtils.showProgressDialog(this, "数据加载中...");
-        }
+        loadingDialog.show();
     }
 
     @Override
     public void hideProgress() {
-        OtherUtils.hideProgressDialog();
+        loadingDialog.dismiss();
     }
 
     @Override
@@ -160,23 +162,18 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
                 NewsBean newsBean = JSONObject.parseObject(json, NewsBean.class);
                 List<NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean> listBeans = newsBean.getShowapi_res_body().getPagebean().getContentlist();
                 if (isRefresh) {
-                    datas.clear();//下拉刷新必须先清空之前的List，不然会出现数据重复的问题
-                    for (int i = 0; i < listBeans.size(); i++) {
-                        datas.add(0, listBeans.get(i));
-                    }
+                    dataBeans.clear();//下拉刷新必须先清空之前的List，不然会出现数据重复的问题
+                    dataBeans = listBeans;
                     refreshLayout.finishRefresh();
                     isRefresh = false;
                 } else if (isLoadMore) {
-                    datas.addAll(listBeans);
+                    dataBeans.addAll(listBeans);
                     refreshLayout.finishLoadMore();
                     isLoadMore = false;
                 } else {
-                    Log.d(TAG, "onSuccess: 首次加载数据");
-                    datas = newsBean.getShowapi_res_body().getPagebean().getContentlist();
+                    dataBeans = newsBean.getShowapi_res_body().getPagebean().getContentlist();
                 }
-                isFirstLoading = false;
-                //更新RecyclerView
-                handler.sendEmptyMessage(10000);
+                weakReferenceHandler.sendEmptyMessage(10000);
             } catch (IOException e) {
                 e.printStackTrace();
             }
