@@ -28,7 +28,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_centerVertical="true"
-                android:background="@mipmap/logo"
+                android:background="@mipmap/launcher_logo"
                 app:border_color="#FFF"
                 app:border_width="1dp" />
 

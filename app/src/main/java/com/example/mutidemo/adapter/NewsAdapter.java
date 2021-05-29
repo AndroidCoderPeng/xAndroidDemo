@@ -26,11 +26,11 @@ import java.util.List;
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsRecyclerViewHolder> {
 
     private Context context;
-    private List<NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean> mItemList;
+    private List<NewsBean.ResultBeanX.ResultBean.ListBean> mItemList;
     private LayoutInflater inflater;
     private OnNewsItemClickListener mOnItemClickListener;
 
-    public NewsAdapter(Context mContext, List<NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean> list) {
+    public NewsAdapter(Context mContext, List<NewsBean.ResultBeanX.ResultBean.ListBean> list) {
         this.context = mContext;
         this.mItemList = list;
         inflater = LayoutInflater.from(mContext);
@@ -75,17 +75,16 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsRecyclerVi
             newsTime = itemView.findViewById(R.id.newsTime);
         }
 
-        void bindHolder(NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean listBean) {
-            String img = listBean.getImg();
+        void bindHolder(NewsBean.ResultBeanX.ResultBean.ListBean listBean) {
+            String img = listBean.getPic();
             if (img == null || img.equals("") || img.endsWith(".gif")) {
-                //gif图片太小，不显示
                 newsPicture.setVisibility(View.GONE);
             } else {
                 Glide.with(context).load(img).apply(RequestOptions.placeholderOf(R.mipmap.noimage)).into(newsPicture);
             }
             newsTitle.setText(listBean.getTitle());
-            newsSrc.setText(listBean.getSource());
-            newsTime.setText(listBean.getPubDate());
+            newsSrc.setText(listBean.getSrc());
+            newsTime.setText(listBean.getTime());
         }
     }
 

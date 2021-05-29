@@ -1,6 +1,6 @@
 package com.example.mutidemo.mvp.view;
 
-import okhttp3.ResponseBody;
+import com.example.mutidemo.bean.NewsBean;
 
 public interface INewsView {
 
@@ -11,5 +11,5 @@ public interface INewsView {
     /**
      * 显示从后台服务器获取到的数据
      */
-    void showNetWorkData(ResponseBody response);
+    void showNetWorkData(NewsBean response);
 }

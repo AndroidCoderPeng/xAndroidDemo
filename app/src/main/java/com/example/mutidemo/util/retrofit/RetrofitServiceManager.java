@@ -1,13 +1,14 @@
-package com.example.mutidemo.mvp.retrofit;
+package com.example.mutidemo.util.retrofit;
 
 import android.util.Log;
 
+import com.example.mutidemo.bean.NewsBean;
 import com.example.mutidemo.bean.WeatherBean;
+import com.example.mutidemo.util.Constant;
 
 import org.jetbrains.annotations.NotNull;
 
 import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -18,16 +19,16 @@ public class RetrofitServiceManager {
 
     private static final String TAG = "RetrofitServiceManager";
 
-    private static Retrofit createRetrofit(String baseUrl) {
+    private static Retrofit createRetrofit() {
         return new Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(Constant.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())//Gson转换器
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .client(getOkHttpClient())//log拦截器
+                .client(createHttpClient())//log拦截器
                 .build();
     }
 
-    private static OkHttpClient getOkHttpClient() {
+    private static OkHttpClient createHttpClient() {
         //日志显示级别
         HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BODY;
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
@@ -42,15 +43,15 @@ public class RetrofitServiceManager {
         return builder.build();
     }
 
-    public static Observable<WeatherBean> getWeatherData(String baseUrl, String city, int cityId, int cityCode) {
-        Retrofit retrofit = createRetrofit(baseUrl);
+    public static Observable<WeatherBean> obtainWeatherData(String city, int cityId, int cityCode) {
+        Retrofit retrofit = createRetrofit();
         RetrofitService service = retrofit.create(RetrofitService.class);
-        return service.getData(city, cityId, cityCode);
+        return service.getWeather(Constant.APP_KEY, city, cityId, cityCode);
     }
 
-    public static Observable<ResponseBody> getNewsData(String baseUrl, int page, long timestamp) {
-        Retrofit retrofit = createRetrofit(baseUrl);
+    public static Observable<NewsBean> obtainNewsData(String channel, int start) {
+        Retrofit retrofit = createRetrofit();
         RetrofitService service = retrofit.create(RetrofitService.class);
-        return service.getData(page, timestamp);
+        return service.getNews(Constant.APP_KEY, channel, 15, start);
     }
 }

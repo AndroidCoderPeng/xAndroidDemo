@@ -2,10 +2,9 @@ package com.example.mutidemo.mvp.model;
 
 import android.util.Log;
 
-import com.example.mutidemo.mvp.retrofit.RetrofitServiceManager;
-import com.example.mutidemo.util.Constant;
+import com.example.mutidemo.bean.NewsBean;
+import com.example.mutidemo.util.retrofit.RetrofitServiceManager;
 
-import okhttp3.ResponseBody;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
@@ -23,28 +22,27 @@ public class NewsModelImpl implements INewsModel {
     }
 
     public interface OnNewsListener {
-        void onSuccess(ResponseBody response);
+        void onSuccess(NewsBean response);
 
         void onFailure(Throwable throwable);
     }
 
     @Override
-    public Subscription sendRetrofitRequest(int page, long timestamp) {
-        Observable<ResponseBody> observable = RetrofitServiceManager.getNewsData(Constant.BASE_NEWS_URL, page, timestamp);
+    public Subscription sendRetrofitRequest(String channel, int start) {
+        Observable<NewsBean> observable = RetrofitServiceManager.obtainNewsData(channel, start);
         return observable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ResponseBody>() {
+                .subscribe(new Observer<NewsBean>() {
                     @Override
                     public void onError(Throwable e) {
                         if (newsListener != null) {
                             newsListener.onFailure(e);
-                            Log.e(TAG, "onError: ", e);
                         }
                     }
 
                     @Override
-                    public void onNext(ResponseBody response) {
+                    public void onNext(NewsBean response) {
                         if (newsListener != null) {
                             newsListener.onSuccess(response);
                         }

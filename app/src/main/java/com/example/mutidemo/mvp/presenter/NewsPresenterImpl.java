@@ -1,10 +1,9 @@
 package com.example.mutidemo.mvp.presenter;
 
+import com.example.mutidemo.bean.NewsBean;
 import com.example.mutidemo.mvp.BasePresenter;
 import com.example.mutidemo.mvp.model.NewsModelImpl;
 import com.example.mutidemo.mvp.view.INewsView;
-
-import okhttp3.ResponseBody;
 
 public class NewsPresenterImpl extends BasePresenter implements INewsPresenter, NewsModelImpl.OnNewsListener {
 
@@ -20,9 +19,9 @@ public class NewsPresenterImpl extends BasePresenter implements INewsPresenter, 
      * 唤醒订阅
      */
     @Override
-    public void onReadyRetrofitRequest(int page, long timestamp) {
+    public void onReadyRetrofitRequest(String channel, int start) {
         iNewsView.showProgress();
-        addSubscription(newsModel.sendRetrofitRequest(page, timestamp));
+        addSubscription(newsModel.sendRetrofitRequest(channel, start));
     }
 
     /**
@@ -34,7 +33,7 @@ public class NewsPresenterImpl extends BasePresenter implements INewsPresenter, 
     }
 
     @Override
-    public void onSuccess(ResponseBody response) {
+    public void onSuccess(NewsBean response) {
         iNewsView.hideProgress();
         /**
          * 将返回的数据传递给View并显示在Activity/Fragment上面

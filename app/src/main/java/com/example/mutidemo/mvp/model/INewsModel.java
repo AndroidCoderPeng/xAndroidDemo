@@ -9,5 +9,5 @@ import rx.Subscription;
  * @date: 2020/3/30 15:11
  */
 public interface INewsModel {
-    Subscription sendRetrofitRequest(int page, long timestamp);
+    Subscription sendRetrofitRequest(String channel, int start);
 }

@@ -9,27 +9,23 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.alibaba.fastjson.JSONObject;
 import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.NewsAdapter;
 import com.example.mutidemo.bean.NewsBean;
 import com.example.mutidemo.mvp.presenter.NewsPresenterImpl;
 import com.example.mutidemo.mvp.view.INewsView;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
-import com.pengxh.app.multilib.widget.EasyToast;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import okhttp3.ResponseBody;
 
 /**
  * @author: Pengxh
@@ -47,7 +43,7 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
     /**
      * 设置一个集合，用来存储网络请求到的数据
      */
-    private List<NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean> dataBeans = new ArrayList<>();
+    private List<NewsBean.ResultBeanX.ResultBean.ListBean> dataBeans = new ArrayList<>();
     /**
      * 自定义刷新和加载的标识，默认为false
      */
@@ -55,7 +51,7 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
     /**
      * 起始页
      */
-    private int defaultPage = 1;
+    private int defaultPage = 0;
     private NewsAdapter newsAdapter;
     private NewsPresenterImpl newsPresenter;
     private QMUITipDialog loadingDialog;
@@ -74,7 +70,7 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
                 .create();
         weakReferenceHandler = new WeakReferenceHandler(this);
         newsPresenter = new NewsPresenterImpl(this);
-        newsPresenter.onReadyRetrofitRequest(defaultPage, System.currentTimeMillis());
+        newsPresenter.onReadyRetrofitRequest("头条", defaultPage);
     }
 
     @Override
@@ -84,8 +80,8 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
             public void onRefresh(@NonNull final RefreshLayout refreshLayout) {
                 isRefresh = true;
                 //刷新之后页码重置
-                defaultPage = 1;
-                newsPresenter.onReadyRetrofitRequest(defaultPage, System.currentTimeMillis());
+                defaultPage = 0;
+                newsPresenter.onReadyRetrofitRequest("头条", defaultPage);
             }
         });
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -93,7 +89,7 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
             public void onLoadMore(@NonNull final RefreshLayout refreshLayout) {
                 isLoadMore = true;
                 defaultPage++;
-                newsPresenter.onReadyRetrofitRequest(defaultPage, System.currentTimeMillis());
+                newsPresenter.onReadyRetrofitRequest("头条", defaultPage);
             }
         });
     }
@@ -108,38 +104,28 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
         @Override
         public void handleMessage(Message msg) {
             RefreshAndLoadMoreActivity activity = reference.get();
-            switch (msg.what) {
-                case 10000:
-                    if (activity.isRefresh || activity.isLoadMore) {
-                        activity.newsAdapter.notifyDataSetChanged();
-                    } else {
-                        //首次加载数据
-                        activity.newsAdapter = new NewsAdapter(activity, activity.dataBeans);
-                        activity.newsRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
-                        activity.newsRecyclerView.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
-                        activity.newsRecyclerView.setAdapter(activity.newsAdapter);
-                        activity.newsAdapter.setOnNewsItemClickListener(new NewsAdapter.OnNewsItemClickListener() {
-                            @Override
-                            public void onClick(int position) {
-                                NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean bean = activity.dataBeans.get(position);
-                                Intent intent = new Intent(activity, NewsDetailsActivity.class);
-                                intent.putExtra("title", bean.getTitle());
-                                intent.putExtra("src", bean.getSource());
-                                intent.putExtra("time", bean.getPubDate());
-                                intent.putExtra("content", bean.getHtml());
-                                activity.startActivity(intent);
-                            }
-                        });
-                    }
-                    break;
-                case 10001:
-                    EasyToast.showToast("获取数据失败", EasyToast.ERROR);
-                    break;
-                case 10002:
-                    EasyToast.showToast("刷新数据失败", EasyToast.ERROR);
-                    break;
-                default:
-                    break;
+            if (msg.what == 10000) {
+                if (activity.isRefresh || activity.isLoadMore) {
+                    activity.newsAdapter.notifyDataSetChanged();
+                } else {
+                    //首次加载数据
+                    activity.newsAdapter = new NewsAdapter(activity, activity.dataBeans);
+                    activity.newsRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
+                    activity.newsRecyclerView.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
+                    activity.newsRecyclerView.setAdapter(activity.newsAdapter);
+                    activity.newsAdapter.setOnNewsItemClickListener(new NewsAdapter.OnNewsItemClickListener() {
+                        @Override
+                        public void onClick(int position) {
+                            NewsBean.ResultBeanX.ResultBean.ListBean bean = activity.dataBeans.get(position);
+                            Intent intent = new Intent(activity, NewsDetailsActivity.class);
+                            intent.putExtra("title", bean.getTitle());
+                            intent.putExtra("src", bean.getSrc());
+                            intent.putExtra("time", bean.getTime());
+                            intent.putExtra("content", bean.getContent());
+                            activity.startActivity(intent);
+                        }
+                    });
+                }
             }
         }
     }
@@ -155,28 +141,22 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
     }
 
     @Override
-    public void showNetWorkData(ResponseBody response) {
-        if (response != null) {
-            try {
-                String json = response.string();
-                NewsBean newsBean = JSONObject.parseObject(json, NewsBean.class);
-                List<NewsBean.ShowapiResBodyBean.PagebeanBean.ContentlistBean> listBeans = newsBean.getShowapi_res_body().getPagebean().getContentlist();
-                if (isRefresh) {
-                    dataBeans.clear();//下拉刷新必须先清空之前的List，不然会出现数据重复的问题
-                    dataBeans = listBeans;
-                    refreshLayout.finishRefresh();
-                    isRefresh = false;
-                } else if (isLoadMore) {
-                    dataBeans.addAll(listBeans);
-                    refreshLayout.finishLoadMore();
-                    isLoadMore = false;
-                } else {
-                    dataBeans = newsBean.getShowapi_res_body().getPagebean().getContentlist();
-                }
-                weakReferenceHandler.sendEmptyMessage(10000);
-            } catch (IOException e) {
-                e.printStackTrace();
+    public void showNetWorkData(NewsBean response) {
+        if (response.getCode().equals("10000")) {
+            List<NewsBean.ResultBeanX.ResultBean.ListBean> listBeans = response.getResult().getResult().getList();
+            if (isRefresh) {
+                dataBeans.clear();//下拉刷新必须先清空之前的List，不然会出现数据重复的问题
+                dataBeans = listBeans;
+                refreshLayout.finishRefresh();
+                isRefresh = false;
+            } else if (isLoadMore) {
+                dataBeans.addAll(listBeans);
+                refreshLayout.finishLoadMore();
+                isLoadMore = false;
+            } else {
+                dataBeans = listBeans;
             }
+            weakReferenceHandler.sendEmptyMessage(10000);
         }
     }
 
