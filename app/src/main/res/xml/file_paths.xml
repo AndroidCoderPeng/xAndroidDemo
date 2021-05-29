@@ -10,6 +10,10 @@
         path="Demo/CompressImageFile" /><!--文件真实路径-->
 
     <files-path
+        name="video"
+        path="Demo/CompressVideoFile" /><!--文件真实路径-->
+
+    <files-path
         name="waterImage"
         path="Demo/WaterImageFile" /><!--文件真实路径-->
 </paths>

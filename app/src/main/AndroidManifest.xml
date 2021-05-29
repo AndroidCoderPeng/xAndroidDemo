@@ -54,6 +54,7 @@
         <activity android:name=".ui.RecodeAudioActivity" />
         <activity android:name=".ui.GPSActivity" />
         <activity android:name=".ui.WaterMarkerActivity" />
+        <activity android:name=".ui.VideoCompressActivity" />
 
         <meta-data
             android:name="PUSH_APPID"

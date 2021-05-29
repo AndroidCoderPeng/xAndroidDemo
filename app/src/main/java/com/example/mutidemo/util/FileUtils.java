@@ -16,6 +16,7 @@ public class FileUtils {
     @SuppressLint("StaticFieldLeak")
     private static Context context;
     private static File imageDir;
+    private static File videoDir;
     private static File waterImageDir;
 
     public static void initFileConfig(Context context) {
@@ -32,6 +33,13 @@ public class FileUtils {
             boolean mkImageDir = imageDir.mkdir();
             if (mkImageDir) {
                 Log.d(TAG, "initFileConfig: 创建CompressImageFile文件夹");
+            }
+        }
+        videoDir = new File(parentDir, "CompressVideoFile");
+        if (!videoDir.exists()) {
+            boolean mkVideoDir = videoDir.mkdir();
+            if (mkVideoDir) {
+                Log.d(TAG, "initFileConfig: 创建CompressVideoFile文件夹");
             }
         }
         waterImageDir = new File(parentDir, "WaterImageFile");
@@ -91,6 +99,35 @@ public class FileUtils {
             }
         }
         return imageDir.toString();
+    }
+
+    public static String getOutputVideoFile() {
+        if (videoDir == null) {
+            File parentDir = new File(context.getFilesDir().getAbsolutePath(), "Demo");
+            if (!parentDir.exists()) {
+                boolean mkdir = parentDir.mkdir();
+                if (mkdir) {
+                    Log.d(TAG, "getOutputVideoFile: 创建Demo文件夹");
+                }
+            }
+            videoDir = new File(parentDir, "CompressVideoFile");
+            if (!videoDir.exists()) {
+                boolean mkVideoDir = videoDir.mkdir();
+                if (mkVideoDir) {
+                    Log.d(TAG, "getOutputVideoFile: 创建CompressVideoFile文件夹");
+                }
+            }
+        }
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(new Date());
+        File videoFile = new File(videoDir + File.separator + "VID_" + timeStamp + ".mp4");
+        if (!videoFile.exists()) {
+            try {
+                videoFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return videoFile.getPath();
     }
 
     static File getOutputAudioFile() {
