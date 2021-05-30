@@ -54,7 +54,10 @@
         <activity android:name=".ui.RecodeAudioActivity" />
         <activity android:name=".ui.GPSActivity" />
         <activity android:name=".ui.WaterMarkerActivity" />
-        <activity android:name=".ui.VideoCompressActivity" />
+        <activity
+            android:name=".ui.VideoCompressActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="fullSensor" />
 
         <meta-data
             android:name="PUSH_APPID"

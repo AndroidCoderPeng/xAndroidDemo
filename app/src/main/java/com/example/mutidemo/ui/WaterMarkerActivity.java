@@ -57,6 +57,7 @@ public class WaterMarkerActivity extends BaseNormalActivity implements View.OnCl
             case R.id.selectImageButton:
                 PictureSelector.create(this)
                         .openGallery(PictureMimeType.ofImage())
+                        .isWeChatStyle(true)
                         .imageEngine(GlideLoadEngine.createGlideEngine())
                         .maxSelectNum(2)
                         .isCompress(true)
