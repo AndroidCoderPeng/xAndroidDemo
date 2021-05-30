@@ -14,6 +14,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.mutidemo.R;
 import com.example.mutidemo.util.FileUtils;
 import com.example.mutidemo.util.GlideLoadEngine;
+import com.example.mutidemo.util.JZMediaExo;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -61,7 +62,7 @@ public class VideoCompressActivity extends BaseNormalActivity implements View.On
 
     @Override
     public void initEvent() {
-
+        testMediaInterface();
     }
 
     @OnClick({R.id.selectVideoButton, R.id.compressVideoButton})
@@ -104,7 +105,7 @@ public class VideoCompressActivity extends BaseNormalActivity implements View.On
                         public void onFinish(boolean result) {
                             //convert finish,result(true is success,false is fail)
                             if (result) {
-                                compressedVideoView.setUp(outputVideoFile, "");
+                                compressedVideoView.setUp(outputVideoFile, "", JzvdStd.SCREEN_NORMAL, JZMediaExo.class);
                                 Glide.with(VideoCompressActivity.this)
                                         .setDefaultRequestOptions(new RequestOptions().frame(4000000))
                                         .load(outputVideoFile)
@@ -119,6 +120,16 @@ public class VideoCompressActivity extends BaseNormalActivity implements View.On
                 }
                 break;
         }
+    }
+
+    private void testMediaInterface() {
+        String url = "http://111.198.10.15:11409/static/2021-05/b9d0e7bf520f4f50a0dedb76bf4b70aa.mp4";
+//        compressedVideoView.setUp(url, "", JzvdStd.SCREEN_NORMAL);
+        compressedVideoView.setUp(url, "", JzvdStd.SCREEN_NORMAL, JZMediaExo.class);
+        Glide.with(VideoCompressActivity.this)
+                .setDefaultRequestOptions(new RequestOptions().frame(4000000))
+                .load(url)
+                .into(compressedVideoView.posterImageView);
     }
 
     @Override
