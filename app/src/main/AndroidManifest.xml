@@ -22,7 +22,6 @@
     <application
         android:name=".base.BaseApplication"
         android:allowBackup="true"
-        android:hardwareAccelerated="true"
         android:icon="@mipmap/launcher_logo"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
@@ -45,7 +44,6 @@
         <activity android:name=".ui.NavigationActivity" />
         <activity android:name=".ui.RefreshAndLoadMoreActivity" />
         <activity android:name=".ui.NewsDetailsActivity" />
-        <activity android:name=".ui.PhotoViewActivity" />
         <activity android:name=".ui.WaterRippleActivity" />
         <activity android:name=".ui.CheckDeviceActivity" />
         <activity android:name=".ui.SlideBarActivity" />
@@ -55,6 +53,9 @@
         <activity android:name=".ui.RecodeAudioActivity" />
         <activity android:name=".ui.GPSActivity" />
         <activity android:name=".ui.WaterMarkerActivity" />
+        <activity
+            android:name=".ui.BigImageViewActivity"
+            android:theme="@style/Theme.BigImageViewActivity" />
         <activity
             android:name=".ui.VideoCompressActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"

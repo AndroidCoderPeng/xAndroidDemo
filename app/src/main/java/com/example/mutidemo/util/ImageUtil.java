@@ -13,9 +13,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
@@ -24,7 +21,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -32,9 +28,11 @@ import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
-import com.example.mutidemo.ui.PhotoViewActivity;
+import com.example.mutidemo.base.BaseApplication;
+import com.example.mutidemo.ui.BigImageViewActivity;
+import com.example.mutidemo.util.callback.ICompressListener;
+import com.example.mutidemo.util.callback.IWaterMarkAddListener;
 import com.pengxh.app.multilib.utils.DensityUtil;
-import com.pengxh.app.multilib.widget.EasyToast;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 
 import org.xml.sax.XMLReader;
@@ -42,15 +40,31 @@ import org.xml.sax.XMLReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+
+import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import top.zibin.luban.CompressionPredicate;
+import top.zibin.luban.Luban;
+import top.zibin.luban.OnCompressListener;
 
 public class ImageUtil {
 
     private static final String TAG = "ImageUtil";
+
+    public static void showBigImage(Context context, int index, ArrayList<String> imageList) {
+        Intent intent = new Intent(context, BigImageViewActivity.class);
+        intent.putExtra("index", index);
+        intent.putStringArrayListExtra("images", imageList);
+        context.startActivity(intent);
+    }
 
     public static Bitmap nv21ToBitmap(byte[] nv21, int width, int height) {
         Bitmap bitmap = null;
@@ -126,85 +140,113 @@ public class ImageUtil {
     }
 
     /**
-     * 保存bitmap到本地
-     *
-     * @param bitmap Bitmap
+     * 绘制文字到右下角
      */
-    public static void saveBitmap(Context context, Bitmap bitmap) {
-        // 首先保存图片
-        File appDir = new File(Environment.getExternalStorageDirectory(), "ImageFile");
-        if (!appDir.exists()) {
-            appDir.mkdir();
-        }
-        String fileName = System.currentTimeMillis() + ".png";
-        File file = new File(appDir, fileName);
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-            fos.close();
-            EasyToast.showToast("保存成功", EasyToast.SUCCESS);
-        } catch (Exception e) {
-            e.printStackTrace();
-            EasyToast.showToast("保存失败", EasyToast.ERROR);
-        }
-        // 把文件插入到系统图库
-        try {
-            MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(), fileName, null);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        // 通知图库更新
-        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + "/sdcard/namecard/")));
+    public static void drawTextToRightBottom(Context context, final Bitmap bitmap, String name,
+                                             String date, String time, IWaterMarkAddListener markAddListener) {
+        Observable<File> fileObservable = Observable.create(new Observable.OnSubscribe<File>() {
+            @Override
+            public void call(Subscriber<? super File> subscriber) {
+                //初始化画笔
+                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                paint.setColor(Color.RED);
+                paint.setDither(true); // 获取跟清晰的图像采样
+                paint.setFilterBitmap(true);// 过滤一些
+                paint.setTextSize(QMUIDisplayHelper.sp2px(context, 50));
+                Rect nameBounds = new Rect();
+                paint.getTextBounds(name, 0, name.length(), nameBounds);
+                Rect dateBounds = new Rect();
+                paint.getTextBounds(date, 0, date.length(), dateBounds);
+                Rect timeBounds = new Rect();
+                paint.getTextBounds(time, 0, time.length(), timeBounds);
+
+                //添加水印
+                android.graphics.Bitmap.Config bitmapConfig = bitmap.getConfig();
+                if (bitmapConfig == null) {
+                    bitmapConfig = Bitmap.Config.RGB_565;
+                }
+                Bitmap copyBitmap = bitmap.copy(bitmapConfig, true);
+
+                Canvas canvas = new Canvas(copyBitmap);
+                final int bitmapWidth = copyBitmap.getWidth();
+                final int bitmapHeight = copyBitmap.getHeight();
+                final int padding = QMUIDisplayHelper.dp2px(context, 20);//两行水印间的间距
+                final int paddingRight = QMUIDisplayHelper.dp2px(context, 20);
+                final int paddingBottom = QMUIDisplayHelper.dp2px(context, 20);
+                //有几行就写几行
+                canvas.drawText(name, bitmapWidth - nameBounds.width() - paddingRight,
+                        bitmapHeight - (dateBounds.height() + timeBounds.height() + 2 * padding + paddingBottom), paint);
+                canvas.drawText(date, bitmapWidth - dateBounds.width() - paddingRight,
+                        bitmapHeight - (timeBounds.height() + padding + paddingBottom), paint);
+                canvas.drawText(time, bitmapWidth - timeBounds.width() - paddingRight,
+                        bitmapHeight - paddingBottom, paint);
+
+                //将带有水印的图片保存
+                File file = FileUtils.getWaterImageFile();
+                try {
+                    FileOutputStream fos = new FileOutputStream(file);
+                    copyBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                    fos.flush();
+                    fos.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                subscriber.onNext(file);
+            }
+        });
+        fileObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<File>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(File file) {
+                markAddListener.onSuccess(file);
+            }
+        });
     }
 
     /**
-     * 绘制文字到右下角
+     * 压缩图片
      */
-    public static String drawTextToRightBottom(Context context, Bitmap bitmap, String name, String date, String time) {
-        //初始化画笔
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.RED);
-        paint.setDither(true); // 获取跟清晰的图像采样
-        paint.setFilterBitmap(true);// 过滤一些
-        paint.setTextSize(QMUIDisplayHelper.dp2px(context, 20));
-        Rect nameBounds = new Rect();
-        paint.getTextBounds(name, 0, name.length(), nameBounds);
-        Rect dateBounds = new Rect();
-        paint.getTextBounds(date, 0, date.length(), dateBounds);
-        Rect timeBounds = new Rect();
-        paint.getTextBounds(time, 0, time.length(), timeBounds);
+    public static void compressImage(String imagePath, String targetDir, ICompressListener listener) {
+        Luban.with(BaseApplication.getInstance())
+                .load(imagePath)
+                .ignoreBy(100)
+                .setTargetDir(targetDir)
+                .filter(new CompressionPredicate() {
+                    @Override
+                    public boolean apply(String path) {
+                        return !(TextUtils.isEmpty(path) || path.toLowerCase().endsWith(".gif"));
+                    }
+                })
+                .setCompressListener(new OnCompressListener() {
 
-        //添加水印
-        android.graphics.Bitmap.Config bitmapConfig = bitmap.getConfig();
-        if (bitmapConfig == null) {
-            bitmapConfig = Bitmap.Config.RGB_565;
-        }
-        bitmap = bitmap.copy(bitmapConfig, true);
+                    @Override
+                    public void onStart() {
 
-        Canvas canvas = new Canvas(bitmap);
-        final int bitmapWidth = bitmap.getWidth();
-        final int bitmapHeight = bitmap.getHeight();
-        final int paddingRight = QMUIDisplayHelper.dp2px(context, 10);
-        //有几行就写几行
-        canvas.drawText(name, bitmapWidth - nameBounds.width() - paddingRight,
-                bitmapHeight - QMUIDisplayHelper.dp2px(context, 55), paint);
-        canvas.drawText(date, bitmapWidth - dateBounds.width() - paddingRight,
-                bitmapHeight - QMUIDisplayHelper.dp2px(context, 30), paint);
-        canvas.drawText(time, bitmapWidth - timeBounds.width() - paddingRight,
-                bitmapHeight - QMUIDisplayHelper.dp2px(context, 10), paint);
+                    }
 
-        //将带有水印的图片保存
-        File file = FileUtils.getWaterImageFile();
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            fos.flush();
-            fos.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return file.getAbsolutePath();
+                    @Override
+                    public void onSuccess(File file) {
+                        if (file != null) {
+                            listener.onSuccess(file);
+                        } else {
+                            listener.onSuccess(null);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        listener.onError(e);
+                    }
+                }).launch();
     }
 
     /**
@@ -290,10 +332,9 @@ public class ImageUtil {
             @Override
             public void onClick(@NonNull View widget) {
                 //查看大图
-                Log.d(TAG, "图片地址：" + imageURL);
-                Intent intent = new Intent(mActivity, PhotoViewActivity.class);
-                intent.putExtra("imageURL", imageURL);
-                mActivity.startActivity(intent);
+                ArrayList<String> urls = new ArrayList<>();
+                urls.add(imageURL);
+                showBigImage(mActivity, 0, urls);
             }
         }
     }

@@ -49,7 +49,7 @@ public class RecodeAudioActivity extends BaseNormalActivity implements View.OnTo
             @Override
             public void onUpdate(double db, long time) {
                 recodeImageView.getDrawable().setLevel((int) (3000 + 6000 * db / 100));
-                recodeTextView.setText(TimeUtil.millsToTime("mm:ss"));
+                recodeTextView.setText(TimeUtil.timestampToTime(time));
             }
 
             @Override

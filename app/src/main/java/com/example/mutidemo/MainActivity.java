@@ -44,7 +44,7 @@ public class MainActivity extends DoubleClickExitActivity {
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "仿iOS风格对话框",
             "MVP架构", "顶/底部导航栏", "ZBar扫一扫", "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画",
             "联系人侧边滑动控件", "OCR识别银行卡", "自定义进度条", "GPS位置信息", "Camera人脸检测", "录音动画",
-            "图片添加水印", "视频压缩");
+            "图片添加水印并压缩", "视频压缩");
 
     @Override
     public int initLayoutView() {

@@ -10,10 +10,12 @@ import com.pengxh.app.multilib.widget.EasyToast;
 public class BaseApplication extends Application {
 
     private static final String TAG = "BaseApplication";
+    private volatile static BaseApplication instance;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         EasyToast.init(this);
         //个推初始化
         com.igexin.sdk.PushManager.getInstance().initialize(this);
@@ -24,5 +26,19 @@ public class BaseApplication extends Application {
             }
         });
         FileUtils.initFileConfig(this);
+    }
+
+    /**
+     * 双重锁单例
+     */
+    public static BaseApplication getInstance() {
+        if (instance == null) {
+            synchronized (BaseApplication.class) {
+                if (instance == null) {
+                    instance = new BaseApplication();
+                }
+            }
+        }
+        return instance;
     }
 }

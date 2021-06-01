@@ -17,8 +17,16 @@ public class TimeUtil {
     /**
      * 时间戳转时间
      */
-    public static String millsToTime(String formatStr) {
+    public static String timestampToTime(String formatStr) {
         SimpleDateFormat millsFormat = new SimpleDateFormat(formatStr);
         return millsFormat.format(new Date());
+    }
+
+    /**
+     * 时间戳转时间
+     */
+    public static String timestampToTime(long mills) {
+        SimpleDateFormat millsFormat = new SimpleDateFormat("mm:ss");
+        return millsFormat.format(mills);
     }
 }

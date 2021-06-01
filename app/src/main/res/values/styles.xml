@@ -8,9 +8,19 @@
     </style>
 
     <style name="PopupAnimation">
-        <item name="android:windowEnterAnimation">@anim/popup_show</item>
         <!-- 指定显示的动画xml -->
-        <item name="android:windowExitAnimation">@anim/popup_hide</item>
+        <item name="android:windowEnterAnimation">@anim/popup_show</item>
         <!-- 指定消失的动画xml -->
+        <item name="android:windowExitAnimation">@anim/popup_hide</item>
+    </style>
+
+    <style name="ActivityInOutAnimation" parent="Base.Theme.NoActionBar">
+        <!--进入-->
+        <item name="android:activityOpenEnterAnimation">@anim/activity_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/activity_out</item>
+
+        <!--退出-->
+        <item name="android:activityCloseEnterAnimation">@anim/activity_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/activity_out</item>
     </style>
 </resources>
