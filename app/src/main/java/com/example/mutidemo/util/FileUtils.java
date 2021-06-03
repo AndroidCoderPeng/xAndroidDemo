@@ -18,6 +18,7 @@ public class FileUtils {
     private static File imageDir;
     private static File videoDir;
     private static File waterImageDir;
+    private static int index = 1;
 
     public static void initFileConfig(Context context) {
         FileUtils.context = context;
@@ -70,7 +71,8 @@ public class FileUtils {
             }
         }
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(new Date());
-        File imageFile = new File(waterImageDir + File.separator + "IMG_" + timeStamp + ".png");
+        //index用来区分for循环太快会导致多想图片覆盖压缩问题
+        File imageFile = new File(waterImageDir + File.separator + "IMG_" + timeStamp + "_" + (index++) + ".png");
         if (!imageFile.exists()) {
             try {
                 imageFile.createNewFile();

@@ -11,11 +11,13 @@ import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.YuvImage;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -148,38 +150,56 @@ public class ImageUtil {
             @Override
             public void call(Subscriber<? super File> subscriber) {
                 //初始化画笔
-                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                paint.setColor(Color.RED);
-                paint.setDither(true); // 获取跟清晰的图像采样
-                paint.setFilterBitmap(true);// 过滤一些
-                paint.setTextSize(QMUIDisplayHelper.sp2px(context, 50));
+                TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
+                textPaint.setTypeface(Typeface.DEFAULT);// 采用默认的宽度
+                textPaint.setColor(Color.RED);
+                textPaint.setDither(true); // 获取跟清晰的图像采样
+                textPaint.setFilterBitmap(true);
+                //图片像素不一样，字体也需要设置不一样
+                //width=1080,height=811
+                //width=1080,height=2400
+                //width=2736,height=3648
+                if (bitmap.getWidth() <= 1080) {
+                    //像素低的图片，文字要小
+                    textPaint.setTextSize(QMUIDisplayHelper.dp2px(context, 20));
+                } else {
+                    textPaint.setTextSize(QMUIDisplayHelper.dp2px(context, 45));
+                }
                 Rect nameBounds = new Rect();
-                paint.getTextBounds(name, 0, name.length(), nameBounds);
+                textPaint.getTextBounds(name, 0, name.length(), nameBounds);
                 Rect dateBounds = new Rect();
-                paint.getTextBounds(date, 0, date.length(), dateBounds);
+                textPaint.getTextBounds(date, 0, date.length(), dateBounds);
                 Rect timeBounds = new Rect();
-                paint.getTextBounds(time, 0, time.length(), timeBounds);
+                textPaint.getTextBounds(time, 0, time.length(), timeBounds);
 
                 //添加水印
-                android.graphics.Bitmap.Config bitmapConfig = bitmap.getConfig();
+                Bitmap.Config bitmapConfig = bitmap.getConfig();
                 if (bitmapConfig == null) {
                     bitmapConfig = Bitmap.Config.RGB_565;
                 }
                 Bitmap copyBitmap = bitmap.copy(bitmapConfig, true);
-
                 Canvas canvas = new Canvas(copyBitmap);
                 final int bitmapWidth = copyBitmap.getWidth();
                 final int bitmapHeight = copyBitmap.getHeight();
-                final int padding = QMUIDisplayHelper.dp2px(context, 20);//两行水印间的间距
-                final int paddingRight = QMUIDisplayHelper.dp2px(context, 20);
-                final int paddingBottom = QMUIDisplayHelper.dp2px(context, 20);
+
+                //图片像素不一样，间距也需要设置不一样
+                int padding, paddingRight, paddingBottom;
+                if (bitmapWidth <= 1080) {
+                    padding = QMUIDisplayHelper.dp2px(context, 10);//两行水印间的间距
+                    paddingRight = QMUIDisplayHelper.dp2px(context, 10);
+                    paddingBottom = QMUIDisplayHelper.dp2px(context, 10);
+                } else {
+                    padding = QMUIDisplayHelper.dp2px(context, 20);//两行水印间的间距
+                    paddingRight = QMUIDisplayHelper.dp2px(context, 20);
+                    paddingBottom = QMUIDisplayHelper.dp2px(context, 20);
+                }
                 //有几行就写几行
                 canvas.drawText(name, bitmapWidth - nameBounds.width() - paddingRight,
-                        bitmapHeight - (dateBounds.height() + timeBounds.height() + 2 * padding + paddingBottom), paint);
+                        bitmapHeight - (dateBounds.height() + timeBounds.height() + 2 * padding + paddingBottom), textPaint);
                 canvas.drawText(date, bitmapWidth - dateBounds.width() - paddingRight,
-                        bitmapHeight - (timeBounds.height() + padding + paddingBottom), paint);
+                        bitmapHeight - (timeBounds.height() + padding + paddingBottom), textPaint);
                 canvas.drawText(time, bitmapWidth - timeBounds.width() - paddingRight,
-                        bitmapHeight - paddingBottom, paint);
+                        bitmapHeight - paddingBottom, textPaint);
 
                 //将带有水印的图片保存
                 File file = FileUtils.getWaterImageFile();
