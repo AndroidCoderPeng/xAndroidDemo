@@ -83,6 +83,10 @@ public class WaterMarkerActivity extends BaseNormalActivity implements View.OnCl
                         .forResult(PictureConfig.CHOOSE_REQUEST);
                 break;
             case R.id.addMarkerButton:
+                /**
+                 * 如果出现添加水印之后压缩OOM的，可以用PictureSelector直接压缩然后添加水印，再以jpeg的编码方式，75%的像素质量保存为png图片
+                 * 这样既能添加水印，也能保证图片的像素
+                 * */
                 if (!TextUtils.isEmpty(mediaRealPath)) {
                     Bitmap bitmap = BitmapFactory.decodeFile(mediaRealPath);
 

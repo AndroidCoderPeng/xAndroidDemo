@@ -80,4 +80,8 @@ dependencies {
     implementation 'com.zolad:videoslimmer:1.0.0'
     //图片压缩
     implementation 'top.zibin:Luban:1.1.8'
+    //ArcGIS
+    implementation 'com.esri.arcgisruntime:arcgis-android:100.10.0'
+    //定位功能
+    implementation 'com.amap.api:location:5.3.1'
 }

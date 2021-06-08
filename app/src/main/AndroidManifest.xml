@@ -19,6 +19,13 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
+    <uses-sdk tools:overrideLibrary="com.esri.arcgisruntime" />
+
+    <!--OpenGL ES支持 -->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
     <application
         android:name=".base.BaseApplication"
         android:allowBackup="true"
@@ -53,6 +60,7 @@
         <activity android:name=".ui.RecodeAudioActivity" />
         <activity android:name=".ui.GPSActivity" />
         <activity android:name=".ui.WaterMarkerActivity" />
+        <activity android:name=".ui.GCJ02ToWGS84Activity" />
         <activity
             android:name=".ui.BigImageViewActivity"
             android:theme="@style/Theme.BigImageViewActivity" />
@@ -95,5 +103,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <!--高德定位-->
+        <service android:name="com.amap.api.location.APSService" />
+
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="56fa2f20eef95e6107f998a5b59f0e10" />
     </application>
 </manifest>

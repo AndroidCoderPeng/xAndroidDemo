@@ -24,6 +24,10 @@ allprojects {
             url "http://mvn.gt.getui.com/nexus/content/repositories/releases/"
         }
         maven { url "https://jitpack.io" }
+        //ArcGIS
+        maven {
+            url 'https://esri.jfrog.io/artifactory/arcgis'
+        }
     }
 }
 
