@@ -2,7 +2,6 @@ package com.example.mutidemo.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -18,6 +17,7 @@ public class FileUtils {
     private static File imageDir;
     private static File videoDir;
     private static File waterImageDir;
+    private static File audioDir;
     private static int index = 1;
 
     public static void initFileConfig(Context context) {
@@ -45,9 +45,16 @@ public class FileUtils {
         }
         waterImageDir = new File(parentDir, "WaterImageFile");
         if (!waterImageDir.exists()) {
-            boolean mkAudioDir = waterImageDir.mkdir();
-            if (mkAudioDir) {
+            boolean mkWaterImageDir = waterImageDir.mkdir();
+            if (mkWaterImageDir) {
                 Log.d(TAG, "initFileConfig: 创建WaterImageFile文件夹");
+            }
+        }
+        audioDir = new File(parentDir, "AudioFile");
+        if (!audioDir.exists()) {
+            boolean mkAudioDir = audioDir.mkdir();
+            if (mkAudioDir) {
+                Log.d(TAG, "initFileConfig: 创建AudioFile文件夹");
             }
         }
     }
@@ -133,9 +140,21 @@ public class FileUtils {
     }
 
     static File getOutputAudioFile() {
-        File audioDir = new File(Environment.getExternalStorageDirectory(), "AudioFile");
-        if (!audioDir.exists()) {
-            audioDir.mkdir();
+        if (audioDir == null) {
+            File parentDir = new File(context.getFilesDir().getAbsolutePath(), "Demo");
+            if (!parentDir.exists()) {
+                boolean mkdir = parentDir.mkdir();
+                if (mkdir) {
+                    Log.d(TAG, "getOutputAudioFile: 创建Demo文件夹");
+                }
+            }
+            audioDir = new File(parentDir, "AudioFile");
+            if (!audioDir.exists()) {
+                boolean mkAudioDir = audioDir.mkdir();
+                if (mkAudioDir) {
+                    Log.d(TAG, "getOutputVideoFile: 创建AudioFile文件夹");
+                }
+            }
         }
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(new Date());
         File audioFile = new File(audioDir + File.separator + "AUD_" + timeStamp + ".m4a");

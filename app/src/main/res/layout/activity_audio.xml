@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parentLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.example.mutidemo.widget.AudioPlayerView
+        android:id="@+id/audioPlayView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/audioFilePathView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginVertical="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/bg_audio_view"
+        android:drawableStart="@drawable/ic_audio_icon1"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="7dp"
+        android:paddingVertical="3dp"
+        android:text="00:00"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/audioFilePathView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/recodeAudioButton"
+        android:textSize="16sp" />
+
+    <ImageButton
+        android:id="@+id/recodeAudioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:background="@drawable/bg_button"
+        android:padding="10dp"
+        android:src="@drawable/ic_voice" />
+</RelativeLayout>
