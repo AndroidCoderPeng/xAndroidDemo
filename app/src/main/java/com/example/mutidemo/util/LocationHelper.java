@@ -15,6 +15,13 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.geocoder.GeocodeResult;
+import com.amap.api.services.geocoder.GeocodeSearch;
+import com.amap.api.services.geocoder.RegeocodeAddress;
+import com.amap.api.services.geocoder.RegeocodeQuery;
+import com.amap.api.services.geocoder.RegeocodeResult;
+import com.example.mutidemo.util.callback.IAddressListener;
 import com.example.mutidemo.util.callback.ILocationListener;
 
 import org.jetbrains.annotations.NotNull;
@@ -100,6 +107,35 @@ public class LocationHelper {
                 }
             });
         }
+    }
+
+    /**
+     * 经纬度反编码为地址
+     */
+    public static void antiCodingLocation(Context context, double lng, double lat, IAddressListener listener) {
+        if (isOutOfChina(lng, lat)) {
+            listener.onGetAddress("经纬度异常");
+        }
+        GeocodeSearch codeSearch = new GeocodeSearch(context);
+        // 第一个参数表示一个LatLonPoint，第二参数表示范围多少米，第三个参数表示是火系坐标系还是GPS原生坐标系
+        RegeocodeQuery query = new RegeocodeQuery(new LatLonPoint(lat, lng), 50, GeocodeSearch.GPS);
+        codeSearch.getFromLocationAsyn(query);
+        codeSearch.setOnGeocodeSearchListener(new GeocodeSearch.OnGeocodeSearchListener() {
+            @Override
+            public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int i) {
+                RegeocodeAddress regeocodeAddress = regeocodeResult.getRegeocodeAddress();
+                if (regeocodeAddress != null) {
+                    listener.onGetAddress(regeocodeAddress.getFormatAddress());
+                } else {
+                    listener.onGetAddress("解析位置失败");
+                }
+            }
+
+            @Override
+            public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
+
+            }
+        });
     }
 
     /**

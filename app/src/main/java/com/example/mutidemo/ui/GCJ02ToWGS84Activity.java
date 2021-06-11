@@ -1,11 +1,13 @@
 package com.example.mutidemo.ui;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.amap.api.location.AMapLocation;
 import com.esri.arcgisruntime.geometry.Point;
@@ -19,6 +21,7 @@ import com.esri.arcgisruntime.symbology.PictureMarkerSymbol;
 import com.esri.arcgisruntime.util.ListenableList;
 import com.example.mutidemo.R;
 import com.example.mutidemo.util.LocationHelper;
+import com.example.mutidemo.util.callback.IAddressListener;
 import com.example.mutidemo.util.callback.ILocationListener;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
@@ -29,9 +32,11 @@ import butterknife.OnClick;
 public class GCJ02ToWGS84Activity extends BaseNormalActivity implements View.OnClickListener {
 
     private static final String TAG = "GCJ02ToWGS84Activity";
+    private Context context = this;
     @BindView(R.id.mapView)
     MapView mapView;
-
+    @BindView(R.id.addressView)
+    TextView addressView;
 
     private QMUITipDialog loadingDialog;
 
@@ -117,6 +122,13 @@ public class GCJ02ToWGS84Activity extends BaseNormalActivity implements View.OnC
                             addPictureMarker(point, true);
                             mapView.setViewpointCenterAsync((point), 28000);
                             loadingDialog.dismiss();
+                            //显示具体位置
+                            LocationHelper.antiCodingLocation(context, location.getLongitude(), location.getLatitude(), new IAddressListener() {
+                                @Override
+                                public void onGetAddress(String address) {
+                                    addressView.setText(address);
+                                }
+                            });
                         }
                     }
 
