@@ -7,12 +7,12 @@ import com.example.mutidemo.mvp.view.INewsView;
 
 public class NewsPresenterImpl extends BasePresenter implements INewsPresenter, NewsModelImpl.OnNewsListener {
 
-    private INewsView iNewsView;
-    private NewsModelImpl newsModel;
+    private INewsView view;
+    private NewsModelImpl actionModel;
 
-    public NewsPresenterImpl(INewsView view) {
-        this.iNewsView = view;
-        newsModel = new NewsModelImpl(this);
+    public NewsPresenterImpl(INewsView newsView) {
+        this.view = newsView;
+        actionModel = new NewsModelImpl(this);
     }
 
     /**
@@ -20,8 +20,8 @@ public class NewsPresenterImpl extends BasePresenter implements INewsPresenter, 
      */
     @Override
     public void onReadyRetrofitRequest(String channel, int start) {
-        iNewsView.showProgress();
-        addSubscription(newsModel.sendRetrofitRequest(channel, start));
+        view.showProgress();
+        addSubscription(actionModel.sendRetrofitRequest(channel, start));
     }
 
     /**
@@ -33,16 +33,13 @@ public class NewsPresenterImpl extends BasePresenter implements INewsPresenter, 
     }
 
     @Override
-    public void onSuccess(NewsBean response) {
-        iNewsView.hideProgress();
-        /**
-         * 将返回的数据传递给View并显示在Activity/Fragment上面
-         */
-        iNewsView.showNetWorkData(response);
+    public void onSuccess(NewsBean resultBean) {
+        view.hideProgress();
+        view.showNetWorkData(resultBean);
     }
 
     @Override
     public void onFailure(Throwable throwable) {
-        iNewsView.hideProgress();
+        view.hideProgress();
     }
 }

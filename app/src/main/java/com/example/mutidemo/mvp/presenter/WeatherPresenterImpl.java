@@ -7,11 +7,11 @@ import com.example.mutidemo.mvp.view.IWeatherView;
 
 public class WeatherPresenterImpl extends BasePresenter implements IWeatherPresenter, WeatherModelImpl.OnWeatherListener {
 
-    private IWeatherView iWeatherView;
+    private IWeatherView view;
     private WeatherModelImpl weatherModel;
 
-    public WeatherPresenterImpl(IWeatherView view) {
-        this.iWeatherView = view;
+    public WeatherPresenterImpl(IWeatherView weatherView) {
+        this.view = weatherView;
         weatherModel = new WeatherModelImpl(this);
     }
 
@@ -20,7 +20,7 @@ public class WeatherPresenterImpl extends BasePresenter implements IWeatherPrese
      */
     @Override
     public void onReadyRetrofitRequest(String city, int cityid, int citycode) {
-        iWeatherView.showProgress();
+        view.showProgress();
         addSubscription(weatherModel.sendRetrofitRequest(city, cityid, citycode));
     }
 
@@ -31,15 +31,12 @@ public class WeatherPresenterImpl extends BasePresenter implements IWeatherPrese
 
     @Override
     public void onSuccess(WeatherBean weatherBean) {
-        iWeatherView.hideProgress();
-        /**
-         * 将返回的数据传递给View并显示在Activity/Fragment上面
-         */
-        iWeatherView.showNetWorkData(weatherBean);
+        view.hideProgress();
+        view.showNetWorkData(weatherBean);
     }
 
     @Override
     public void onFailure(Throwable throwable) {
-        iWeatherView.hideProgress();
+        view.hideProgress();
     }
 }

@@ -62,7 +62,6 @@ dependencies {
     //查看大图
     implementation 'com.github.chrisbanes:PhotoView:2.0.0'
     implementation group: 'com.belerweb', name: 'pinyin4j', version: '2.5.0'
-    implementation 'com.amap.api:map2d:6.0.0'
     //腾讯Android UI框架
     implementation 'com.qmuiteam:qmui:2.0.0-alpha10'
     implementation 'com.qmuiteam:arch:0.3.1'
@@ -82,7 +81,8 @@ dependencies {
     implementation 'top.zibin:Luban:1.1.8'
     //ArcGIS
     implementation 'com.esri.arcgisruntime:arcgis-android:100.10.0'
-    //定位功能
+    //高德地图相关(不能用2d地图，一定要用3d地图，否则地图效果会很差，因为2d是切片地图，3d是矢量地图)
     implementation 'com.amap.api:location:5.3.1'
     implementation 'com.amap.api:search:7.9.0'
+    implementation 'com.amap.api:3dmap:7.9.1'
 }

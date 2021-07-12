@@ -11,5 +11,5 @@ public interface INewsView {
     /**
      * 显示从后台服务器获取到的数据
      */
-    void showNetWorkData(NewsBean response);
+    void showNetWorkData(NewsBean resultBean);
 }
