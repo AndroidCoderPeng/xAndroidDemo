@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <!--危险权限，需要手动申请-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -62,6 +64,7 @@
         <activity android:name=".ui.GPSActivity" />
         <activity android:name=".ui.WaterMarkerActivity" />
         <activity android:name=".ui.GCJ02ToWGS84Activity" />
+        <activity android:name=".ui.BluetoothActivity" />
         <activity
             android:name=".ui.BigImageViewActivity"
             android:theme="@style/Theme.BigImageViewActivity" />
@@ -111,5 +114,14 @@
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="56fa2f20eef95e6107f998a5b59f0e10" />
+
+        <!--蓝牙开关状态监听-->
+        <receiver android:name=".util.BluetoothStateBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+                <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

@@ -14,8 +14,8 @@ import com.example.mutidemo.adapter.NewsAdapter;
 import com.example.mutidemo.bean.NewsBean;
 import com.example.mutidemo.mvp.presenter.NewsPresenterImpl;
 import com.example.mutidemo.mvp.view.INewsView;
+import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
-import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
@@ -54,7 +54,6 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
     private int defaultPage = 0;
     private NewsAdapter newsAdapter;
     private NewsPresenterImpl newsPresenter;
-    private QMUITipDialog loadingDialog;
     private static WeakReferenceHandler weakReferenceHandler;
 
     @Override
@@ -64,13 +63,9 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
 
     @Override
     public void initData() {
-        loadingDialog = new QMUITipDialog.Builder(this)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord("加载数据中，请稍后...")
-                .create();
         weakReferenceHandler = new WeakReferenceHandler(this);
         newsPresenter = new NewsPresenterImpl(this);
-        newsPresenter.onReadyRetrofitRequest("头条", defaultPage);
+        newsPresenter.onReadyRetrofitRequest("娱乐", defaultPage);
     }
 
     @Override
@@ -81,7 +76,7 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
                 isRefresh = true;
                 //刷新之后页码重置
                 defaultPage = 0;
-                newsPresenter.onReadyRetrofitRequest("头条", defaultPage);
+                newsPresenter.onReadyRetrofitRequest("娱乐", defaultPage);
             }
         });
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -89,7 +84,7 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
             public void onLoadMore(@NonNull final RefreshLayout refreshLayout) {
                 isLoadMore = true;
                 defaultPage++;
-                newsPresenter.onReadyRetrofitRequest("头条", defaultPage);
+                newsPresenter.onReadyRetrofitRequest("娱乐", defaultPage);
             }
         });
     }
@@ -132,12 +127,12 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
 
     @Override
     public void showProgress() {
-        loadingDialog.show();
+        OtherUtils.showLoadingDialog(this, "加载数据中，请稍后...");
     }
 
     @Override
     public void hideProgress() {
-        loadingDialog.dismiss();
+        OtherUtils.dismissLoadingDialog();
     }
 
     @Override

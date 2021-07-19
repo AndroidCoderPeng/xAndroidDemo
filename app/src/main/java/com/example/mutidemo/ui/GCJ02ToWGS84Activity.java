@@ -21,10 +21,10 @@ import com.esri.arcgisruntime.symbology.PictureMarkerSymbol;
 import com.esri.arcgisruntime.util.ListenableList;
 import com.example.mutidemo.R;
 import com.example.mutidemo.util.LocationHelper;
+import com.example.mutidemo.util.OtherUtils;
 import com.example.mutidemo.util.callback.IAddressListener;
 import com.example.mutidemo.util.callback.ILocationListener;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
-import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -38,8 +38,6 @@ public class GCJ02ToWGS84Activity extends BaseNormalActivity implements View.OnC
     @BindView(R.id.addressView)
     TextView addressView;
 
-    private QMUITipDialog loadingDialog;
-
     @Override
     public int initLayoutView() {
         return R.layout.activity_gis;
@@ -52,11 +50,6 @@ public class GCJ02ToWGS84Activity extends BaseNormalActivity implements View.OnC
 
         ArcGISMap arcGISMap = new ArcGISMap(BasemapStyle.ARCGIS_STREETS);
         mapView.setMap(arcGISMap);
-
-        loadingDialog = new QMUITipDialog.Builder(this)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord("定位中，请稍后")
-                .create();
     }
 
     @Override
@@ -112,7 +105,7 @@ public class GCJ02ToWGS84Activity extends BaseNormalActivity implements View.OnC
                 mapView.setViewpointScaleAsync(mapView.getMapScale() * 2);
                 break;
             case R.id.removeToLocalView:
-                loadingDialog.show();
+                OtherUtils.showLoadingDialog(this, "定位中，请稍后");
                 LocationHelper.obtainCurrentLocation(this, new ILocationListener() {
                     @Override
                     public void onLocationGet(Location location) {
@@ -121,7 +114,7 @@ public class GCJ02ToWGS84Activity extends BaseNormalActivity implements View.OnC
                             Point point = new Point(location.getLongitude(), location.getLatitude(), SpatialReference.create(4326));
                             addPictureMarker(point, true);
                             mapView.setViewpointCenterAsync((point), 28000);
-                            loadingDialog.dismiss();
+                            OtherUtils.dismissLoadingDialog();
                             //显示具体位置
                             LocationHelper.antiCodingLocation(context, location.getLongitude(), location.getLatitude(), new IAddressListener() {
                                 @Override

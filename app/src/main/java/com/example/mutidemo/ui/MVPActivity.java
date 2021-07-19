@@ -11,14 +11,12 @@ import com.example.mutidemo.adapter.WeatherAdapter;
 import com.example.mutidemo.bean.WeatherBean;
 import com.example.mutidemo.mvp.presenter.WeatherPresenterImpl;
 import com.example.mutidemo.mvp.view.IWeatherView;
+import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
-import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 
 import butterknife.BindView;
 
 public class MVPActivity extends BaseNormalActivity implements IWeatherView {
-
-    private static final String TAG = "MVPActivity";
 
     @BindView(R.id.tempView)
     TextView tempView;
@@ -34,7 +32,6 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView {
     RecyclerView weatherRecyclerView;
 
     private WeatherPresenterImpl weatherPresenter;
-    private QMUITipDialog loadingDialog;
 
     @Override
     public int initLayoutView() {
@@ -43,10 +40,6 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView {
 
     @Override
     public void initData() {
-        loadingDialog = new QMUITipDialog.Builder(this)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord("加载数据中，请稍后...")
-                .create();
         weatherPresenter = new WeatherPresenterImpl(this);
     }
 
@@ -57,12 +50,12 @@ public class MVPActivity extends BaseNormalActivity implements IWeatherView {
 
     @Override
     public void showProgress() {
-        loadingDialog.show();
+        OtherUtils.showLoadingDialog(this, "加载数据中，请稍后...");
     }
 
     @Override
     public void hideProgress() {
-        loadingDialog.dismiss();
+        OtherUtils.dismissLoadingDialog();
     }
 
     @SuppressLint("SetTextI18n")
