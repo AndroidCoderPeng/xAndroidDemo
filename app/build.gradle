@@ -1,4 +1,7 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
 
 android {
     compileSdkVersion 30
@@ -26,6 +29,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -35,7 +39,7 @@ dependencies {
     //仿iOS风格的dialog库
     implementation 'com.aihook:alertview:1.0.0'
     //图片加载库
-    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
     //控件注解
     implementation 'com.jakewharton:butterknife:10.2.1'
     implementation files('libs/ocr-sdk.jar')

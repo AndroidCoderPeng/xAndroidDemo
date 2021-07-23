@@ -1,27 +1,29 @@
 package com.example.mutidemo.bean;
 
+import android.bluetooth.BluetoothDevice;
+
 public class BlueToothBean {
-    private String blueToothName;
-    private String blueToothAddress;
+    private BluetoothDevice bluetoothDevice;  //蓝牙设备
+    private int rssi;  //蓝牙信号
 
-    public BlueToothBean(String blueToothName, String blueToothAddress) {
-        this.blueToothName = blueToothName;
-        this.blueToothAddress = blueToothAddress;
+    public BlueToothBean(BluetoothDevice bluetoothDevice, int rssi) {
+        this.bluetoothDevice = bluetoothDevice;
+        this.rssi = rssi;
     }
 
-    public String getBlueToothName() {
-        return blueToothName;
+    public BluetoothDevice getBluetoothDevice() {
+        return bluetoothDevice;
     }
 
-    public void setBlueToothName(String blueToothName) {
-        this.blueToothName = blueToothName;
+    public void setBluetoothDevice(BluetoothDevice bluetoothDevice) {
+        this.bluetoothDevice = bluetoothDevice;
     }
 
-    public String getBlueToothAddress() {
-        return blueToothAddress;
+    public int getRssi() {
+        return rssi;
     }
 
-    public void setBlueToothAddress(String blueToothAddress) {
-        this.blueToothAddress = blueToothAddress;
+    public void setRssi(int rssi) {
+        this.rssi = rssi;
     }
 }
