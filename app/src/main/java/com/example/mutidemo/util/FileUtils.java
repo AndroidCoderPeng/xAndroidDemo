@@ -18,8 +18,10 @@ public class FileUtils {
     private static File waterImageDir;
     private static File videoDir;
     private static File audioDir;
+    private static File documentDir;
     private static int index = 1;
 
+    //只有子文件夹需要手动创建
     public static void initFileConfig(Context context) {
         FileUtils.context = context;
         waterImageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "WaterImage");
@@ -29,17 +31,26 @@ public class FileUtils {
             }
         }
         videoDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES), "");
-        if (!videoDir.exists()) {
-            if (videoDir.mkdir()) {
-                Log.d(TAG, "创建CompressVideo文件夹");
-            }
-        }
         audioDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_AUDIOBOOKS), "");
-        if (!audioDir.exists()) {
-            if (audioDir.mkdir()) {
-                Log.d(TAG, "创建CompressVideo文件夹");
+        documentDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "");
+        if (!documentDir.exists()) {
+            if (documentDir.mkdir()) {
+                Log.d(TAG, "创建documentDir文件夹");
             }
         }
+    }
+
+    public static File getDocumentFile() {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(new Date());
+        File logFile = new File(documentDir + File.separator + "Log_" + timeStamp + ".txt");
+        if (!logFile.exists()) {
+            try {
+                logFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return logFile;
     }
 
     static File getWaterImageFile() {

@@ -19,7 +19,7 @@ import com.example.mutidemo.util.FileUtils;
 import com.example.mutidemo.util.GlideLoadEngine;
 import com.example.mutidemo.util.ImageUtil;
 import com.example.mutidemo.util.OtherUtils;
-import com.example.mutidemo.util.TimeUtil;
+import com.example.mutidemo.util.TimeOrDateUtil;
 import com.example.mutidemo.util.callback.ICompressListener;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
@@ -87,8 +87,8 @@ public class WaterMarkerActivity extends BaseNormalActivity implements View.OnCl
 
                     OtherUtils.showLoadingDialog(this, "水印添加中，请稍后...");
                     ImageUtil.drawTextToRightBottom(this, bitmap, getString(R.string.app_name),
-                            TimeUtil.timestampToTime("yyyy-MM-dd"),
-                            TimeUtil.timestampToTime("HH:mm:ss"),
+                            TimeOrDateUtil.timestampToDate(System.currentTimeMillis()),
+                            TimeOrDateUtil.timestampToTime(System.currentTimeMillis()),
                             file -> {
                                 OtherUtils.dismissLoadingDialog();
                                 ImageUtil.compressImage(file.getPath(), FileUtils.getImageCompressPath(), new ICompressListener() {

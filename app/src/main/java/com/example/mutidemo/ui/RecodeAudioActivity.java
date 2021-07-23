@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.util.AudioRecodeHelper;
-import com.example.mutidemo.util.TimeUtil;
+import com.example.mutidemo.util.TimeOrDateUtil;
 import com.example.mutidemo.widget.AudioPlayerView;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -54,7 +54,7 @@ public class RecodeAudioActivity extends BaseNormalActivity implements View.OnTo
             @Override
             public void onUpdate(double db, long time) {
                 recodeImageView.getDrawable().setLevel((int) (3000 + 6000 * db / 100));
-                recodeTextView.setText(TimeUtil.timestampToTime(time));
+                recodeTextView.setText(TimeOrDateUtil.millsToTime(time));
             }
 
             @SuppressLint("SetTextI18n")

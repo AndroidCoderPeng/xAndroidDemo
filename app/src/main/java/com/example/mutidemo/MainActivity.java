@@ -3,6 +3,8 @@ package com.example.mutidemo;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.CountDownTimer;
+import android.util.Log;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,9 +27,13 @@ import com.example.mutidemo.ui.SlideBarActivity;
 import com.example.mutidemo.ui.VideoCompressActivity;
 import com.example.mutidemo.ui.WaterMarkerActivity;
 import com.example.mutidemo.ui.WaterRippleActivity;
+import com.example.mutidemo.util.FileUtils;
+import com.example.mutidemo.util.LogToFile;
+import com.example.mutidemo.util.TimeOrDateUtil;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,6 +45,7 @@ import cn.bertsir.zbar.view.ScanLineView;
 
 public class MainActivity extends DoubleClickExitActivity {
 
+    private static final String TAG = "MainActivity";
     @BindView(R.id.mMainRecyclerView)
     RecyclerView mMainRecyclerView;
 
@@ -46,7 +53,7 @@ public class MainActivity extends DoubleClickExitActivity {
     private List<String> mItemNameList = Arrays.asList("SharedPreferences", "仿iOS风格对话框",
             "MVP架构", "顶/底部导航栏", "ZBar扫一扫", "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画",
             "联系人侧边滑动控件", "OCR识别银行卡", "自定义进度条", "GPS位置信息", "Camera人脸检测", "音频录制与播放",
-            "图片添加水印并压缩", "视频压缩", "WCJ02ToWGS84", "蓝牙相关");
+            "图片添加水印并压缩", "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "Log写入文件");
 
     @Override
     public int initLayoutView() {
@@ -140,6 +147,28 @@ public class MainActivity extends DoubleClickExitActivity {
                     case 17:
                         intent.setClass(mContext, BluetoothActivity.class);
                         startActivity(intent);
+                        break;
+                    case 18:
+                        File documentFile = FileUtils.getDocumentFile();
+                        LogToFile.write(documentFile, "第一条记录");
+                        for (int i = 0; i < 50; i++) {
+                            LogToFile.write(documentFile, TimeOrDateUtil.timestampToCompleteDate(System.currentTimeMillis()));
+                        }
+                        LogToFile.write(documentFile, "最后一条记录");
+                        EasyToast.showToast("写入完成", EasyToast.SUCCESS);
+                        //缓几秒钟之后再读出来
+                        new CountDownTimer(3000, 1000) {
+
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                Log.d(TAG, LogToFile.read(documentFile));
+                            }
+                        }.start();
                         break;
                     default:
                         break;
