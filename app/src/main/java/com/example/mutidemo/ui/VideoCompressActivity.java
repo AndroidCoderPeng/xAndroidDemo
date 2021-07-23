@@ -81,7 +81,7 @@ public class VideoCompressActivity extends BaseNormalActivity implements View.On
                 break;
             case R.id.compressVideoButton:
                 if (!TextUtils.isEmpty(mediaOriginalPath)) {
-                    String outputVideoFile = FileUtils.getOutputVideoFile();
+                    String outputVideoFile = FileUtils.getVideoFilePath();
                     int width, height;
                     if (defaultRotation.equals("90")) {
                         width = defaultHeight / 2;
