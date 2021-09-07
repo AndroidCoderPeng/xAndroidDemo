@@ -34,7 +34,7 @@ import com.example.mutidemo.base.BaseApplication;
 import com.example.mutidemo.ui.BigImageViewActivity;
 import com.example.mutidemo.util.callback.ICompressListener;
 import com.example.mutidemo.util.callback.IWaterMarkAddListener;
-import com.pengxh.app.multilib.utils.DensityUtil;
+import com.pengxh.app.multilib.utils.SizeUtil;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 
 import org.xml.sax.XMLReader;
@@ -300,7 +300,7 @@ public class ImageUtil {
                                 int h = drawable.getIntrinsicHeight();
                                 //对图片改变尺寸
                                 float scale = width / w;
-                                w = (int) (scale * w - ((DensityUtil.dp2px(activity, rightPadding))));
+                                w = (int) (scale * w - ((SizeUtil.dp2px(activity, rightPadding))));
                                 h = (int) (scale * h);
                                 drawable.setBounds(0, 0, w, h);
                                 return drawable;

@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.util.callback.DecorationCallback;
-import com.pengxh.app.multilib.utils.DensityUtil;
+import com.pengxh.app.multilib.utils.SizeUtil;
 
 /**
  * @description: TODO
@@ -48,7 +48,7 @@ public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
         textPaint.setTextSize(sp2px(ctx, 20));
         textPaint.setColor(Color.BLACK);
         textPaint.setTextAlign(Paint.Align.LEFT);
-        topGap = DensityUtil.dp2px(ctx, 30);
+        topGap = SizeUtil.dp2px(ctx, 30);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
         int childCount = parent.getChildCount();
         for (int i = 0; i < childCount; i++) {
             View view = parent.getChildAt(i);
-            c.drawRect(DensityUtil.dp2px(context, 15), view.getBottom(), parent.getWidth(), view.getBottom() + 1, bottomLinePaint);
+            c.drawRect(SizeUtil.dp2px(context, 15), view.getBottom(), parent.getWidth(), view.getBottom() + 1, bottomLinePaint);
         }
     }
 
@@ -92,7 +92,7 @@ public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
         super.onDrawOver(c, parent, state);
         int itemCount = state.getItemCount();
         int childCount = parent.getChildCount();
-        int left = parent.getPaddingLeft() + DensityUtil.dp2px(context, 15);
+        int left = parent.getPaddingLeft() + SizeUtil.dp2px(context, 15);
         int right = parent.getWidth();
 
         long preGroupId, groupId = -1;
@@ -116,7 +116,7 @@ public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
                 }
             }
             c.drawRect(0, textY - topGap, right, textY, topLinePaint);
-            c.drawText(firstLetter, left, textY - (DensityUtil.dp2px(context, 7)), textPaint);
+            c.drawText(firstLetter, left, textY - (SizeUtil.dp2px(context, 7)), textPaint);
         }
     }
 

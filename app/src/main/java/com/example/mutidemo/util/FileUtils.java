@@ -31,13 +31,8 @@ public class FileUtils {
             }
         }
         videoDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES), "");
-        audioDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_AUDIOBOOKS), "");
+        audioDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_MUSIC), "");
         documentDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "");
-        if (!documentDir.exists()) {
-            if (documentDir.mkdir()) {
-                Log.d(TAG, "创建documentDir文件夹");
-            }
-        }
     }
 
     public static File getDocumentFile() {

@@ -48,8 +48,6 @@
         </activity>
 
         <activity android:name=".MainActivity" />
-        <activity android:name=".ui.SharedPreferencesActivity" />
-        <activity android:name=".ui.BottomDialogActivity" />
         <activity android:name=".ui.MVPActivity" />
         <activity android:name=".ui.NavigationActivity" />
         <activity android:name=".ui.RefreshAndLoadMoreActivity" />

@@ -12,7 +12,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.pengxh.app.multilib.utils.DensityUtil;
+import com.pengxh.app.multilib.utils.SizeUtil;
 
 /**
  * @author : Pengxh
@@ -45,7 +45,7 @@ public class FaceDetectView extends View {
         mPaint = new Paint();
         mPaint.setColor(Color.GREEN);
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(DensityUtil.dp2px(context, 2));
+        mPaint.setStrokeWidth(SizeUtil.dp2px(context, 2));
         //设置抗锯齿
         mPaint.setAntiAlias(true);
         faces = new Camera.Face[]{};

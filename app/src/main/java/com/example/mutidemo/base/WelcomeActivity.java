@@ -4,15 +4,12 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mutidemo.MainActivity;
-import com.pengxh.app.multilib.widget.EasyToast;
-import com.pengxh.app.multilib.widget.dialog.PermissionDialog;
 
 import java.util.List;
 
@@ -40,31 +37,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
             if (EasyPermissions.hasPermissions(this, USER_PERMISSIONS)) {
                 startMainActivity();
             } else {
-                new PermissionDialog.Builder()
-                        .setContext(this)
-                        .setPermissions(USER_PERMISSIONS)
-                        .setOnDialogClickListener(new PermissionDialog.OnDialogClickListener() {
-                            @Override
-                            public void onButtonClick() {
-                                EasyPermissions.requestPermissions(WelcomeActivity.this, "", PERMISSIONS_CODE, USER_PERMISSIONS);
-                            }
-
-                            @Override
-                            public void onCancelClick() {
-                                EasyToast.showToast("用户取消授权", EasyToast.WARING);
-                                new CountDownTimer(2000, 1000) {
-                                    @Override
-                                    public void onTick(long millisUntilFinished) {
-
-                                    }
-
-                                    @Override
-                                    public void onFinish() {
-                                        WelcomeActivity.this.finish();
-                                    }
-                                }.start();
-                            }
-                        }).build().show();
+                EasyPermissions.requestPermissions(this, "", PERMISSIONS_CODE, USER_PERMISSIONS);
             }
         } else {
             startMainActivity();
