@@ -11,7 +11,6 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -19,21 +18,19 @@ import androidx.annotation.Nullable;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.util.StringHelper;
+import com.pengxh.app.multilib.utils.SizeUtil;
 
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 
 public class SlideBarView extends View implements View.OnTouchListener {
 
     private static final String TAG = "SlideBarView";
     private static final int viewWidth = 25;
     private List<String> data = new ArrayList<>();
-    private String[] letterArray;
+    private static final String[] letterArray = new String[]{
+            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
     private Context mContext;
     private float centerX;//中心x
     private int textSize;
@@ -60,7 +57,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SlideBarView, defStyleAttr, 0);
 
         textSize = a.getDimensionPixelOffset(R.styleable.SlideBarView_slide_textSize
-                , sp2px(context, 18));
+                , SizeUtil.sp2px(context, 18));
         textColor = a.getColor(R.styleable.SlideBarView_slide_textColor, Color.LTGRAY);
         a.recycle();
 
@@ -72,17 +69,6 @@ public class SlideBarView extends View implements View.OnTouchListener {
 
     public void setData(List<String> cities) {
         this.data = cities;
-        //先将数据按照字母排序
-        Comparator<Object> comparator = Collator.getInstance(Locale.CHINA);
-        Collections.sort(cities, comparator);
-        //将中文转化为大写字母
-        HashSet<String> letterSet = new HashSet<>();
-        for (String city : cities) {
-            String firstLetter = StringHelper.obtainHanYuPinyin(city);
-            letterSet.add(firstLetter);
-        }
-        //将letterSet转为String[]
-        letterArray = letterSet.toArray(new String[0]);
     }
 
     private void initPaint() {
@@ -110,7 +96,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
         int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
         // 获取宽
-        int mWidth = dp2px(mContext, viewWidth);
+        int mWidth = SizeUtil.dp2px(mContext, viewWidth);
         // 获取高
         if (heightSpecMode == MeasureSpec.EXACTLY) {
             // match_parent/精确值
@@ -202,23 +188,8 @@ public class SlideBarView extends View implements View.OnTouchListener {
         void OnIndexChange(String letter);
     }
 
-    /**
-     * sp转换成px
-     */
-    private int sp2px(Context context, float spValue) {
-        float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
-        return (int) (spValue * fontScale + 0.5f);
-    }
-
-    /**
-     * dp转px
-     */
-    private int dp2px(Context context, float dpValue) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, context.getResources().getDisplayMetrics());
-    }
-
     public int obtainFirstLetterIndex(String letter) {
-        int index = 0;
+        int index = -1;
         for (int i = 0; i < data.size(); i++) {
             String firstLetter = StringHelper.obtainHanYuPinyin(data.get(i));
             if (letter.equals(firstLetter)) {

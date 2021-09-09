@@ -144,31 +144,17 @@ public class ImageUtil {
     /**
      * 绘制文字到右下角
      */
-    public static void drawTextToRightBottom(Context context, final Bitmap bitmap, String name,
-                                             String date, String time, IWaterMarkAddListener markAddListener) {
+    public static void drawTextToRightBottom(Context context, final Bitmap bitmap, String time, IWaterMarkAddListener markAddListener) {
         Observable<File> fileObservable = Observable.create(new Observable.OnSubscribe<File>() {
             @Override
             public void call(Subscriber<? super File> subscriber) {
                 //初始化画笔
                 TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
                 textPaint.setTypeface(Typeface.DEFAULT);// 采用默认的宽度
-                textPaint.setColor(Color.RED);
+                textPaint.setColor(Color.WHITE);
                 textPaint.setDither(true); // 获取跟清晰的图像采样
                 textPaint.setFilterBitmap(true);
-                //图片像素不一样，字体也需要设置不一样
-                //width=1080,height=811
-                //width=1080,height=2400
-                //width=2736,height=3648
-                if (bitmap.getWidth() <= 1080) {
-                    //像素低的图片，文字要小
-                    textPaint.setTextSize(QMUIDisplayHelper.dp2px(context, 20));
-                } else {
-                    textPaint.setTextSize(QMUIDisplayHelper.dp2px(context, 45));
-                }
-                Rect nameBounds = new Rect();
-                textPaint.getTextBounds(name, 0, name.length(), nameBounds);
-                Rect dateBounds = new Rect();
-                textPaint.getTextBounds(date, 0, date.length(), dateBounds);
+                textPaint.setTextSize(SizeUtil.sp2px(context, 36));
                 Rect timeBounds = new Rect();
                 textPaint.getTextBounds(time, 0, time.length(), timeBounds);
 
@@ -183,21 +169,9 @@ public class ImageUtil {
                 final int bitmapHeight = copyBitmap.getHeight();
 
                 //图片像素不一样，间距也需要设置不一样
-                int padding, paddingRight, paddingBottom;
-                if (bitmapWidth <= 1080) {
-                    padding = QMUIDisplayHelper.dp2px(context, 10);//两行水印间的间距
-                    paddingRight = QMUIDisplayHelper.dp2px(context, 10);
-                    paddingBottom = QMUIDisplayHelper.dp2px(context, 10);
-                } else {
-                    padding = QMUIDisplayHelper.dp2px(context, 20);//两行水印间的间距
-                    paddingRight = QMUIDisplayHelper.dp2px(context, 20);
-                    paddingBottom = QMUIDisplayHelper.dp2px(context, 20);
-                }
+                int paddingRight = QMUIDisplayHelper.dp2px(context, 20);
+                int paddingBottom = QMUIDisplayHelper.dp2px(context, 20);
                 //有几行就写几行
-                canvas.drawText(name, bitmapWidth - nameBounds.width() - paddingRight,
-                        bitmapHeight - (dateBounds.height() + timeBounds.height() + 2 * padding + paddingBottom), textPaint);
-                canvas.drawText(date, bitmapWidth - dateBounds.width() - paddingRight,
-                        bitmapHeight - (timeBounds.height() + padding + paddingBottom), textPaint);
                 canvas.drawText(time, bitmapWidth - timeBounds.width() - paddingRight,
                         bitmapHeight - paddingBottom, textPaint);
 

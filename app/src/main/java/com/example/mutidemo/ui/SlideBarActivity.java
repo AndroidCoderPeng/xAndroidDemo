@@ -154,7 +154,10 @@ public class SlideBarActivity extends BaseNormalActivity {
                 countDownTimer.start();
 
                 //根据滑动显示的字母索引到城市名字第一个汉字
-                cityRecyclerView.smoothScrollToPosition(slideBarView.obtainFirstLetterIndex(letter));
+                int letterIndex = slideBarView.obtainFirstLetterIndex(letter);
+                if (letterIndex != -1) {
+                    cityRecyclerView.smoothScrollToPosition(letterIndex);
+                }
             }
         });
     }

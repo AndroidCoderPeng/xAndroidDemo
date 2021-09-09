@@ -1,19 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
     <external-path
-        name="camera_image"
+        name="cameraImage"
         path="DCIM/Camera" />
-
-    <!--name是临时分享路径-->
-    <files-path
-        name="image"
-        path="Demo/CompressImageFile" /><!--文件真实路径-->
-
-    <files-path
-        name="video"
-        path="Demo/CompressVideoFile" /><!--文件真实路径-->
-
-    <files-path
-        name="waterImage"
-        path="Demo/WaterImageFile" /><!--文件真实路径-->
 </paths>

@@ -1,6 +1,5 @@
 package com.example.mutidemo.util;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
@@ -13,9 +12,8 @@ import java.util.Locale;
 
 public class FileUtils {
     private static final String TAG = "FileUtils";
-    @SuppressLint("StaticFieldLeak")
-    private static Context context;
     private static File waterImageDir;
+    private static File compressImageDir;
     private static File videoDir;
     private static File audioDir;
     private static File documentDir;
@@ -23,11 +21,16 @@ public class FileUtils {
 
     //只有子文件夹需要手动创建
     public static void initFileConfig(Context context) {
-        FileUtils.context = context;
         waterImageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "WaterImage");
         if (!waterImageDir.exists()) {
             if (waterImageDir.mkdir()) {
-                Log.d(TAG, "创建waterImageFile文件夹");
+                Log.d(TAG, "创建WaterImage文件夹");
+            }
+        }
+        compressImageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "CompressImage");
+        if (!compressImageDir.exists()) {
+            if (compressImageDir.mkdir()) {
+                Log.d(TAG, "创建CompressImage文件夹");
             }
         }
         videoDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES), "");
@@ -76,13 +79,7 @@ public class FileUtils {
     }
 
     public static String getImageCompressPath() {
-        File imageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "");
-        if (!imageDir.exists()) {
-            if (imageDir.mkdir()) {
-                Log.d(TAG, "创建imageCompressPath文件夹");
-            }
-        }
-        return imageDir.toString();
+        return compressImageDir.toString();
     }
 
     public static String getVideoFilePath() {

@@ -86,35 +86,32 @@ public class WaterMarkerActivity extends BaseNormalActivity implements View.OnCl
                     Bitmap bitmap = BitmapFactory.decodeFile(mediaRealPath);
 
                     OtherUtils.showLoadingDialog(this, "水印添加中，请稍后...");
-                    ImageUtil.drawTextToRightBottom(this, bitmap, getString(R.string.app_name),
-                            TimeOrDateUtil.timestampToDate(System.currentTimeMillis()),
-                            TimeOrDateUtil.timestampToTime(System.currentTimeMillis()),
-                            file -> {
-                                OtherUtils.dismissLoadingDialog();
-                                ImageUtil.compressImage(file.getPath(), FileUtils.getImageCompressPath(), new ICompressListener() {
+                    ImageUtil.drawTextToRightBottom(this, bitmap, TimeOrDateUtil.timestampToCompleteDate(System.currentTimeMillis()), file -> {
+                        OtherUtils.dismissLoadingDialog();
+                        ImageUtil.compressImage(file.getPath(), FileUtils.getImageCompressPath(), new ICompressListener() {
+                            @Override
+                            public void onSuccess(File file) {
+                                Glide.with(context)
+                                        .load(file)
+                                        .apply(new RequestOptions().error(R.drawable.ic_load_error))
+                                        .into(markerImageView);
+                                markerImageSizeView.setText("压缩后：" + FileUtil.formatFileSize(file.length()));
+                                markerImageView.setOnClickListener(new View.OnClickListener() {
                                     @Override
-                                    public void onSuccess(File file) {
-                                        Glide.with(context)
-                                                .load(file)
-                                                .apply(new RequestOptions().error(R.drawable.ic_load_error))
-                                                .into(markerImageView);
-                                        markerImageSizeView.setText("压缩后：" + FileUtil.formatFileSize(file.length()));
-                                        markerImageView.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v1) {
-                                                ArrayList<String> urls = new ArrayList<>();
-                                                urls.add(file.getPath());
-                                                ImageUtil.showBigImage(context, 0, urls);
-                                            }
-                                        });
-                                    }
-
-                                    @Override
-                                    public void onError(Throwable e) {
-
+                                    public void onClick(View v1) {
+                                        ArrayList<String> urls = new ArrayList<>();
+                                        urls.add(file.getPath());
+                                        ImageUtil.showBigImage(context, 0, urls);
                                     }
                                 });
-                            });
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+                        });
+                    });
                 }
                 break;
         }
