@@ -11,12 +11,13 @@ import android.graphics.Rect;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
 import com.example.mutidemo.R;
+import com.pengxh.app.multilib.utils.ColorUtil;
+import com.pengxh.app.multilib.utils.SizeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,20 +67,20 @@ public class WaterRippleView extends View implements View.OnClickListener {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.WaterRippleView, defStyleAttr, 0);
 
         centerColor = a.getColor(R.styleable.WaterRippleView_ripple_centerColor
-                , getResourcesColor(context, R.color.mainColor));
+                , ColorUtil.getResourcesColor(context, R.color.mainColor));
         spreadColor = a.getColor(R.styleable.WaterRippleView_ripple_spreadColor
-                , getResourcesColor(context, R.color.mainColor));
+                , ColorUtil.getResourcesColor(context, R.color.mainColor));
         animDuration = a.getInteger(R.styleable.WaterRippleView_ripple_animDuration, animDuration);
-        radius = a.getDimensionPixelOffset(R.styleable.WaterRippleView_ripple_radius, dp2px(context, 50));
+        radius = a.getDimensionPixelOffset(R.styleable.WaterRippleView_ripple_radius, SizeUtil.dp2px(context, 50));
         distance = a.getDimensionPixelOffset(R.styleable.WaterRippleView_ripple_distance
-                , dp2px(context, 3));
+                , SizeUtil.dp2px(context, 3));
         maxDistance = a.getDimensionPixelOffset(R.styleable.WaterRippleView_ripple_maxDistance
-                , dp2px(context, 30));
+                , SizeUtil.dp2px(context, 30));
         textSize = a.getDimensionPixelOffset(R.styleable.WaterRippleView_ripple_textSize
-                , sp2px(context, 16));
+                , SizeUtil.sp2px(context, 16));
         text = a.getString(R.styleable.WaterRippleView_ripple_text);
         textColor = a.getColor(R.styleable.WaterRippleView_ripple_textColor
-                , getResourcesColor(context, R.color.white));
+                , ColorUtil.getResourcesColor(context, R.color.white));
         imageResourceId = a.getResourceId(R.styleable.WaterRippleView_ripple_image, R.mipmap.hujiao);
         a.recycle();
 
@@ -138,7 +139,7 @@ public class WaterRippleView extends View implements View.OnClickListener {
             mWidth = widthSpecSize;
         } else {
             // wrap_content
-            mWidth = dp2px(mContext, 2 * (maxDistance + radius));
+            mWidth = SizeUtil.dp2px(mContext, 2 * (maxDistance + radius));
         }
         // 获取高
         if (heightSpecMode == MeasureSpec.EXACTLY) {
@@ -146,7 +147,7 @@ public class WaterRippleView extends View implements View.OnClickListener {
             mHeight = heightSpecSize;
         } else {
             // wrap_content
-            mHeight = dp2px(mContext, 2 * (maxDistance + radius));
+            mHeight = SizeUtil.dp2px(mContext, 2 * (maxDistance + radius));
         }
         // 设置该view的宽高
         setMeasuredDimension(mWidth, mHeight);
@@ -164,7 +165,7 @@ public class WaterRippleView extends View implements View.OnClickListener {
                 //绘制扩散的圆
                 canvas.drawCircle(centerX, centerY, radius + width, spreadPaint);
                 //每次扩散圆半径递增，圆透明度递减
-                if (alpha > 0 && width < dp2px(mContext, maxDistance + radius)) {
+                if (alpha > 0 && width < SizeUtil.dp2px(mContext, maxDistance + radius)) {
                     alpha = Math.max(alpha - distance, 0);
                     alphas.set(i, alpha);
                     spreadRadius.set(i, width + distance);
@@ -177,7 +178,7 @@ public class WaterRippleView extends View implements View.OnClickListener {
                 alphas.add(255);
             }
             //超过5个扩散圆，删除最先绘制的圆，即最外层的圆
-            if (spreadRadius.size() >= 5) {
+            if (spreadRadius.size() >= 8) {
                 alphas.remove(0);
                 spreadRadius.remove(0);
             }
@@ -219,28 +220,6 @@ public class WaterRippleView extends View implements View.OnClickListener {
          *
          * Matrix matrix=new Matrix();
          * */
-    }
-
-    /**
-     * dp转px
-     */
-    private int dp2px(Context context, float dpValue) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, context.getResources().getDisplayMetrics());
-    }
-
-    /**
-     * sp转换成px
-     */
-    private int sp2px(Context context, float spValue) {
-        float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
-        return (int) (spValue * fontScale + 0.5f);
-    }
-
-    /**
-     * 获取xml颜色值
-     */
-    private int getResourcesColor(Context context, int res) {
-        return context.getResources().getColor(res);
     }
 
     /**

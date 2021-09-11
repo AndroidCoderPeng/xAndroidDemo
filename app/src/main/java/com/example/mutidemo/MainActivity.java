@@ -22,6 +22,7 @@ import com.example.mutidemo.ui.CheckDeviceActivity;
 import com.example.mutidemo.ui.FacePreViewActivity;
 import com.example.mutidemo.ui.GCJ02ToWGS84Activity;
 import com.example.mutidemo.ui.GPSActivity;
+import com.example.mutidemo.ui.GridViewActivity;
 import com.example.mutidemo.ui.MVPActivity;
 import com.example.mutidemo.ui.NavigationActivity;
 import com.example.mutidemo.ui.OcrNumberActivity;
@@ -64,7 +65,7 @@ public class MainActivity extends DoubleClickExitActivity {
     private List<String> mItemNameList = Arrays.asList("MVP架构", "顶/底部导航栏", "ZBar扫一扫",
             "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
             "自定义进度条", "GPS位置信息", "Camera人脸检测", "音频录制与播放", "图片添加水印并压缩",
-            "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "Log写入文件", "拍照后不保存");
+            "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "Log写入文件", "拍照后不保存", "可删减九宫格");
 
     @Override
     public int initLayoutView() {
@@ -178,6 +179,10 @@ public class MainActivity extends DoubleClickExitActivity {
                                 .openCamera(PictureMimeType.ofImage())
                                 .imageEngine(GlideLoadEngine.createGlideEngine())
                                 .forResult(PictureConfig.REQUEST_CAMERA);
+                        break;
+                    case 18:
+                        intent.setClass(mContext, GridViewActivity.class);
+                        startActivity(intent);
                         break;
                     default:
                         break;

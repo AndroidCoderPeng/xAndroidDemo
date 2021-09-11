@@ -20,7 +20,6 @@ import com.example.mutidemo.R;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.utils.StatusBarColorHelper;
-import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -72,7 +71,6 @@ public class BigImageViewActivity extends AppCompatActivity {
         imagePagerView.setAdapter(new BigImageAdapter(this, urls));
         imagePagerView.setCurrentItem(index);
         imagePagerView.setOffscreenPageLimit(2);//设置预加载数量
-        imagePagerView.setPageMargin(QMUIDisplayHelper.dp2px(this, 1));//控制两幅图之间的间距
         imagePagerView.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
