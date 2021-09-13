@@ -64,6 +64,7 @@
         <activity android:name=".ui.GCJ02ToWGS84Activity" />
         <activity android:name=".ui.BluetoothActivity" />
         <activity android:name=".ui.GridViewActivity" />
+        <activity android:name=".ui.OriginalShareActivity" />
         <activity
             android:name=".ui.BigImageViewActivity"
             android:theme="@style/Theme.BigImageViewActivity" />
