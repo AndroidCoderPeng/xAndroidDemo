@@ -70,7 +70,7 @@ public class OriginalShareActivity extends BaseNormalActivity {
                         "com.example.mutidemo.fileProvider",
                         new File(realPath));
                 intent.putExtra(Intent.EXTRA_STREAM, uri);
-                intent.setType("*/*");
+                intent.setType("image/*");
                 startActivity(intent);
             }
         });

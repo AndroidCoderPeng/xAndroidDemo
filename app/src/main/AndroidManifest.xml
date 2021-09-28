@@ -49,6 +49,7 @@
 
         <activity android:name=".MainActivity" />
         <activity android:name=".ui.MVPActivity" />
+        <activity android:name=".mvvm.view.MVVMActivity" />
         <activity android:name=".ui.NavigationActivity" />
         <activity android:name=".ui.RefreshAndLoadMoreActivity" />
         <activity android:name=".ui.NewsDetailsActivity" />

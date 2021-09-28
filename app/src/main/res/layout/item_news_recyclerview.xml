@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="100dp"
     android:orientation="horizontal"
@@ -25,9 +26,11 @@
 
         <TextView
             android:id="@+id/newsSrc"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@id/newsTime"
+            android:singleLine="true"
             android:text="新浪时尚" />
 
         <TextView
@@ -40,12 +43,11 @@
             android:text="2020-02-24 14:39:04" />
     </RelativeLayout>
 
-    <ImageView
+    <com.qmuiteam.qmui.widget.QMUIRadiusImageView
         android:id="@+id/newsPicture"
         android:layout_width="120dp"
         android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:scaleType="centerCrop" />
-
+        android:scaleType="centerCrop"
+        app:qmui_border_width="0dp"
+        app:qmui_corner_radius="5dp" />
 </LinearLayout>

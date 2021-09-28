@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.adapter.MainAdapter;
+import com.example.mutidemo.mvvm.view.MVVMActivity;
 import com.example.mutidemo.ui.BluetoothActivity;
 import com.example.mutidemo.ui.CheckDeviceActivity;
 import com.example.mutidemo.ui.FacePreViewActivity;
@@ -39,6 +40,7 @@ import com.example.mutidemo.util.GlideLoadEngine;
 import com.example.mutidemo.util.ImageUtil;
 import com.example.mutidemo.util.LogToFile;
 import com.example.mutidemo.util.TimeOrDateUtil;
+import com.igexin.sdk.PushManager;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -63,7 +65,7 @@ public class MainActivity extends DoubleClickExitActivity {
     RecyclerView mMainRecyclerView;
 
     private Context mContext = MainActivity.this;
-    private List<String> mItemNameList = Arrays.asList("MVP架构", "顶/底部导航栏", "ZBar扫一扫",
+    private List<String> mItemNameList = Arrays.asList("MVP架构", "MVVM架构", "顶/底部导航栏", "ZBar扫一扫",
             "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
             "自定义进度条", "GPS位置信息", "Camera人脸检测", "音频录制与播放", "图片添加水印并压缩",
             "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "Log写入文件", "拍照后不保存", "可删减九宫格",
@@ -77,7 +79,7 @@ public class MainActivity extends DoubleClickExitActivity {
     @Override
     public void initData() {
         //个推初始化
-        com.igexin.sdk.PushManager.getInstance().initialize(this);
+        PushManager.getInstance().initialize(this);
     }
 
     @Override
@@ -95,66 +97,70 @@ public class MainActivity extends DoubleClickExitActivity {
                         startActivity(intent);
                         break;
                     case 1:
-                        intent.setClass(mContext, NavigationActivity.class);
+                        intent.setClass(mContext, MVVMActivity.class);
                         startActivity(intent);
                         break;
                     case 2:
+                        intent.setClass(mContext, NavigationActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 3:
                         //开始扫一扫
                         startScannerActivity();
                         break;
-                    case 3:
+                    case 4:
                         intent.setClass(mContext, RefreshAndLoadMoreActivity.class);
                         startActivity(intent);
                         break;
-                    case 4:
+                    case 5:
                         intent.setClass(mContext, WaterRippleActivity.class);
                         startActivity(intent);
                         break;
-                    case 5:
+                    case 6:
                         intent.setClass(mContext, CheckDeviceActivity.class);
                         startActivity(intent);
                         break;
-                    case 6:
+                    case 7:
                         intent.setClass(mContext, SlideBarActivity.class);
                         startActivity(intent);
                         break;
-                    case 7:
+                    case 8:
                         intent.setClass(mContext, OcrNumberActivity.class);
                         startActivity(intent);
                         break;
-                    case 8:
+                    case 9:
                         intent.setClass(mContext, ProcessBarActivity.class);
                         startActivity(intent);
                         break;
-                    case 9:
+                    case 10:
                         intent.setClass(mContext, GPSActivity.class);
                         startActivity(intent);
                         break;
-                    case 10:
+                    case 11:
                         intent.setClass(mContext, FacePreViewActivity.class);
                         startActivity(intent);
                         break;
-                    case 11:
+                    case 12:
                         intent.setClass(mContext, RecodeAudioActivity.class);
                         startActivity(intent);
                         break;
-                    case 12:
+                    case 13:
                         intent.setClass(mContext, WaterMarkerActivity.class);
                         startActivity(intent);
                         break;
-                    case 13:
+                    case 14:
                         intent.setClass(mContext, VideoCompressActivity.class);
                         startActivity(intent);
                         break;
-                    case 14:
+                    case 15:
                         intent.setClass(mContext, GCJ02ToWGS84Activity.class);
                         startActivity(intent);
                         break;
-                    case 15:
+                    case 16:
                         intent.setClass(mContext, BluetoothActivity.class);
                         startActivity(intent);
                         break;
-                    case 16:
+                    case 17:
                         File documentFile = FileUtils.getDocumentFile();
                         LogToFile.write(documentFile, "第一条记录");
                         for (int i = 0; i < 50; i++) {
@@ -176,17 +182,17 @@ public class MainActivity extends DoubleClickExitActivity {
                             }
                         }.start();
                         break;
-                    case 17:
+                    case 18:
                         PictureSelector.create(MainActivity.this)
                                 .openCamera(PictureMimeType.ofImage())
                                 .imageEngine(GlideLoadEngine.createGlideEngine())
                                 .forResult(PictureConfig.REQUEST_CAMERA);
                         break;
-                    case 18:
+                    case 19:
                         intent.setClass(mContext, GridViewActivity.class);
                         startActivity(intent);
                         break;
-                    case 19:
+                    case 20:
                         intent.setClass(mContext, OriginalShareActivity.class);
                         startActivity(intent);
                         break;
