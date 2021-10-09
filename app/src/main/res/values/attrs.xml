@@ -65,4 +65,20 @@
         <attr name="slide_textSize" format="dimension" />
         <attr name="slide_textColor" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="AirDashBoardView">
+        <attr name="air_valueColor" format="color" />
+        <attr name="air_valueSize" format="dimension" />
+        <attr name="air_current_valueColor" format="color" />
+        <attr name="air_current_valueSize" format="dimension" />
+        <attr name="air_top_text" format="string" />
+        <attr name="air_top_textSize" format="dimension" />
+        <attr name="air_top_textColor" format="color" />
+        <attr name="air_center_textSize" format="dimension" />
+        <attr name="air_center_textColor" format="color" />
+        <attr name="air_ring_background" format="color" />
+        <attr name="air_ring_foreground" format="color" />
+        <attr name="air_ring_width" format="dimension" />
+        <attr name="air_ring_radius" format="dimension" />
+    </declare-styleable>
 </resources>

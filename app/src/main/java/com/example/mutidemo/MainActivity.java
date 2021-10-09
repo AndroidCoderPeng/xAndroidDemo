@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.mvvm.view.MVVMActivity;
+import com.example.mutidemo.ui.AirDashBoardActivity;
 import com.example.mutidemo.ui.BluetoothActivity;
 import com.example.mutidemo.ui.CheckDeviceActivity;
 import com.example.mutidemo.ui.FacePreViewActivity;
@@ -69,7 +70,7 @@ public class MainActivity extends DoubleClickExitActivity {
             "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
             "自定义进度条", "GPS位置信息", "Camera人脸检测", "音频录制与播放", "图片添加水印并压缩",
             "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "Log写入文件", "拍照后不保存", "可删减九宫格",
-            "系统原生分享");
+            "系统原生分享", "空气污染刻度盘");
 
     @Override
     public int initLayoutView() {
@@ -194,6 +195,10 @@ public class MainActivity extends DoubleClickExitActivity {
                         break;
                     case 20:
                         intent.setClass(mContext, OriginalShareActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 21:
+                        intent.setClass(mContext, AirDashBoardActivity.class);
                         startActivity(intent);
                         break;
                     default:
