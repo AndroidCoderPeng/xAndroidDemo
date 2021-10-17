@@ -2,13 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#4D000000">
+    android:layout_height="match_parent">
 
     <com.example.mutidemo.widget.AirDashBoardView
         android:id="@+id/dashBoardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        app:air_top_text="污染指数" />
+        app:air_center_text="优"
+        app:air_center_textColor="#A9A9A9"
+        app:air_current_valueColor="#A9A9A9"
+        app:air_ring_background="#E0E0E0"
+        app:air_ring_radius="80dp"
+        app:air_ring_width="5dp"
+        app:air_top_text="污染指数"
+        app:air_top_textColor="#A9A9A9"
+        app:air_top_textSize="12sp"
+        app:air_valueColor="#A9A9A9" />
 </RelativeLayout>

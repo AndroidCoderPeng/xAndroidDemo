@@ -62,6 +62,9 @@ public class OriginalShareActivity extends BaseNormalActivity {
         shareImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (realPath == null) {
+                    return;
+                }
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.putExtra(Intent.EXTRA_SUBJECT, "文件分享");
                 // 兼容android 7.0+

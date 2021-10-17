@@ -40,7 +40,6 @@ public class AirDashBoardView extends View {
 
     private int currentValue;//当前污染物测量值
     private int currentValueTextSize;
-    private int currentValueColor;//当前污染物测量值颜色
 
     private String topText;//表盘顶部文字
     private int topTextSize;
@@ -48,10 +47,8 @@ public class AirDashBoardView extends View {
 
     private String centerText;//表盘中心文字
     private int centerTextSize;
-    private int centerTextColor;
 
     private int background;//表盘圆弧背景色
-    private int foreground;//表盘圆弧前景强调色
     private int ringWidth;
     private int ringRadius;
 
@@ -84,17 +81,15 @@ public class AirDashBoardView extends View {
         valueColor = type.getColor(R.styleable.AirDashBoardView_air_valueColor, getResourcesColor(R.color.mainBackground));
 
         currentValueTextSize = type.getDimensionPixelOffset(R.styleable.AirDashBoardView_air_current_valueSize, SizeUtil.dp2px(context, 24));
-        currentValueColor = type.getColor(R.styleable.AirDashBoardView_air_current_valueColor, getResourcesColor(R.color.white));
 
         topText = type.getString(R.styleable.AirDashBoardView_air_top_text);
         topTextSize = type.getDimensionPixelOffset(R.styleable.AirDashBoardView_air_top_textSize, SizeUtil.dp2px(context, 16));
         topTextColor = type.getColor(R.styleable.AirDashBoardView_air_top_textColor, getResourcesColor(R.color.white));
 
+        centerText = type.getString(R.styleable.AirDashBoardView_air_center_text);
         centerTextSize = type.getDimensionPixelOffset(R.styleable.AirDashBoardView_air_center_textSize, SizeUtil.dp2px(context, 12));
-        centerTextColor = type.getColor(R.styleable.AirDashBoardView_air_center_textColor, getResourcesColor(R.color.white));
 
         background = type.getColor(R.styleable.AirDashBoardView_air_ring_background, getResourcesColor(R.color.mainBackground));
-        foreground = type.getColor(R.styleable.AirDashBoardView_air_ring_foreground, getResourcesColor(R.color.color_1));
         ringWidth = type.getDimensionPixelOffset(R.styleable.AirDashBoardView_air_ring_width, SizeUtil.dp2px(context, 5));
         ringRadius = type.getDimensionPixelOffset(R.styleable.AirDashBoardView_air_ring_radius, SizeUtil.dp2px(context, 100));
 
@@ -113,7 +108,6 @@ public class AirDashBoardView extends View {
         valuePaint.setTextSize(valueTextSize);
 
         currentValuePaint = new TextPaint();
-        currentValuePaint.setColor(currentValueColor);
         currentValuePaint.setAntiAlias(true);
         currentValuePaint.setTextAlign(Paint.Align.CENTER);
         currentValuePaint.setTextSize(currentValueTextSize);
@@ -125,7 +119,6 @@ public class AirDashBoardView extends View {
         topPaint.setTextSize(topTextSize);
 
         centerPaint = new TextPaint();
-        centerPaint.setColor(centerTextColor);
         centerPaint.setAntiAlias(true);
         centerPaint.setTextAlign(Paint.Align.CENTER);
         centerPaint.setTextSize(centerTextSize);
@@ -140,16 +133,10 @@ public class AirDashBoardView extends View {
         backPaint.setMaskFilter(new BlurMaskFilter(15, BlurMaskFilter.Blur.SOLID));
 
         forePaint = new Paint();
-        forePaint.setColor(foreground);
         forePaint.setStrokeCap(Paint.Cap.ROUND);
         forePaint.setStyle(Paint.Style.STROKE);
         forePaint.setStrokeWidth(SizeUtil.dp2px(context, ringWidth));
         forePaint.setAntiAlias(true);
-//        LinearGradient linearGradient = new LinearGradient(
-//                0, 0, ringWidth, 0,
-//                new int[]{0xFF04C0AF, 0xFFD53A02},
-//                null, Shader.TileMode.MIRROR);
-//        forePaint.setShader(linearGradient);
     }
 
     @Override
@@ -372,5 +359,17 @@ public class AirDashBoardView extends View {
 
     public void setCenterText(String centerText) {
         this.centerText = centerText;
+    }
+
+    public void setAirRingForeground(int color) {
+        forePaint.setColor(color);
+    }
+
+    public void setAirCenterTextColor(int color) {
+        centerPaint.setColor(color);
+    }
+
+    public void setAirCurrentValueColor(int color) {
+        currentValuePaint.setColor(color);
     }
 }

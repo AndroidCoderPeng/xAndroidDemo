@@ -14,4 +14,11 @@
     <color name="listMainColor">#06134C</color><!--列表强调色-->
     <color name="listSubColor">#090E47</color><!--列表次级强调色-->
     <color name="listAuxiliaryColor">#98A0BD</color><!--列表辅助色-->
+
+    <color name="excellentColor">#009966</color>
+    <color name="wellColor">#FFDE33</color>
+    <color name="mildColor">#FF9933</color>
+    <color name="moderateColor">#CC0033</color>
+    <color name="severeColor">#660099</color>
+    <color name="seriousColor">#7E0023</color>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.mutidemo.ui;
 
 import com.example.mutidemo.R;
+import com.example.mutidemo.util.ColorUtil;
 import com.example.mutidemo.widget.AirDashBoardView;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 
@@ -20,8 +21,12 @@ public class AirDashBoardActivity extends BaseNormalActivity {
     public void initData() {
         dashBoardView.setMinValue(0);
         dashBoardView.setMaxValue(500);
-        dashBoardView.setCurrentValue(420);
+        int aqiValue = 501;
+        dashBoardView.setCurrentValue(aqiValue);
         dashBoardView.setCenterText("优");
+        dashBoardView.setAirRingForeground(ColorUtil.aqiToColor(this, aqiValue));
+        dashBoardView.setAirCenterTextColor(ColorUtil.aqiToColor(this, aqiValue));
+        dashBoardView.setAirCurrentValueColor(ColorUtil.aqiToColor(this, aqiValue));
     }
 
     @Override
