@@ -24,5 +24,6 @@
         android:layout_height="wrap_content"
         app:itemIconTint="@drawable/bottom_text_color"
         app:itemTextColor="@drawable/bottom_text_color"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_nav_menu" />
 </LinearLayout>

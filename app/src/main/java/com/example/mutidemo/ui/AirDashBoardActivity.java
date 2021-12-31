@@ -21,9 +21,9 @@ public class AirDashBoardActivity extends BaseNormalActivity {
     public void initData() {
         dashBoardView.setMinValue(0);
         dashBoardView.setMaxValue(500);
-        int aqiValue = 501;
+        int aqiValue = 128;
         dashBoardView.setCurrentValue(aqiValue);
-        dashBoardView.setCenterText("优");
+        dashBoardView.setCenterText("良");
         dashBoardView.setAirRingForeground(ColorUtil.aqiToColor(this, aqiValue));
         dashBoardView.setAirCenterTextColor(ColorUtil.aqiToColor(this, aqiValue));
         dashBoardView.setAirCurrentValueColor(ColorUtil.aqiToColor(this, aqiValue));

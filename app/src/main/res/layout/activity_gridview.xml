@@ -3,21 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/lightGray"
-        android:gravity="center"
-        android:paddingVertical="10dp"
-        android:text="RecyclerView实现"
-        android:textSize="18sp" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/nineRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv"
         android:scrollbars="none" />
 
     <TextView
@@ -27,7 +16,6 @@
         android:layout_below="@id/nineRecyclerView"
         android:layout_marginHorizontal="5dp"
         android:paddingVertical="10dp"
-        android:text="@string/app_name"
         android:textColor="@color/listMainColor"
         android:textSize="16sp" />
 

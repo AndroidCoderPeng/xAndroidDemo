@@ -17,6 +17,8 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!--允许读取手机状态 用于创建BmobInstallation-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -67,6 +69,7 @@
         <activity android:name=".ui.GridViewActivity" />
         <activity android:name=".ui.OriginalShareActivity" />
         <activity android:name=".ui.AirDashBoardActivity" />
+        <activity android:name=".ui.BmobActivity"/>
 
         <activity
             android:name=".ui.BigImageViewActivity"
@@ -109,6 +112,11 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
+        </provider>
+
+        <provider
+            android:name="cn.bmob.v3.util.BmobContentProvider"
+            android:authorities="com.example.mutidemo.BmobContentProvider">
         </provider>
 
         <!--高德定位-->

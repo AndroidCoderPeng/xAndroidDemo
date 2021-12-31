@@ -3,6 +3,7 @@ package com.example.mutidemo.util;
 public class Constant {
     public static final String BASE_URL = "https://way.jd.com";
     public static final String APP_KEY = "e957ed7ad90436a57e604127d9d8fa32";
+    public static final String BMOB_APP_KEY = "8412e96df0cc08f343f42506d4d5030d";
     public static final int BLUETOOTH_ON = 1;
     public static final int BLUETOOTH_OFF = 2;
     public static final int CONNECT_SUCCESS = 22;
