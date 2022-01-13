@@ -1,18 +1,11 @@
 package com.example.mutidemo;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.CountDownTimer;
-import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,15 +31,9 @@ import com.example.mutidemo.ui.VideoCompressActivity;
 import com.example.mutidemo.ui.WaterMarkerActivity;
 import com.example.mutidemo.ui.WaterRippleActivity;
 import com.example.mutidemo.util.FileUtils;
-import com.example.mutidemo.util.GlideLoadEngine;
-import com.example.mutidemo.util.ImageUtil;
 import com.example.mutidemo.util.LogToFile;
 import com.example.mutidemo.util.TimeOrDateUtil;
 import com.igexin.sdk.PushManager;
-import com.luck.picture.lib.PictureSelector;
-import com.luck.picture.lib.config.PictureConfig;
-import com.luck.picture.lib.config.PictureMimeType;
-import com.luck.picture.lib.entity.LocalMedia;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
 
@@ -69,9 +56,9 @@ public class MainActivity extends DoubleClickExitActivity {
     private Context mContext = MainActivity.this;
     private List<String> mItemNameList = Arrays.asList("MVP架构", "MVVM架构", "顶/底部导航栏", "ZBar扫一扫",
             "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
-            "自定义进度条", "GPS位置信息", "Camera人脸检测", "音频录制与播放", "图片添加水印并压缩",
-            "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "Log写入文件", "拍照后不保存", "可删减九宫格",
-            "系统原生分享", "空气污染刻度盘", "Bmob数据库");
+            "自定义进度条", "GPS位置信息", "人脸检测", "音频录制与播放", "图片添加水印并压缩",
+            "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "Log写入文件", "可删减九宫格", "系统原生分享",
+            "空气污染刻度盘", "Bmob数据库");
 
     @Override
     public int initLayoutView() {
@@ -165,7 +152,7 @@ public class MainActivity extends DoubleClickExitActivity {
                     case 17:
                         File documentFile = FileUtils.getDocumentFile();
                         LogToFile.write(documentFile, "第一条记录");
-                        for (int i = 0; i < 50; i++) {
+                        for (int i = 0; i < 20; i++) {
                             LogToFile.write(documentFile, TimeOrDateUtil.timestampToCompleteDate(System.currentTimeMillis()));
                         }
                         LogToFile.write(documentFile, "最后一条记录");
@@ -185,24 +172,18 @@ public class MainActivity extends DoubleClickExitActivity {
                         }.start();
                         break;
                     case 18:
-                        PictureSelector.create(MainActivity.this)
-                                .openCamera(PictureMimeType.ofImage())
-                                .imageEngine(GlideLoadEngine.createGlideEngine())
-                                .forResult(PictureConfig.REQUEST_CAMERA);
-                        break;
-                    case 19:
                         intent.setClass(mContext, GridViewActivity.class);
                         startActivity(intent);
                         break;
-                    case 20:
+                    case 19:
                         intent.setClass(mContext, OriginalShareActivity.class);
                         startActivity(intent);
                         break;
-                    case 21:
+                    case 20:
                         intent.setClass(mContext, AirDashBoardActivity.class);
                         startActivity(intent);
                         break;
-                    case 22:
+                    case 21:
                         intent.setClass(mContext, BmobActivity.class);
                         startActivity(intent);
                         break;
@@ -211,35 +192,6 @@ public class MainActivity extends DoubleClickExitActivity {
                 }
             }
         });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == PictureConfig.REQUEST_CAMERA) {
-                LocalMedia localMedia = PictureSelector.obtainMultipleResult(data).get(0);
-                //{"androidQToPath":"/storage/emulated/0/Android/data/com.example.mutidemo/files/Pictures/IMG_CMP_261216909.jpeg","bucketId":-1739773001,"chooseModel":1,"compressPath":"/storage/emulated/0/Android/data/com.example.mutidemo/files/Pictures/IMG_CMP_261216909.jpeg","compressed":true,"duration":0,"height":6528,"id":97022,"isChecked":false,"isCut":false,"isLongImage":false,"isMaxSelectEnabledMask":false,"isOriginal":false,"loadLongImageStatus":-1,"mimeType":"image/jpeg","num":0,"orientation":0,"parentFolderName":"Camera","path":"content://media/external/images/media/97022","position":0,"realPath":"/storage/emulated/0/DCIM/Camera/IMG_20210909_11053409.jpg","size":3385527,"width":4896}
-                String localPath = localMedia.getRealPath();
-                Bitmap bitmap = BitmapFactory.decodeFile(localPath);
-                ImageUtil.drawTextToRightBottom(this, bitmap, TimeOrDateUtil.timestampToCompleteDate(System.currentTimeMillis()), file -> {
-                    Log.d(TAG, "onActivityResult: " + file.getAbsolutePath());
-                });
-                if (!TextUtils.isEmpty(localPath)) {
-                    Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                    ContentResolver contentResolver = getContentResolver();
-                    String url = MediaStore.Images.Media.DATA + "=?";
-                    //当生成图片时没有通知(插入到）媒体数据库，那么在图库里面看不到该图片，而且使用contentResolver.delete方法会返回0，此时使用file.delete方法删除文件
-                    int deleteRows = contentResolver.delete(uri, url, new String[]{localPath});
-                    if (deleteRows == 0) {
-                        File file = new File(localPath);
-                        if (file.exists()) {
-                            file.delete();
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private void startScannerActivity() {
