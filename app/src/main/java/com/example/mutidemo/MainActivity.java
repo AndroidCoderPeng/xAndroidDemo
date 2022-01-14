@@ -15,6 +15,7 @@ import com.example.mutidemo.ui.AirDashBoardActivity;
 import com.example.mutidemo.ui.BluetoothActivity;
 import com.example.mutidemo.ui.BmobActivity;
 import com.example.mutidemo.ui.CheckDeviceActivity;
+import com.example.mutidemo.ui.FaceCollectionActivity;
 import com.example.mutidemo.ui.FacePreViewActivity;
 import com.example.mutidemo.ui.GCJ02ToWGS84Activity;
 import com.example.mutidemo.ui.GPSActivity;
@@ -47,6 +48,7 @@ import cn.bertsir.zbar.QrConfig;
 import cn.bertsir.zbar.QrManager;
 import cn.bertsir.zbar.view.ScanLineView;
 
+
 public class MainActivity extends DoubleClickExitActivity {
 
     private static final String TAG = "MainActivity";
@@ -58,7 +60,7 @@ public class MainActivity extends DoubleClickExitActivity {
             "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
             "自定义进度条", "GPS位置信息", "人脸检测", "音频录制与播放", "图片添加水印并压缩",
             "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "Log写入文件", "可删减九宫格", "系统原生分享",
-            "空气污染刻度盘", "Bmob数据库");
+            "空气污染刻度盘", "Bmob数据库", "人脸采集框");
 
     @Override
     public int initLayoutView() {
@@ -185,6 +187,10 @@ public class MainActivity extends DoubleClickExitActivity {
                         break;
                     case 21:
                         intent.setClass(mContext, BmobActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 22:
+                        intent.setClass(mContext, FaceCollectionActivity.class);
                         startActivity(intent);
                         break;
                     default:

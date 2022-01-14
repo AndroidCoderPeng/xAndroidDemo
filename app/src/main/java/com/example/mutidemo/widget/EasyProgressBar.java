@@ -52,9 +52,9 @@ public class EasyProgressBar extends View {
         backgroundColor = a.getColor(R.styleable.EasyProgressBar_progress_backgroundColor
                 , getResourcesColor(context, R.color.lightGray));
         startColor = a.getColor(R.styleable.EasyProgressBar_progress_startColor
-                , getResourcesColor(context, R.color.sky));
+                , getResourcesColor(context, R.color.mainColor));
         endColor = a.getColor(R.styleable.EasyProgressBar_progress_endColor
-                , getResourcesColor(context, R.color.sky));
+                , getResourcesColor(context, R.color.mainColor));
         textColor = a.getColor(R.styleable.EasyProgressBar_progress_textColor
                 , getResourcesColor(context, R.color.white));
         text = a.getString(R.styleable.EasyProgressBar_progress_text);

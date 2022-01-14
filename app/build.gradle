@@ -90,8 +90,8 @@ dependencies {
     implementation 'com.qmuiteam:arch:0.3.1'
     //沉浸式状态栏。基础依赖包，必须要依赖
     implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
-    implementation 'com.getui:gtsdk:3.1.4.0'  //个推SDK
-    implementation 'com.getui:gtc:3.1.0.0'  //个推核心组件
+    implementation 'com.getui:gtsdk:3.2.7.0'  //个推SDK
+    implementation 'com.getui:gtc:3.1.7.0'  //个推核心组件
     //图片选择框架
     implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.6.0'
     //视频播放器
@@ -112,4 +112,11 @@ dependencies {
     implementation 'io.github.bmob:android-sdk:3.8.11'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    // CameraX core library using the camera2 implementation
+    implementation "androidx.camera:camera-core:1.0.2"
+    implementation "androidx.camera:camera-camera2:1.0.2"
+    implementation "androidx.camera:camera-lifecycle:1.0.2"
+    implementation "androidx.camera:camera-video:1.1.0-alpha12"
+    implementation "androidx.camera:camera-view:1.0.0-alpha32"
+    implementation "androidx.camera:camera-extensions:1.0.0-alpha32"
 }

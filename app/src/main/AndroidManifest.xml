@@ -70,6 +70,7 @@
         <activity android:name=".ui.OriginalShareActivity" />
         <activity android:name=".ui.AirDashBoardActivity" />
         <activity android:name=".ui.BmobActivity"/>
+        <activity android:name=".ui.FaceCollectionActivity"/>
 
         <activity
             android:name=".ui.BigImageViewActivity"

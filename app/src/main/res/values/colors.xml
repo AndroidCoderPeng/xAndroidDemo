@@ -2,14 +2,13 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="mainColor">#5b8bff</color>
+    <color name="mainColor">#1D55C6</color>
 
-    <color name="white">#ffffff</color>
-    <color name="sky">#0094ff</color>
+    <color name="white">#FFFFFF</color>
     <color name="gray">#808080</color>
     <color name="lightGray">#D3D3D3</color>
-    <color name="color_1">#972ae4</color>
-    <color name="color_2">#8a2ace</color>
+    <color name="color_1">#972AE4</color>
+    <color name="color_2">#8A2ACE</color>
 
     <color name="listMainColor">#06134C</color><!--列表强调色-->
     <color name="listSubColor">#090E47</color><!--列表次级强调色-->
