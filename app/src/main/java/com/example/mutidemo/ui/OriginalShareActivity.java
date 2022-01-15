@@ -7,19 +7,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.mutidemo.R;
 import com.example.mutidemo.util.GlideLoadEngine;
-import com.luck.picture.lib.PictureSelector;
-import com.luck.picture.lib.config.PictureConfig;
-import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.basic.PictureSelector;
+import com.luck.picture.lib.config.SelectMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 
@@ -52,11 +52,24 @@ public class OriginalShareActivity extends BaseNormalActivity {
             @Override
             public void onClick(View v) {
                 PictureSelector.create(OriginalShareActivity.this)
-                        .openGallery(PictureMimeType.ofImage())
-                        .isWeChatStyle(true)
-                        .imageEngine(GlideLoadEngine.createGlideEngine())
-                        .maxSelectNum(1)
-                        .forResult(PictureConfig.CHOOSE_REQUEST);
+                        .openGallery(SelectMimeType.ofImage())
+                        .setImageEngine(GlideLoadEngine.createGlideEngine())
+                        .setMaxSelectNum(9)
+                        .forResult(new OnResultCallbackListener<LocalMedia>() {
+
+                            @Override
+                            public void onResult(ArrayList<LocalMedia> result) {
+                                LocalMedia resultMedia = result.get(0);
+                                realPath = resultMedia.getRealPath();
+                                imagePathView.setText(realPath);
+                                Glide.with(OriginalShareActivity.this).load(realPath).into(imageView);
+                            }
+
+                            @Override
+                            public void onCancel() {
+
+                            }
+                        });
             }
         });
         shareImageButton.setOnClickListener(new View.OnClickListener() {
@@ -77,20 +90,5 @@ public class OriginalShareActivity extends BaseNormalActivity {
                 startActivity(intent);
             }
         });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == PictureConfig.CHOOSE_REQUEST) {
-                LocalMedia resultMedia = PictureSelector.obtainMultipleResult(data).get(0);
-                realPath = resultMedia.getRealPath();
-                imagePathView.setText(realPath);
-                Glide.with(this)
-                        .load(realPath)
-                        .into(imageView);
-            }
-        }
     }
 }

@@ -6,8 +6,6 @@ import android.graphics.Matrix;
 import android.media.Image;
 import android.media.ImageReader;
 import android.util.Log;
-import android.util.SparseIntArray;
-import android.view.Surface;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.CameraSelector;
@@ -44,15 +42,6 @@ public class FaceCollectionActivity extends BaseNormalActivity {
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private ExecutorService cameraExecutor;
     private ImageCapture imageCapture;
-
-    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-
-    static {
-        ORIENTATIONS.append(Surface.ROTATION_0, 90);
-        ORIENTATIONS.append(Surface.ROTATION_90, 0);
-        ORIENTATIONS.append(Surface.ROTATION_180, 270);
-        ORIENTATIONS.append(Surface.ROTATION_270, 180);
-    }
 
     @Override
     public int initLayoutView() {

@@ -1,11 +1,9 @@
 package com.example.mutidemo.ui;
 
-import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,10 +11,10 @@ import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.NineGridImageAdapter;
 import com.example.mutidemo.util.GlideLoadEngine;
 import com.example.mutidemo.util.ImageUtil;
-import com.luck.picture.lib.PictureSelector;
-import com.luck.picture.lib.config.PictureConfig;
-import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.basic.PictureSelector;
+import com.luck.picture.lib.config.SelectMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import java.util.ArrayList;
@@ -65,25 +63,24 @@ public class GridViewActivity extends BaseNormalActivity {
 
     private void selectPicture() {
         PictureSelector.create(this)
-                .openGallery(PictureMimeType.ofImage())
-                .isWeChatStyle(true)
-                .imageEngine(GlideLoadEngine.createGlideEngine())
-                .maxSelectNum(9)
-                .forResult(PictureConfig.CHOOSE_REQUEST);
-    }
+                .openGallery(SelectMimeType.ofImage())
+                .setImageEngine(GlideLoadEngine.createGlideEngine())
+                .setMaxSelectNum(9)
+                .forResult(new OnResultCallbackListener<LocalMedia>() {
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == PictureConfig.CHOOSE_REQUEST) {
-                List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
-                for (LocalMedia media : selectList) {
-                    recyclerViewImages.add(media.getRealPath());
-                }
-                nineRecyclerViewAdapter.setupImage(recyclerViewImages);
-            }
-        }
+                    @Override
+                    public void onResult(ArrayList<LocalMedia> result) {
+                        for (LocalMedia media : result) {
+                            recyclerViewImages.add(media.getRealPath());
+                        }
+                        nineRecyclerViewAdapter.setupImage(recyclerViewImages);
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
     }
 
     @Override

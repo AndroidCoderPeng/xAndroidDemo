@@ -2,15 +2,12 @@ package com.example.mutidemo.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -21,16 +18,15 @@ import com.example.mutidemo.util.ImageUtil;
 import com.example.mutidemo.util.OtherUtils;
 import com.example.mutidemo.util.TimeOrDateUtil;
 import com.example.mutidemo.util.callback.ICompressListener;
-import com.luck.picture.lib.PictureSelector;
-import com.luck.picture.lib.config.PictureConfig;
-import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.basic.PictureSelector;
+import com.luck.picture.lib.config.SelectMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.utils.FileUtil;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -70,12 +66,22 @@ public class WaterMarkerActivity extends BaseNormalActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.selectImageButton:
-                PictureSelector.create(this)
-                        .openGallery(PictureMimeType.ofImage())
-                        .isWeChatStyle(true)
-                        .imageEngine(GlideLoadEngine.createGlideEngine())
-                        .maxSelectNum(1)
-                        .forResult(PictureConfig.CHOOSE_REQUEST);
+                PictureSelector.create(WaterMarkerActivity.this)
+                        .openGallery(SelectMimeType.ofImage())
+                        .setImageEngine(GlideLoadEngine.createGlideEngine())
+                        .setMaxSelectNum(1)
+                        .forResult(new OnResultCallbackListener<LocalMedia>() {
+
+                            @Override
+                            public void onResult(ArrayList<LocalMedia> result) {
+                                onSelectResult(result);
+                            }
+
+                            @Override
+                            public void onCancel() {
+
+                            }
+                        });
                 break;
             case R.id.addMarkerButton:
                 /**
@@ -117,29 +123,22 @@ public class WaterMarkerActivity extends BaseNormalActivity implements View.OnCl
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == PictureConfig.CHOOSE_REQUEST) {
-                List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
-                for (LocalMedia media : selectList) {
-                    mediaRealPath = media.getRealPath();
-                    Glide.with(this)
-                            .load(mediaRealPath)
-                            .apply(new RequestOptions().error(R.drawable.ic_load_error))
-                            .into(originalImageView);
-                    originalImageSizeView.setText("压缩前：" + FileUtil.formatFileSize(media.getSize()));
-                    originalImageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            ArrayList<String> urls = new ArrayList<>();
-                            urls.add(mediaRealPath);
-                            ImageUtil.showBigImage(context, 0, urls);
-                        }
-                    });
+    private void onSelectResult(ArrayList<LocalMedia> result) {
+        for (LocalMedia media : result) {
+            mediaRealPath = media.getRealPath();
+            Glide.with(this)
+                    .load(mediaRealPath)
+                    .apply(new RequestOptions().error(R.drawable.ic_load_error))
+                    .into(originalImageView);
+            originalImageSizeView.setText("压缩前：" + FileUtil.formatFileSize(media.getSize()));
+            originalImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ArrayList<String> urls = new ArrayList<>();
+                    urls.add(mediaRealPath);
+                    ImageUtil.showBigImage(context, 0, urls);
                 }
-            }
+            });
         }
     }
 }

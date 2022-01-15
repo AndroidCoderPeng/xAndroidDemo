@@ -1,13 +1,10 @@
 package com.example.mutidemo.ui;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-
-import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -15,15 +12,15 @@ import com.example.mutidemo.R;
 import com.example.mutidemo.util.FileUtils;
 import com.example.mutidemo.util.GlideLoadEngine;
 import com.example.mutidemo.util.JZMediaExo;
-import com.luck.picture.lib.PictureSelector;
-import com.luck.picture.lib.config.PictureConfig;
-import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.basic.PictureSelector;
+import com.luck.picture.lib.config.SelectMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.zolad.videoslimmer.VideoSlimmer;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -70,14 +67,24 @@ public class VideoCompressActivity extends BaseNormalActivity implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.selectVideoButton:
-                PictureSelector.create(this)
-                        .openGallery(PictureMimeType.ofVideo())
-                        .isWeChatStyle(true)
-                        .imageEngine(GlideLoadEngine.createGlideEngine())
-                        .maxSelectNum(1)
-                        .videoMaxSecond(20)
+                PictureSelector.create(VideoCompressActivity.this)
+                        .openGallery(SelectMimeType.ofVideo())
+                        .setImageEngine(GlideLoadEngine.createGlideEngine())
+                        .setMaxSelectNum(1)
+                        .setRecordVideoMaxSecond(20)
                         .isPreviewVideo(true)
-                        .forResult(PictureConfig.CHOOSE_REQUEST);
+                        .forResult(new OnResultCallbackListener<LocalMedia>() {
+
+                            @Override
+                            public void onResult(ArrayList<LocalMedia> result) {
+                                onSelectResult(result);
+                            }
+
+                            @Override
+                            public void onCancel() {
+
+                            }
+                        });
                 break;
             case R.id.compressVideoButton:
                 if (!TextUtils.isEmpty(mediaOriginalPath)) {
@@ -132,30 +139,23 @@ public class VideoCompressActivity extends BaseNormalActivity implements View.On
                 .into(compressedVideoView.posterImageView);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == PictureConfig.CHOOSE_REQUEST) {
-                List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
-                for (LocalMedia media : selectList) {
-                    this.defaultWidth = media.getWidth();
-                    this.defaultHeight = media.getHeight();
-                    this.mediaOriginalPath = media.getRealPath();
+    private void onSelectResult(ArrayList<LocalMedia> result) {
+        for (LocalMedia media : result) {
+            this.defaultWidth = media.getWidth();
+            this.defaultHeight = media.getHeight();
+            this.mediaOriginalPath = media.getRealPath();
 
-                    MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                    retriever.setDataSource(mediaOriginalPath);
-                    this.defaultRotation = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
-                    Log.d(TAG, "defaultRotation: " + defaultRotation);
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(mediaOriginalPath);
+            this.defaultRotation = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
+            Log.d(TAG, "defaultRotation: " + defaultRotation);
 
-                    originalVideoView.setUp(mediaOriginalPath, media.getFileName());
-                    //设置第一帧为封面
-                    Glide.with(this)
-                            .setDefaultRequestOptions(new RequestOptions().frame(4000000))
-                            .load(mediaOriginalPath)
-                            .into(originalVideoView.posterImageView);
-                }
-            }
+            originalVideoView.setUp(mediaOriginalPath, media.getFileName());
+            //设置第一帧为封面
+            Glide.with(this)
+                    .setDefaultRequestOptions(new RequestOptions().frame(4000000))
+                    .load(mediaOriginalPath)
+                    .into(originalVideoView.posterImageView);
         }
     }
 }
