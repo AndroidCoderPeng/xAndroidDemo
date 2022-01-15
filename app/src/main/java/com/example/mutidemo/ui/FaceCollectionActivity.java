@@ -5,16 +5,31 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.Image;
 import android.media.ImageReader;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Surface;
 
+import androidx.annotation.NonNull;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.Preview;
+import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
+import androidx.core.content.ContextCompat;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.widget.FaceCollectionView;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 import java.nio.ByteBuffer;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import butterknife.BindView;
 
@@ -25,6 +40,10 @@ public class FaceCollectionActivity extends BaseNormalActivity {
     PreviewView cameraPreView;
     @BindView(R.id.faceCollectionView)
     FaceCollectionView faceCollectionView;
+
+    private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
+    private ExecutorService cameraExecutor;
+    private ImageCapture imageCapture;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -42,12 +61,60 @@ public class FaceCollectionActivity extends BaseNormalActivity {
 
     @Override
     public void initData() {
-
+        cameraProviderFuture = ProcessCameraProvider.getInstance(this);
+        //检查 CameraProvider 可用性
+        cameraProviderFuture.addListener(() -> {
+            try {
+                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+                bindPreview(cameraProvider);
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }, ContextCompat.getMainExecutor(this));
     }
 
     @Override
     public void initEvent() {
 
+    }
+
+    private void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
+        cameraExecutor = Executors.newSingleThreadExecutor();
+        Preview cameraPreview = new Preview.Builder().build();
+        imageCapture = new ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                .build();
+        CameraSelector cameraSelector = new CameraSelector.Builder()
+                .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
+                .build();
+        cameraPreview.setSurfaceProvider(cameraPreView.getSurfaceProvider());
+        cameraProvider.bindToLifecycle(this, cameraSelector, imageCapture, cameraPreview);
+    }
+
+    public void takePicture() {
+        ImageCapture.OutputFileOptions outputFileOptions =
+                new ImageCapture.OutputFileOptions.Builder(new File("")).build();
+        imageCapture.takePicture(outputFileOptions, cameraExecutor,
+                new ImageCapture.OnImageSavedCallback() {
+                    @Override
+                    public void onImageSaved(@NotNull ImageCapture.OutputFileResults results) {
+                        Log.d(TAG, "onImageSaved: " + results.getSavedUri());
+                    }
+
+                    @Override
+                    public void onError(@NotNull ImageCaptureException error) {
+                        error.printStackTrace();
+                    }
+                }
+        );
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (cameraExecutor != null) {
+            cameraExecutor.shutdown();
+        }
     }
 
     private ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener() {
