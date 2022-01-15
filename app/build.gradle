@@ -38,13 +38,11 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     //Google官方授权库
     implementation 'pub.devrel:easypermissions:3.0.0'
-    //仿iOS风格的dialog库
-    implementation 'com.aihook:alertview:1.0.0'
     //图片加载库
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     //控件注解
@@ -80,8 +78,6 @@ dependencies {
     implementation 'cn.bertsir.zbarLibary:zbarlibary:1.4.2'
     //上拉加载下拉刷新
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0'
-    //解析Html
-    implementation 'org.jsoup:jsoup:1.12.2'
     //查看大图
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'
     implementation group: 'com.belerweb', name: 'pinyin4j', version: '2.5.0'
@@ -93,10 +89,11 @@ dependencies {
     implementation 'com.getui:gtsdk:3.2.7.0'  //个推SDK
     implementation 'com.getui:gtc:3.1.7.0'  //个推核心组件
     //图片选择框架
-    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.6.0'
+//    implementation 'io.github.lucksiege:pictureselector:v3.0.1'
     //视频播放器
     implementation 'cn.jzvd:jiaozivideoplayer:7.6.0'
     //exo播放内核
+    //noinspection GradleDependency
     implementation 'com.google.android.exoplayer:exoplayer:2.13.2'
     //视频压缩
     implementation 'com.zolad:videoslimmer:1.0.0'
@@ -112,11 +109,8 @@ dependencies {
     implementation 'io.github.bmob:android-sdk:3.8.11'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    // CameraX core library using the camera2 implementation
-    implementation "androidx.camera:camera-core:1.0.2"
-    implementation "androidx.camera:camera-camera2:1.0.2"
-    implementation "androidx.camera:camera-lifecycle:1.0.2"
-    implementation "androidx.camera:camera-video:1.1.0-alpha12"
-    implementation "androidx.camera:camera-view:1.0.0-alpha32"
-    implementation "androidx.camera:camera-extensions:1.0.0-alpha32"
+    //CameraX
+    implementation 'androidx.camera:camera-camera2:1.0.2'
+    implementation 'androidx.camera:camera-lifecycle:1.0.2'
+    implementation 'androidx.camera:camera-view:1.0.0-alpha32'
 }
