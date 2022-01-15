@@ -1,10 +1,7 @@
-.gradle/
-.idea/
-.idea/caches/
-.idea/codeStyles/
-.settings/
+/.gradle/
+/.idea/
+/.settings/
 *.iml
-local.properties
-
-app/.settings
-app/build
+/local.properties
+/app/.settings/
+/app/build/
