@@ -14,7 +14,7 @@
         <item name="android:windowExitAnimation">@anim/popup_hide</item>
     </style>
 
-    <style name="ActivityInOutAnimation" parent="Base.Theme.NoActionBar">
+    <style name="ActivityInOutAnimation" parent="Theme.AppCompat.NoActionBar">
         <!--进入-->
         <item name="android:activityOpenEnterAnimation">@anim/activity_in</item>
         <item name="android:activityOpenExitAnimation">@anim/activity_out</item>

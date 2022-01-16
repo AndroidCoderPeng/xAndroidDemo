@@ -12,10 +12,9 @@ import androidx.core.content.FileProvider;
 import com.bumptech.glide.Glide;
 import com.example.mutidemo.R;
 import com.example.mutidemo.util.GlideLoadEngine;
-import com.luck.picture.lib.basic.PictureSelector;
-import com.luck.picture.lib.config.SelectMimeType;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.interfaces.OnResultCallbackListener;
+import com.huantansheng.easyphotos.EasyPhotos;
+import com.huantansheng.easyphotos.callback.SelectCallback;
+import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import java.io.File;
@@ -51,16 +50,15 @@ public class OriginalShareActivity extends BaseNormalActivity {
         selectImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PictureSelector.create(OriginalShareActivity.this)
-                        .openGallery(SelectMimeType.ofImage())
-                        .setImageEngine(GlideLoadEngine.createGlideEngine())
-                        .setMaxSelectNum(9)
-                        .forResult(new OnResultCallbackListener<LocalMedia>() {
-
+                EasyPhotos.createAlbum(OriginalShareActivity.this, true, false, GlideLoadEngine.getInstance())
+                        .setFileProviderAuthority("com.example.mutidemo.fileProvider")
+                        .setCount(1)
+                        .setMinFileSize(1024 * 10)
+                        .start(new SelectCallback() {
                             @Override
-                            public void onResult(ArrayList<LocalMedia> result) {
-                                LocalMedia resultMedia = result.get(0);
-                                realPath = resultMedia.getRealPath();
+                            public void onResult(ArrayList<Photo> photos, boolean isOriginal) {
+                                Photo resultMedia = photos.get(0);
+                                realPath = resultMedia.path;
                                 imagePathView.setText(realPath);
                                 Glide.with(OriginalShareActivity.this).load(realPath).into(imageView);
                             }

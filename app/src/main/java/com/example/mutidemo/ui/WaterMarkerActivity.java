@@ -2,6 +2,7 @@ package com.example.mutidemo.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
@@ -18,12 +19,11 @@ import com.example.mutidemo.util.ImageUtil;
 import com.example.mutidemo.util.OtherUtils;
 import com.example.mutidemo.util.TimeOrDateUtil;
 import com.example.mutidemo.util.callback.ICompressListener;
-import com.luck.picture.lib.basic.PictureSelector;
-import com.luck.picture.lib.config.SelectMimeType;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.interfaces.OnResultCallbackListener;
+import com.huantansheng.easyphotos.EasyPhotos;
+import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.utils.FileUtil;
+import com.pengxh.app.multilib.widget.EasyToast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,22 +66,9 @@ public class WaterMarkerActivity extends BaseNormalActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.selectImageButton:
-                PictureSelector.create(WaterMarkerActivity.this)
-                        .openGallery(SelectMimeType.ofImage())
-                        .setImageEngine(GlideLoadEngine.createGlideEngine())
-                        .setMaxSelectNum(1)
-                        .forResult(new OnResultCallbackListener<LocalMedia>() {
-
-                            @Override
-                            public void onResult(ArrayList<LocalMedia> result) {
-                                onSelectResult(result);
-                            }
-
-                            @Override
-                            public void onCancel() {
-
-                            }
-                        });
+                EasyPhotos.createAlbum(this, true, false, GlideLoadEngine.getInstance())
+                        .setFileProviderAuthority("com.example.mutidemo.fileProvider")
+                        .start(101);//也可以选择链式调用写法
                 break;
             case R.id.addMarkerButton:
                 /**
@@ -123,14 +110,22 @@ public class WaterMarkerActivity extends BaseNormalActivity implements View.OnCl
         }
     }
 
-    private void onSelectResult(ArrayList<LocalMedia> result) {
-        for (LocalMedia media : result) {
-            mediaRealPath = media.getRealPath();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
+        if (resultPhotos == null) {
+            EasyToast.showToast("选择图片失败", EasyToast.ERROR);
+            return;
+        }
+        if (resultPhotos.size() >= 1) {
+            Photo photo = resultPhotos.get(0);
+            mediaRealPath = photo.path;
             Glide.with(this)
-                    .load(mediaRealPath)
+                    .load(photo.uri)
                     .apply(new RequestOptions().error(R.drawable.ic_load_error))
                     .into(originalImageView);
-            originalImageSizeView.setText("压缩前：" + FileUtil.formatFileSize(media.getSize()));
+            originalImageSizeView.setText("压缩前：" + FileUtil.formatFileSize(photo.size));
             originalImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

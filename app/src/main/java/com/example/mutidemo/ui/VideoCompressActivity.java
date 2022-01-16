@@ -12,10 +12,10 @@ import com.example.mutidemo.R;
 import com.example.mutidemo.util.FileUtils;
 import com.example.mutidemo.util.GlideLoadEngine;
 import com.example.mutidemo.util.JZMediaExo;
-import com.luck.picture.lib.basic.PictureSelector;
-import com.luck.picture.lib.config.SelectMimeType;
-import com.luck.picture.lib.entity.LocalMedia;
-import com.luck.picture.lib.interfaces.OnResultCallbackListener;
+import com.huantansheng.easyphotos.EasyPhotos;
+import com.huantansheng.easyphotos.callback.SelectCallback;
+import com.huantansheng.easyphotos.constant.Type;
+import com.huantansheng.easyphotos.models.album.entity.Photo;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.zolad.videoslimmer.VideoSlimmer;
@@ -67,17 +67,20 @@ public class VideoCompressActivity extends BaseNormalActivity implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.selectVideoButton:
-                PictureSelector.create(VideoCompressActivity.this)
-                        .openGallery(SelectMimeType.ofVideo())
-                        .setImageEngine(GlideLoadEngine.createGlideEngine())
-                        .setMaxSelectNum(1)
-                        .setRecordVideoMaxSecond(20)
-                        .isPreviewVideo(true)
-                        .forResult(new OnResultCallbackListener<LocalMedia>() {
-
+                EasyPhotos.createAlbum(this, true, true, GlideLoadEngine.getInstance())
+                        .setFileProviderAuthority("com.example.mutidemo.fileProvider")
+                        .setCount(1)
+                        .setVideoMaxSecond(20)
+                        .filter(Type.VIDEO)
+                        .start(new SelectCallback() {
                             @Override
-                            public void onResult(ArrayList<LocalMedia> result) {
-                                onSelectResult(result);
+                            public void onResult(ArrayList<Photo> photos, boolean isOriginal) {
+                                Log.d(TAG, "onActivityResult: " + photos);
+                                if (photos == null) {
+                                    EasyToast.showToast("选择视频失败", EasyToast.ERROR);
+                                    return;
+                                }
+                                onSelectResult(photos.get(0));
                             }
 
                             @Override
@@ -139,23 +142,21 @@ public class VideoCompressActivity extends BaseNormalActivity implements View.On
                 .into(compressedVideoView.posterImageView);
     }
 
-    private void onSelectResult(ArrayList<LocalMedia> result) {
-        for (LocalMedia media : result) {
-            this.defaultWidth = media.getWidth();
-            this.defaultHeight = media.getHeight();
-            this.mediaOriginalPath = media.getRealPath();
+    protected void onSelectResult(Photo photo) {
+        this.defaultWidth = photo.width;
+        this.defaultHeight = photo.height;
+        this.mediaOriginalPath = photo.path;
 
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(mediaOriginalPath);
-            this.defaultRotation = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
-            Log.d(TAG, "defaultRotation: " + defaultRotation);
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(mediaOriginalPath);
+        this.defaultRotation = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
+        Log.d(TAG, "defaultRotation: " + defaultRotation);
 
-            originalVideoView.setUp(mediaOriginalPath, media.getFileName());
-            //设置第一帧为封面
-            Glide.with(this)
-                    .setDefaultRequestOptions(new RequestOptions().frame(4000000))
-                    .load(mediaOriginalPath)
-                    .into(originalVideoView.posterImageView);
-        }
+        originalVideoView.setUp(mediaOriginalPath, photo.name);
+        //设置第一帧为封面
+        Glide.with(this)
+                .setDefaultRequestOptions(new RequestOptions().frame(4000000))
+                .load(mediaOriginalPath)
+                .into(originalVideoView.posterImageView);
     }
 }
