@@ -1,18 +1,16 @@
 package com.example.mutidemo.ui;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.Rect;
-import android.media.Image;
-import android.media.ImageReader;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.AspectRatio;
+import androidx.camera.core.Camera;
+import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.CameraState;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.Preview;
@@ -21,14 +19,13 @@ import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
 import com.example.mutidemo.R;
+import com.example.mutidemo.util.FileUtils;
 import com.example.mutidemo.widget.FaceCollectionView;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.nio.ByteBuffer;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -119,10 +116,11 @@ public class FaceCollectionActivity extends BaseNormalActivity {
         // Must unbind the use-cases before rebinding them
         cameraProvider.unbindAll();
         try {
-            cameraProvider.bindToLifecycle(this, cameraSelector, imageCapture, cameraPreview);
+            Camera camera = cameraProvider.bindToLifecycle(this, cameraSelector, imageCapture, cameraPreview);
 
             // Attach the viewfinder's surface provider to preview use case
             cameraPreview.setSurfaceProvider(cameraPreView.getSurfaceProvider());
+            observeCameraState(camera.getCameraInfo());
         } catch (Exception e) {
             Log.e(TAG, "Use case binding failed", e);
         }
@@ -136,9 +134,19 @@ public class FaceCollectionActivity extends BaseNormalActivity {
         return AspectRatio.RATIO_16_9;
     }
 
+    private void observeCameraState(CameraInfo cameraInfo) {
+        cameraInfo.getCameraState().observe(this, cameraState -> {
+            //开始预览之后才人脸检测
+            if (cameraState.getType() == CameraState.Type.OPEN) {
+                Log.d(TAG, "observeCameraState: 人脸检测");
+
+            }
+        });
+    }
+
     public void takePicture() {
         ImageCapture.OutputFileOptions outputFileOptions =
-                new ImageCapture.OutputFileOptions.Builder(new File("")).build();
+                new ImageCapture.OutputFileOptions.Builder(FileUtils.getImageFile()).build();
         imageCapture.takePicture(outputFileOptions, cameraExecutor,
                 new ImageCapture.OnImageSavedCallback() {
                     @Override
@@ -160,57 +168,5 @@ public class FaceCollectionActivity extends BaseNormalActivity {
         if (cameraExecutor != null) {
             cameraExecutor.shutdown();
         }
-    }
-
-    private ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener() {
-        @Override
-        public void onImageAvailable(ImageReader reader) {
-            Image image = reader.acquireNextImage();
-            ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-            byte[] bytes = new byte[buffer.remaining()];
-            buffer.get(bytes);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            // 前置摄像头需要左右镜像
-            Bitmap rotateBitmap = rotateBitmap(bitmap, 0, true, true);
-            saveBitmap(rotateBitmap);
-            rotateBitmap.recycle();
-            image.close();
-        }
-    };
-
-    public static Bitmap rotateBitmap(Bitmap source, int degree, boolean flipHorizontal, boolean recycle) {
-        if (degree == 0) {
-            return source;
-        }
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degree);
-        if (flipHorizontal) {
-            matrix.postScale(-1, 1); // 前置摄像头存在水平镜像的问题，所以有需要的话调用这个方法进行水平镜像
-        }
-        Bitmap rotateBitmap = Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, false);
-        if (recycle) {
-            source.recycle();
-        }
-        return rotateBitmap;
-    }
-
-    public static void saveBitmap(Bitmap bitmap) {
-//        String fileName = DATE_FORMAT.format(new Date()) + ".jpg";
-//        File outFile = new File(GALLERY_PATH, fileName);
-//        FileOutputStream os = null;
-//        try {
-//            os = new FileOutputStream(outFile);
-//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (os != null) {
-//                try {
-//                    os.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
     }
 }

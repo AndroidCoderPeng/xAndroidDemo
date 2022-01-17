@@ -105,6 +105,7 @@ public class FaceCollectionView extends View {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+        int radius = SizeUtil.getScreenWidth(context) / 2;
         /**
          * 设置View背景为白色
          * */
@@ -118,12 +119,12 @@ public class FaceCollectionView extends View {
         /**
          * 画虚线圆环
          * */
-        canvas.drawCircle(centerX, (float) (centerY * 0.6), SizeUtil.dp2px(context, 135), dashedPaint);
+        canvas.drawCircle(centerX, (float) (centerY * 0.6), (float) (radius * 0.85), dashedPaint);
 
         /**
          * 抠出中心圆
          * */
-        canvas.drawCircle(centerX, (float) (centerY * 0.6), SizeUtil.dp2px(context, 120), facePaint);
+        canvas.drawCircle(centerX, (float) (centerY * 0.6), (float) (radius * 0.80), facePaint);
     }
 
     private void drawTopText(@NotNull Canvas canvas) {

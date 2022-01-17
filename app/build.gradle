@@ -36,7 +36,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -109,7 +109,7 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     //CameraX
-    def CameraX_version = '1.0.2'
+    def CameraX_version = '1.1.0-alpha12'
     implementation "androidx.camera:camera-core:${CameraX_version}"
     implementation "androidx.camera:camera-camera2:${CameraX_version}"
     implementation "androidx.camera:camera-lifecycle:${CameraX_version}"

@@ -12,6 +12,7 @@ import java.util.Locale;
 
 public class FileUtils {
     private static final String TAG = "FileUtils";
+    private static File imageDir;
     private static File waterImageDir;
     private static File compressImageDir;
     private static File videoDir;
@@ -21,6 +22,7 @@ public class FileUtils {
 
     //只有子文件夹需要手动创建
     public static void initFileConfig(Context context) {
+        imageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES), "");
         waterImageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "WaterImage");
         if (!waterImageDir.exists()) {
             if (waterImageDir.mkdir()) {
@@ -49,6 +51,19 @@ public class FileUtils {
             }
         }
         return logFile;
+    }
+
+    public static File getImageFile() {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(new Date());
+        File imageFile = new File(imageDir + File.separator + "IMG_" + timeStamp + ".jpg");
+        if (!imageFile.exists()) {
+            try {
+                imageFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return imageFile;
     }
 
     static File getWaterImageFile() {
