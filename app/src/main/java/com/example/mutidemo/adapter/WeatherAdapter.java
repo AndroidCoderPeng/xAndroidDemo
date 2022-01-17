@@ -23,8 +23,8 @@ import java.util.List;
  */
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder> {
 
-    private List<WeatherBean.ResultBeanX.ResultBean.DailyBean> mItemList;
-    private LayoutInflater inflater;
+    private final List<WeatherBean.ResultBeanX.ResultBean.DailyBean> mItemList;
+    private final LayoutInflater inflater;
 
     public WeatherAdapter(Context mContext, List<WeatherBean.ResultBeanX.ResultBean.DailyBean> list) {
         this.mItemList = list;
@@ -73,9 +73,9 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
 
     static class WeatherViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView weatherWeek;
-        private TextView weatherLow;
-        private TextView weatherHigh;
+        private final TextView weatherWeek;
+        private final TextView weatherLow;
+        private final TextView weatherHigh;
 
         private WeatherViewHolder(View itemView) {
             super(itemView);

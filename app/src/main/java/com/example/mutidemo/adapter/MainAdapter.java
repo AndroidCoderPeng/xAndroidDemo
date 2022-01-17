@@ -1,5 +1,6 @@
 package com.example.mutidemo.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +21,8 @@ import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainRecyclerViewHolder> {
 
-    private List<String> mItemList;
-    private LayoutInflater inflater;
+    private final List<String> mItemList;
+    private final LayoutInflater inflater;
     private OnItemClickListener mOnItemClickListener;
 
 
@@ -42,7 +43,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainRecyclerVi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MainRecyclerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MainRecyclerViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.bindHolder(mItemList.get(position));
         if (mOnItemClickListener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -56,7 +57,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainRecyclerVi
 
     static class MainRecyclerViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView mMainTextView;
+        private final TextView mMainTextView;
 
         private MainRecyclerViewHolder(View itemView) {
             super(itemView);

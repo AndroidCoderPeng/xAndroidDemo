@@ -1,5 +1,6 @@
 package com.example.mutidemo.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -90,12 +91,13 @@ public class RefreshAndLoadMoreActivity extends BaseNormalActivity implements IN
     }
 
     private static class WeakReferenceHandler extends Handler {
-        private WeakReference<RefreshAndLoadMoreActivity> reference;
+        private final WeakReference<RefreshAndLoadMoreActivity> reference;
 
         private WeakReferenceHandler(RefreshAndLoadMoreActivity activity) {
             reference = new WeakReference<>(activity);
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         @Override
         public void handleMessage(Message msg) {
             RefreshAndLoadMoreActivity activity = reference.get();

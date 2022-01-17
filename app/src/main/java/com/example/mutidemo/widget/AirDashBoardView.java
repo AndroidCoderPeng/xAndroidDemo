@@ -29,36 +29,28 @@ import java.lang.ref.WeakReference;
  * @date: 2021年10月08日12:04:03
  */
 public class AirDashBoardView extends View {
-    private static final String TAG = "AirDashBoardView";
-    private static WeakReferenceHandler weakReferenceHandler;
-    private Context context;
 
+    private static WeakReferenceHandler weakReferenceHandler;
+    private final Context context;
+    private final int currentValueTextSize;
+    private final String topText;//表盘顶部文字
+    private final int topTextSize;
+    private final int topTextColor;
+    private final int valueTextSize;
+    private final int valueColor;//阈值颜色
+    private final int centerTextSize;
+    private final int background;//表盘圆弧背景色
+    private final int ringWidth;
+    private final int ringRadius;
+    private int currentValue;//当前污染物测量值
     private int minValue;//污染物最小值
     private int maxValue;//污染物最大值
-    private int valueTextSize;
-    private int valueColor;//阈值颜色
-
-    private int currentValue;//当前污染物测量值
-    private int currentValueTextSize;
-
-    private String topText;//表盘顶部文字
-    private int topTextSize;
-    private int topTextColor;
-
-    private String centerText;//表盘中心文字
-    private int centerTextSize;
-
-    private int background;//表盘圆弧背景色
-    private int ringWidth;
-    private int ringRadius;
-
-    private TextPaint valuePaint, currentValuePaint, topPaint, centerPaint;
-    private Paint backPaint, forePaint;
-
     private int centerX;//圆心x
     private int centerY;//圆心y
-
     private float sweepAngle;//当前测量值转为弧度扫过的角度
+    private TextPaint valuePaint, currentValuePaint, topPaint, centerPaint;
+    private Paint backPaint, forePaint;
+    private String centerText;//表盘中心文字
 
     public AirDashBoardView(Context context) {
         this(context, null, 0);
@@ -341,7 +333,7 @@ public class AirDashBoardView extends View {
     }
 
     private static class WeakReferenceHandler extends Handler {
-        private WeakReference<AirDashBoardView> reference;
+        private final WeakReference<AirDashBoardView> reference;
 
         private WeakReferenceHandler(AirDashBoardView boardView) {
             reference = new WeakReference<>(boardView);

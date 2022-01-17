@@ -54,7 +54,7 @@ public class WaterRippleActivity extends BaseNormalActivity {
         });
     }
 
-    private Runnable searchRunnable = () -> {
+    private final Runnable searchRunnable = () -> {
         while (true) {
             try {
                 if (!isRunning) {

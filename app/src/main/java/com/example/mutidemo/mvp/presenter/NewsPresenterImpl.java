@@ -7,8 +7,8 @@ import com.example.mutidemo.mvp.view.INewsView;
 
 public class NewsPresenterImpl extends BasePresenter implements INewsPresenter, NewsModelImpl.OnNewsListener {
 
-    private INewsView view;
-    private NewsModelImpl actionModel;
+    private final INewsView view;
+    private final NewsModelImpl actionModel;
 
     public NewsPresenterImpl(INewsView newsView) {
         this.view = newsView;

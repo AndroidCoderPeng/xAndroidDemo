@@ -1,5 +1,6 @@
 package com.example.mutidemo.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class SwipeViewAdapter extends RecyclerView.Adapter<QMUISwipeViewHolder> {
 
-    private List<String> mData = new ArrayList<>();
+    private final List<String> mData = new ArrayList<>();
     private final QMUISwipeAction mDeleteAction;
 
     public SwipeViewAdapter(Context context) {
@@ -32,6 +33,7 @@ public class SwipeViewAdapter extends RecyclerView.Adapter<QMUISwipeViewHolder> 
         mDeleteAction = builder.text("删除").backgroundColor(Color.RED).build();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setData(@Nullable List<String> list) {
         mData.clear();
         if (list != null) {

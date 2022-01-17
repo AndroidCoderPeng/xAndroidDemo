@@ -32,26 +32,26 @@ import java.util.List;
 public class WaterRippleView extends View implements View.OnClickListener {
 
     private static final String TAG = "WaterRippleView";
-    private Context mContext;
-    private Paint centerPaint; //中心圆paint
-    private int radius; //中心圆半径
-    private Paint spreadPaint; //扩散圆paint
+    private final Context mContext;
+    private final int radius; //中心圆半径
+    private final int distance; //每次圆递增间距，值越大，扩散速度越快
+    private final int maxDistance; //最大扩散距离，值越小，扩散效果越明显
+    private final int textSize;
+    private final int textColor;
+    private final int spreadColor;
+    private final int centerColor;
+    private final int imageResourceId;//图片资源
+    private final List<Integer> spreadRadius = new ArrayList<>();//扩散圆层级数，元素为扩散的距离
+    private final List<Integer> alphas = new ArrayList<>();//对应每层圆的透明度
     private float centerX;//圆心x
     private float centerY;//圆心y
-    private int distance; //每次圆递增间距，值越大，扩散速度越快
-    private int maxDistance; //最大扩散距离，值越小，扩散效果越明显
     private int animDuration;//扩散延迟间隔，越大扩散越慢
-    private List<Integer> spreadRadius = new ArrayList<>();//扩散圆层级数，元素为扩散的距离
-    private List<Integer> alphas = new ArrayList<>();//对应每层圆的透明度
+    private boolean isStart = false;
     private TextPaint textPaint;
     private String text = "呼叫设备";
-    private int textSize;
-    private int textColor;
-    private int spreadColor;
-    private int centerColor;
     private Paint imagePaint;
-    private int imageResourceId;//图片资源
-    private boolean isStart = false;
+    private Paint centerPaint; //中心圆paint
+    private Paint spreadPaint; //扩散圆paint
 
     public WaterRippleView(Context context) {
         this(context, null, 0);
@@ -206,7 +206,7 @@ public class WaterRippleView extends View implements View.OnClickListener {
         int imageHeight = bitmap.getHeight();
         //计算图片左上角坐标
         float imageX = centerX - (imageWidth >> 1);
-        float imageY = centerY - 4 * imageHeight / 3;//让图片靠上点，所以Y坐标小一点
+        float imageY = centerY - (4 * imageHeight / 3);//让图片靠上点，所以Y坐标小一点
         canvas.drawBitmap(bitmap, imageX, imageY, imagePaint);
         /**
          * 方法二：此方法是为将要绘制的图片划定显示区域，可以缓解图片尺寸导致显示异常问题

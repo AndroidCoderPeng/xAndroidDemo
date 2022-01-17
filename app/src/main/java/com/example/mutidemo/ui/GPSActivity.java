@@ -1,6 +1,7 @@
 package com.example.mutidemo.ui;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -41,8 +42,9 @@ public class GPSActivity extends AppCompatActivity {
     @BindView(R.id.mapView)
     MapView mapView;
     private AMap aMap;
-    private Marker marker = null;
+    private final Marker marker = null;
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,9 +123,6 @@ public class GPSActivity extends AppCompatActivity {
             latitudeView.setText(String.valueOf(latitude));
             altitudeView.setText(String.valueOf(location.getAltitude()));
 
-            if (marker != null) {
-                marker.remove();
-            }
             //需要将wgs84坐标换为高德坐标（火星坐标）
             CoordinateConverter converter = new CoordinateConverter(this);
             converter.from(CoordinateConverter.CoordType.GPS);

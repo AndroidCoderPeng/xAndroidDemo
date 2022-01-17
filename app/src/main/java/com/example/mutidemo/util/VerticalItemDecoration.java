@@ -24,12 +24,12 @@ import com.pengxh.app.multilib.utils.SizeUtil;
  */
 public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
 
-    private static final String TAG = "VerticalItemDecoration";
-    private Context context;
-    private Paint topLinePaint, bottomLinePaint;
-    private TextPaint textPaint;
-    private DecorationCallback callback;
-    private int topGap;
+    private final Context context;
+    private final Paint topLinePaint;
+    private final Paint bottomLinePaint;
+    private final TextPaint textPaint;
+    private final DecorationCallback callback;
+    private final int topGap;
 
     public VerticalItemDecoration(Context ctx, DecorationCallback decorationCallback) {
         this.context = ctx;
@@ -45,7 +45,7 @@ public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
 
         textPaint = new TextPaint();
         textPaint.setAntiAlias(true);
-        textPaint.setTextSize(sp2px(ctx, 20));
+        textPaint.setTextSize(SizeUtil.sp2px(ctx, 20));
         textPaint.setColor(Color.BLACK);
         textPaint.setTextAlign(Paint.Align.LEFT);
         topGap = SizeUtil.dp2px(ctx, 30);
@@ -132,13 +132,5 @@ public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
         protected int getVerticalSnapPreference() {
             return SNAP_TO_START;
         }
-    }
-
-    /**
-     * sp转换成px
-     */
-    private int sp2px(Context context, float spValue) {
-        float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
-        return (int) (spValue * fontScale + 0.5f);
     }
 }

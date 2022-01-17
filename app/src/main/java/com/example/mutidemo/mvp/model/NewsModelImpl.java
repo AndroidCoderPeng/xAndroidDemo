@@ -15,7 +15,7 @@ import rx.schedulers.Schedulers;
 public class NewsModelImpl implements INewsModel {
 
     private static final String TAG = "NewsModelImpl";
-    private OnNewsListener newsListener;
+    private final OnNewsListener newsListener;
 
     public NewsModelImpl(OnNewsListener listener) {
         this.newsListener = listener;

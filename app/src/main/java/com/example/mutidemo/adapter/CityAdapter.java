@@ -1,5 +1,6 @@
 package com.example.mutidemo.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,8 +23,8 @@ import java.util.List;
  */
 public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
 
-    private LayoutInflater inflater;
-    private List<CityBean> mCityItem;
+    private final LayoutInflater inflater;
+    private final List<CityBean> mCityItem;
 
     public CityAdapter(Context mContext, List<CityBean> list) {
         this.mCityItem = list;
@@ -37,7 +38,7 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.bindHolder(mCityItem.get(position).getCity());
         if (mOnItemClickListener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -56,7 +57,7 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView cityName;
+        private final TextView cityName;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);

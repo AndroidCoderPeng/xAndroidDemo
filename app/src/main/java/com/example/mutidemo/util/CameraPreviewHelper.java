@@ -1,6 +1,7 @@
 package com.example.mutidemo.util;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -47,10 +48,10 @@ public class CameraPreviewHelper {
     private static final String TAG = "CameraPreviewHelper";
     private static final int mCameraFacing = CameraCharacteristics.LENS_FACING_BACK;//默认使用后置摄像头
     private static final Size mPreviewSize = new Size(1080, 1920);//预览大小
-    private Activity mActivity;
-    private Context mContext;
-    private TextureView mTextureView;
-    private Handler mPreviewHandler;
+    private final Activity mActivity;
+    private final Context mContext;
+    private final TextureView mTextureView;
+    private final Handler mPreviewHandler;
     private String mCameraId = "0";
     private CameraCharacteristics mCharacteristics;
     private Integer mSensorOrientation;
@@ -104,6 +105,7 @@ public class CameraPreviewHelper {
     /**
      * 初始化相机
      */
+    @SuppressLint("MissingPermission")
     private void initCamera() throws CameraAccessException {
         CameraManager mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         assert mCameraManager != null;
@@ -190,7 +192,7 @@ public class CameraPreviewHelper {
     /**
      * 预览回调
      */
-    private CameraCaptureSession.CaptureCallback mCaptureCallBack = new CameraCaptureSession.CaptureCallback() {
+    private final CameraCaptureSession.CaptureCallback mCaptureCallBack = new CameraCaptureSession.CaptureCallback() {
         @Override
         public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
@@ -225,7 +227,7 @@ public class CameraPreviewHelper {
         }
     }
 
-    private ImageReader.OnImageAvailableListener mImageAvailableListener = new ImageReader.OnImageAvailableListener() {
+    private final ImageReader.OnImageAvailableListener mImageAvailableListener = new ImageReader.OnImageAvailableListener() {
         @Override
         public void onImageAvailable(ImageReader reader) {
             Image image = reader.acquireNextImage();

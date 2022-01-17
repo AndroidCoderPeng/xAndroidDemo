@@ -43,7 +43,7 @@ public class WaterMarkerActivity extends BaseNormalActivity implements View.OnCl
     @BindView(R.id.markerImageSizeView)
     TextView markerImageSizeView;
 
-    private Context context = this;
+    private final Context context = this;
     private String mediaRealPath;
 
     @Override

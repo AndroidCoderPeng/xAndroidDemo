@@ -1,5 +1,6 @@
 package com.example.mutidemo.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -20,18 +21,20 @@ import java.util.List;
 public class NineGridImageAdapter extends RecyclerView.Adapter<NineGridImageAdapter.ItemViewHolder> {
 
     private static final int mCountLimit = 9;
-    private Context mContext;
+    private final Context mContext;
     private List<String> mImageData = new ArrayList<>();
 
     public NineGridImageAdapter(Context context) {
         this.mContext = context;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setupImage(List<String> images) {
         this.mImageData = images;
         notifyDataSetChanged();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void deleteImage(int position) {
         if (mImageData.size() != 0) {
             mImageData.remove(position);
@@ -55,7 +58,7 @@ public class NineGridImageAdapter extends RecyclerView.Adapter<NineGridImageAdap
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ItemViewHolder holder, @SuppressLint("RecyclerView") int position) {
         if (position == getItemCount() - 1 && mImageData.size() < mCountLimit) {
             holder.imageView.setImageResource(R.drawable.ic_add_pic);
             holder.imageView.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +116,7 @@ public class NineGridImageAdapter extends RecyclerView.Adapter<NineGridImageAdap
     }
 
     static class ItemViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imageView;
+        private final ImageView imageView;
 
         private ItemViewHolder(View itemView) {
             super(itemView);

@@ -27,18 +27,16 @@ import java.util.Random;
  */
 public class RadarView extends View {
 
-    private static final String TAG = "RadarView";
-
-    private Context mContext;
-    private static final double speed = 3;//线扫描的速度
-    private int lineColor;
-    private int radius; //中心圆半径
-    private Paint linePaint; //圆环paint
+    private final Context mContext;
+    private final double speed = 3;//线扫描的速度
+    private final int lineColor;
+    private final int radius; //中心圆半径
+    private final int ringNumber;
+    private final int maxRingRadius;//最外环的半径
     private float centerX;//圆心x
     private float centerY;//圆心y
     private double degree;//线每次扫描的角度
-    private int ringNumber;
-    private int maxRingRadius;//最外环的半径
+    private Paint linePaint; //圆环paint
     private Matrix matrix;
     private Paint sectorPaint;
 

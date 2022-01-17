@@ -32,7 +32,7 @@ import butterknife.OnClick;
 public class GCJ02ToWGS84Activity extends BaseNormalActivity implements View.OnClickListener {
 
     private static final String TAG = "GCJ02ToWGS84Activity";
-    private Context context = this;
+    private final Context context = this;
     @BindView(R.id.mapView)
     MapView mapView;
     @BindView(R.id.addressView)

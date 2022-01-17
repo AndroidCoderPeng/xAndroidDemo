@@ -91,8 +91,8 @@ public class BigImageViewActivity extends AppCompatActivity {
 
     class BigImageAdapter extends PagerAdapter {
 
-        private Context context;
-        private List<String> data;
+        private final Context context;
+        private final List<String> data;
 
         BigImageAdapter(@NotNull Context context, @NotNull List<String> imageList) {
             this.context = context;

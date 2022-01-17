@@ -58,9 +58,6 @@ import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
 
 public class ImageUtil {
-
-    private static final String TAG = "ImageUtil";
-
     public static void showBigImage(Context context, int index, ArrayList<String> imageList) {
         Intent intent = new Intent(context, BigImageViewActivity.class);
         intent.putExtra("index", index);
@@ -293,7 +290,7 @@ public class ImageUtil {
 
     private static class ImageClickHandler implements Html.TagHandler {
 
-        private Activity mActivity;
+        private final Activity mActivity;
 
         ImageClickHandler(Activity activity) {
             this.mActivity = activity;
@@ -315,8 +312,8 @@ public class ImageUtil {
 
         private static class ClickableImage extends ClickableSpan {
 
-            private String imageURL;
-            private Activity mActivity;
+            private final String imageURL;
+            private final Activity mActivity;
 
             ClickableImage(Activity activity, String url) {
                 this.mActivity = activity;

@@ -99,7 +99,7 @@ public class NavigationActivity extends BaseNormalActivity {
 
     static class ViewPagerAdapter extends FragmentPagerAdapter {
 
-        private List<Fragment> mFragments;
+        private final List<Fragment> mFragments;
 
         ViewPagerAdapter(FragmentManager fm, List<Fragment> fragments) {
             super(fm);

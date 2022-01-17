@@ -1,6 +1,7 @@
 package com.example.mutidemo.util;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -73,6 +74,7 @@ public class LocationHelper {
     /**
      * 原生GSP获取当前定位
      */
+    @SuppressLint("MissingPermission")
     public static void obtainCurrentLocation(Context context, ILocationListener listener, boolean isOnce) {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED

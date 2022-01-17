@@ -1,5 +1,6 @@
 package com.example.mutidemo.util
 
+import android.annotation.SuppressLint
 import android.bluetooth.*
 import android.content.Context
 import android.content.Intent
@@ -22,6 +23,7 @@ import java.util.*
  * 8、数据通讯（发送数据、接收数据）
  * 9、断开连接
  */
+@SuppressLint("StaticFieldLeak")
 object BLEManager {
     private const val Tag = "BLEManager"
     private const val MAX_CONNECT_TIME = 10000L//连接超时时间10s
@@ -42,7 +44,7 @@ object BLEManager {
         BLEManager.context = context
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             val bluetoothManager =
-                    context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+                context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             bluetoothAdapter = bluetoothManager.adapter
             bluetoothAdapter != null
         } else {
@@ -61,6 +63,7 @@ object BLEManager {
      * 打开蓝牙
      * @param isFast  true 直接打开蓝牙  false 提示用户打开
      */
+    @SuppressLint("MissingPermission")
     fun openBluetooth(isFast: Boolean) {
         if (!isEnable()) {
             if (isFast) {
@@ -78,6 +81,7 @@ object BLEManager {
      * 本地蓝牙是否处于正在扫描状态
      * @return true false
      */
+    @SuppressLint("MissingPermission")
     fun isDiscovery(): Boolean {
         if (bluetoothAdapter == null) {
             return false
@@ -85,6 +89,7 @@ object BLEManager {
         return bluetoothAdapter!!.isDiscovering
     }
 
+    @SuppressLint("MissingPermission")
     fun stopDiscoveryDevice() {
         handler.removeCallbacks(stopScanRunnable)
         if (bluetoothAdapter == null) {
@@ -102,11 +107,11 @@ object BLEManager {
     }
 
     //扫描设备回调
+    @SuppressLint("MissingPermission")
     private val scanCallback = object : BluetoothAdapter.LeScanCallback {
         override fun onLeScan(device: BluetoothDevice?, rssi: Int, scanRecord: ByteArray?) {
             if (device == null) return
             if (device.name != null) {
-//                Log.d(Tag, device.name + "-->" + device.address)
                 //去掉非必要的数据，比如mobike的蓝牙的等数据
                 if (device.name != "mobike" || device.name != "") {
                     if (onDeviceSearchListener != null) {
@@ -117,6 +122,7 @@ object BLEManager {
         }
     }
 
+    @SuppressLint("MissingPermission")
     fun startDiscoveryDevice(onDeviceSearchListener: OnDeviceSearchListener, scanTime: Long) {
         if (bluetoothAdapter == null) {
             return
@@ -131,8 +137,11 @@ object BLEManager {
         handler.postDelayed(stopScanRunnable, scanTime)
     }
 
-    fun connectBleDevice(bluetoothDevice: BluetoothDevice, outTime: Long, serviceUUID: String,
-                         readUUID: String, writeUUID: String, onBleConnectListener: OnBleConnectListener) {
+    @SuppressLint("MissingPermission")
+    fun connectBleDevice(
+        bluetoothDevice: BluetoothDevice, outTime: Long, serviceUUID: String,
+        readUUID: String, writeUUID: String, onBleConnectListener: OnBleConnectListener
+    ) {
         if (isConnecting) {
             Log.d(Tag, "connectBleDevice()-->isConnecting = true")
             return
@@ -152,6 +161,7 @@ object BLEManager {
         handler.postDelayed(connectOutTimeRunnable, outTime)
     }
 
+    @SuppressLint("MissingPermission")
     private val bluetoothGattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
             super.onConnectionStateChange(gatt, status, newState)
@@ -192,7 +202,7 @@ object BLEManager {
                             if (onBleConnectListener != null) {
                                 gatt.close()
                                 onBleConnectListener!!.onConnectFailure(
-                                        gatt, "连接异常！", status
+                                    gatt, "连接异常！", status
                                 )
                                 Log.d(Tag, "连接失败status：" + status + "  " + bluetoothDevice.address)
                             }
@@ -201,7 +211,7 @@ object BLEManager {
                             if (onBleConnectListener != null) {
                                 gatt.close()
                                 onBleConnectListener!!.onConnectFailure(
-                                        gatt, "连接成功服务未发现断开！", status
+                                    gatt, "连接成功服务未发现断开！", status
                                 )
                             }
                         }
@@ -248,7 +258,7 @@ object BLEManager {
 
         //读取蓝牙设备发出来的数据回调
         override fun onCharacteristicRead(
-                gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int
+            gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int
         ) {
             super.onCharacteristicRead(gatt, characteristic, status)
             Log.d(Tag, "读status: $status")
@@ -256,8 +266,8 @@ object BLEManager {
 
         //向蓝牙设备写入数据结果回调
         override fun onCharacteristicWrite(
-                gatt: BluetoothGatt?,
-                characteristic: BluetoothGattCharacteristic?, status: Int
+            gatt: BluetoothGatt?,
+            characteristic: BluetoothGattCharacteristic?, status: Int
         ) {
             super.onCharacteristicWrite(gatt, characteristic, status)
             if (characteristic!!.value == null) {
@@ -285,7 +295,7 @@ object BLEManager {
         }
 
         override fun onCharacteristicChanged(
-                gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?
+            gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?
         ) {
             super.onCharacteristicChanged(gatt, characteristic)
             //接收数据
@@ -298,7 +308,7 @@ object BLEManager {
         }
 
         override fun onDescriptorRead(
-                gatt: BluetoothGatt?, descriptor: BluetoothGattDescriptor?, status: Int
+            gatt: BluetoothGatt?, descriptor: BluetoothGattDescriptor?, status: Int
         ) {
             super.onDescriptorRead(gatt, descriptor, status)
             //开启监听成功，可以从设备读数据了
@@ -306,7 +316,7 @@ object BLEManager {
         }
 
         override fun onDescriptorWrite(
-                gatt: BluetoothGatt?, descriptor: BluetoothGattDescriptor?, status: Int
+            gatt: BluetoothGatt?, descriptor: BluetoothGattDescriptor?, status: Int
         ) {
             super.onDescriptorWrite(gatt, descriptor, status)
             //开启监听成功，可以向设备写入命令了
@@ -328,6 +338,7 @@ object BLEManager {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private val connectOutTimeRunnable = Runnable {
         if (bluetoothGatt == null) {
             Log.d(Tag, "connectOutTimeRunnable-->bluetoothGatt == null")
@@ -338,13 +349,14 @@ object BLEManager {
         //连接超时当作连接失败回调
         if (onBleConnectListener != null) {
             onBleConnectListener!!.onConnectFailure(
-                    bluetoothGatt,
-                    "连接超时",
-                    -1
+                bluetoothGatt,
+                "连接超时",
+                -1
             )  //连接失败回调
         }
     }
 
+    @SuppressLint("MissingPermission")
     private val serviceDiscoverOutTimeRunnable = Runnable {
         if (bluetoothGatt == null) {
             Log.d(Tag, "serviceDiscoverOutTimeRunnable-->bluetoothGatt == null");
@@ -355,15 +367,16 @@ object BLEManager {
         //发现服务超时当作连接失败回调
         if (onBleConnectListener != null) {
             onBleConnectListener!!.onConnectFailure(
-                    bluetoothGatt,
-                    "发现服务超时！",
-                    -1
+                bluetoothGatt,
+                "发现服务超时！",
+                -1
             )  //连接失败回调
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun setupService(
-            bluetoothGatt: BluetoothGatt, serviceUUID: UUID, readUUID: UUID, writeUUID: UUID
+        bluetoothGatt: BluetoothGatt, serviceUUID: UUID, readUUID: UUID, writeUUID: UUID
     ): Boolean {
         var notifyCharacteristic: BluetoothGattCharacteristic? = null
         bluetoothGatt.services.forEach { service ->
@@ -379,9 +392,12 @@ object BLEManager {
                     if (charaProp and BluetoothGattCharacteristic.PROPERTY_NOTIFY > 0) {
                         val notifyServiceUUID = service.uuid
                         val notifyCharacteristicUUID = characteristic.uuid
-                        Log.d(Tag, "notifyCharacteristicUUID=$notifyCharacteristicUUID, notifyServiceUUID=$notifyServiceUUID")
+                        Log.d(
+                            Tag,
+                            "notifyCharacteristicUUID=$notifyCharacteristicUUID, notifyServiceUUID=$notifyServiceUUID"
+                        )
                         notifyCharacteristic = bluetoothGatt.getService(notifyServiceUUID)
-                                .getCharacteristic(notifyCharacteristicUUID)
+                            .getCharacteristic(notifyCharacteristicUUID)
                     }
                 }
             }
@@ -398,6 +414,7 @@ object BLEManager {
         return true
     }
 
+    @SuppressLint("MissingPermission")
     fun sendCommand(cmd: ByteArray) {
         if (writeCharacteristic == null) {
             Log.d(Tag, "sendCommand(ByteArray)-->writeGattCharacteristic == null")
@@ -412,6 +429,7 @@ object BLEManager {
         bluetoothGatt!!.writeCharacteristic(writeCharacteristic)
     }
 
+    @SuppressLint("MissingPermission")
     fun disConnectDevice() {
         if (bluetoothGatt == null) {
             Log.d(Tag, "disConnectDevice(ByteArray)-->bluetoothGatt == null");

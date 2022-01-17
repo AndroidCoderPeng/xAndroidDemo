@@ -12,12 +12,13 @@ import android.os.Message;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
 import com.example.mutidemo.R;
+import com.pengxh.app.multilib.utils.ColorUtil;
+import com.pengxh.app.multilib.utils.SizeUtil;
 
 /**
  * @description: TODO 检查设备动画控件
@@ -28,21 +29,21 @@ import com.example.mutidemo.R;
 public class CheckView extends View implements View.OnClickListener {
     private static final String TAG = "CheckView";
 
-    private Context mContext;
-    private Paint centerPaint; //中心圆paint
-    private int centerColor;
-    private int ringColor;
-    private int radius; //中心圆半径
+    private final Context mContext;
+
+    private final int centerColor;
+    private final int ringColor;
+    private final int radius; //中心圆半径
+    private final int textSize;
+    private final int textColor;
     private float centerX;//圆心x
     private float centerY;//圆心y
+    private Paint centerPaint; //中心圆paint
     private TextPaint textPaint;
     private String text = "开始自检";
-    private int textSize;
-    private int textColor;
     private Paint ringPaint; //圆环paint
     private boolean isStart = false;
     private double degree;//小球每次运行的角度
-    private double speed = 0.04;//小球每次运行的速度
     private int x1, y1, x2, y2;//两个小球的坐标
 
     public CheckView(Context context) {
@@ -58,16 +59,12 @@ public class CheckView extends View implements View.OnClickListener {
         this.mContext = context;
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CheckView, defStyleAttr, 0);
 
-        centerColor = a.getColor(R.styleable.CheckView_view_centerColor
-                , getResourcesColor(context, R.color.mainColor));
-        ringColor = a.getColor(R.styleable.CheckView_view_ringColor
-                , getResourcesColor(context, R.color.mainColor));
-        radius = a.getDimensionPixelOffset(R.styleable.CheckView_view_radius, dp2px(context, 50));
-        textSize = a.getDimensionPixelOffset(R.styleable.CheckView_view_textSize
-                , sp2px(context, 18));
+        centerColor = a.getColor(R.styleable.CheckView_view_centerColor, ColorUtil.getResourcesColor(context, R.color.mainColor));
+        ringColor = a.getColor(R.styleable.CheckView_view_ringColor, ColorUtil.getResourcesColor(context, R.color.mainColor));
+        radius = a.getDimensionPixelOffset(R.styleable.CheckView_view_radius, SizeUtil.dp2px(context, 50));
+        textSize = a.getDimensionPixelOffset(R.styleable.CheckView_view_textSize, SizeUtil.sp2px(context, 18));
         text = a.getString(R.styleable.CheckView_view_text);
-        textColor = a.getColor(R.styleable.CheckView_view_textColor
-                , getResourcesColor(context, R.color.white));
+        textColor = a.getColor(R.styleable.CheckView_view_textColor, ColorUtil.getResourcesColor(context, R.color.white));
         a.recycle();
 
         //初始化画笔
@@ -88,7 +85,7 @@ public class CheckView extends View implements View.OnClickListener {
         ringPaint.setStyle(Paint.Style.STROKE);
         ringPaint.setPathEffect(new DashPathEffect(new float[]{3, 3}, 0));//虚线
         ringPaint.setAlpha(90);
-        ringPaint.setStrokeWidth(dp2px(mContext, 5));
+        ringPaint.setStrokeWidth(SizeUtil.dp2px(mContext, 5));
         ringPaint.setAntiAlias(true);
 
         //中心圆文字画笔
@@ -120,7 +117,7 @@ public class CheckView extends View implements View.OnClickListener {
             mWidth = widthSpecSize;
         } else {
             // wrap_content
-            mWidth = dp2px(mContext, 3 * radius >> 1);
+            mWidth = SizeUtil.dp2px(mContext, 3 * radius >> 1);
         }
         // 获取高
         if (heightSpecMode == MeasureSpec.EXACTLY) {
@@ -128,7 +125,7 @@ public class CheckView extends View implements View.OnClickListener {
             mHeight = heightSpecSize;
         } else {
             // wrap_content
-            mHeight = dp2px(mContext, 3 * radius >> 1);
+            mHeight = SizeUtil.dp2px(mContext, 3 * radius >> 1);
         }
         // 设置该view的宽高
         setMeasuredDimension(mWidth, mHeight);
@@ -142,13 +139,13 @@ public class CheckView extends View implements View.OnClickListener {
         canvas.drawCircle(centerX, centerY, radius, centerPaint);
 
         //外层圆环
-        canvas.drawCircle(centerX, centerY, radius + dp2px(mContext, 10), ringPaint);
-        canvas.drawCircle(centerX, centerY, radius + dp2px(mContext, 20), ringPaint);
+        canvas.drawCircle(centerX, centerY, radius + SizeUtil.dp2px(mContext, 10), ringPaint);
+        canvas.drawCircle(centerX, centerY, radius + SizeUtil.dp2px(mContext, 20), ringPaint);
 
         if (isStart) {
             handler.sendEmptyMessage(1);
             //圆环上面的小圆
-            int ringRadius = dp2px(mContext, 5);
+            int ringRadius = SizeUtil.dp2px(mContext, 5);
             canvas.drawCircle(x1, y1, ringRadius, centerPaint);
             canvas.drawCircle(x2, y2, ringRadius, centerPaint);
             invalidate();
@@ -166,22 +163,24 @@ public class CheckView extends View implements View.OnClickListener {
     }
 
     @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
+    private final Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 1) {
+                //小球每次运行的速度
+                double speed = 0.04;
                 degree = speed + degree;
                 if (degree >= 360) {
                     degree = degree - 360;
                 }
                 //顺时针运动
-                x1 = (int) (centerX + (radius + dp2px(mContext, 10)) * Math.sin(degree));
-                y1 = (int) (centerY - (radius + dp2px(mContext, 10)) * Math.cos(degree));
+                x1 = (int) (centerX + (radius + SizeUtil.dp2px(mContext, 10)) * Math.sin(degree));
+                y1 = (int) (centerY - (radius + SizeUtil.dp2px(mContext, 10)) * Math.cos(degree));
 
                 //逆时针运动
-                x2 = (int) (centerX + (radius + dp2px(mContext, 20)) * Math.sin(-degree));
-                y2 = (int) (centerY - (radius + dp2px(mContext, 20)) * Math.cos(-degree));
+                x2 = (int) (centerX + (radius + SizeUtil.dp2px(mContext, 20)) * Math.sin(-degree));
+                y2 = (int) (centerY - (radius + SizeUtil.dp2px(mContext, 20)) * Math.cos(-degree));
             }
         }
     };
@@ -225,27 +224,5 @@ public class CheckView extends View implements View.OnClickListener {
 
     public void setOnAnimationStartListener(OnAnimationStartListener listener) {
         this.startListener = listener;
-    }
-
-    /**
-     * dp转px
-     */
-    private int dp2px(Context context, float dpValue) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, context.getResources().getDisplayMetrics());
-    }
-
-    /**
-     * sp转换成px
-     */
-    private int sp2px(Context context, float spValue) {
-        float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
-        return (int) (spValue * fontScale + 0.5f);
-    }
-
-    /**
-     * 获取xml颜色值
-     */
-    private int getResourcesColor(Context context, int res) {
-        return context.getResources().getColor(res);
     }
 }

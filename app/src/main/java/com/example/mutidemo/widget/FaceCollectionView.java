@@ -21,14 +21,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class FaceCollectionView extends View {
 
-    private static final String TAG = "FaceCollectionView";
-    private Context context;
-    private TextPaint textPaint;
-    private Paint dashedPaint, facePaint;
-
+    private final Context context;
+    private final TextPaint textPaint;
+    private final Paint dashedPaint;
+    private final Paint facePaint;
     private int centerX;//圆心x
     private int centerY;//圆心y
-
     private String tips = "请将脸移至圆框内";
     private int lineColor = Color.rgb(211, 211, 211);
 

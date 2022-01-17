@@ -1,8 +1,6 @@
 package com.example.mutidemo.util;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 
@@ -23,26 +21,5 @@ public class OtherUtils {
                 loadingDialog.dismiss();
             }
         }
-    }
-
-    /**
-     * 判断是否有网络连接
-     *
-     * @param context
-     * @return
-     */
-    public static boolean isNetworkConnected(Context context) { //true是链接，false是没链接
-        if (context != null) {
-            ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            if (manager == null) {
-                return false;
-            } else {
-                NetworkInfo netWorkInfo = manager.getActiveNetworkInfo();
-                if (netWorkInfo != null) {
-                    return netWorkInfo.isAvailable();
-                }
-            }
-        }
-        return false;
     }
 }

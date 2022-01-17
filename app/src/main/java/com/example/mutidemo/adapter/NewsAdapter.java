@@ -1,5 +1,6 @@
 package com.example.mutidemo.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,9 +26,9 @@ import java.util.List;
  */
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsRecyclerViewHolder> {
 
-    private Context context;
-    private List<NewsBean.ResultBeanX.ResultBean.ListBean> mItemList;
-    private LayoutInflater inflater;
+    private final Context context;
+    private final List<NewsBean.ResultBeanX.ResultBean.ListBean> mItemList;
+    private final LayoutInflater inflater;
     private OnNewsItemClickListener mOnItemClickListener;
 
     public NewsAdapter(Context mContext, List<NewsBean.ResultBeanX.ResultBean.ListBean> list) {
@@ -48,7 +49,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsRecyclerVi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NewsRecyclerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull NewsRecyclerViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.bindHolder(mItemList.get(position));
         if (mOnItemClickListener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -62,10 +63,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsRecyclerVi
 
     class NewsRecyclerViewHolder extends RecyclerView.ViewHolder {
 
-        private QMUIRadiusImageView newsPicture;
-        private TextView newsTitle;
-        private TextView newsSrc;
-        private TextView newsTime;
+        private final QMUIRadiusImageView newsPicture;
+        private final TextView newsTitle;
+        private final TextView newsSrc;
+        private final TextView newsTime;
 
         private NewsRecyclerViewHolder(View itemView) {
             super(itemView);

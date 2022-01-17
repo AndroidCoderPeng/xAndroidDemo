@@ -15,7 +15,7 @@ class MVVMActivity : BaseViewModelActivity<WeatherDataViewModel>() {
 
     override fun initLayoutView(): Int = R.layout.activity_mvp
 
-    override fun createViewModelByClass(): Class<WeatherDataViewModel>? =
+    override fun createViewModelByClass(): Class<WeatherDataViewModel> =
         WeatherDataViewModel::class.java
 
     override fun initData() {

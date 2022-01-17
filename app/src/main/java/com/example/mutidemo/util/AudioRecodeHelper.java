@@ -56,7 +56,6 @@ public class AudioRecodeHelper {
     public void stopRecordAudio() {
         if (mMediaRecorder == null)
             return;
-        long endTime = System.currentTimeMillis();
         try {
             mMediaRecorder.stop();
             mMediaRecorder.reset();
@@ -98,8 +97,8 @@ public class AudioRecodeHelper {
         }
     }
 
-    private Handler mHandler = new Handler();
-    private Runnable mUpdateMicStatusTimer = this::updateMicStatus;
+    private final Handler mHandler = new Handler();
+    private final Runnable mUpdateMicStatusTimer = this::updateMicStatus;
 
     public interface OnAudioStatusUpdateListener {
         /**

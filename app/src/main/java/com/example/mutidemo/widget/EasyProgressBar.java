@@ -20,22 +20,21 @@ import com.example.mutidemo.R;
 
 public class EasyProgressBar extends View {
 
-    private static final String TAG = "EasyProgressBar";
+    private final Context mContext;
+    private final int backgroundColor;
+    private final int startColor;
+    private final int endColor;
+    private final int textColor;
     private int viewHeight;
     private int viewWidth;
     private int radius;
-    private Context mContext;
-    private int backgroundColor;
-    private int startColor;
-    private int endColor;
-    private int textColor;
+    private float centerY;
+    private float maxProgress;
+    private float currentProgress;
     private String text;
     private Paint backgroundPaint;
     private Paint foregroundPaint;
     private TextPaint textPaint;
-    private float centerY;
-    private float maxProgress;
-    private float currentProgress;
 
     public EasyProgressBar(Context context) {
         this(context, null, 0);

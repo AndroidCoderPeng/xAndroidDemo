@@ -15,7 +15,7 @@ import rx.schedulers.Schedulers;
 public class WeatherModelImpl implements IWeatherModel {
 
     private static final String TAG = "WeatherModelImpl";
-    private OnWeatherListener weatherListener;
+    private final OnWeatherListener weatherListener;
 
     public WeatherModelImpl(OnWeatherListener listener) {
         this.weatherListener = listener;

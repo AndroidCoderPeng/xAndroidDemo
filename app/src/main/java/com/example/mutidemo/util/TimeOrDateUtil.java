@@ -10,7 +10,6 @@ import java.util.Locale;
  * @email : 290677893@qq.com
  **/
 public class TimeOrDateUtil {
-    private static final String TAG = "TimeOrDateUtil";
     private static final SimpleDateFormat allDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.CHINA);

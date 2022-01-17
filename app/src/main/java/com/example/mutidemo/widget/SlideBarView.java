@@ -25,23 +25,22 @@ import java.util.List;
 
 public class SlideBarView extends View implements View.OnTouchListener {
 
-    private static final String TAG = "SlideBarView";
     private static final int viewWidth = 25;
     private List<String> data = new ArrayList<>();
     private static final String[] letterArray = new String[]{
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
-    private Context mContext;
+    private final Context mContext;
+    private final int textSize;
+    private final int textColor;
     private float centerX;//中心x
-    private int textSize;
-    private int textColor;
-    private TextPaint textPaint;//文字画笔
-    private Paint backgroundPaint;
+    private float radius = 0f;//圆角半径
     private int mHeight;//控件的实际尺寸
     private int touchIndex = -1;
     private int letterHeight;
     private boolean showBackground = false;
-    private float radius = 0f;//圆角半径
+    private TextPaint textPaint;//文字画笔
+    private Paint backgroundPaint;
 
     public SlideBarView(Context context) {
         this(context, null, 0);

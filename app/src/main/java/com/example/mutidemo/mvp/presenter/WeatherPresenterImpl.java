@@ -7,8 +7,8 @@ import com.example.mutidemo.mvp.view.IWeatherView;
 
 public class WeatherPresenterImpl extends BasePresenter implements IWeatherPresenter, WeatherModelImpl.OnWeatherListener {
 
-    private IWeatherView view;
-    private WeatherModelImpl weatherModel;
+    private final IWeatherView view;
+    private final WeatherModelImpl weatherModel;
 
     public WeatherPresenterImpl(IWeatherView weatherView) {
         this.view = weatherView;

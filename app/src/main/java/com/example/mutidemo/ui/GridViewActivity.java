@@ -24,7 +24,7 @@ import butterknife.BindView;
 public class GridViewActivity extends BaseNormalActivity {
 
     private NineGridImageAdapter nineRecyclerViewAdapter;
-    private ArrayList<String> recyclerViewImages = new ArrayList<>();
+    private final ArrayList<String> recyclerViewImages = new ArrayList<>();
     @BindView(R.id.nineRecyclerView)
     RecyclerView nineRecyclerView;
     @BindView(R.id.imagePathView)

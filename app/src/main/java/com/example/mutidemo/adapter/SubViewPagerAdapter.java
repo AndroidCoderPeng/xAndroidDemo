@@ -10,8 +10,8 @@ import java.util.List;
 
 public class SubViewPagerAdapter extends FragmentPagerAdapter {
 
-    private List<Fragment> pages;
-    private String[] pageTitles;
+    private final List<Fragment> pages;
+    private final String[] pageTitles;
 
     public SubViewPagerAdapter(FragmentManager fm, List<Fragment> pages, String[] pageTitles) {
         super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);

@@ -42,7 +42,7 @@ public class ProcessBarActivity extends BaseNormalActivity {
     }
 
     @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
+    private final Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
                 mEasyProgressBar.setCurrentProgress(msg.arg1);

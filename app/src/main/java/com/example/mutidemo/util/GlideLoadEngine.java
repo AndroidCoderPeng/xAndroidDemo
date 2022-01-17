@@ -19,6 +19,7 @@ public class GlideLoadEngine implements ImageEngine {
 
     //单例模式，私有构造方法
     private GlideLoadEngine() {
+
     }
 
     //获取单例

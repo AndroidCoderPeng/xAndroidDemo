@@ -14,6 +14,8 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
+import com.pengxh.app.multilib.utils.SizeUtil;
+
 /**
  * @description: TODO
  * @author: Pengxh
@@ -24,7 +26,8 @@ public class BorderView extends AppCompatImageView {
 
     private static final String TAG = "BorderView";
     private static final String TEXT = "请将银行卡置于方框内，便于识别卡号";
-    private Paint borderPaint, textPaint;
+    private final Paint borderPaint;
+    private final Paint textPaint;
     private float centerX, centerY;
 
     public BorderView(Context context, @Nullable AttributeSet attrs) {
@@ -42,7 +45,7 @@ public class BorderView extends AppCompatImageView {
         textPaint = new TextPaint();
         textPaint.setColor(Color.GREEN);
         textPaint.setAntiAlias(true);
-        textPaint.setTextSize(sp2px(context));
+        textPaint.setTextSize(SizeUtil.sp2px(context, 16));
         textPaint.setAlpha(255);
     }
 
@@ -71,13 +74,5 @@ public class BorderView extends AppCompatImageView {
         //绘制圆角矩形
         RectF rectF = new RectF((centerX - 425), centerY - 225, centerX + 425, centerY + 225);
         canvas.drawRoundRect(rectF, 25, 25, borderPaint);//第二个参数是x半径，第三个参数是y半径
-    }
-
-    /**
-     * sp转换成px
-     */
-    private int sp2px(Context context) {
-        float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
-        return (int) ((float) 16 * fontScale + 0.5f);
     }
 }

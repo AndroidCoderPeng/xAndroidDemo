@@ -8,6 +8,8 @@ import android.os.HandlerThread;
 import android.util.Log;
 import android.view.Surface;
 
+import androidx.annotation.NonNull;
+
 import com.example.mutidemo.R;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -124,7 +126,7 @@ public class JZMediaExo extends JZMediaInterface implements Player.Listener {
     }
 
     @Override
-    public void onVideoSizeChanged(VideoSize videoSize) {
+    public void onVideoSizeChanged(@NonNull VideoSize videoSize) {
         handler.post(() -> jzvd.onVideoSizeChanged(videoSize.width, videoSize.height));
     }
 
@@ -199,12 +201,12 @@ public class JZMediaExo extends JZMediaInterface implements Player.Listener {
     }
 
     @Override
-    public void onTimelineChanged(final Timeline timeline, final int reason) {
+    public void onTimelineChanged(@NonNull final Timeline timeline, final int reason) {
 
     }
 
     @Override
-    public void onTracksInfoChanged(TracksInfo tracksInfo) {
+    public void onTracksInfoChanged(@NonNull TracksInfo tracksInfo) {
 
     }
 
@@ -254,12 +256,12 @@ public class JZMediaExo extends JZMediaInterface implements Player.Listener {
     }
 
     @Override
-    public void onPositionDiscontinuity(Player.PositionInfo oldPosition, Player.PositionInfo newPosition, int reason) {
+    public void onPositionDiscontinuity(@NonNull Player.PositionInfo oldPosition, @NonNull Player.PositionInfo newPosition, int reason) {
         handler.post(() -> jzvd.onSeekComplete());
     }
 
     @Override
-    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+    public void onPlaybackParametersChanged(@NonNull PlaybackParameters playbackParameters) {
 
     }
 

@@ -48,7 +48,7 @@ public class BluetoothActivity extends BaseNormalActivity {
     QMUIRoundButton disconnectButton;
 
     private static WeakReferenceHandler weakReferenceHandler;
-    private List<BlueToothBean> blueToothBeans = new ArrayList<>();
+    private final List<BlueToothBean> blueToothBeans = new ArrayList<>();
     private boolean isConnected = false;
     private StringBuilder builder;
 
@@ -127,7 +127,7 @@ public class BluetoothActivity extends BaseNormalActivity {
         }
     }
 
-    private OnBleConnectListener onBleConnectListener = new OnBleConnectListener() {
+    private final OnBleConnectListener onBleConnectListener = new OnBleConnectListener() {
         @Override
         public void onConnecting(BluetoothGatt bluetoothGatt) {
 
@@ -215,12 +215,13 @@ public class BluetoothActivity extends BaseNormalActivity {
 
     private static class WeakReferenceHandler extends Handler {
 
-        private WeakReference<BluetoothActivity> reference;
+        private final WeakReference<BluetoothActivity> reference;
 
         private WeakReferenceHandler(BluetoothActivity activity) {
             reference = new WeakReference<>(activity);
         }
 
+        @SuppressLint("MissingPermission")
         @Override
         public void handleMessage(@NonNull Message msg) {
             BluetoothActivity activity = reference.get();
