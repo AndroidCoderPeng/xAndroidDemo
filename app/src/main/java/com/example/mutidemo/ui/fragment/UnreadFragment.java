@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.SwipeViewAdapter;
-import com.pengxh.app.multilib.base.BaseFragment;
+import com.example.mutidemo.base.AndroidxBaseFragment;
+import com.example.mutidemo.databinding.FragmentUnreadBinding;
 import com.qmuiteam.qmui.recyclerView.QMUIRVItemSwipeAction;
 import com.qmuiteam.qmui.recyclerView.QMUISwipeAction;
 
@@ -17,29 +17,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.BindView;
+public class UnreadFragment extends AndroidxBaseFragment<FragmentUnreadBinding> {
 
-public class UnreadFragment extends BaseFragment {
-
-    private List<String> data = new ArrayList<>(Arrays.asList("Helps", "Maintain", "Liver", "Health", "Function", "Supports", "Healthy", "Fat",
+    private final List<String> data = new ArrayList<>(Arrays.asList("Helps", "Maintain", "Liver", "Health", "Function", "Supports", "Healthy", "Fat",
             "Metabolism", "Nuturally", "Bracket", "Refrigerator", "Bathtub", "Wardrobe", "Comb", "Apron", "Carpet", "Bolster", "Pillow", "Cushion"));
-    @BindView(R.id.swipeRecyclerView)
-    RecyclerView swipeRecyclerView;
     private SwipeViewAdapter swipeViewAdapter;
 
     @Override
-    protected int initLayoutView() {
-        return R.layout.fragment_unread;
-    }
-
-    @Override
-    protected void initData() {
+    public void initData() {
         swipeViewAdapter = new SwipeViewAdapter(getContext());
         swipeViewAdapter.setData(data);
     }
 
     @Override
-    protected void initEvent() {
+    public void initEvent() {
         QMUIRVItemSwipeAction swipeAction = new QMUIRVItemSwipeAction(true, new QMUIRVItemSwipeAction.Callback() {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
@@ -57,15 +48,15 @@ public class UnreadFragment extends BaseFragment {
                 swipeViewAdapter.remove(selected.getAdapterPosition());
             }
         });
-        swipeAction.attachToRecyclerView(swipeRecyclerView);
-        swipeRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()) {
+        swipeAction.attachToRecyclerView(viewBinding.swipeRecyclerView);
+        viewBinding.swipeRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()) {
             @Override
             public RecyclerView.LayoutParams generateDefaultLayoutParams() {
                 return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT);
             }
         });
-        swipeRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        swipeRecyclerView.setAdapter(swipeViewAdapter);
+        viewBinding.swipeRecyclerView.addItemDecoration(new DividerItemDecoration(viewBinding.getRoot().getContext(), DividerItemDecoration.VERTICAL));
+        viewBinding.swipeRecyclerView.setAdapter(swipeViewAdapter);
     }
 }

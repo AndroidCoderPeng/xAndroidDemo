@@ -1,22 +1,17 @@
 package com.example.mutidemo.ui.fragment;
 
-import com.example.mutidemo.R;
-import com.pengxh.app.multilib.base.BaseFragment;
+import com.example.mutidemo.base.AndroidxBaseFragment;
+import com.example.mutidemo.databinding.FragmentThirdBinding;
 
-public class ThirdFragment extends BaseFragment {
-
-    @Override
-    protected int initLayoutView() {
-        return R.layout.fragment_third;
-    }
+public class ThirdFragment extends AndroidxBaseFragment<FragmentThirdBinding> {
 
     @Override
-    protected void initData() {
+    public void initData() {
 
     }
 
     @Override
-    protected void initEvent() {
+    public void initEvent() {
 
     }
 }
