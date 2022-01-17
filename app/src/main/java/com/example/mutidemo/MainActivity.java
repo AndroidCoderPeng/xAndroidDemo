@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.adapter.MainAdapter;
+import com.example.mutidemo.base.AndroidxBaseActivity;
+import com.example.mutidemo.databinding.ActivityMainBinding;
 import com.example.mutidemo.mvvm.view.MVVMActivity;
 import com.example.mutidemo.ui.AirDashBoardActivity;
 import com.example.mutidemo.ui.BluetoothActivity;
@@ -35,37 +38,29 @@ import com.example.mutidemo.util.FileUtils;
 import com.example.mutidemo.util.LogToFile;
 import com.example.mutidemo.util.TimeOrDateUtil;
 import com.igexin.sdk.PushManager;
-import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.BindView;
 import cn.bertsir.zbar.Qr.ScanResult;
 import cn.bertsir.zbar.QrConfig;
 import cn.bertsir.zbar.QrManager;
 import cn.bertsir.zbar.view.ScanLineView;
 
 
-public class MainActivity extends DoubleClickExitActivity {
+public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
 
     private static final String TAG = "MainActivity";
-    @BindView(R.id.mMainRecyclerView)
-    RecyclerView mMainRecyclerView;
 
+    private long i_time = 0;
     private final Context mContext = MainActivity.this;
     private final List<String> mItemNameList = Arrays.asList("MVP架构", "MVVM架构", "顶/底部导航栏", "ZBar扫一扫",
             "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
             "自定义进度条", "GPS位置信息", "人脸检测", "音频录制与播放", "图片添加水印并压缩",
             "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "Log写入文件", "可删减九宫格", "系统原生分享",
             "空气污染刻度盘", "Bmob数据库", "人脸采集框");
-
-    @Override
-    public int initLayoutView() {
-        return R.layout.activity_main;
-    }
 
     @Override
     public void initData() {
@@ -76,8 +71,8 @@ public class MainActivity extends DoubleClickExitActivity {
     @Override
     public void initEvent() {
         MainAdapter adapter = new MainAdapter(this, mItemNameList);
-        mMainRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        mMainRecyclerView.setAdapter(adapter);
+        viewBinding.mMainRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        viewBinding.mMainRecyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(new MainAdapter.OnItemClickListener() {
             @Override
             public void onClick(int position) {
@@ -228,5 +223,20 @@ public class MainActivity extends DoubleClickExitActivity {
                 runOnUiThread(() -> EasyToast.showToast("扫码结果: " + result.content, EasyToast.SUCCESS));
             }
         });
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (System.currentTimeMillis() - i_time > 2000) {
+                String msg = "再按一次退出程序";
+                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                i_time = System.currentTimeMillis();
+                return true;
+            } else {
+                return super.onKeyDown(keyCode, event);
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
