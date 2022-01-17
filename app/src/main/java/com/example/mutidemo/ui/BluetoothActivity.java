@@ -8,54 +8,33 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.example.mutidemo.R;
+import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.bean.BlueToothBean;
+import com.example.mutidemo.databinding.ActivityBluetoothBinding;
 import com.example.mutidemo.util.BLEManager;
 import com.example.mutidemo.util.Constant;
 import com.example.mutidemo.util.OtherUtils;
 import com.example.mutidemo.util.callback.OnBleConnectListener;
 import com.example.mutidemo.util.callback.OnDeviceSearchListener;
-import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
-import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.BindView;
-
 @SuppressLint("SetTextI18n")
-public class BluetoothActivity extends BaseNormalActivity {
+public class BluetoothActivity extends AndroidxBaseActivity<ActivityBluetoothBinding> {
 
     private static final String TAG = "BLEManager";
-
-    @BindView(R.id.bluetoothStateView)
-    TextView bluetoothStateView;
-    @BindView(R.id.deviceCodeView)
-    TextView deviceCodeView;
-    @BindView(R.id.deviceValueView)
-    TextView deviceValueView;
-    @BindView(R.id.searchButton)
-    QMUIRoundButton searchButton;
-    @BindView(R.id.disconnectButton)
-    QMUIRoundButton disconnectButton;
-
     private static WeakReferenceHandler weakReferenceHandler;
     private final List<BlueToothBean> blueToothBeans = new ArrayList<>();
     private boolean isConnected = false;
     private StringBuilder builder;
-
-    @Override
-    public int initLayoutView() {
-        return R.layout.activity_bluetooth;
-    }
 
     @Override
     public void initData() {
@@ -63,9 +42,9 @@ public class BluetoothActivity extends BaseNormalActivity {
         builder = new StringBuilder();
         if (BLEManager.INSTANCE.initBle(BluetoothActivity.this)) {
             if (BLEManager.INSTANCE.isEnable()) {
-                bluetoothStateView.setText("蓝牙状态: ON");
+                viewBinding.bluetoothStateView.setText("蓝牙状态: ON");
             } else {
-                bluetoothStateView.setText("蓝牙状态: OFF");
+                viewBinding.bluetoothStateView.setText("蓝牙状态: OFF");
                 BLEManager.INSTANCE.openBluetooth(false);
             }
         } else {
@@ -75,9 +54,9 @@ public class BluetoothActivity extends BaseNormalActivity {
 
     @Override
     public void initEvent() {
-        disconnectButton.setChangeAlphaWhenPress(true);
-        searchButton.setChangeAlphaWhenPress(true);
-        disconnectButton.setOnClickListener(new View.OnClickListener() {
+        viewBinding.disconnectButton.setChangeAlphaWhenPress(true);
+        viewBinding.searchButton.setChangeAlphaWhenPress(true);
+        viewBinding.disconnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isConnected) {
@@ -89,7 +68,7 @@ public class BluetoothActivity extends BaseNormalActivity {
                 }
             }
         });
-        searchButton.setOnClickListener(new View.OnClickListener() {
+        viewBinding.searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //搜索蓝牙
@@ -228,11 +207,11 @@ public class BluetoothActivity extends BaseNormalActivity {
             switch (msg.what) {
                 case Constant.BLUETOOTH_ON:
                     EasyToast.showToast("蓝牙已开启", EasyToast.SUCCESS);
-                    activity.bluetoothStateView.setText("蓝牙状态: ON");
+                    activity.viewBinding.bluetoothStateView.setText("蓝牙状态: ON");
                     break;
                 case Constant.BLUETOOTH_OFF:
                     EasyToast.showToast("蓝牙已关闭", EasyToast.ERROR);
-                    activity.bluetoothStateView.setText("蓝牙状态: ON");
+                    activity.viewBinding.bluetoothStateView.setText("蓝牙状态: ON");
                     break;
                 case Constant.DISCOVERY_DEVICE:
                     BlueToothBean bean = (BlueToothBean) msg.obj;
@@ -296,7 +275,7 @@ public class BluetoothActivity extends BaseNormalActivity {
                                     .append("设备返回值: ")
                                     .append(Arrays.toString(receiveByteArray))
                                     .append("\r\n");
-                            activity.deviceValueView.setText(activity.builder.toString());
+                            activity.viewBinding.deviceValueView.setText(activity.builder.toString());
                         } else {
                             Log.d(TAG, "设备返回值长度异常，无法解析");
                         }
@@ -304,7 +283,7 @@ public class BluetoothActivity extends BaseNormalActivity {
                         //解析deviceCode
                         //51, 51, 50, 48, 50, 49, 48, 49, 48, 48, 48, 51, 13, 10, -86, 0, 0, 0, 0, 0
                         if (receiveByteArray.length >= 12) {
-                            activity.deviceCodeView.setText("设备编号: " + activity.toDeviceCode(receiveByteArray));
+                            activity.viewBinding.deviceCodeView.setText("设备编号: " + activity.toDeviceCode(receiveByteArray));
                             BLEManager.INSTANCE.sendCommand(Constant.OPEN_TRANSFER_COMMAND);
                         } else {
                             Log.d(TAG, "设备返回值长度异常，无法解析");

@@ -5,40 +5,21 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.mutidemo.R;
+import com.example.mutidemo.base.AndroidxBaseActivity;
+import com.example.mutidemo.databinding.ActivityAudioBinding;
 import com.example.mutidemo.util.AudioRecodeHelper;
 import com.example.mutidemo.util.TimeOrDateUtil;
-import com.example.mutidemo.widget.AudioPlayerView;
-import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 
-import butterknife.BindView;
-
-public class RecodeAudioActivity extends BaseNormalActivity implements View.OnTouchListener {
-
-    private static final String TAG = "RecodeAudioActivity";
-    @BindView(R.id.parentLayout)
-    RelativeLayout parentLayout;
-    @BindView(R.id.recodeAudioButton)
-    ImageButton recodeAudioButton;
-    @BindView(R.id.audioFilePathView)
-    TextView audioFilePathView;
-    @BindView(R.id.audioPlayView)
-    AudioPlayerView audioPlayView;
+public class RecodeAudioActivity extends AndroidxBaseActivity<ActivityAudioBinding> implements View.OnTouchListener {
 
     private AudioRecodeHelper audioRecodeHelper;
     private PopupWindow popWindow;
-
-    @Override
-    public int initLayoutView() {
-        return R.layout.activity_audio;
-    }
 
     @Override
     public void initData() {
@@ -60,9 +41,9 @@ public class RecodeAudioActivity extends BaseNormalActivity implements View.OnTo
             @SuppressLint("SetTextI18n")
             @Override
             public void onStop(String filePath) {
-                audioFilePathView.setText("录音文件路径：\r\n" + filePath);
+                viewBinding.audioFilePathView.setText("录音文件路径：\r\n" + filePath);
                 if (!TextUtils.isEmpty(filePath)) {
-                    audioPlayView.setAudioUrl(filePath);
+                    viewBinding.audioPlayView.setAudioUrl(filePath);
                 }
             }
         });
@@ -71,7 +52,7 @@ public class RecodeAudioActivity extends BaseNormalActivity implements View.OnTo
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void initEvent() {
-        recodeAudioButton.setOnTouchListener(this);
+        viewBinding.recodeAudioButton.setOnTouchListener(this);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -79,24 +60,22 @@ public class RecodeAudioActivity extends BaseNormalActivity implements View.OnTo
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                recodeAudioButton.animate().scaleX(0.75f).scaleY(0.75f).setDuration(100).start();
-                popWindow.showAtLocation(parentLayout, Gravity.CENTER, 0, 0);
+                viewBinding.recodeAudioButton.animate().scaleX(0.75f).scaleY(0.75f).setDuration(100).start();
+                popWindow.showAtLocation(viewBinding.parentLayout, Gravity.CENTER, 0, 0);
                 audioRecodeHelper.startRecordAudio();
                 break;
             case MotionEvent.ACTION_UP:
                 audioRecodeHelper.stopRecordAudio();//结束录音（保存录音文件）
                 popWindow.dismiss();
-                recodeAudioButton.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start();
+                viewBinding.recodeAudioButton.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start();
                 break;
         }
         return true;
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
+        viewBinding.audioPlayView.release();
         super.onDestroy();
-        if (audioPlayView != null) {
-            audioPlayView.release();
-        }
     }
 }

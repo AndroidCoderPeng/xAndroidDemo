@@ -1,16 +1,9 @@
 package com.example.mutidemo.ui;
 
-import android.os.Build;
-import android.widget.TextView;
-
-import androidx.annotation.RequiresApi;
-
-import com.example.mutidemo.R;
+import com.example.mutidemo.base.AndroidxBaseActivity;
+import com.example.mutidemo.databinding.ActivityNewsDetailsBinding;
 import com.example.mutidemo.util.ImageUtil;
-import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
-
-import butterknife.BindView;
 
 /**
  * @author: Pengxh
@@ -18,23 +11,8 @@ import butterknife.BindView;
  * @description: TODO
  * @date: 2020/3/5 20:18
  */
-public class NewsDetailsActivity extends BaseNormalActivity {
+public class NewsDetailsActivity extends AndroidxBaseActivity<ActivityNewsDetailsBinding> {
 
-    @BindView(R.id.newsTitle)
-    TextView newsTitle;
-    @BindView(R.id.newsSrc)
-    TextView newsSrc;
-    @BindView(R.id.newsTime)
-    TextView newsTime;
-    @BindView(R.id.newsContent)
-    TextView newsContent;
-
-    @Override
-    public int initLayoutView() {
-        return R.layout.activity_news_details;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void initData() {
         String title = getIntent().getStringExtra("title");
@@ -42,11 +20,11 @@ public class NewsDetailsActivity extends BaseNormalActivity {
         String time = getIntent().getStringExtra("time");
         String content = getIntent().getStringExtra("content");
 
-        newsTitle.setText(title);
-        newsSrc.setText(src);
-        newsTime.setText(time);
+        viewBinding.newsTitle.setText(title);
+        viewBinding.newsSrc.setText(src);
+        viewBinding.newsTime.setText(time);
 
-        ImageUtil.setTextFromHtml(this, newsContent, content,
+        ImageUtil.setTextFromHtml(this, viewBinding.newsContent, content,
                 QMUIDisplayHelper.getScreenWidth(this), 10);
     }
 

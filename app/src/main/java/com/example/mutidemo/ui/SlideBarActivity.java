@@ -14,13 +14,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.CityAdapter;
+import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.bean.CityBean;
+import com.example.mutidemo.databinding.ActivitySlideBinding;
 import com.example.mutidemo.util.StringHelper;
 import com.example.mutidemo.util.VerticalItemDecoration;
 import com.example.mutidemo.util.callback.DecorationCallback;
 import com.example.mutidemo.widget.SlideBarView;
 import com.google.gson.Gson;
-import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.widget.EasyToast;
 
 import java.text.Collator;
@@ -31,10 +32,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.BindView;
 
-
-public class SlideBarActivity extends BaseNormalActivity {
+public class SlideBarActivity extends AndroidxBaseActivity<ActivitySlideBinding> {
 
     private static final String TAG = "SlideBarActivity";
     private static final List<String> CITY = Arrays.asList("安徽"
@@ -54,15 +53,6 @@ public class SlideBarActivity extends BaseNormalActivity {
             , "西藏", "厦门", "襄阳", "孝感", "新疆", "新乡", "忻州"
             , "宜昌", "云南"
             , "湛江", "浙江", "珠海");
-    @BindView(R.id.cityRecyclerView)
-    RecyclerView cityRecyclerView;
-    @BindView(R.id.slideBarView)
-    SlideBarView slideBarView;
-
-    @Override
-    public int initLayoutView() {
-        return R.layout.activity_slide;
-    }
 
     @Override
     public void initData() {
@@ -76,8 +66,8 @@ public class SlideBarActivity extends BaseNormalActivity {
                 startSmoothScroll(scroller);
             }
         };
-        cityRecyclerView.setLayoutManager(layoutManager);
-        cityRecyclerView.addItemDecoration(new VerticalItemDecoration(this, new DecorationCallback() {
+        viewBinding.cityRecyclerView.setLayoutManager(layoutManager);
+        viewBinding.cityRecyclerView.addItemDecoration(new VerticalItemDecoration(this, new DecorationCallback() {
             @Override
             public long getGroupTag(int position) {
                 return cityBeans.get(position).getTag().charAt(0);
@@ -88,8 +78,8 @@ public class SlideBarActivity extends BaseNormalActivity {
                 return cityBeans.get(position).getTag();
             }
         }));
-        cityRecyclerView.setAdapter(cityAdapter);
-        cityRecyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+        viewBinding.cityRecyclerView.setAdapter(cityAdapter);
+        viewBinding.cityRecyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
             @Override
             public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
 
@@ -144,8 +134,8 @@ public class SlideBarActivity extends BaseNormalActivity {
                 popupWindow.dismiss();
             }
         };
-        slideBarView.setData(CITY);
-        slideBarView.setOnIndexChangeListener(new SlideBarView.OnIndexChangeListener() {
+        viewBinding.slideBarView.setData(CITY);
+        viewBinding.slideBarView.setOnIndexChangeListener(new SlideBarView.OnIndexChangeListener() {
             @Override
             public void OnIndexChange(String letter) {
                 //在屏幕中间放大显示被按到的字母
@@ -154,9 +144,9 @@ public class SlideBarActivity extends BaseNormalActivity {
                 countDownTimer.start();
 
                 //根据滑动显示的字母索引到城市名字第一个汉字
-                int letterIndex = slideBarView.obtainFirstLetterIndex(letter);
+                int letterIndex = viewBinding.slideBarView.obtainFirstLetterIndex(letter);
                 if (letterIndex != -1) {
-                    cityRecyclerView.smoothScrollToPosition(letterIndex);
+                    viewBinding.cityRecyclerView.smoothScrollToPosition(letterIndex);
                 }
             }
         });

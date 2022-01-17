@@ -1,32 +1,21 @@
 package com.example.mutidemo.ui;
 
-import com.example.mutidemo.R;
+import com.example.mutidemo.base.AndroidxBaseActivity;
+import com.example.mutidemo.databinding.ActivityAirDashBinding;
 import com.example.mutidemo.util.ColorUtil;
-import com.example.mutidemo.widget.AirDashBoardView;
-import com.pengxh.app.multilib.base.BaseNormalActivity;
 
-import butterknife.BindView;
-
-public class AirDashBoardActivity extends BaseNormalActivity {
-
-    @BindView(R.id.dashBoardView)
-    AirDashBoardView dashBoardView;
-
-    @Override
-    public int initLayoutView() {
-        return R.layout.activity_air_dash;
-    }
+public class AirDashBoardActivity extends AndroidxBaseActivity<ActivityAirDashBinding> {
 
     @Override
     public void initData() {
-        dashBoardView.setMinValue(0);
-        dashBoardView.setMaxValue(500);
+        viewBinding.dashBoardView.setMinValue(0);
+        viewBinding.dashBoardView.setMaxValue(500);
         int aqiValue = 128;
-        dashBoardView.setCurrentValue(aqiValue);
-        dashBoardView.setCenterText("良");
-        dashBoardView.setAirRingForeground(ColorUtil.aqiToColor(this, aqiValue));
-        dashBoardView.setAirCenterTextColor(ColorUtil.aqiToColor(this, aqiValue));
-        dashBoardView.setAirCurrentValueColor(ColorUtil.aqiToColor(this, aqiValue));
+        viewBinding.dashBoardView.setCurrentValue(aqiValue);
+        viewBinding.dashBoardView.setCenterText("良");
+        viewBinding.dashBoardView.setAirRingForeground(ColorUtil.aqiToColor(this, aqiValue));
+        viewBinding.dashBoardView.setAirCenterTextColor(ColorUtil.aqiToColor(this, aqiValue));
+        viewBinding.dashBoardView.setAirCurrentValueColor(ColorUtil.aqiToColor(this, aqiValue));
     }
 
     @Override

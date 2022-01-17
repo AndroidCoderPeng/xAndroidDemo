@@ -8,52 +8,42 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.CoordinateConverter;
-import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.example.mutidemo.R;
+import com.example.mutidemo.base.AndroidxBaseActivity;
+import com.example.mutidemo.databinding.ActivityGpsBinding;
 
 import org.jetbrains.annotations.NotNull;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+public class GPSActivity extends AndroidxBaseActivity<ActivityGpsBinding> {
 
-public class GPSActivity extends AppCompatActivity {
-
-    @BindView(R.id.longitudeView)
-    TextView longitudeView;
-    @BindView(R.id.latitudeView)
-    TextView latitudeView;
-    @BindView(R.id.altitudeView)
-    TextView altitudeView;
-    @BindView(R.id.mapView)
-    MapView mapView;
     private AMap aMap;
     private final Marker marker = null;
 
-    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gps);
-        ButterKnife.bind(this);
+        viewBinding.mapView.onCreate(savedInstanceState);
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void initData() {
         LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        mapView.onCreate(savedInstanceState);
         if (aMap == null) {
-            aMap = mapView.getMap();
+            aMap = viewBinding.mapView.getMap();
         }
         //获取到GPS_PROVIDER
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -92,36 +82,41 @@ public class GPSActivity extends AppCompatActivity {
     }
 
     @Override
+    public void initEvent() {
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        mapView.onResume();
+        viewBinding.mapView.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mapView.onPause();
+        viewBinding.mapView.onPause();
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
+        viewBinding.mapView.onDestroy();
         super.onDestroy();
-        mapView.onDestroy();
     }
 
     @Override
     protected void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
+        viewBinding.mapView.onSaveInstanceState(outState);
     }
 
     private void updateLocation(Location location) {
         if (location != null) {
             double longitude = location.getLongitude();
-            longitudeView.setText(String.valueOf(longitude));
+            viewBinding.longitudeView.setText(String.valueOf(longitude));
             double latitude = location.getLatitude();
-            latitudeView.setText(String.valueOf(latitude));
-            altitudeView.setText(String.valueOf(location.getAltitude()));
+            viewBinding.latitudeView.setText(String.valueOf(latitude));
+            viewBinding.altitudeView.setText(String.valueOf(location.getAltitude()));
 
             //需要将wgs84坐标换为高德坐标（火星坐标）
             CoordinateConverter converter = new CoordinateConverter(this);

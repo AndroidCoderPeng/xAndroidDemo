@@ -2,21 +2,19 @@ package com.example.mutidemo.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.example.mutidemo.R;
+import com.example.mutidemo.base.AndroidxBaseActivity;
+import com.example.mutidemo.databinding.ActivityBigPictureBinding;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.utils.StatusBarColorHelper;
@@ -26,52 +24,34 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * @author: Pengxh
  * @email: 290677893@qq.com
  * @description: TODO
  * @date: 2020/3/6 12:49
  */
-public class BigImageViewActivity extends AppCompatActivity {
-
-    @BindView(R.id.imagePagerView)
-    ViewPager imagePagerView;
-    @BindView(R.id.leftBackView)
-    ImageView leftBackView;
-    @BindView(R.id.pageNumberView)
-    TextView pageNumberView;
+public class BigImageViewActivity extends AndroidxBaseActivity<ActivityBigPictureBinding> {
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_big_picture);
-        ButterKnife.bind(this);
-        setupTopBarLayout();
-        initEvent();
-
-    }
-
-    private void setupTopBarLayout() {
+    public void initData() {
         StatusBarColorHelper.setColor(this, ContextCompat.getColor(this, R.color.black));
         ImmersionBar.with(this).statusBarDarkFont(false).init();
-        leftBackView.setOnClickListener(v -> finish());
+        viewBinding.leftBackView.setOnClickListener(v -> finish());
     }
 
     @SuppressLint("SetTextI18n")
-    private void initEvent() {
+    @Override
+    public void initEvent() {
         int index = getIntent().getIntExtra("index", 0);
         ArrayList<String> urls = getIntent().getStringArrayListExtra("images");
         if (urls == null || urls.size() == 0) {
             return;
         }
-        pageNumberView.setText("(" + (index + 1) + "/" + urls.size() + ")");
-        imagePagerView.setAdapter(new BigImageAdapter(this, urls));
-        imagePagerView.setCurrentItem(index);
-        imagePagerView.setOffscreenPageLimit(2);//设置预加载数量
-        imagePagerView.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        viewBinding.pageNumberView.setText("(" + (index + 1) + "/" + urls.size() + ")");
+        viewBinding.imagePagerView.setAdapter(new BigImageAdapter(this, urls));
+        viewBinding.imagePagerView.setCurrentItem(index);
+        viewBinding.imagePagerView.setOffscreenPageLimit(2);//设置预加载数量
+        viewBinding.imagePagerView.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -79,7 +59,7 @@ public class BigImageViewActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                pageNumberView.setText("(" + (position + 1) + "/" + urls.size() + ")");
+                viewBinding.pageNumberView.setText("(" + (position + 1) + "/" + urls.size() + ")");
             }
 
             @Override

@@ -15,14 +15,12 @@ import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
-import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
-import com.example.mutidemo.R;
+import com.example.mutidemo.base.AndroidxBaseActivity;
+import com.example.mutidemo.databinding.ActivityFaceCollectBinding;
 import com.example.mutidemo.util.FileUtils;
-import com.example.mutidemo.widget.FaceCollectionView;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,27 +29,15 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import butterknife.BindView;
-
-public class FaceCollectionActivity extends BaseNormalActivity {
+public class FaceCollectionActivity extends AndroidxBaseActivity<ActivityFaceCollectBinding> {
 
     private static final String TAG = "FaceCollectionActivity";
-    @BindView(R.id.cameraPreView)
-    PreviewView cameraPreView;
-    @BindView(R.id.faceCollectionView)
-    FaceCollectionView faceCollectionView;
-
     private ExecutorService cameraExecutor;
     private WindowManager windowManager;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private ImageCapture imageCapture;
     private static final double RATIO_4_3_VALUE = 4.0 / 3.0;
     private static final double RATIO_16_9_VALUE = 16.0 / 9.0;
-
-    @Override
-    public int initLayoutView() {
-        return R.layout.activity_face_collect;
-    }
 
     @Override
     public void initData() {
@@ -119,7 +105,7 @@ public class FaceCollectionActivity extends BaseNormalActivity {
             Camera camera = cameraProvider.bindToLifecycle(this, cameraSelector, imageCapture, cameraPreview);
 
             // Attach the viewfinder's surface provider to preview use case
-            cameraPreview.setSurfaceProvider(cameraPreView.getSurfaceProvider());
+            cameraPreview.setSurfaceProvider(viewBinding.cameraPreView.getSurfaceProvider());
             observeCameraState(camera.getCameraInfo());
         } catch (Exception e) {
             Log.e(TAG, "Use case binding failed", e);
@@ -163,10 +149,10 @@ public class FaceCollectionActivity extends BaseNormalActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onDestroy() {
         if (cameraExecutor != null) {
             cameraExecutor.shutdown();
         }
+        super.onDestroy();
     }
 }

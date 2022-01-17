@@ -1,47 +1,31 @@
 package com.example.mutidemo.ui;
 
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.NineGridImageAdapter;
+import com.example.mutidemo.base.AndroidxBaseActivity;
+import com.example.mutidemo.databinding.ActivityGridviewBinding;
 import com.example.mutidemo.util.GlideLoadEngine;
 import com.example.mutidemo.util.ImageUtil;
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.callback.SelectCallback;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
-import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-
-public class GridViewActivity extends BaseNormalActivity {
+public class GridViewActivity extends AndroidxBaseActivity<ActivityGridviewBinding> {
 
     private NineGridImageAdapter nineRecyclerViewAdapter;
     private final ArrayList<String> recyclerViewImages = new ArrayList<>();
-    @BindView(R.id.nineRecyclerView)
-    RecyclerView nineRecyclerView;
-    @BindView(R.id.imagePathView)
-    TextView imagePathView;
-    @BindView(R.id.button)
-    Button button;
-
-    @Override
-    public int initLayoutView() {
-        return R.layout.activity_gridview;
-    }
 
     @Override
     public void initData() {
-        nineRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        viewBinding.nineRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         nineRecyclerViewAdapter = new NineGridImageAdapter(this);
-        nineRecyclerView.setAdapter(nineRecyclerViewAdapter);
+        viewBinding.nineRecyclerView.setAdapter(nineRecyclerViewAdapter);
         nineRecyclerViewAdapter.setOnItemClickListener(new NineGridImageAdapter.OnItemClickListener() {
             @Override
             public void onAddImageClick() {
@@ -83,12 +67,7 @@ public class GridViewActivity extends BaseNormalActivity {
 
     @Override
     public void initEvent() {
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imagePathView.setText(reformatURL(recyclerViewImages));
-            }
-        });
+        viewBinding.button.setOnClickListener(v -> viewBinding.imagePathView.setText(reformatURL(recyclerViewImages)));
     }
 
     private String reformatURL(List<String> urls) {

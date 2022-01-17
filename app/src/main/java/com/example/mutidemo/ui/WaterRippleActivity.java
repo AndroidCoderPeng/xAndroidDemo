@@ -1,32 +1,18 @@
 package com.example.mutidemo.ui;
 
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
-import com.example.mutidemo.R;
-import com.example.mutidemo.widget.WaterRippleView;
-import com.pengxh.app.multilib.base.BaseNormalActivity;
+import com.example.mutidemo.base.AndroidxBaseActivity;
+import com.example.mutidemo.databinding.ActivityWaterRippleBinding;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import butterknife.BindView;
-
-public class WaterRippleActivity extends BaseNormalActivity {
+public class WaterRippleActivity extends AndroidxBaseActivity<ActivityWaterRippleBinding> {
 
     private static final String TAG = "WaterRippleActivity";
-    @BindView(R.id.waterRippleView)
-    WaterRippleView waterRippleView;
-    @BindView(R.id.stopButton)
-    Button stopButton;
     private boolean isRunning = true;
     private ExecutorService singleThreadExecutor;
-
-    @Override
-    public int initLayoutView() {
-        return R.layout.activity_water_ripple;
-    }
 
     @Override
     public void initData() {
@@ -36,22 +22,14 @@ public class WaterRippleActivity extends BaseNormalActivity {
 
     @Override
     public void initEvent() {
-        waterRippleView.setOnAnimationStartListener(new WaterRippleView.OnAnimationStartListener() {
-            @Override
-            public void onStart(WaterRippleView view) {
-                view.start();
-                //开启线程搜索设备
-                Log.d(TAG, "onStart: 开始线程");
-                singleThreadExecutor.execute(searchRunnable);
-                isRunning = true;
-            }
+        viewBinding.waterRippleView.setOnAnimationStartListener(view -> {
+            view.start();
+            //开启线程搜索设备
+            Log.d(TAG, "onStart: 开始线程");
+            singleThreadExecutor.execute(searchRunnable);
+            isRunning = true;
         });
-        stopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                waterRippleView.stop();
-            }
-        });
+        viewBinding.stopButton.setOnClickListener(v -> viewBinding.waterRippleView.stop());
     }
 
     private final Runnable searchRunnable = () -> {
@@ -78,6 +56,6 @@ public class WaterRippleActivity extends BaseNormalActivity {
     protected void onPause() {
         super.onPause();
         isRunning = false;
-        waterRippleView.stop();
+        viewBinding.waterRippleView.stop();
     }
 }

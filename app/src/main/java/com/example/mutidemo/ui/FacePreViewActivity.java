@@ -11,39 +11,23 @@ import android.hardware.Camera;
 import android.media.FaceDetector;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.example.mutidemo.R;
+import com.example.mutidemo.base.AndroidxBaseActivity;
+import com.example.mutidemo.databinding.ActivityFaceBinding;
 import com.example.mutidemo.util.ImageUtil;
-import com.example.mutidemo.widget.FaceDetectView;
-import com.pengxh.app.multilib.base.BaseNormalActivity;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Stack;
 
-import butterknife.BindView;
-
-public class FacePreViewActivity extends BaseNormalActivity implements Camera.PreviewCallback {
+public class FacePreViewActivity extends AndroidxBaseActivity<ActivityFaceBinding> implements Camera.PreviewCallback {
 
     private static final String TAG = "FacePreViewActivity";
-    @BindView(R.id.surfaceView)
-    SurfaceView surfaceView;
-    @BindView(R.id.faceDetectView)
-    FaceDetectView faceDetectView;
-    @BindView(R.id.faceTipsView)
-    TextView faceTipsView;
     private SurfaceHolder mSurfaceHolder;
     private Camera mCamera;
     private Stack<Bitmap> bitmapStack;
-
-    @Override
-    public int initLayoutView() {
-        return R.layout.activity_face;
-    }
 
     @Override
     public void initData() {
@@ -53,7 +37,7 @@ public class FacePreViewActivity extends BaseNormalActivity implements Camera.Pr
     @Override
     public void initEvent() {
         // 绑定SurfaceView，取得SurfaceHolder对象
-        mSurfaceHolder = surfaceView.getHolder();
+        mSurfaceHolder = viewBinding.surfaceView.getHolder();
         mSurfaceHolder.addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(@NonNull SurfaceHolder holder) {
@@ -83,11 +67,11 @@ public class FacePreViewActivity extends BaseNormalActivity implements Camera.Pr
                                     " ,Y: " + rect.centerY() +
                                     " ,[" + rect.left + "," + rect.top + "," + rect.right + "," + rect.bottom + "]");
                             Matrix matrix = updateFaceRect();
-                            faceDetectView.updateFace(matrix, faces);
-                            faceTipsView.setText("已检测到人脸，识别中");
-                            faceTipsView.setTextColor(Color.GREEN);
+                            viewBinding.faceDetectView.updateFace(matrix, faces);
+                            viewBinding.faceTipsView.setText("已检测到人脸，识别中");
+                            viewBinding.faceTipsView.setTextColor(Color.GREEN);
                         } else {
-                            faceDetectView.removeRect();
+                            viewBinding.faceDetectView.removeRect();
                         }
                     }
                 });
@@ -117,8 +101,8 @@ public class FacePreViewActivity extends BaseNormalActivity implements Camera.Pr
         matrix.postRotate(90);
         // Camera driver coordinates range from (-1000, -1000) to (1000, 1000).
         // UI coordinates range from (0, 0) to (width, height).
-        matrix.postScale(surfaceView.getWidth() / 2000f, surfaceView.getHeight() / 2000f);
-        matrix.postTranslate(surfaceView.getWidth() / 2f, surfaceView.getHeight() / 2f);
+        matrix.postScale(viewBinding.surfaceView.getWidth() / 2000f, viewBinding.surfaceView.getHeight() / 2000f);
+        matrix.postTranslate(viewBinding.surfaceView.getWidth() / 2f, viewBinding.surfaceView.getHeight() / 2f);
         return matrix;
     }
 
@@ -166,7 +150,7 @@ public class FacePreViewActivity extends BaseNormalActivity implements Camera.Pr
             mParameters.setPreviewFormat(ImageFormat.NV21);  //设置预览图片的格式
             //获取与指定宽高相等或最接近的尺寸
             //设置预览尺寸
-            Camera.Size bestPreviewSize = obtainBestSize(surfaceView.getWidth(), surfaceView.getHeight(), mParameters.getSupportedPreviewSizes());
+            Camera.Size bestPreviewSize = obtainBestSize(viewBinding.surfaceView.getWidth(), viewBinding.surfaceView.getHeight(), mParameters.getSupportedPreviewSizes());
             mParameters.setPreviewSize(bestPreviewSize.width, bestPreviewSize.height);
             //设置保存图片尺寸
 //            Camera.Size bestPicSize = obtainBestSize(picWidth, picHeight, mParameters.getSupportedPictureSizes());

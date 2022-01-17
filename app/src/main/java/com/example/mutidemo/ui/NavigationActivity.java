@@ -2,24 +2,20 @@ package com.example.mutidemo.ui;
 
 import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.mutidemo.R;
+import com.example.mutidemo.base.AndroidxBaseActivity;
+import com.example.mutidemo.databinding.ActivityNavigatBinding;
 import com.example.mutidemo.ui.fragment.FirstFragment;
 import com.example.mutidemo.ui.fragment.SecondFragment;
 import com.example.mutidemo.ui.fragment.ThirdFragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.pengxh.app.multilib.base.BaseNormalActivity;
-import com.pengxh.app.multilib.widget.NoScrollViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
 
 /**
  * @author: Pengxh
@@ -27,20 +23,10 @@ import butterknife.BindView;
  * @description: TODO
  * @date: 2020/2/19 16:28
  */
-public class NavigationActivity extends BaseNormalActivity {
-
-    @BindView(R.id.mainViewPager)
-    NoScrollViewPager mainViewPager;
-    @BindView(R.id.bottomNavigation)
-    BottomNavigationView bottomNavigation;
+public class NavigationActivity extends AndroidxBaseActivity<ActivityNavigatBinding> {
 
     private MenuItem menuItem;
     private List<Fragment> fragmentList;
-
-    @Override
-    public int initLayoutView() {
-        return R.layout.activity_navigat;
-    }
 
     @Override
     public void initData() {
@@ -52,26 +38,17 @@ public class NavigationActivity extends BaseNormalActivity {
 
     @Override
     public void initEvent() {
-        bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.navigation_home:
-                        mainViewPager.setCurrentItem(0);
-                        break;
-                    case R.id.navigation_dashboard:
-                        mainViewPager.setCurrentItem(1);
-                        break;
-                    case R.id.navigation_mine:
-                        mainViewPager.setCurrentItem(2);
-                        break;
-                    default:
-                        break;
-                }
-                return false;
+        viewBinding.bottomNavigation.setOnNavigationItemSelectedListener(menuItem -> {
+            if (menuItem.getItemId() == R.id.navigation_home) {
+                viewBinding.mainViewPager.setCurrentItem(0);
+            } else if (menuItem.getItemId() == R.id.navigation_dashboard) {
+                viewBinding.mainViewPager.setCurrentItem(1);
+            } else if (menuItem.getItemId() == R.id.navigation_mine) {
+                viewBinding.mainViewPager.setCurrentItem(2);
             }
+            return false;
         });
-        mainViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        viewBinding.mainViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -82,9 +59,9 @@ public class NavigationActivity extends BaseNormalActivity {
                 if (menuItem != null) {
                     menuItem.setChecked(false);
                 } else {
-                    bottomNavigation.getMenu().getItem(0).setChecked(false);
+                    viewBinding.bottomNavigation.getMenu().getItem(0).setChecked(false);
                 }
-                menuItem = bottomNavigation.getMenu().getItem(position);
+                menuItem = viewBinding.bottomNavigation.getMenu().getItem(position);
                 menuItem.setChecked(true);
             }
 
@@ -94,7 +71,7 @@ public class NavigationActivity extends BaseNormalActivity {
             }
         });
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), fragmentList);
-        mainViewPager.setAdapter(adapter);
+        viewBinding.mainViewPager.setAdapter(adapter);
     }
 
     static class ViewPagerAdapter extends FragmentPagerAdapter {
