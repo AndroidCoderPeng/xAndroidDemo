@@ -25,6 +25,7 @@ public class FaceCollectionView extends View {
     private final TextPaint textPaint;
     private final Paint dashedPaint;
     private final Paint facePaint;
+    //    private final Paint bitMapPaint;
     private int centerX;//圆心x
     private int centerY;//圆心y
     private String tips = "请将脸移至圆框内";
@@ -61,6 +62,12 @@ public class FaceCollectionView extends View {
         //扣掉前景圆，给背景Surface显示
         facePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         facePaint.setAntiAlias(true);
+
+//        bitMapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+//        bitMapPaint.setFilterBitmap(true);
+//        bitMapPaint.setDither(true);
+
+//        weakReferenceHandler = new WeakReferenceHandler(this);
     }
 
     @Override
@@ -117,13 +124,52 @@ public class FaceCollectionView extends View {
         /**
          * 画虚线圆环
          * */
-        canvas.drawCircle(centerX, (float) (centerY * 0.6), (float) (radius * 0.85), dashedPaint);
+        canvas.drawCircle(centerX, (float) (centerY * 0.6), (float) (radius * 0.8), dashedPaint);
 
         /**
          * 抠出中心圆
          * */
-        canvas.drawCircle(centerX, (float) (centerY * 0.6), (float) (radius * 0.80), facePaint);
+        canvas.drawCircle(centerX, (float) (centerY * 0.6), (float) (radius * 0.7), facePaint);
+
+//        drawBitmap(canvas);
     }
+
+//    private Bitmap bitmap;
+//    private static WeakReferenceHandler weakReferenceHandler;
+//
+//    private void drawBitmap(@NotNull Canvas canvas) {
+//        int height = SizeUtil.getScreenHeight(context);
+//        if (bitmap != null) {
+//            canvas.drawBitmap(bitmap, 0, height >> 1, bitMapPaint);
+//            invalidate();
+//        }
+//    }
+//
+//    public void setBitmap(Bitmap bitmap) {
+//        new Thread(() -> {
+//            Message message = weakReferenceHandler.obtainMessage();
+//            message.obj = bitmap;
+//            message.what = 202120118;
+//            weakReferenceHandler.handleMessage(message);
+//        }).start();
+//    }
+//
+//    private static class WeakReferenceHandler extends Handler {
+//        private final WeakReference<FaceCollectionView> reference;
+//
+//        private WeakReferenceHandler(FaceCollectionView faceCollectionView) {
+//            reference = new WeakReference<>(faceCollectionView);
+//        }
+//
+//        @Override
+//        public void handleMessage(@NonNull Message msg) {
+//            super.handleMessage(msg);
+//            FaceCollectionView view = reference.get();
+//            if (msg.what == 202120118) {
+//                view.bitmap = (Bitmap) msg.obj;
+//            }
+//        }
+//    }
 
     private void drawTopText(@NotNull Canvas canvas) {
         Rect textRect = new Rect(0, (int) (centerY * 0.25), centerX * 2, 0);
