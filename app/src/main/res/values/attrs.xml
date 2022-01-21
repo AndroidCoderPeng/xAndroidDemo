@@ -81,4 +81,10 @@
         <attr name="air_ring_width" format="dimension" />
         <attr name="air_ring_radius" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="BusCardView">
+        <attr name="card_tag_background" format="color" />
+        <attr name="card_tag_padding" format="dimension" />
+        <attr name="card_radius" format="dimension" />
+    </declare-styleable>
 </resources>

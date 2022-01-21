@@ -17,6 +17,7 @@ import com.example.mutidemo.mvvm.view.MVVMActivity;
 import com.example.mutidemo.ui.AirDashBoardActivity;
 import com.example.mutidemo.ui.BluetoothActivity;
 import com.example.mutidemo.ui.BmobActivity;
+import com.example.mutidemo.ui.BusCardActivity;
 import com.example.mutidemo.ui.CheckDeviceActivity;
 import com.example.mutidemo.ui.FaceCollectionActivity;
 import com.example.mutidemo.ui.FacePreViewActivity;
@@ -60,7 +61,7 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
             "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
             "自定义进度条", "GPS位置信息", "人脸检测", "音频录制与播放", "图片添加水印并压缩",
             "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "Log写入文件", "可删减九宫格", "系统原生分享",
-            "空气污染刻度盘", "Bmob数据库", "人脸采集框");
+            "空气污染刻度盘", "Bmob数据库", "人脸采集框","公交卡自定义View");
 
     @Override
     public void initData() {
@@ -186,6 +187,10 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
                         break;
                     case 22:
                         intent.setClass(mContext, FaceCollectionActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 23:
+                        intent.setClass(mContext, BusCardActivity.class);
                         startActivity(intent);
                         break;
                     default:
