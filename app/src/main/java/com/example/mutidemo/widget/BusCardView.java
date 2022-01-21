@@ -12,6 +12,8 @@ import android.graphics.RectF;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -33,6 +35,7 @@ public class BusCardView extends AppCompatImageView {
     private int centerY;//View中心y
     private int viewWidth, viewHeight, textWidth;
     private String tagText;
+    private RectF roundRectF;
 
     public BusCardView(Context context) {
         this(context, null, 0);
@@ -148,6 +151,10 @@ public class BusCardView extends AppCompatImageView {
         Log.d(TAG, "textWidth ===> " + textWidth);
     }
 
+    public String getTagText() {
+        return tagText;
+    }
+
     private void drawRightBottomText(Canvas canvas) {
         Rect textRect = new Rect(-centerX + padding, centerY - (padding + 60), -centerX + (padding + textWidth + innerPadding), centerY - padding);
         Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
@@ -161,7 +168,34 @@ public class BusCardView extends AppCompatImageView {
         /**
          * Tag高度60px
          * */
-        RectF roundRectF = new RectF(-centerX + padding, centerY - (padding + 60), -centerX + (padding + textWidth + innerPadding), centerY - padding);
+        roundRectF = new RectF(-centerX + padding, centerY - (padding + 60), -centerX + (padding + textWidth + innerPadding), centerY - padding);
         canvas.drawRoundRect(roundRectF, radius >> 1, radius >> 1, backPaint);
+    }
+
+    /**
+     * Tag点击事件
+     */
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            //因为画布移动过中心位置，所以需要调整x，y的相对中心点位置
+            float x = event.getX() - centerX;
+            float y = event.getY() - centerY;
+            if (roundRectF.contains(x, y)) {
+                listener.onClick(this);
+            }
+        }
+        //返回true，代表事件已经消费，事件已经终止。拦截点击事件
+        return true;
+    }
+
+    private OnTagClickListener listener;
+
+    public void setOnTagClickListener(OnTagClickListener onTagClickListener) {
+        this.listener = onTagClickListener;
+    }
+
+    public interface OnTagClickListener {
+        void onClick(View view);
     }
 }
