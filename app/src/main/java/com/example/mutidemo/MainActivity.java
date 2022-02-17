@@ -10,8 +10,12 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.mutidemo.adapter.MainAdapter;
 import com.example.mutidemo.base.AndroidxBaseActivity;
+import com.example.mutidemo.bean.BannerImageModel;
 import com.example.mutidemo.databinding.ActivityMainBinding;
 import com.example.mutidemo.mvvm.view.MVVMActivity;
 import com.example.mutidemo.ui.AirDashBoardActivity;
@@ -35,13 +39,18 @@ import com.example.mutidemo.ui.SlideBarActivity;
 import com.example.mutidemo.ui.VideoCompressActivity;
 import com.example.mutidemo.ui.WaterMarkerActivity;
 import com.example.mutidemo.ui.WaterRippleActivity;
+import com.example.mutidemo.util.Constant;
 import com.example.mutidemo.util.FileUtils;
 import com.example.mutidemo.util.LogToFile;
 import com.example.mutidemo.util.TimeOrDateUtil;
 import com.igexin.sdk.PushManager;
 import com.pengxh.app.multilib.widget.EasyToast;
+import com.youth.banner.adapter.BannerImageAdapter;
+import com.youth.banner.holder.BannerImageHolder;
+import com.youth.banner.indicator.CircleIndicator;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,12 +70,35 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
             "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
             "自定义进度条", "GPS位置信息", "人脸检测", "音频录制与播放", "图片添加水印并压缩",
             "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "Log写入文件", "可删减九宫格", "系统原生分享",
-            "空气污染刻度盘", "Bmob数据库", "人脸采集框","公交卡自定义View");
+            "空气污染刻度盘", "Bmob数据库", "人脸采集框", "公交卡自定义View");
 
     @Override
     public void initData() {
         //个推初始化
         PushManager.getInstance().initialize(this);
+        //轮播图
+        viewBinding.bannerView.setAdapter(new BannerImageAdapter<BannerImageModel.DataBean>(getData()) {
+            @Override
+            public void onBindView(BannerImageHolder holder, BannerImageModel.DataBean data, int position, int size) {
+                Glide.with(holder.itemView)
+                        .load(data.getImageLink())
+                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(30)))
+                        .into(holder.imageView);
+            }
+        }).addBannerLifecycleObserver(this).setIndicator(new CircleIndicator(this));
+    }
+
+    private List<BannerImageModel.DataBean> getData() {
+        List<BannerImageModel.DataBean> list = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            BannerImageModel.DataBean dataBean = new BannerImageModel.DataBean();
+
+            dataBean.setImageTitle("测试标题" + i);
+            dataBean.setImageLink(Constant.images.get(i));
+
+            list.add(dataBean);
+        }
+        return list;
     }
 
     @Override
