@@ -38,24 +38,6 @@ import top.zibin.luban.OnCompressListener;
 
 public class ImageHelper {
     /**
-     * Camera
-     */
-    public static Bitmap nv21ToBitmap(byte[] nv21, int width, int height) {
-        Bitmap bitmap = null;
-        try {
-            final YuvImage image = new YuvImage(nv21, ImageFormat.NV21, width, height, null);
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            image.compressToJpeg(new Rect(0, 0, width, height), 80, outputStream);
-            final Bitmap bmp = BitmapFactory.decodeByteArray(outputStream.toByteArray(), 0, outputStream.size());
-            bitmap = rotateImageView(-90, bmp);
-            outputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return bitmap;
-    }
-
-    /**
      * CameraX
      */
     public static Bitmap ImageToBitmap(Image image) {

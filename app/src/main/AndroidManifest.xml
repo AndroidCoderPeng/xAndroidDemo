@@ -69,14 +69,18 @@
         <activity android:name=".ui.GridViewActivity" />
         <activity android:name=".ui.OriginalShareActivity" />
         <activity android:name=".ui.AirDashBoardActivity" />
-        <activity android:name=".ui.BmobActivity"/>
-        <activity android:name=".ui.FaceCollectionActivity"/>
-        <activity android:name=".ui.BusCardActivity"/>
+        <activity android:name=".ui.BmobActivity" />
+        <activity android:name=".ui.FaceCollectionActivity" />
+        <activity android:name=".ui.BusCardActivity" />
 
         <activity
             android:name=".ui.VideoCompressActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="fullSensor" />
+
+        <activity
+            android:name="com.pengxh.androidx.lite.activity.BigImageActivity"
+            android:theme="@style/Theme.BigImageActivity" />
 
         <meta-data
             android:name="PUSH_APPID"
@@ -115,8 +119,7 @@
 
         <provider
             android:name="cn.bmob.v3.util.BmobContentProvider"
-            android:authorities="com.example.mutidemo.BmobContentProvider">
-        </provider>
+            android:authorities="com.example.mutidemo.BmobContentProvider"></provider>
 
         <!--高德定位-->
         <service android:name="com.amap.api.location.APSService" />
