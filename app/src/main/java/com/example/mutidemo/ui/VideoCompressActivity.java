@@ -8,7 +8,6 @@ import android.util.Log;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.mutidemo.R;
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.databinding.ActivityVideoCompressBinding;
 import com.example.mutidemo.util.FileUtils;
 import com.example.mutidemo.util.GlideLoadEngine;
@@ -17,7 +16,8 @@ import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.callback.SelectCallback;
 import com.huantansheng.easyphotos.constant.Type;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
-import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.widget.EasyToast;
 import com.zolad.videoslimmer.VideoSlimmer;
 
 import java.util.ArrayList;
@@ -34,6 +34,11 @@ public class VideoCompressActivity extends AndroidxBaseActivity<ActivityVideoCom
     private String defaultRotation = "90";//视频为竖屏，0为横屏
     private String mediaOriginalPath;
     private ProgressDialog progressDialog;
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {
@@ -60,7 +65,7 @@ public class VideoCompressActivity extends AndroidxBaseActivity<ActivityVideoCom
                                    public void onResult(ArrayList<Photo> photos, boolean isOriginal) {
                                        Log.d(TAG, "onActivityResult: " + photos);
                                        if (photos == null) {
-                                           EasyToast.showToast("选择视频失败", EasyToast.ERROR);
+                                           EasyToast.show(VideoCompressActivity.this, "选择视频失败");
                                            return;
                                        }
                                        onSelectResult(photos.get(0));
@@ -105,7 +110,7 @@ public class VideoCompressActivity extends AndroidxBaseActivity<ActivityVideoCom
                                     .load(outputVideoFile)
                                     .into(viewBinding.compressedVideoView.posterImageView);
                         } else {
-                            EasyToast.showToast("压缩失败", EasyToast.ERROR);
+                            EasyToast.show(VideoCompressActivity.this, "压缩失败");
                         }
                         progressDialog.dismiss();
                     }

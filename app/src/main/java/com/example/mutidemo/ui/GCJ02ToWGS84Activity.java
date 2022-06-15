@@ -17,17 +17,23 @@ import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.symbology.PictureMarkerSymbol;
 import com.esri.arcgisruntime.util.ListenableList;
 import com.example.mutidemo.R;
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.databinding.ActivityGisBinding;
+import com.example.mutidemo.databinding.ActivityGpsBinding;
 import com.example.mutidemo.util.LocationHelper;
 import com.example.mutidemo.util.OtherUtils;
 import com.example.mutidemo.util.callback.IAddressListener;
 import com.example.mutidemo.util.callback.ILocationListener;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
 public class GCJ02ToWGS84Activity extends AndroidxBaseActivity<ActivityGisBinding> {
 
     private static final String TAG = "GCJ02ToWGS84Activity";
     private final Context context = this;
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {

@@ -3,8 +3,6 @@ package com.example.mutidemo;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
@@ -14,7 +12,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.mutidemo.adapter.MainAdapter;
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.bean.BannerImageModel;
 import com.example.mutidemo.databinding.ActivityMainBinding;
 import com.example.mutidemo.mvvm.view.MVVMActivity;
@@ -39,17 +36,14 @@ import com.example.mutidemo.ui.SlideBarActivity;
 import com.example.mutidemo.ui.VideoCompressActivity;
 import com.example.mutidemo.ui.WaterMarkerActivity;
 import com.example.mutidemo.ui.WaterRippleActivity;
-import com.example.mutidemo.util.Constant;
-import com.example.mutidemo.util.FileUtils;
-import com.example.mutidemo.util.LogToFile;
-import com.example.mutidemo.util.TimeOrDateUtil;
+import com.example.mutidemo.util.DemoConstant;
 import com.igexin.sdk.PushManager;
-import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.widget.EasyToast;
 import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,8 +63,13 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
     private final List<String> mItemNameList = Arrays.asList("MVP架构", "MVVM架构", "顶/底部导航栏", "ZBar扫一扫",
             "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
             "自定义进度条", "GPS位置信息", "人脸检测", "音频录制与播放", "图片添加水印并压缩",
-            "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "Log写入文件", "可删减九宫格", "系统原生分享",
+            "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "可删减九宫格", "系统原生分享",
             "空气污染刻度盘", "Bmob数据库", "人脸采集框", "公交卡自定义View");
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {
@@ -94,7 +93,7 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
             BannerImageModel.DataBean dataBean = new BannerImageModel.DataBean();
 
             dataBean.setImageTitle("测试标题" + i);
-            dataBean.setImageLink(Constant.images.get(i));
+            dataBean.setImageLink(DemoConstant.images.get(i));
 
             list.add(dataBean);
         }
@@ -180,48 +179,26 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
                         startActivity(intent);
                         break;
                     case 17:
-                        File documentFile = FileUtils.getDocumentFile();
-                        LogToFile.write(documentFile, "第一条记录");
-                        for (int i = 0; i < 20; i++) {
-                            LogToFile.write(documentFile, TimeOrDateUtil.timestampToCompleteDate(System.currentTimeMillis()));
-                        }
-                        LogToFile.write(documentFile, "最后一条记录");
-                        EasyToast.showToast("写入完成", EasyToast.SUCCESS);
-                        //缓几秒钟之后再读出来
-                        new CountDownTimer(3000, 1000) {
-
-                            @Override
-                            public void onTick(long millisUntilFinished) {
-
-                            }
-
-                            @Override
-                            public void onFinish() {
-                                Log.d(TAG, LogToFile.read(documentFile));
-                            }
-                        }.start();
-                        break;
-                    case 18:
                         intent.setClass(mContext, GridViewActivity.class);
                         startActivity(intent);
                         break;
-                    case 19:
+                    case 18:
                         intent.setClass(mContext, OriginalShareActivity.class);
                         startActivity(intent);
                         break;
-                    case 20:
+                    case 19:
                         intent.setClass(mContext, AirDashBoardActivity.class);
                         startActivity(intent);
                         break;
-                    case 21:
+                    case 20:
                         intent.setClass(mContext, BmobActivity.class);
                         startActivity(intent);
                         break;
-                    case 22:
+                    case 21:
                         intent.setClass(mContext, FaceCollectionActivity.class);
                         startActivity(intent);
                         break;
-                    case 23:
+                    case 22:
                         intent.setClass(mContext, BusCardActivity.class);
                         startActivity(intent);
                         break;
@@ -257,7 +234,7 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
         QrManager.getInstance().init(qrConfig).startScan(this, new QrManager.OnScanResultCallback() {
             @Override
             public void onScanSuccess(final ScanResult result) {
-                runOnUiThread(() -> EasyToast.showToast("扫码结果: " + result.content, EasyToast.SUCCESS));
+                runOnUiThread(() -> EasyToast.show(MainActivity.this, "扫码结果: " + result.content));
             }
         });
     }

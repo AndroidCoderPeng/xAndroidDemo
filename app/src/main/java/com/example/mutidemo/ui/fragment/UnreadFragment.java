@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.adapter.SwipeViewAdapter;
-import com.example.mutidemo.base.AndroidxBaseFragment;
 import com.example.mutidemo.databinding.FragmentUnreadBinding;
+import com.pengxh.androidx.lite.base.AndroidxBaseFragment;
 import com.qmuiteam.qmui.recyclerView.QMUIRVItemSwipeAction;
 import com.qmuiteam.qmui.recyclerView.QMUISwipeAction;
 
@@ -24,8 +24,13 @@ public class UnreadFragment extends AndroidxBaseFragment<FragmentUnreadBinding> 
     private SwipeViewAdapter swipeViewAdapter;
 
     @Override
+    protected void setupTopBarLayout() {
+
+    }
+
+    @Override
     public void initData() {
-        swipeViewAdapter = new SwipeViewAdapter(getContext());
+        swipeViewAdapter = new SwipeViewAdapter(requireContext());
         swipeViewAdapter.setData(data);
     }
 

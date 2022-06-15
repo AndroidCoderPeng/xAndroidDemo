@@ -6,12 +6,12 @@ import android.net.Uri;
 import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.databinding.ActivityOriginalBinding;
 import com.example.mutidemo.util.GlideLoadEngine;
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.callback.SelectCallback;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,6 +19,11 @@ import java.util.ArrayList;
 public class OriginalShareActivity extends AndroidxBaseActivity<ActivityOriginalBinding> {
 
     private String realPath;
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {

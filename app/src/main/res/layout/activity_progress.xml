@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_marginHorizontal="50dp"
-        app:progress_endColor="@color/color_2"
-        app:progress_startColor="@color/color_1"
+        app:progress_endColor="@color/listSubColor"
+        app:progress_startColor="@color/listMainColor"
         app:progress_text="0%" />
 </RelativeLayout>

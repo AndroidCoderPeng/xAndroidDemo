@@ -2,12 +2,12 @@ package com.example.mutidemo.ui;
 
 import android.util.Log;
 
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.bean.UserBean;
 import com.example.mutidemo.databinding.ActivityBmobBinding;
 import com.example.mutidemo.util.OtherUtils;
 import com.google.gson.Gson;
-import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.widget.EasyToast;
 
 import java.util.List;
 import java.util.Objects;
@@ -26,6 +26,11 @@ public class BmobActivity extends AndroidxBaseActivity<ActivityBmobBinding> {
     private static final String TAG = "BmobActivity";
 
     @Override
+    protected void setupTopBarLayout() {
+
+    }
+
+    @Override
     public void initData() {
 
     }
@@ -39,12 +44,12 @@ public class BmobActivity extends AndroidxBaseActivity<ActivityBmobBinding> {
                 @Override
                 public void done(UserBean bean, BmobException e) {
                     if (e == null) {
-                        EasyToast.showToast("注册成功", EasyToast.SUCCESS);
+                        EasyToast.show(BmobActivity.this, "注册成功");
                     } else {
                         if (e.getErrorCode() == 202) {
-                            EasyToast.showToast("注册失败，" + userBean.getUsername() + "已注册", EasyToast.ERROR);
+                            EasyToast.show(BmobActivity.this, "注册失败，" + userBean.getUsername() + "已注册");
                         } else {
-                            EasyToast.showToast("注册失败", EasyToast.ERROR);
+                            EasyToast.show(BmobActivity.this, "注册失败");
                         }
                     }
                     OtherUtils.dismissLoadingDialog();
@@ -57,12 +62,12 @@ public class BmobActivity extends AndroidxBaseActivity<ActivityBmobBinding> {
                 @Override
                 public void done(UserBean userBean, BmobException e) {
                     if (e == null) {
-                        EasyToast.showToast("登陆成功", EasyToast.SUCCESS);
+                        EasyToast.show(BmobActivity.this, "登陆成功");
                     } else {
                         if (e.getErrorCode() == 304) {
-                            EasyToast.showToast("登陆失败， 未注册", EasyToast.ERROR);
+                            EasyToast.show(BmobActivity.this, "登陆失败， 未注册");
                         } else {
-                            EasyToast.showToast("登陆失败", EasyToast.ERROR);
+                            EasyToast.show(BmobActivity.this, "登陆失败");
                         }
                     }
                     OtherUtils.dismissLoadingDialog();
@@ -87,9 +92,9 @@ public class BmobActivity extends AndroidxBaseActivity<ActivityBmobBinding> {
                 @Override
                 public void done(BmobException e) {
                     if (e == null) {
-                        EasyToast.showToast("更新成功", EasyToast.SUCCESS);
+                        EasyToast.show(BmobActivity.this, "更新成功");
                     } else {
-                        EasyToast.showToast("更新用户信息失败：" + e.getMessage(), EasyToast.ERROR);
+                        EasyToast.show(BmobActivity.this, "更新用户信息失败：" + e.getMessage());
                     }
                     OtherUtils.dismissLoadingDialog();
                 }
@@ -104,7 +109,7 @@ public class BmobActivity extends AndroidxBaseActivity<ActivityBmobBinding> {
                     if (e == null) {
                         Log.d(TAG, "最新用户列表：" + new Gson().toJson(list));
                     } else {
-                        EasyToast.showToast("查询失败：" + e.getMessage(), EasyToast.ERROR);
+                        EasyToast.show(BmobActivity.this, "查询失败：" + e.getMessage());
                     }
                     OtherUtils.dismissLoadingDialog();
                 }
@@ -116,9 +121,9 @@ public class BmobActivity extends AndroidxBaseActivity<ActivityBmobBinding> {
                 @Override
                 public void done(BmobException e) {
                     if (e == null) {
-                        EasyToast.showToast("修改密码成功", EasyToast.SUCCESS);
+                        EasyToast.show(BmobActivity.this, "修改密码成功");
                     } else {
-                        EasyToast.showToast("修改密码失败：" + e.getMessage(), EasyToast.ERROR);
+                        EasyToast.show(BmobActivity.this, "修改密码失败：" + e.getMessage());
                     }
                     OtherUtils.dismissLoadingDialog();
                 }

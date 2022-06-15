@@ -19,8 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
 import com.example.mutidemo.R;
-import com.pengxh.app.multilib.utils.ColorUtil;
-import com.pengxh.app.multilib.utils.SizeUtil;
+import com.pengxh.androidx.lite.utils.ColorUtil;
+import com.pengxh.androidx.lite.utils.DeviceSizeUtil;
 
 public class BusCardView extends AppCompatImageView {
 
@@ -51,9 +51,9 @@ public class BusCardView extends AppCompatImageView {
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BusCardView, defStyleAttr, 0);
         backgroundColor = a.getColor(R.styleable.BusCardView_card_tag_background
-                , ColorUtil.getResourcesColor(context, R.color.lightGray));
-        padding = a.getDimensionPixelOffset(R.styleable.BusCardView_card_tag_padding, SizeUtil.dp2px(context, 10));
-        radius = a.getDimensionPixelOffset(R.styleable.BusCardView_card_radius, SizeUtil.dp2px(context, 5));
+                , ColorUtil.convertColor(context, R.color.lightGray));
+        padding = a.getDimensionPixelOffset(R.styleable.BusCardView_card_tag_padding, DeviceSizeUtil.dp2px(context, 10));
+        radius = a.getDimensionPixelOffset(R.styleable.BusCardView_card_radius, DeviceSizeUtil.dp2px(context, 5));
         a.recycle();
         //初始化画笔
         initPaint();
@@ -64,7 +64,7 @@ public class BusCardView extends AppCompatImageView {
         textPaint.setAntiAlias(true);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setColor(Color.WHITE);
-        textPaint.setTextSize(SizeUtil.sp2px(context, 12));
+        textPaint.setTextSize(DeviceSizeUtil.sp2px(context, 12));
 
         backPaint = new Paint();
         backPaint.setColor(backgroundColor);
@@ -91,7 +91,7 @@ public class BusCardView extends AppCompatImageView {
             viewWidth = widthSpecSize;
         } else {
             // wrap_content，外边界宽
-            viewWidth = SizeUtil.dp2px(context, 300);
+            viewWidth = DeviceSizeUtil.dp2px(context, 300);
         }
         // 获取高
         if (heightSpecMode == MeasureSpec.EXACTLY) {
@@ -99,7 +99,7 @@ public class BusCardView extends AppCompatImageView {
             viewHeight = heightSpecSize;
         } else {
             // wrap_content，外边界高
-            viewHeight = SizeUtil.dp2px(context, 180);
+            viewHeight = DeviceSizeUtil.dp2px(context, 180);
         }
         // 设置该view的宽高
         setMeasuredDimension(viewWidth, viewHeight);

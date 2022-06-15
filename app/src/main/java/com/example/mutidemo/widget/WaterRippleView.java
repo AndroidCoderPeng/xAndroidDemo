@@ -16,8 +16,8 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.example.mutidemo.R;
-import com.pengxh.app.multilib.utils.ColorUtil;
-import com.pengxh.app.multilib.utils.SizeUtil;
+import com.pengxh.androidx.lite.utils.ColorUtil;
+import com.pengxh.androidx.lite.utils.DeviceSizeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,20 +67,20 @@ public class WaterRippleView extends View implements View.OnClickListener {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.WaterRippleView, defStyleAttr, 0);
 
         centerColor = a.getColor(R.styleable.WaterRippleView_ripple_centerColor
-                , ColorUtil.getResourcesColor(context, R.color.mainColor));
+                , ColorUtil.convertColor(context, R.color.mainColor));
         spreadColor = a.getColor(R.styleable.WaterRippleView_ripple_spreadColor
-                , ColorUtil.getResourcesColor(context, R.color.mainColor));
+                , ColorUtil.convertColor(context, R.color.mainColor));
         animDuration = a.getInteger(R.styleable.WaterRippleView_ripple_animDuration, animDuration);
-        radius = a.getDimensionPixelOffset(R.styleable.WaterRippleView_ripple_radius, SizeUtil.dp2px(context, 50));
+        radius = a.getDimensionPixelOffset(R.styleable.WaterRippleView_ripple_radius, DeviceSizeUtil.dp2px(context, 50));
         distance = a.getDimensionPixelOffset(R.styleable.WaterRippleView_ripple_distance
-                , SizeUtil.dp2px(context, 3));
+                , DeviceSizeUtil.dp2px(context, 3));
         maxDistance = a.getDimensionPixelOffset(R.styleable.WaterRippleView_ripple_maxDistance
-                , SizeUtil.dp2px(context, 30));
+                , DeviceSizeUtil.dp2px(context, 30));
         textSize = a.getDimensionPixelOffset(R.styleable.WaterRippleView_ripple_textSize
-                , SizeUtil.sp2px(context, 16));
+                , DeviceSizeUtil.sp2px(context, 16));
         text = a.getString(R.styleable.WaterRippleView_ripple_text);
         textColor = a.getColor(R.styleable.WaterRippleView_ripple_textColor
-                , ColorUtil.getResourcesColor(context, R.color.white));
+                , ColorUtil.convertColor(context, R.color.white));
         imageResourceId = a.getResourceId(R.styleable.WaterRippleView_ripple_image, R.mipmap.hujiao);
         a.recycle();
 
@@ -139,7 +139,7 @@ public class WaterRippleView extends View implements View.OnClickListener {
             mWidth = widthSpecSize;
         } else {
             // wrap_content
-            mWidth = SizeUtil.dp2px(mContext, 2 * (maxDistance + radius));
+            mWidth = DeviceSizeUtil.dp2px(mContext, 2 * (maxDistance + radius));
         }
         // 获取高
         if (heightSpecMode == MeasureSpec.EXACTLY) {
@@ -147,7 +147,7 @@ public class WaterRippleView extends View implements View.OnClickListener {
             mHeight = heightSpecSize;
         } else {
             // wrap_content
-            mHeight = SizeUtil.dp2px(mContext, 2 * (maxDistance + radius));
+            mHeight = DeviceSizeUtil.dp2px(mContext, 2 * (maxDistance + radius));
         }
         // 设置该view的宽高
         setMeasuredDimension(mWidth, mHeight);
@@ -165,7 +165,7 @@ public class WaterRippleView extends View implements View.OnClickListener {
                 //绘制扩散的圆
                 canvas.drawCircle(centerX, centerY, radius + width, spreadPaint);
                 //每次扩散圆半径递增，圆透明度递减
-                if (alpha > 0 && width < SizeUtil.dp2px(mContext, maxDistance + radius)) {
+                if (alpha > 0 && width < DeviceSizeUtil.dp2px(mContext, maxDistance + radius)) {
                     alpha = Math.max(alpha - distance, 0);
                     alphas.set(i, alpha);
                     spreadRadius.set(i, width + distance);

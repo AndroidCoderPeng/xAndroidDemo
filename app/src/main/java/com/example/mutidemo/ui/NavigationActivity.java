@@ -8,11 +8,11 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.mutidemo.R;
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.databinding.ActivityNavigatBinding;
 import com.example.mutidemo.ui.fragment.FirstFragment;
 import com.example.mutidemo.ui.fragment.SecondFragment;
 import com.example.mutidemo.ui.fragment.ThirdFragment;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,11 @@ public class NavigationActivity extends AndroidxBaseActivity<ActivityNavigatBind
 
     private MenuItem menuItem;
     private List<Fragment> fragmentList;
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {

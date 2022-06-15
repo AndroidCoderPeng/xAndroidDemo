@@ -1,17 +1,22 @@
 package com.example.mutidemo.ui.fragment;
 
-import com.example.mutidemo.base.AndroidxBaseFragment;
 import com.example.mutidemo.databinding.FragmentSecondBinding;
+import com.pengxh.androidx.lite.base.AndroidxBaseFragment;
 
 public class SecondFragment extends AndroidxBaseFragment<FragmentSecondBinding> {
 
     @Override
-    public void initData() {
+    protected void setupTopBarLayout() {
 
     }
 
     @Override
-    public void initEvent() {
+    protected void initData() {
+
+    }
+
+    @Override
+    protected void initEvent() {
 
     }
 }

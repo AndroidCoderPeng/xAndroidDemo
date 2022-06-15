@@ -1,10 +1,15 @@
 package com.example.mutidemo.ui;
 
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.databinding.ActivityAirDashBinding;
 import com.example.mutidemo.util.ColorUtil;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
 public class AirDashBoardActivity extends AndroidxBaseActivity<ActivityAirDashBinding> {
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {

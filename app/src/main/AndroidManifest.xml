@@ -74,9 +74,6 @@
         <activity android:name=".ui.BusCardActivity"/>
 
         <activity
-            android:name=".ui.BigImageViewActivity"
-            android:theme="@style/Theme.BigImageViewActivity" />
-        <activity
             android:name=".ui.VideoCompressActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="fullSensor" />
@@ -127,12 +124,5 @@
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="56fa2f20eef95e6107f998a5b59f0e10" />
-
-        <!--蓝牙开关状态监听-->
-        <receiver android:name=".util.BluetoothStateBroadcastReceiver">
-            <intent-filter>
-                <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
-            </intent-filter>
-        </receiver>
     </application>
 </manifest>

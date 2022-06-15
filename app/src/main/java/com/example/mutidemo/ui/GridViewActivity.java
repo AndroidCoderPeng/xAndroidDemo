@@ -4,29 +4,34 @@ import android.view.View;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.example.mutidemo.adapter.NineGridImageAdapter;
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.databinding.ActivityGridviewBinding;
 import com.example.mutidemo.util.GlideLoadEngine;
-import com.example.mutidemo.util.ImageUtil;
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.callback.SelectCallback;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
+import com.pengxh.androidx.lite.adapter.EditableImageAdapter;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.utils.ImageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GridViewActivity extends AndroidxBaseActivity<ActivityGridviewBinding> {
 
-    private NineGridImageAdapter nineRecyclerViewAdapter;
+    private EditableImageAdapter editableImageAdapter;
     private final ArrayList<String> recyclerViewImages = new ArrayList<>();
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {
         viewBinding.nineRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        nineRecyclerViewAdapter = new NineGridImageAdapter(this);
-        viewBinding.nineRecyclerView.setAdapter(nineRecyclerViewAdapter);
-        nineRecyclerViewAdapter.setOnItemClickListener(new NineGridImageAdapter.OnItemClickListener() {
+        editableImageAdapter = new EditableImageAdapter(this, 9);
+        viewBinding.nineRecyclerView.setAdapter(editableImageAdapter);
+        editableImageAdapter.setOnItemClickListener(new EditableImageAdapter.OnItemClickListener() {
             @Override
             public void onAddImageClick() {
                 selectPicture();
@@ -39,7 +44,7 @@ public class GridViewActivity extends AndroidxBaseActivity<ActivityGridviewBindi
 
             @Override
             public void onItemLongClick(View view, int position) {
-                nineRecyclerViewAdapter.deleteImage(position);
+                editableImageAdapter.deleteImage(position);
             }
         });
     }
@@ -55,7 +60,7 @@ public class GridViewActivity extends AndroidxBaseActivity<ActivityGridviewBindi
                         for (Photo media : photos) {
                             recyclerViewImages.add(media.path);
                         }
-                        nineRecyclerViewAdapter.setupImage(recyclerViewImages);
+                        editableImageAdapter.setupImage(recyclerViewImages);
                     }
 
                     @Override

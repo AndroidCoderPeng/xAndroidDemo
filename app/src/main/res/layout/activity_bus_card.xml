@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:scaleType="fitXY"
-        android:src="@drawable/home_top"
+        android:src="@mipmap/home_top"
         app:card_radius="8dp"
         app:card_tag_background="#88000000"
         app:card_tag_padding="10dp" />

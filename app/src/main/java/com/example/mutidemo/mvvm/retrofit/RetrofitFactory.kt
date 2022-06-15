@@ -1,7 +1,7 @@
 package com.example.mutidemo.mvvm.retrofit
 
 import android.util.Log
-import com.example.mutidemo.util.Constant
+import com.example.mutidemo.util.DemoConstant
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -18,7 +18,7 @@ object RetrofitFactory {
 
     fun <T> createRetrofit(clazz: Class<T>): T {
         return Retrofit.Builder()
-            .baseUrl(Constant.BASE_URL)
+            .baseUrl(DemoConstant.BASE_URL)
             .addConverterFactory(ScalarsConverterFactory.create())          //字符串转换器
             .addConverterFactory(GsonConverterFactory.create())             //Gson转换器
             .addCallAdapterFactory(CoroutineCallAdapterFactory.invoke())    //协程请求适配器

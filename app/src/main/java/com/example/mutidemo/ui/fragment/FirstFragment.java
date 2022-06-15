@@ -7,8 +7,8 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.SubViewPagerAdapter;
-import com.example.mutidemo.base.AndroidxBaseFragment;
 import com.example.mutidemo.databinding.FragmentFirstBinding;
+import com.pengxh.androidx.lite.base.AndroidxBaseFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,12 @@ public class FirstFragment extends AndroidxBaseFragment<FragmentFirstBinding> {
     private static final String[] pageTitles = {"未读消息", "已读消息"};
 
     @Override
-    public void initData() {
+    protected void setupTopBarLayout() {
+
+    }
+
+    @Override
+    protected void initData() {
         List<Fragment> fragmentList = new ArrayList<>();
         fragmentList.add(new UnreadFragment());
         fragmentList.add(new ReadFragment());
@@ -32,7 +37,7 @@ public class FirstFragment extends AndroidxBaseFragment<FragmentFirstBinding> {
     }
 
     @Override
-    public void initEvent() {
+    protected void initEvent() {
 
     }
 }

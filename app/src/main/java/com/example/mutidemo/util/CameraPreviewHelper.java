@@ -29,7 +29,7 @@ import android.view.TextureView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.androidx.lite.widget.EasyToast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * @author: Pengxh
  * @email: 290677893@qq.com
- * @description: TODO 相机部分功能封装
+ * @description: 相机部分功能封装
  * @date: 2020年11月16日19:26:32
  */
 public class CameraPreviewHelper {
@@ -111,7 +111,7 @@ public class CameraPreviewHelper {
         assert mCameraManager != null;
         String[] cameraIdList = mCameraManager.getCameraIdList();
         if (cameraIdList.length == 0) {
-            EasyToast.showToast("没有可用相机", EasyToast.WARING);
+            EasyToast.show(mContext, "没有可用相机");
             return;
         }
         for (String id : cameraIdList) {
@@ -131,7 +131,7 @@ public class CameraPreviewHelper {
         mImageReader.setOnImageAvailableListener(mImageAvailableListener, mPreviewHandler);
         //打开箱机
         if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            EasyToast.showToast("没有相机权限", EasyToast.WARING);
+            EasyToast.show(mContext, "没有相机权限");
             return;
         }
         mCameraManager.openCamera(mCameraId, new CameraDevice.StateCallback() {
@@ -154,7 +154,6 @@ public class CameraPreviewHelper {
             @Override
             public void onError(@NonNull CameraDevice camera, int error) {
                 Log.d(TAG, "onError: " + camera.getId());
-                EasyToast.showToast("打开相机失败，错误码：" + error, EasyToast.ERROR);
             }
         }, mPreviewHandler);
     }
@@ -184,7 +183,7 @@ public class CameraPreviewHelper {
 
             @Override
             public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-                EasyToast.showToast("开启预览会话失败！", EasyToast.ERROR);
+                EasyToast.show(mContext, "开启预览会话失败");
             }
         }, mPreviewHandler);
     }
@@ -203,7 +202,6 @@ public class CameraPreviewHelper {
         public void onCaptureFailed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureFailure failure) {
             super.onCaptureFailed(session, request, failure);
             Log.d(TAG, "onCaptureFailed: " + failure);
-            EasyToast.showToast("开启预览失败！", EasyToast.ERROR);
             canTakePic = false;
         }
     };

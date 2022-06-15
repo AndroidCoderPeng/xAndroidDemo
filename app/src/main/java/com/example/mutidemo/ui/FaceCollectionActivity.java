@@ -23,12 +23,12 @@ import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.core.content.ContextCompat;
 
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.databinding.ActivityFaceCollectBinding;
 import com.example.mutidemo.util.FileUtils;
-import com.example.mutidemo.util.ImageUtil;
+import com.example.mutidemo.util.ImageHelper;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -55,6 +55,11 @@ public class FaceCollectionActivity extends AndroidxBaseActivity<ActivityFaceCol
             new LinkedBlockingQueue<>(1024),
             new ThreadFactoryBuilder().setNameFormat("faceDetector-pool-%d").build(),
             new ThreadPoolExecutor.AbortPolicy());
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {
@@ -160,7 +165,7 @@ public class FaceCollectionActivity extends AndroidxBaseActivity<ActivityFaceCol
                         executor.execute(() -> {
                             Image image = imageProxy.getImage();
                             if (image != null) {
-                                Bitmap bitmap = ImageUtil.ImageToBitmap(image);
+                                Bitmap bitmap = ImageHelper.ImageToBitmap(image);
 //                                viewBinding.faceCollectionView.setBitmap(bitmap);
 
                                 detectFace(bitmap);

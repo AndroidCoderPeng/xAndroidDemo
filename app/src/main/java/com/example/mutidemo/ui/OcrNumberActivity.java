@@ -9,10 +9,10 @@ import com.baidu.ocr.sdk.exception.OCRError;
 import com.baidu.ocr.sdk.model.AccessToken;
 import com.baidu.ocr.sdk.model.BankCardParams;
 import com.baidu.ocr.sdk.model.BankCardResult;
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.databinding.ActivityOcrBinding;
 import com.example.mutidemo.util.CameraPreviewHelper;
 import com.google.gson.Gson;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
 import java.io.File;
 
@@ -25,6 +25,11 @@ public class OcrNumberActivity extends AndroidxBaseActivity<ActivityOcrBinding> 
     private CameraPreviewHelper cameraPreviewHelper;
     private String path;
     private OCR ocr;
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {

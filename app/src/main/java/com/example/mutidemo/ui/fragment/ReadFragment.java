@@ -1,17 +1,22 @@
 package com.example.mutidemo.ui.fragment;
 
-import com.example.mutidemo.base.AndroidxBaseFragment;
 import com.example.mutidemo.databinding.FragmentReadBinding;
+import com.pengxh.androidx.lite.base.AndroidxBaseFragment;
 
 public class ReadFragment extends AndroidxBaseFragment<FragmentReadBinding> {
 
     @Override
-    public void initData() {
+    protected void setupTopBarLayout() {
 
     }
 
     @Override
-    public void initEvent() {
+    protected void initData() {
+
+    }
+
+    @Override
+    protected void initEvent() {
 
     }
 }

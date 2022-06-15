@@ -16,7 +16,6 @@ public class FileUtils {
     private static File waterImageDir;
     private static File compressImageDir;
     private static File videoDir;
-    private static File audioDir;
     private static File documentDir;
     private static int index = 1;
 
@@ -36,7 +35,6 @@ public class FileUtils {
             }
         }
         videoDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES), "");
-        audioDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_MUSIC), "");
         documentDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "");
     }
 
@@ -78,19 +76,6 @@ public class FileUtils {
             }
         }
         return imageFile;
-    }
-
-    static File getOutputAudioFile() {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(new Date());
-        File audioFile = new File(audioDir + File.separator + "AUD_" + timeStamp + ".m4a");
-        if (!audioFile.exists()) {
-            try {
-                audioFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return audioFile;
     }
 
     public static String getImageCompressPath() {

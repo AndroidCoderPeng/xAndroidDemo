@@ -1,9 +1,13 @@
 package com.example.mutidemo.ui;
 
 import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -11,44 +15,72 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.example.mutidemo.base.AndroidxBaseActivity;
-import com.example.mutidemo.bean.BlueToothBean;
 import com.example.mutidemo.databinding.ActivityBluetoothBinding;
-import com.example.mutidemo.util.BLEManager;
-import com.example.mutidemo.util.Constant;
+import com.example.mutidemo.util.DemoConstant;
 import com.example.mutidemo.util.OtherUtils;
-import com.example.mutidemo.util.callback.OnBleConnectListener;
-import com.example.mutidemo.util.callback.OnDeviceSearchListener;
-import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.utils.BroadcastManager;
+import com.pengxh.androidx.lite.utils.Constant;
+import com.pengxh.androidx.lite.utils.WeakReferenceHandler;
+import com.pengxh.androidx.lite.utils.ble.BLEManager;
+import com.pengxh.androidx.lite.utils.ble.BlueToothBean;
+import com.pengxh.androidx.lite.utils.ble.OnBleConnectListener;
+import com.pengxh.androidx.lite.utils.ble.OnDeviceDiscoveredListener;
+import com.pengxh.androidx.lite.widget.EasyToast;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @SuppressLint("SetTextI18n")
 public class BluetoothActivity extends AndroidxBaseActivity<ActivityBluetoothBinding> {
 
-    private static final String TAG = "BLEManager";
+    private static final String TAG = "BluetoothActivity";
     private static WeakReferenceHandler weakReferenceHandler;
     private final List<BlueToothBean> blueToothBeans = new ArrayList<>();
+    private BroadcastManager broadcastManager;
+    private BLEManager bleManager;
     private boolean isConnected = false;
     private StringBuilder builder;
 
     @Override
+    protected void setupTopBarLayout() {
+
+    }
+
+    @Override
     public void initData() {
-        weakReferenceHandler = new WeakReferenceHandler(this);
+        broadcastManager = BroadcastManager.getInstance(this);
+        broadcastManager.addAction(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(Objects.requireNonNull(intent.getAction()))) {
+                    switch (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)) {
+                        case BluetoothAdapter.STATE_ON:
+                            weakReferenceHandler.sendEmptyMessage(Constant.BLUETOOTH_ON);
+                            break;
+                        case BluetoothAdapter.STATE_OFF:
+                            weakReferenceHandler.sendEmptyMessage(Constant.BLUETOOTH_OFF);
+                            break;
+                    }
+                }
+            }
+        }, Constant.BLUETOOTH_STATE_CHANGED);
+
+        bleManager = BLEManager.getInstance();
+        weakReferenceHandler = new WeakReferenceHandler(callback);
         builder = new StringBuilder();
-        if (BLEManager.INSTANCE.initBle(BluetoothActivity.this)) {
-            if (BLEManager.INSTANCE.isEnable()) {
+        if (bleManager.initBLE(this)) {
+            if (bleManager.isBluetoothEnable()) {
                 viewBinding.bluetoothStateView.setText("蓝牙状态: ON");
             } else {
                 viewBinding.bluetoothStateView.setText("蓝牙状态: OFF");
-                BLEManager.INSTANCE.openBluetooth(false);
+                bleManager.openBluetooth(true);
             }
         } else {
-            EasyToast.showToast("该设备不支持低功耗蓝牙", EasyToast.ERROR);
+            EasyToast.show(this, "该设备不支持低功耗蓝牙");
         }
     }
 
@@ -61,10 +93,10 @@ public class BluetoothActivity extends AndroidxBaseActivity<ActivityBluetoothBin
             public void onClick(View v) {
                 if (isConnected) {
                     //断开连接
-                    BLEManager.INSTANCE.disConnectDevice();
-                    EasyToast.showToast("设备已断开连接", EasyToast.DEFAULT);
+                    bleManager.disConnectDevice();
+                    EasyToast.show(BluetoothActivity.this, "设备已断开连接");
                 } else {
-                    EasyToast.showToast("设备未连接，无需断开", EasyToast.WARING);
+                    EasyToast.show(BluetoothActivity.this, "设备未连接，无需断开");
                 }
             }
         });
@@ -72,11 +104,11 @@ public class BluetoothActivity extends AndroidxBaseActivity<ActivityBluetoothBin
             @Override
             public void onClick(View v) {
                 //搜索蓝牙
-                if (BLEManager.INSTANCE.isDiscovery()) {//当前正在搜索设备...
-                    BLEManager.INSTANCE.stopDiscoveryDevice();
+                if (bleManager.isDiscovery()) {//当前正在搜索设备...
+                    bleManager.stopDiscoverDevice();
                 }
                 OtherUtils.showLoadingDialog(BluetoothActivity.this, "设备搜索中...");
-                BLEManager.INSTANCE.startDiscoveryDevice(new OnDeviceSearchListener() {
+                bleManager.startDiscoverDevice(new OnDeviceDiscoveredListener() {
                     @Override
                     public void onDeviceFound(BlueToothBean blueToothBean) {
                         Message message = weakReferenceHandler.obtainMessage();
@@ -86,12 +118,12 @@ public class BluetoothActivity extends AndroidxBaseActivity<ActivityBluetoothBin
                     }
 
                     @Override
-                    public void onDiscoveryOutTime() {
+                    public void onDiscoveryTimeout() {
                         Message message = weakReferenceHandler.obtainMessage();
                         message.what = Constant.DISCOVERY_OUT_TIME;
                         weakReferenceHandler.sendMessage(message);
                     }
-                }, 5 * 1000);
+                }, 15 * 1000);
             }
         });
     }
@@ -100,8 +132,10 @@ public class BluetoothActivity extends AndroidxBaseActivity<ActivityBluetoothBin
         // 当前蓝牙设备
         if (!isConnected) {
             OtherUtils.showLoadingDialog(this, "正在连接...");
-            BLEManager.INSTANCE.connectBleDevice(device, 10000, Constant.SERVICE_UUID,
-                    Constant.READ_CHARACTERISTIC_UUID, Constant.WRITE_CHARACTERISTIC_UUID,
+            bleManager.connectBleDevice(device, 10000,
+                    DemoConstant.SERVICE_UUID,
+                    DemoConstant.READ_CHARACTERISTIC_UUID,
+                    DemoConstant.WRITE_CHARACTERISTIC_UUID,
                     onBleConnectListener);
         }
     }
@@ -188,72 +222,59 @@ public class BluetoothActivity extends AndroidxBaseActivity<ActivityBluetoothBin
         }
     };
 
-    public static void sendEmptyMessage(int what) {
-        weakReferenceHandler.sendEmptyMessage(what);
-    }
-
-    private static class WeakReferenceHandler extends Handler {
-
-        private final WeakReference<BluetoothActivity> reference;
-
-        private WeakReferenceHandler(BluetoothActivity activity) {
-            reference = new WeakReference<>(activity);
-        }
-
-        @SuppressLint("MissingPermission")
+    private final Handler.Callback callback = new Handler.Callback() {
         @Override
-        public void handleMessage(@NonNull Message msg) {
-            BluetoothActivity activity = reference.get();
+        public boolean handleMessage(@NonNull Message msg) {
             switch (msg.what) {
                 case Constant.BLUETOOTH_ON:
-                    EasyToast.showToast("蓝牙已开启", EasyToast.SUCCESS);
-                    activity.viewBinding.bluetoothStateView.setText("蓝牙状态: ON");
+                    EasyToast.show(BluetoothActivity.this, "蓝牙已开启");
+                    viewBinding.bluetoothStateView.setText("蓝牙状态: ON");
                     break;
                 case Constant.BLUETOOTH_OFF:
-                    EasyToast.showToast("蓝牙已关闭", EasyToast.ERROR);
-                    activity.viewBinding.bluetoothStateView.setText("蓝牙状态: ON");
+                    EasyToast.show(BluetoothActivity.this, "蓝牙已关闭");
+                    viewBinding.bluetoothStateView.setText("蓝牙状态: ON");
                     break;
                 case Constant.DISCOVERY_DEVICE:
                     BlueToothBean bean = (BlueToothBean) msg.obj;
-                    if (activity.blueToothBeans.size() == 0) {
-                        activity.blueToothBeans.add(bean);
+                    if (blueToothBeans.size() == 0) {
+                        blueToothBeans.add(bean);
                     } else {
                         //0表示未添加到list的新设备，1表示已经扫描并添加到list的设备
                         int judge = 0;
-                        for (BlueToothBean it : activity.blueToothBeans) {
+                        for (BlueToothBean it : blueToothBeans) {
                             if (it.getBluetoothDevice().getAddress().equals(bean.getBluetoothDevice().getAddress())) {
                                 judge = 1;
                                 break;
                             }
                         }
                         if (judge == 0) {
-                            activity.blueToothBeans.add(bean);
+                            blueToothBeans.add(bean);
                         }
                     }
                     break;
                 case Constant.DISCOVERY_OUT_TIME:
                     OtherUtils.dismissLoadingDialog();
-                    QMUIBottomSheet.BottomListSheetBuilder sheetBuilder = new QMUIBottomSheet.BottomListSheetBuilder(activity);
-                    for (BlueToothBean it : activity.blueToothBeans) {
+                    QMUIBottomSheet.BottomListSheetBuilder sheetBuilder = new QMUIBottomSheet.BottomListSheetBuilder(BluetoothActivity.this);
+                    for (BlueToothBean it : blueToothBeans) {
                         sheetBuilder.addItem(it.getBluetoothDevice().getName());
                     }
                     sheetBuilder.setGravityCenter(true).setAddCancelBtn(true).setOnSheetItemClickListener((dialog, itemView, position, tag) -> {
                         dialog.dismiss();
                         //连接点击的设备
-                        activity.startConnectDevice(activity.blueToothBeans.get(position).getBluetoothDevice());
+                        startConnectDevice(blueToothBeans.get(position).getBluetoothDevice());
                     }).build().show();
                     break;
                 case Constant.CONNECT_SUCCESS:
                     OtherUtils.dismissLoadingDialog();
-                    activity.isConnected = true;
-                    BLEManager.INSTANCE.sendCommand(Constant.ASK_DEV_CODE_COMMAND);
+                    isConnected = true;
+                    bleManager.sendCommand(DemoConstant.ASK_DEV_CODE_COMMAND);
                     break;
                 case Constant.CONNECT_FAILURE:
-                    activity.isConnected = false;
+                    isConnected = false;
                     Log.d(TAG, "handleMessage: curConnectState" + false);
                     break;
                 case Constant.DISCONNECT_SUCCESS:
-                    activity.isConnected = false;
+                    isConnected = false;
                     break;
                 case Constant.SEND_SUCCESS:
                     byte[] sendSuccess = (byte[]) msg.obj;
@@ -271,11 +292,11 @@ public class BluetoothActivity extends AndroidxBaseActivity<ActivityBluetoothBin
                     if (firstByte == (byte) 0xAA) {
                         //解析测量数据
                         if (receiveByteArray.length == 14) {
-                            activity.builder
+                            builder
                                     .append("设备返回值: ")
                                     .append(Arrays.toString(receiveByteArray))
                                     .append("\r\n");
-                            activity.viewBinding.deviceValueView.setText(activity.builder.toString());
+                            viewBinding.deviceValueView.setText(builder.toString());
                         } else {
                             Log.d(TAG, "设备返回值长度异常，无法解析");
                         }
@@ -283,8 +304,8 @@ public class BluetoothActivity extends AndroidxBaseActivity<ActivityBluetoothBin
                         //解析deviceCode
                         //51, 51, 50, 48, 50, 49, 48, 49, 48, 48, 48, 51, 13, 10, -86, 0, 0, 0, 0, 0
                         if (receiveByteArray.length >= 12) {
-                            activity.viewBinding.deviceCodeView.setText("设备编号: " + activity.toDeviceCode(receiveByteArray));
-                            BLEManager.INSTANCE.sendCommand(Constant.OPEN_TRANSFER_COMMAND);
+                            viewBinding.deviceCodeView.setText("设备编号: " + toDeviceCode(receiveByteArray));
+                            bleManager.sendCommand(DemoConstant.OPEN_TRANSFER_COMMAND);
                         } else {
                             Log.d(TAG, "设备返回值长度异常，无法解析");
                         }
@@ -297,8 +318,9 @@ public class BluetoothActivity extends AndroidxBaseActivity<ActivityBluetoothBin
                     Log.d(TAG, "接收失败->receiveString: " + receiveString);
                     break;
             }
+            return true;
         }
-    }
+    };
 
     private String toDeviceCode(byte[] byteArray) {
         /**
@@ -313,5 +335,11 @@ public class BluetoothActivity extends AndroidxBaseActivity<ActivityBluetoothBin
             builder.append((char) ((int) byteArray[i]));
         }
         return builder.toString();
+    }
+
+    @Override
+    protected void onDestroy() {
+        broadcastManager.destroy(Constant.BLUETOOTH_STATE_CHANGED);
+        super.onDestroy();
     }
 }

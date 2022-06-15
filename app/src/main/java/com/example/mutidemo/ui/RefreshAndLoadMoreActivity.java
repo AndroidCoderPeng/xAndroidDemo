@@ -9,12 +9,12 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mutidemo.adapter.NewsAdapter;
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.bean.NewsBean;
 import com.example.mutidemo.databinding.ActivityRefreshBinding;
 import com.example.mutidemo.mvp.presenter.NewsPresenterImpl;
 import com.example.mutidemo.mvp.view.INewsView;
 import com.example.mutidemo.util.OtherUtils;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -43,6 +43,11 @@ public class RefreshAndLoadMoreActivity extends AndroidxBaseActivity<ActivityRef
     private NewsAdapter newsAdapter;
     private NewsPresenterImpl newsPresenter;
     private static WeakReferenceHandler weakReferenceHandler;
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {

@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp">
 
-            <com.pengxh.app.multilib.widget.CircleImageView
+            <com.pengxh.androidx.lite.widget.CircleImageView
                 android:id="@+id/iv"
                 android:layout_width="40dp"
                 android:layout_height="40dp"

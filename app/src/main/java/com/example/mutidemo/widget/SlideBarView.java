@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.util.StringHelper;
-import com.pengxh.app.multilib.utils.SizeUtil;
+import com.pengxh.androidx.lite.utils.DeviceSizeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SlideBarView, defStyleAttr, 0);
 
         textSize = a.getDimensionPixelOffset(R.styleable.SlideBarView_slide_textSize
-                , SizeUtil.sp2px(context, 18));
+                , DeviceSizeUtil.sp2px(context, 18));
         textColor = a.getColor(R.styleable.SlideBarView_slide_textColor, Color.LTGRAY);
         a.recycle();
 
@@ -95,7 +95,7 @@ public class SlideBarView extends View implements View.OnTouchListener {
         int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
         // 获取宽
-        int mWidth = SizeUtil.dp2px(mContext, viewWidth);
+        int mWidth = DeviceSizeUtil.dp2px(mContext, viewWidth);
         // 获取高
         if (heightSpecMode == MeasureSpec.EXACTLY) {
             // match_parent/精确值

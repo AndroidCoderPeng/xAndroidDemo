@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.example.mutidemo.bean.NewsBean;
 import com.example.mutidemo.bean.WeatherBean;
-import com.example.mutidemo.util.Constant;
+import com.example.mutidemo.util.DemoConstant;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +21,7 @@ public class RetrofitServiceManager {
 
     private static Retrofit createRetrofit() {
         return new Retrofit.Builder()
-                .baseUrl(Constant.BASE_URL)
+                .baseUrl(DemoConstant.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())//Gson转换器
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .client(createHttpClient())//log拦截器
@@ -46,12 +46,12 @@ public class RetrofitServiceManager {
     public static Observable<WeatherBean> obtainWeatherData(String city, int cityId, int cityCode) {
         Retrofit retrofit = createRetrofit();
         RetrofitService service = retrofit.create(RetrofitService.class);
-        return service.getWeather(Constant.APP_KEY, city, cityId, cityCode);
+        return service.getWeather(DemoConstant.APP_KEY, city, cityId, cityCode);
     }
 
     public static Observable<NewsBean> obtainNewsData(String channel, int start) {
         Retrofit retrofit = createRetrofit();
         RetrofitService service = retrofit.create(RetrofitService.class);
-        return service.getNews(Constant.APP_KEY, channel, 15, start);
+        return service.getNews(DemoConstant.APP_KEY, channel, 15, start);
     }
 }

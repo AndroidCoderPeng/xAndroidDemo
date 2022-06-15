@@ -1,10 +1,15 @@
 package com.example.mutidemo.ui;
 
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.databinding.ActivityCheckBinding;
 import com.example.mutidemo.widget.CheckView;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
 public class CheckDeviceActivity extends AndroidxBaseActivity<ActivityCheckBinding> {
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {

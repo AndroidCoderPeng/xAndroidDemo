@@ -15,7 +15,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.pengxh.app.multilib.utils.SizeUtil;
+import com.pengxh.androidx.lite.utils.DeviceSizeUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,12 +47,12 @@ public class FaceCollectionView extends View {
         textPaint.setColor(Color.rgb(102, 102, 102));
         textPaint.setAntiAlias(true);
         textPaint.setTextAlign(Paint.Align.CENTER);
-        textPaint.setTextSize(SizeUtil.sp2px(context, 16));
+        textPaint.setTextSize(DeviceSizeUtil.sp2px(context, 16));
 
         dashedPaint = new Paint();
         dashedPaint.setColor(lineColor);
         dashedPaint.setStyle(Paint.Style.STROKE);
-        dashedPaint.setStrokeWidth(SizeUtil.dp2px(context, 8));
+        dashedPaint.setStrokeWidth(DeviceSizeUtil.dp2px(context, 8));
         dashedPaint.setPathEffect(new DashPathEffect(new float[]{8, 16}, 0));
         dashedPaint.setAntiAlias(true);
 
@@ -92,7 +92,7 @@ public class FaceCollectionView extends View {
             mWidth = widthSpecSize;
         } else {
             // wrap_content，外边界宽
-            mWidth = SizeUtil.getScreenWidth(context);
+            mWidth = DeviceSizeUtil.getScreenWidth(context);
         }
         // 获取高
         if (heightSpecMode == MeasureSpec.EXACTLY) {
@@ -100,7 +100,7 @@ public class FaceCollectionView extends View {
             mHeight = heightSpecSize;
         } else {
             // wrap_content，外边界高
-            mHeight = SizeUtil.getScreenHeight(context);
+            mHeight = DeviceSizeUtil.getScreenHeight(context);
         }
         // 设置该view的宽高
         setMeasuredDimension(mWidth, mHeight);
@@ -110,7 +110,7 @@ public class FaceCollectionView extends View {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        int radius = SizeUtil.getScreenWidth(context) / 2;
+        int radius = DeviceSizeUtil.getScreenWidth(context) / 2;
         /**
          * 设置View背景为白色
          * */

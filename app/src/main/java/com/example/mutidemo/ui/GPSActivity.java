@@ -22,8 +22,8 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.example.mutidemo.R;
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.databinding.ActivityGpsBinding;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +36,11 @@ public class GPSActivity extends AndroidxBaseActivity<ActivityGpsBinding> {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewBinding.mapView.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void setupTopBarLayout() {
+
     }
 
     @SuppressLint("MissingPermission")

@@ -2,8 +2,8 @@ package com.example.mutidemo.ui;
 
 import android.util.Log;
 
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.databinding.ActivityWaterRippleBinding;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,6 +13,11 @@ public class WaterRippleActivity extends AndroidxBaseActivity<ActivityWaterRippl
     private static final String TAG = "WaterRippleActivity";
     private boolean isRunning = true;
     private ExecutorService singleThreadExecutor;
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {

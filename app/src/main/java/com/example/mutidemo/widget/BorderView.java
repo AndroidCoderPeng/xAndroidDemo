@@ -14,7 +14,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.pengxh.app.multilib.utils.SizeUtil;
+import com.pengxh.androidx.lite.utils.DeviceSizeUtil;
 
 /**
  * @description: TODO
@@ -45,7 +45,7 @@ public class BorderView extends AppCompatImageView {
         textPaint = new TextPaint();
         textPaint.setColor(Color.GREEN);
         textPaint.setAntiAlias(true);
-        textPaint.setTextSize(SizeUtil.sp2px(context, 16));
+        textPaint.setTextSize(DeviceSizeUtil.sp2px(context, 16));
         textPaint.setAlpha(255);
     }
 

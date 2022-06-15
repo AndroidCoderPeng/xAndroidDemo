@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <com.pengxh.app.multilib.widget.NoScrollViewPager
+    <com.pengxh.androidx.lite.widget.NoScrollViewPager
         android:id="@+id/mainViewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -22,8 +22,8 @@
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:itemIconTint="@drawable/bottom_text_color"
-        app:itemTextColor="@drawable/bottom_text_color"
+        app:itemIconTint="#0094FF"
+        app:itemTextColor="#0094FF"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_nav_menu" />
 </LinearLayout>

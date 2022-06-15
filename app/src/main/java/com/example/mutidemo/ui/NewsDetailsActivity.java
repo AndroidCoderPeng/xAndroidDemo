@@ -1,8 +1,8 @@
 package com.example.mutidemo.ui;
 
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.databinding.ActivityNewsDetailsBinding;
-import com.example.mutidemo.util.ImageUtil;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.utils.ImageUtil;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 
 /**
@@ -12,6 +12,11 @@ import com.qmuiteam.qmui.util.QMUIDisplayHelper;
  * @date: 2020/3/5 20:18
  */
 public class NewsDetailsActivity extends AndroidxBaseActivity<ActivityNewsDetailsBinding> {
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {

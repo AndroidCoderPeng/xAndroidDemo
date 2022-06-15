@@ -5,16 +5,21 @@ import android.annotation.SuppressLint;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mutidemo.adapter.WeatherAdapter;
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.bean.WeatherBean;
 import com.example.mutidemo.databinding.ActivityMvpBinding;
 import com.example.mutidemo.mvp.presenter.WeatherPresenterImpl;
 import com.example.mutidemo.mvp.view.IWeatherView;
 import com.example.mutidemo.util.OtherUtils;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
 public class MVPActivity extends AndroidxBaseActivity<ActivityMvpBinding> implements IWeatherView {
 
     private WeatherPresenterImpl weatherPresenter;
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {

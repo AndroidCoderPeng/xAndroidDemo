@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.R;
 import com.example.mutidemo.adapter.CityAdapter;
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.bean.CityBean;
 import com.example.mutidemo.databinding.ActivitySlideBinding;
 import com.example.mutidemo.util.StringHelper;
@@ -22,7 +21,8 @@ import com.example.mutidemo.util.VerticalItemDecoration;
 import com.example.mutidemo.util.callback.DecorationCallback;
 import com.example.mutidemo.widget.SlideBarView;
 import com.google.gson.Gson;
-import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.widget.EasyToast;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -53,6 +53,11 @@ public class SlideBarActivity extends AndroidxBaseActivity<ActivitySlideBinding>
             , "西藏", "厦门", "襄阳", "孝感", "新疆", "新乡", "忻州"
             , "宜昌", "云南"
             , "湛江", "浙江", "珠海");
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {
@@ -88,7 +93,7 @@ public class SlideBarActivity extends AndroidxBaseActivity<ActivitySlideBinding>
         cityAdapter.setOnCityItemClickListener(new CityAdapter.OnCityItemClickListener() {
             @Override
             public void onClick(int position) {
-                EasyToast.showToast(CITY.get(position), EasyToast.DEFAULT);
+                EasyToast.show(SlideBarActivity.this, CITY.get(position));
             }
         });
     }

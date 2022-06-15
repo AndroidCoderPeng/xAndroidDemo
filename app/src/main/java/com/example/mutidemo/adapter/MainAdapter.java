@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.R;
-import com.pengxh.app.multilib.utils.ColorUtil;
+import com.pengxh.androidx.lite.utils.ColorUtil;
 
 import java.util.List;
 
@@ -66,7 +66,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainRecyclerVi
 
         void bindHolder(String title) {
             mMainTextView.setText(title);
-            mMainTextView.setBackgroundColor(ColorUtil.getRandomColor());
+            mMainTextView.setBackgroundColor(ColorUtil.randomColor());
         }
     }
 

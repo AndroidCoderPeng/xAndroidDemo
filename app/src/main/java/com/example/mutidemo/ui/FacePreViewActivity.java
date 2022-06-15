@@ -14,9 +14,10 @@ import android.view.SurfaceHolder;
 
 import androidx.annotation.NonNull;
 
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.databinding.ActivityFaceBinding;
-import com.example.mutidemo.util.ImageUtil;
+import com.example.mutidemo.util.ImageHelper;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.utils.ImageUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,6 +29,11 @@ public class FacePreViewActivity extends AndroidxBaseActivity<ActivityFaceBindin
     private SurfaceHolder mSurfaceHolder;
     private Camera mCamera;
     private Stack<Bitmap> bitmapStack;
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {
@@ -110,7 +116,7 @@ public class FacePreViewActivity extends AndroidxBaseActivity<ActivityFaceBindin
     public void onPreviewFrame(byte[] data, Camera camera) {
         camera.addCallbackBuffer(data);
         Camera.Size size = camera.getParameters().getPreviewSize();//必须是相机支持的预览尺寸，否则颜色YUV空间会错位
-        Bitmap originBitmap = ImageUtil.nv21ToBitmap(data, size.width, size.height);
+        Bitmap originBitmap = ImageHelper.nv21ToBitmap(data, size.width, size.height);
         //要使用Android内置的人脸识别，需要将Bitmap对象转为RGB_565格式，否则无法识别
         Bitmap faceDetectorBitmap = originBitmap.copy(Bitmap.Config.RGB_565, true);
         FaceDetector.Face[] faces = new FaceDetector.Face[1];

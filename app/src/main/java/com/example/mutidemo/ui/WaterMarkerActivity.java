@@ -11,18 +11,19 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.mutidemo.R;
-import com.example.mutidemo.base.AndroidxBaseActivity;
 import com.example.mutidemo.databinding.ActivityWaterMarkerBinding;
 import com.example.mutidemo.util.FileUtils;
 import com.example.mutidemo.util.GlideLoadEngine;
-import com.example.mutidemo.util.ImageUtil;
+import com.example.mutidemo.util.ImageHelper;
 import com.example.mutidemo.util.OtherUtils;
-import com.example.mutidemo.util.TimeOrDateUtil;
 import com.example.mutidemo.util.callback.ICompressListener;
 import com.huantansheng.easyphotos.EasyPhotos;
 import com.huantansheng.easyphotos.models.album.entity.Photo;
-import com.pengxh.app.multilib.utils.FileUtil;
-import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.utils.FileUtil;
+import com.pengxh.androidx.lite.utils.ImageUtil;
+import com.pengxh.androidx.lite.utils.TimeOrDateUtil;
+import com.pengxh.androidx.lite.widget.EasyToast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,6 +33,11 @@ public class WaterMarkerActivity extends AndroidxBaseActivity<ActivityWaterMarke
 
     private final Context context = this;
     private String mediaRealPath;
+
+    @Override
+    protected void setupTopBarLayout() {
+
+    }
 
     @Override
     public void initData() {
@@ -50,9 +56,9 @@ public class WaterMarkerActivity extends AndroidxBaseActivity<ActivityWaterMarke
                 Bitmap bitmap = BitmapFactory.decodeFile(mediaRealPath);
 
                 OtherUtils.showLoadingDialog(context, "水印添加中，请稍后...");
-                ImageUtil.drawTextToRightBottom(context, bitmap, TimeOrDateUtil.timestampToCompleteDate(System.currentTimeMillis()), file -> {
+                ImageHelper.drawTextToRightBottom(context, bitmap, TimeOrDateUtil.timestampToCompleteDate(System.currentTimeMillis()), file -> {
                     OtherUtils.dismissLoadingDialog();
-                    ImageUtil.compressImage(file.getPath(), FileUtils.getImageCompressPath(), new ICompressListener() {
+                    ImageHelper.compressImage(file.getPath(), FileUtils.getImageCompressPath(), new ICompressListener() {
                         @Override
                         public void onSuccess(File file) {
                             Glide.with(context)
@@ -82,7 +88,7 @@ public class WaterMarkerActivity extends AndroidxBaseActivity<ActivityWaterMarke
         super.onActivityResult(requestCode, resultCode, data);
         ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
         if (resultPhotos == null) {
-            EasyToast.showToast("选择图片失败", EasyToast.ERROR);
+            EasyToast.show(this, "选择图片失败");
             return;
         }
         if (resultPhotos.size() >= 1) {
