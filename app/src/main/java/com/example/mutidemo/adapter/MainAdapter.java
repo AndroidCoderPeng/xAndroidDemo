@@ -39,7 +39,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainRecyclerVi
     @NonNull
     @Override
     public MainRecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MainRecyclerViewHolder(inflater.inflate(R.layout.item_main_recyclerview, parent, false));
+        return new MainRecyclerViewHolder(inflater.inflate(R.layout.item_main_rv, parent, false));
     }
 
     @Override

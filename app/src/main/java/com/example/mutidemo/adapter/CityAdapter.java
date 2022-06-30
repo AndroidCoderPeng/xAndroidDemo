@@ -34,7 +34,7 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(inflater.inflate(R.layout.item_city_recyclerview, parent, false));
+        return new ViewHolder(inflater.inflate(R.layout.item_city_rv, parent, false));
     }
 
     @Override

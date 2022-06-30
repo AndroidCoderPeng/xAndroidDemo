@@ -24,7 +24,7 @@ class WeatherAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherViewHolder {
         return WeatherViewHolder(
             inflater.inflate(
-                R.layout.item_weather_recyclerview,
+                R.layout.item_weather_rv,
                 parent,
                 false
             )

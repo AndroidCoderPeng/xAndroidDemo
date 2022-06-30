@@ -40,7 +40,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
     @NonNull
     @Override
     public WeatherViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new WeatherViewHolder(inflater.inflate(R.layout.item_weather_recyclerview, parent, false));
+        return new WeatherViewHolder(inflater.inflate(R.layout.item_weather_rv, parent, false));
     }
 
     @SuppressLint("SetTextI18n")

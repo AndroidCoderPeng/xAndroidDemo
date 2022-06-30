@@ -50,7 +50,7 @@ public class SwipeViewAdapter extends RecyclerView.Adapter<QMUISwipeViewHolder> 
     @NonNull
     @Override
     public QMUISwipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_unread_list, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_unread_lv, parent, false);
         final QMUISwipeViewHolder vh = new QMUISwipeViewHolder(view);
         vh.addSwipeAction(mDeleteAction);
         view.setOnClickListener(new View.OnClickListener() {

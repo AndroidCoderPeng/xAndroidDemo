@@ -72,7 +72,7 @@
         <activity android:name=".ui.BmobActivity" />
         <activity android:name=".ui.FaceCollectionActivity" />
         <activity android:name=".ui.BusCardActivity" />
-
+        <activity android:name=".ui.SecretManagerActivity" />
         <activity
             android:name=".ui.VideoCompressActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"

@@ -1,7 +1,6 @@
 package com.example.mutidemo;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.view.KeyEvent;
 import android.widget.Toast;
@@ -32,6 +31,7 @@ import com.example.mutidemo.ui.OriginalShareActivity;
 import com.example.mutidemo.ui.ProcessBarActivity;
 import com.example.mutidemo.ui.RecodeAudioActivity;
 import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
+import com.example.mutidemo.ui.SecretManagerActivity;
 import com.example.mutidemo.ui.SlideBarActivity;
 import com.example.mutidemo.ui.VideoCompressActivity;
 import com.example.mutidemo.ui.WaterMarkerActivity;
@@ -39,11 +39,18 @@ import com.example.mutidemo.ui.WaterRippleActivity;
 import com.example.mutidemo.util.DemoConstant;
 import com.igexin.sdk.PushManager;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.utils.ColorUtil;
+import com.pengxh.androidx.lite.utils.ContextUtil;
 import com.pengxh.androidx.lite.widget.EasyToast;
 import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,6 +59,10 @@ import cn.bertsir.zbar.Qr.ScanResult;
 import cn.bertsir.zbar.QrConfig;
 import cn.bertsir.zbar.QrManager;
 import cn.bertsir.zbar.view.ScanLineView;
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
 
 
 public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
@@ -64,7 +75,7 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
             "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
             "自定义进度条", "GPS位置信息", "人脸检测", "音频录制与播放", "图片添加水印并压缩",
             "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "可删减九宫格", "系统原生分享",
-            "空气污染刻度盘", "Bmob数据库", "人脸采集框", "公交卡自定义View");
+            "空气污染刻度盘", "Bmob数据库", "人脸采集框", "公交卡自定义View", "ExcelToJson");
 
     @Override
     protected void setupTopBarLayout() {
@@ -108,99 +119,111 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
         adapter.setOnItemClickListener(new MainAdapter.OnItemClickListener() {
             @Override
             public void onClick(int position) {
-                Intent intent = new Intent();
                 switch (position) {
                     case 0:
-                        intent.setClass(mContext, MVPActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, MVPActivity.class);
                         break;
                     case 1:
-                        intent.setClass(mContext, MVVMActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, MVVMActivity.class);
                         break;
                     case 2:
-                        intent.setClass(mContext, NavigationActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, NavigationActivity.class);
                         break;
                     case 3:
                         //开始扫一扫
                         startScannerActivity();
                         break;
                     case 4:
-                        intent.setClass(mContext, RefreshAndLoadMoreActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, RefreshAndLoadMoreActivity.class);
                         break;
                     case 5:
-                        intent.setClass(mContext, WaterRippleActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, WaterRippleActivity.class);
                         break;
                     case 6:
-                        intent.setClass(mContext, CheckDeviceActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, CheckDeviceActivity.class);
                         break;
                     case 7:
-                        intent.setClass(mContext, SlideBarActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, SlideBarActivity.class);
                         break;
                     case 8:
-                        intent.setClass(mContext, OcrNumberActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, OcrNumberActivity.class);
                         break;
                     case 9:
-                        intent.setClass(mContext, ProcessBarActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, ProcessBarActivity.class);
                         break;
                     case 10:
-                        intent.setClass(mContext, GPSActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, GPSActivity.class);
                         break;
                     case 11:
-                        intent.setClass(mContext, FacePreViewActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, FacePreViewActivity.class);
                         break;
                     case 12:
-                        intent.setClass(mContext, RecodeAudioActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, RecodeAudioActivity.class);
                         break;
                     case 13:
-                        intent.setClass(mContext, WaterMarkerActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, WaterMarkerActivity.class);
                         break;
                     case 14:
-                        intent.setClass(mContext, VideoCompressActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, VideoCompressActivity.class);
                         break;
                     case 15:
-                        intent.setClass(mContext, GCJ02ToWGS84Activity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, GCJ02ToWGS84Activity.class);
                         break;
                     case 16:
-                        intent.setClass(mContext, BluetoothActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, BluetoothActivity.class);
                         break;
                     case 17:
-                        intent.setClass(mContext, GridViewActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, GridViewActivity.class);
                         break;
                     case 18:
-                        intent.setClass(mContext, OriginalShareActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, OriginalShareActivity.class);
                         break;
                     case 19:
-                        intent.setClass(mContext, AirDashBoardActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, AirDashBoardActivity.class);
                         break;
                     case 20:
-                        intent.setClass(mContext, BmobActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, BmobActivity.class);
                         break;
                     case 21:
-                        intent.setClass(mContext, FaceCollectionActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, FaceCollectionActivity.class);
                         break;
                     case 22:
-                        intent.setClass(mContext, BusCardActivity.class);
-                        startActivity(intent);
+                        ContextUtil.navigatePageTo(mContext, BusCardActivity.class);
+                        break;
+                    case 23:
+                        try {
+                            JSONArray result = new JSONArray();
+                            Workbook workbook = Workbook.getWorkbook(getAssets().open("_MMGJ_20220627_160645.xls"));
+                            Sheet sheet = workbook.getSheet(0);
+                            for (int i = 1; i < sheet.getRows(); i++) {
+                                Cell cell = sheet.getCell(0, i);
+                                Cell cell1 = sheet.getCell(1, i);
+                                Cell cell2 = sheet.getCell(2, i);
+                                Cell cell3 = sheet.getCell(3, i);
+                                Cell cell4 = sheet.getCell(4, i);
+
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("category", cell.getContents());
+                                jsonObject.put("title", cell1.getContents());
+                                jsonObject.put("account", cell2.getContents());
+                                jsonObject.put("password", cell3.getContents());
+                                jsonObject.put("remarks", cell4.getContents());
+                                try {
+                                    Cell cell5 = sheet.getCell(5, i);
+                                    jsonObject.put("dataIcon", cell5.getContents());
+                                } catch (Exception e) {
+                                    jsonObject.put("dataIcon", R.mipmap.launcher_logo);
+                                }
+                                result.put(jsonObject);
+                            }
+                            workbook.close();
+                            if (result.toString().isEmpty()) {
+                                return;
+                            }
+                            ContextUtil.navigatePageTo(mContext, SecretManagerActivity.class, result.toString());
+                        } catch (IOException | BiffException | JSONException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     default:
                         break;
@@ -215,8 +238,8 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
                 .setShowLight(true)//显示手电筒按钮
                 .setShowTitle(true)//显示Title
                 .setShowAlbum(true)//显示从相册选择按钮
-                .setCornerColor(Color.parseColor("#0094FF"))//设置扫描框颜色
-                .setLineColor(Color.parseColor("#0094FF"))//设置扫描线颜色
+                .setCornerColor(ColorUtil.convertColor(this, R.color.mainColor))//设置扫描框颜色
+                .setLineColor(ColorUtil.convertColor(this, R.color.mainColor))//设置扫描线颜色
                 .setLineSpeed(QrConfig.LINE_MEDIUM)//设置扫描线速度
                 .setScanType(QrConfig.TYPE_ALL)//设置扫码类型（二维码，条形码，全部，自定义，默认为二维码）
                 .setDesText(null)//扫描框下文字
@@ -224,7 +247,7 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
                 .setPlaySound(true)//是否扫描成功后bi~的声音
                 .setDingPath(R.raw.qrcode)//设置提示音(不设置为默认的Ding~)
                 .setIsOnlyCenter(true)//是否只识别框中内容(默认为全屏识别)
-                .setTitleBackgroudColor(Color.parseColor("#262020"))//设置状态栏颜色
+                .setTitleBackgroudColor(Color.BLACK)//设置状态栏颜色
                 .setTitleTextColor(Color.WHITE)//设置Title文字颜色
                 .setScreenOrientation(QrConfig.SCREEN_PORTRAIT)//设置屏幕方式
                 .setOpenAlbumText("选择要识别的图片")//打开相册的文字

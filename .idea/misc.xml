@@ -7,6 +7,7 @@
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_main.xml" value="0.32222222222222224" />
         <entry key="app/src/main/res/drawable/bg_audio_view.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable/bg_button.xml" value="0.32916666666666666" />
+        <entry key="app/src/main/res/drawable/bg_solid_layout_white_radius_10.xml" value="0.21342592592592594" />
         <entry key="app/src/main/res/drawable/ic_add_black.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable/ic_aim.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable/ic_minus.xml" value="0.32916666666666666" />
@@ -31,6 +32,7 @@
         <entry key="app/src/main/res/layout/activity_original.xml" value="0.19583333333333333" />
         <entry key="app/src/main/res/layout/activity_progress.xml" value="0.19583333333333333" />
         <entry key="app/src/main/res/layout/activity_refresh.xml" value="0.19583333333333333" />
+        <entry key="app/src/main/res/layout/activity_secret_manager.xml" value="0.19537037037037036" />
         <entry key="app/src/main/res/layout/activity_slide.xml" value="0.19583333333333333" />
         <entry key="app/src/main/res/layout/activity_video_compress.xml" value="0.19583333333333333" />
         <entry key="app/src/main/res/layout/activity_water_marker.xml" value="0.19583333333333333" />
@@ -44,6 +46,7 @@
         <entry key="app/src/main/res/layout/item_city_recyclerview.xml" value="0.19583333333333333" />
         <entry key="app/src/main/res/layout/item_main_recyclerview.xml" value="0.19583333333333333" />
         <entry key="app/src/main/res/layout/item_news_recyclerview.xml" value="0.19583333333333333" />
+        <entry key="app/src/main/res/layout/item_secret_rv.xml" value="0.335" />
         <entry key="app/src/main/res/layout/item_unread_list.xml" value="0.19583333333333333" />
         <entry key="app/src/main/res/layout/item_weather_recyclerview.xml" value="0.19583333333333333" />
         <entry key="app/src/main/res/layout/layout_popup.xml" value="0.19583333333333333" />
