@@ -6,9 +6,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.mutidemo.databinding.ActivityGridviewBinding;
 import com.example.mutidemo.util.GlideLoadEngine;
-import com.huantansheng.easyphotos.EasyPhotos;
-import com.huantansheng.easyphotos.callback.SelectCallback;
-import com.huantansheng.easyphotos.models.album.entity.Photo;
+import com.luck.picture.lib.basic.PictureSelector;
+import com.luck.picture.lib.config.SelectMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 import com.pengxh.androidx.lite.adapter.EditableImageAdapter;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 import com.pengxh.androidx.lite.utils.ImageUtil;
@@ -30,6 +31,7 @@ public class GridViewActivity extends AndroidxBaseActivity<ActivityGridviewBindi
     public void initData() {
         viewBinding.nineRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         editableImageAdapter = new EditableImageAdapter(this, 9);
+        editableImageAdapter.setImageMargins(10, 10, 1);
         viewBinding.nineRecyclerView.setAdapter(editableImageAdapter);
         editableImageAdapter.setOnItemClickListener(new EditableImageAdapter.OnItemClickListener() {
             @Override
@@ -50,15 +52,19 @@ public class GridViewActivity extends AndroidxBaseActivity<ActivityGridviewBindi
     }
 
     private void selectPicture() {
-        EasyPhotos.createAlbum(this, true, false, GlideLoadEngine.getInstance())
-                .setFileProviderAuthority("com.example.mutidemo.fileProvider")
-                .setCount(9)
-                .setMinFileSize(1024 * 10)
-                .start(new SelectCallback() {
+        PictureSelector.create(GridViewActivity.this)
+                .openGallery(SelectMimeType.ofImage())
+                .isGif(false)
+                .isMaxSelectEnabledMask(true)
+                .setFilterMinFileSize(100)
+                .setMaxSelectNum(9)
+                .isDisplayCamera(false)
+                .setImageEngine(GlideLoadEngine.getInstance())
+                .forResult(new OnResultCallbackListener<LocalMedia>() {
                     @Override
-                    public void onResult(ArrayList<Photo> photos, boolean isOriginal) {
-                        for (Photo media : photos) {
-                            recyclerViewImages.add(media.path);
+                    public void onResult(ArrayList<LocalMedia> result) {
+                        for (LocalMedia media : result) {
+                            recyclerViewImages.add(media.getRealPath());
                         }
                         editableImageAdapter.setupImage(recyclerViewImages);
                     }

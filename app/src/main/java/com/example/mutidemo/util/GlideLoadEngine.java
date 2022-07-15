@@ -2,15 +2,22 @@ package com.example.mutidemo.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
-import com.huantansheng.easyphotos.engine.ImageEngine;
-
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.example.mutidemo.R;
+import com.luck.picture.lib.engine.ImageEngine;
+import com.luck.picture.lib.interfaces.OnCallbackListener;
+import com.luck.picture.lib.utils.ActivityCompatHelper;
 
 public class GlideLoadEngine implements ImageEngine {
 
@@ -34,63 +41,71 @@ public class GlideLoadEngine implements ImageEngine {
         return instance;
     }
 
-    /**
-     * 加载图片到ImageView
-     *
-     * @param context   上下文
-     * @param uri       图片路径Uri
-     * @param imageView 加载到的ImageView
-     */
-    //安卓10推荐uri，并且path的方式不再可用
     @Override
-    public void loadPhoto(@NonNull Context context, @NonNull Uri uri, @NonNull ImageView imageView) {
-        Glide.with(context).load(uri).transition(withCrossFade()).into(imageView);
+    public void loadImage(@NonNull Context context, @NonNull String url, @NonNull ImageView imageView) {
+        if (!ActivityCompatHelper.assertValidRequest(context)) {
+            return;
+        }
+        Glide.with(context).load(url).into(imageView);
     }
 
-    /**
-     * 加载gif动图图片到ImageView，gif动图不动
-     *
-     * @param context   上下文
-     * @param gifUri    gif动图路径Uri
-     * @param imageView 加载到的ImageView
-     *                  <p>
-     *                  备注：不支持动图显示的情况下可以不写
-     */
-    //安卓10推荐uri，并且path的方式不再可用
     @Override
-    public void loadGifAsBitmap(@NonNull Context context, @NonNull Uri gifUri, @NonNull ImageView imageView) {
-        Glide.with(context).asBitmap().load(gifUri).into(imageView);
+    public void loadImageBitmap(@NonNull Context context, @NonNull String url, int maxWidth, int maxHeight, final OnCallbackListener<Bitmap> call) {
+        if (!ActivityCompatHelper.assertValidRequest(context)) {
+            return;
+        }
+        Glide.with(context)
+                .asBitmap()
+                .override(maxWidth, maxHeight)
+                .load(url)
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        call.onCall(resource);
+                    }
+
+                    @Override
+                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                        call.onCall(null);
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                    }
+                });
     }
 
-    /**
-     * 加载gif动图到ImageView，gif动图动
-     *
-     * @param context   上下文
-     * @param gifUri    gif动图路径Uri
-     * @param imageView 加载动图的ImageView
-     *                  <p>
-     *                  备注：不支持动图显示的情况下可以不写
-     */
-    //安卓10推荐uri，并且path的方式不再可用
     @Override
-    public void loadGif(@NonNull Context context, @NonNull Uri gifUri, @NonNull ImageView imageView) {
-        Glide.with(context).asGif().load(gifUri).transition(withCrossFade()).into(imageView);
+    public void loadAlbumCover(@NonNull Context context, @NonNull String url, @NonNull ImageView imageView) {
+        if (!ActivityCompatHelper.assertValidRequest(context)) {
+            return;
+        }
+        Glide.with(context)
+                .asBitmap()
+                .load(url)
+                .override(180, 180)
+                .sizeMultiplier(0.5f)
+                .transform(new CenterCrop(), new RoundedCorners(8))
+                .placeholder(R.drawable.ps_image_placeholder)
+                .into(imageView);
     }
 
-
-    /**
-     * 获取图片加载框架中的缓存Bitmap，不用拼图功能可以直接返回null
-     *
-     * @param context 上下文
-     * @param uri     图片路径
-     * @param width   图片宽度
-     * @param height  图片高度
-     * @return Bitmap
-     * @throws Exception 异常直接抛出，EasyPhotos内部处理
-     */
-    //安卓10推荐uri，并且path的方式不再可用
     @Override
-    public Bitmap getCacheBitmap(@NonNull Context context, @NonNull Uri uri, int width, int height) throws Exception {
-        return Glide.with(context).asBitmap().load(uri).submit(width, height).get();
+    public void loadGridImage(@NonNull Context context, @NonNull String url, @NonNull ImageView imageView) {
+        Glide.with(context)
+                .load(url)
+                .apply(new RequestOptions().placeholder(R.drawable.ps_image_placeholder))
+                .into(imageView);
+    }
+
+    @Override
+    public void pauseRequests(Context context) {
+        Glide.with(context).pauseRequests();
+    }
+
+    @Override
+    public void resumeRequests(Context context) {
+        Glide.with(context).resumeRequests();
     }
 }

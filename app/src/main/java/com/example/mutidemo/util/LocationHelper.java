@@ -16,6 +16,7 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
@@ -114,7 +115,7 @@ public class LocationHelper {
     /**
      * 经纬度反编码为地址
      */
-    public static void antiCodingLocation(Context context, double lng, double lat, IAddressListener listener) {
+    public static void antiCodingLocation(Context context, double lng, double lat, IAddressListener listener) throws AMapException {
         if (isOutOfChina(lng, lat)) {
             listener.onGetAddress("经纬度异常");
         }

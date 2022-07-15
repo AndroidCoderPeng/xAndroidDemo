@@ -2,9 +2,11 @@ package com.example.mutidemo.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -17,12 +19,15 @@ import com.example.mutidemo.util.GlideLoadEngine;
 import com.example.mutidemo.util.ImageHelper;
 import com.example.mutidemo.util.OtherUtils;
 import com.example.mutidemo.util.callback.ICompressListener;
-import com.huantansheng.easyphotos.EasyPhotos;
-import com.huantansheng.easyphotos.models.album.entity.Photo;
+import com.luck.picture.lib.basic.PictureSelector;
+import com.luck.picture.lib.config.SelectMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 import com.pengxh.androidx.lite.utils.FileUtil;
 import com.pengxh.androidx.lite.utils.ImageUtil;
 import com.pengxh.androidx.lite.utils.TimeOrDateUtil;
+import com.pengxh.androidx.lite.utils.WeakReferenceHandler;
 import com.pengxh.androidx.lite.widget.EasyToast;
 
 import java.io.File;
@@ -32,6 +37,7 @@ import java.util.ArrayList;
 public class WaterMarkerActivity extends AndroidxBaseActivity<ActivityWaterMarkerBinding> {
 
     private final Context context = this;
+    private WeakReferenceHandler weakReferenceHandler;
     private String mediaRealPath;
 
     @Override
@@ -41,15 +47,56 @@ public class WaterMarkerActivity extends AndroidxBaseActivity<ActivityWaterMarke
 
     @Override
     public void initData() {
-
+        weakReferenceHandler = new WeakReferenceHandler(callback);
     }
 
     @Override
     public void initEvent() {
-        viewBinding.selectImageButton.setOnClickListener(view ->
-                EasyPhotos.createAlbum(WaterMarkerActivity.this, true, false, GlideLoadEngine.getInstance())
-                        .setFileProviderAuthority("com.example.mutidemo.fileProvider")
-                        .start(101));
+        viewBinding.selectImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PictureSelector.create(WaterMarkerActivity.this)
+                        .openGallery(SelectMimeType.ofImage())
+                        .isGif(false)
+                        .isMaxSelectEnabledMask(true)
+                        .setFilterMinFileSize(100)
+                        .setMaxSelectNum(1)
+                        .isDisplayCamera(false)
+                        .setImageEngine(GlideLoadEngine.getInstance())
+                        .forResult(new OnResultCallbackListener<LocalMedia>() {
+                            @Override
+                            public void onResult(ArrayList<LocalMedia> result) {
+                                if (result == null) {
+                                    EasyToast.show(WaterMarkerActivity.this, "选择照片失败，请重试");
+                                    return;
+                                }
+                                // 线程控制图片压缩上传过程，防止速度过快导致压缩失败
+                                int sum = (result.size() * 500);
+                                new CountDownTimer(sum, 500) {
+
+                                    @Override
+                                    public void onTick(long millisUntilFinished) {
+                                        int i = (int) (millisUntilFinished / 500);
+                                        Message message = weakReferenceHandler.obtainMessage();
+                                        message.obj = result.get(i);
+                                        message.what = 2022061702;
+                                        weakReferenceHandler.handleMessage(message);
+                                    }
+
+                                    @Override
+                                    public void onFinish() {
+
+                                    }
+                                }.start();
+                            }
+
+                            @Override
+                            public void onCancel() {
+
+                            }
+                        });
+            }
+        });
 
         viewBinding.addMarkerButton.setOnClickListener(view -> {
             if (!TextUtils.isEmpty(mediaRealPath)) {
@@ -83,22 +130,15 @@ public class WaterMarkerActivity extends AndroidxBaseActivity<ActivityWaterMarke
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        ArrayList<Photo> resultPhotos = data.getParcelableArrayListExtra(EasyPhotos.RESULT_PHOTOS);
-        if (resultPhotos == null) {
-            EasyToast.show(this, "选择图片失败");
-            return;
-        }
-        if (resultPhotos.size() >= 1) {
-            Photo photo = resultPhotos.get(0);
-            mediaRealPath = photo.path;
+    private final Handler.Callback callback = msg -> {
+        if (msg.what == 2022061702) {
+            LocalMedia obj = (LocalMedia) msg.obj;
+            mediaRealPath = obj.getRealPath();
             Glide.with(this)
-                    .load(photo.uri)
+                    .load(mediaRealPath)
                     .apply(new RequestOptions().error(R.drawable.ic_load_error))
                     .into(viewBinding.originalImageView);
-            viewBinding.originalImageSizeView.setText("压缩前：" + FileUtil.formatFileSize(photo.size));
+            viewBinding.originalImageSizeView.setText("压缩前：" + FileUtil.formatFileSize(obj.getSize()));
             viewBinding.originalImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -108,5 +148,6 @@ public class WaterMarkerActivity extends AndroidxBaseActivity<ActivityWaterMarke
                 }
             });
         }
-    }
+        return true;
+    };
 }

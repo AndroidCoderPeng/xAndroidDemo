@@ -40,7 +40,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -53,7 +53,7 @@ dependencies {
     implementation files('libs/ocr-sdk.jar')
     implementation 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
     //基础依赖库
-    implementation 'com.github.AndroidCoderPeng:Androidx-lite-lib:1.0.1'
+    implementation 'com.github.AndroidCoderPeng:Androidx-lite-lib:1.0.4'
     //阿里巴巴Json解析库
     implementation 'com.alibaba:fastjson:1.2.76'
     //MVP:okhttp3+rxjava+retrofit2
@@ -65,7 +65,7 @@ dependencies {
     //MVVM:okhttp3+协程+livedata
     //Kotlin协程
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0'
     implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
     //livedata
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
@@ -88,10 +88,10 @@ dependencies {
     implementation 'com.qmuiteam:arch:0.3.1'
     //沉浸式状态栏。基础依赖包，必须要依赖
     implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
-    implementation 'com.getui:gtsdk:3.2.7.0'  //个推SDK
-    implementation 'com.getui:gtc:3.1.7.0'  //个推核心组件
+    implementation 'com.getui:gtsdk:3.2.10.0'  //个推SDK
+    implementation 'com.getui:gtc:3.1.9.0'  //个推核心组件
     //图片选择框架
-    implementation 'com.github.HuanTanSheng:EasyPhotos:3.1.5'
+    implementation 'io.github.lucksiege:pictureselector:v3.0.4'
     //视频播放器
     implementation 'cn.jzvd:jiaozivideoplayer:7.6.0'
     //exo播放内核
@@ -104,14 +104,14 @@ dependencies {
     implementation 'com.esri.arcgisruntime:arcgis-android:100.10.0'
     //高德地图相关(不能用2d地图，一定要用3d地图，否则地图效果会很差，因为2d是切片地图，3d是矢量地图)
     implementation 'com.amap.api:location:5.3.1'
-    implementation 'com.amap.api:search:7.9.0'
-    implementation 'com.amap.api:3dmap:7.9.1'
+    implementation 'com.amap.api:search:8.1.0'
+    implementation 'com.amap.api:navi-3dmap:8.1.0_3dmap8.1.0'
     //Bmob云数据库
-    implementation 'io.github.bmob:android-sdk:3.8.11'
+    implementation 'io.github.bmob:android-sdk:3.8.13'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     //CameraX
-    def CameraX_version = '1.1.0-alpha12'
+    def CameraX_version = '1.1.0'
     implementation "androidx.camera:camera-core:${CameraX_version}"
     implementation "androidx.camera:camera-camera2:${CameraX_version}"
     implementation "androidx.camera:camera-lifecycle:${CameraX_version}"

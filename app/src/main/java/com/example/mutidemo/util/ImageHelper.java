@@ -14,6 +14,7 @@ import android.graphics.YuvImage;
 import android.media.Image;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.example.mutidemo.base.BaseApplication;
 import com.example.mutidemo.util.callback.ICompressListener;
@@ -24,7 +25,6 @@ import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import rx.Observable;
@@ -37,33 +37,44 @@ import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
 
 public class ImageHelper {
+    private static final String TAG = "ImageHelper";
+
     /**
      * CameraX
      */
-    public static Bitmap ImageToBitmap(Image image) {
-        Image.Plane[] planes = image.getPlanes();
+    public static Bitmap ImageToBitmap(Image image, int format) {
+        if (format == ImageFormat.YUV_420_888) {
+            Image.Plane[] planes = image.getPlanes();
 
-        ByteBuffer yBuffer = planes[0].getBuffer();
-        ByteBuffer uBuffer = planes[1].getBuffer();
-        ByteBuffer vBuffer = planes[2].getBuffer();
+            ByteBuffer yBuffer = planes[0].getBuffer();
+            ByteBuffer uBuffer = planes[1].getBuffer();
+            ByteBuffer vBuffer = planes[2].getBuffer();
 
-        int ySize = yBuffer.remaining();
-        int uSize = uBuffer.remaining();
-        int vSize = vBuffer.remaining();
+            int ySize = yBuffer.remaining();
+            int uSize = uBuffer.remaining();
+            int vSize = vBuffer.remaining();
 
-        byte[] nv21 = new byte[ySize + uSize + vSize];
-        //U and V are swapped
-        yBuffer.get(nv21, 0, ySize);
-        vBuffer.get(nv21, ySize, vSize);
-        uBuffer.get(nv21, ySize + vSize, uSize);
+            byte[] nv21 = new byte[ySize + uSize + vSize];
+            //U and V are swapped
+            yBuffer.get(nv21, 0, ySize);
+            vBuffer.get(nv21, ySize, vSize);
+            uBuffer.get(nv21, ySize + vSize, uSize);
 
-        YuvImage yuvImage = new YuvImage(nv21, ImageFormat.NV21, image.getWidth(), image.getHeight(), null);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 75, out);
+            YuvImage yuvImage = new YuvImage(nv21, ImageFormat.NV21, image.getWidth(), image.getHeight(), null);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 75, out);
 
-        byte[] imageBytes = out.toByteArray();
-        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-        return rotateImageView(-90, bitmap);
+            byte[] imageBytes = out.toByteArray();
+            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+            return rotateImageView(-90, bitmap);
+        } else if (format == ImageFormat.JPEG) {
+            ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+            byte[] bytes = new byte[buffer.capacity()];
+            buffer.get(bytes);
+            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
+        }
+        Log.e(TAG, "ImageToBitmap: ImageFormat error");
+        return null;
     }
 
     /**

@@ -8,6 +8,7 @@ import android.location.Location;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
+import com.amap.api.services.core.AMapException;
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.geometry.SpatialReference;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
@@ -78,12 +79,16 @@ public class GCJ02ToWGS84Activity extends AndroidxBaseActivity<ActivityGisBindin
                         viewBinding.mapView.setViewpointCenterAsync((point), 28000);
                         OtherUtils.dismissLoadingDialog();
                         //显示具体位置
-                        LocationHelper.antiCodingLocation(context, location.getLongitude(), location.getLatitude(), new IAddressListener() {
-                            @Override
-                            public void onGetAddress(String address) {
-                                viewBinding.addressView.setText(address);
-                            }
-                        });
+                        try {
+                            LocationHelper.antiCodingLocation(context, location.getLongitude(), location.getLatitude(), new IAddressListener() {
+                                @Override
+                                public void onGetAddress(String address) {
+                                    viewBinding.addressView.setText(address);
+                                }
+                            });
+                        } catch (AMapException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 

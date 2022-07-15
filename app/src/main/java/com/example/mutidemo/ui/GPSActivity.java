@@ -13,9 +13,11 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.AMapOptions;
 import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.CoordinateConverter;
+import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
@@ -50,6 +52,12 @@ public class GPSActivity extends AndroidxBaseActivity<ActivityGpsBinding> {
         if (aMap == null) {
             aMap = viewBinding.mapView.getMap();
         }
+        UiSettings uiSettings = aMap.getUiSettings();
+        uiSettings.setCompassEnabled(true);
+        uiSettings.setZoomPosition(AMapOptions.ZOOM_POSITION_RIGHT_CENTER);
+        uiSettings.setTiltGesturesEnabled(false);
+        uiSettings.setRotateGesturesEnabled(false);
+
         //获取到GPS_PROVIDER
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

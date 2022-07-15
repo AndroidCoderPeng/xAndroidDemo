@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.media.MediaMetadataRetriever;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -12,10 +13,10 @@ import com.example.mutidemo.databinding.ActivityVideoCompressBinding;
 import com.example.mutidemo.util.FileUtils;
 import com.example.mutidemo.util.GlideLoadEngine;
 import com.example.mutidemo.util.JZMediaExo;
-import com.huantansheng.easyphotos.EasyPhotos;
-import com.huantansheng.easyphotos.callback.SelectCallback;
-import com.huantansheng.easyphotos.constant.Type;
-import com.huantansheng.easyphotos.models.album.entity.Photo;
+import com.luck.picture.lib.basic.PictureSelector;
+import com.luck.picture.lib.config.SelectMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 import com.pengxh.androidx.lite.widget.EasyToast;
 import com.zolad.videoslimmer.VideoSlimmer;
@@ -54,30 +55,35 @@ public class VideoCompressActivity extends AndroidxBaseActivity<ActivityVideoCom
     public void initEvent() {
         testMediaInterface();
 
-        viewBinding.selectVideoButton.setOnClickListener(view ->
-                EasyPhotos.createAlbum(VideoCompressActivity.this, true, true, GlideLoadEngine.getInstance())
-                        .setFileProviderAuthority("com.example.mutidemo.fileProvider")
-                        .setCount(1)
-                        .setVideoMaxSecond(20)
-                        .filter(Type.VIDEO)
-                        .start(new SelectCallback() {
-                                   @Override
-                                   public void onResult(ArrayList<Photo> photos, boolean isOriginal) {
-                                       Log.d(TAG, "onActivityResult: " + photos);
-                                       if (photos == null) {
-                                           EasyToast.show(VideoCompressActivity.this, "选择视频失败");
-                                           return;
-                                       }
-                                       onSelectResult(photos.get(0));
-                                   }
+        viewBinding.selectVideoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PictureSelector.create(VideoCompressActivity.this)
+                        .openGallery(SelectMimeType.ofVideo())
+                        .isGif(false)
+                        .isMaxSelectEnabledMask(true)
+                        .setFilterMinFileSize(100)
+                        .setMaxSelectNum(1)
+                        .isDisplayCamera(false)
+                        .setImageEngine(GlideLoadEngine.getInstance())
+                        .forResult(new OnResultCallbackListener<LocalMedia>() {
+                            @Override
+                            public void onResult(ArrayList<LocalMedia> result) {
+                                if (result == null) {
+                                    EasyToast.show(VideoCompressActivity.this, "选择视频失败");
+                                    return;
+                                }
+                                onSelectResult(result.get(0));
+                            }
 
-                                   @Override
-                                   public void onCancel() {
+                            @Override
+                            public void onCancel() {
 
-                                   }
-                               }
-                        )
-        );
+                            }
+                        });
+            }
+        });
+
         viewBinding.compressVideoButton.setOnClickListener(view -> {
             if (!TextUtils.isEmpty(mediaOriginalPath)) {
                 String outputVideoFile = FileUtils.getVideoFilePath();
@@ -130,17 +136,17 @@ public class VideoCompressActivity extends AndroidxBaseActivity<ActivityVideoCom
                 .into(viewBinding.compressedVideoView.posterImageView);
     }
 
-    protected void onSelectResult(Photo photo) {
-        this.defaultWidth = photo.width;
-        this.defaultHeight = photo.height;
-        this.mediaOriginalPath = photo.path;
+    protected void onSelectResult(LocalMedia media) {
+        this.defaultWidth = media.getWidth();
+        this.defaultHeight = media.getHeight();
+        this.mediaOriginalPath = media.getRealPath();
 
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(mediaOriginalPath);
         this.defaultRotation = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
         Log.d(TAG, "defaultRotation: " + defaultRotation);
 
-        viewBinding.originalVideoView.setUp(mediaOriginalPath, photo.name);
+        viewBinding.originalVideoView.setUp(mediaOriginalPath, media.getFileName());
         //设置第一帧为封面
         Glide.with(this)
                 .setDefaultRequestOptions(new RequestOptions().frame(4000000))

@@ -31,7 +31,6 @@ import com.example.mutidemo.ui.OriginalShareActivity;
 import com.example.mutidemo.ui.ProcessBarActivity;
 import com.example.mutidemo.ui.RecodeAudioActivity;
 import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
-import com.example.mutidemo.ui.SecretManagerActivity;
 import com.example.mutidemo.ui.SlideBarActivity;
 import com.example.mutidemo.ui.VideoCompressActivity;
 import com.example.mutidemo.ui.WaterMarkerActivity;
@@ -46,11 +45,6 @@ import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,10 +53,6 @@ import cn.bertsir.zbar.Qr.ScanResult;
 import cn.bertsir.zbar.QrConfig;
 import cn.bertsir.zbar.QrManager;
 import cn.bertsir.zbar.view.ScanLineView;
-import jxl.Cell;
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.read.biff.BiffException;
 
 
 public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
@@ -75,7 +65,7 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
             "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
             "自定义进度条", "GPS位置信息", "人脸检测", "音频录制与播放", "图片添加水印并压缩",
             "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "可删减九宫格", "系统原生分享",
-            "空气污染刻度盘", "Bmob数据库", "人脸采集框", "公交卡自定义View", "ExcelToJson");
+            "空气污染刻度盘", "Bmob数据库", "人脸采集框", "公交卡自定义View");
 
     @Override
     protected void setupTopBarLayout() {
@@ -189,41 +179,6 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
                         break;
                     case 22:
                         ContextUtil.navigatePageTo(mContext, BusCardActivity.class);
-                        break;
-                    case 23:
-                        try {
-                            JSONArray result = new JSONArray();
-                            Workbook workbook = Workbook.getWorkbook(getAssets().open("_MMGJ_20220627_160645.xls"));
-                            Sheet sheet = workbook.getSheet(0);
-                            for (int i = 1; i < sheet.getRows(); i++) {
-                                Cell cell = sheet.getCell(0, i);
-                                Cell cell1 = sheet.getCell(1, i);
-                                Cell cell2 = sheet.getCell(2, i);
-                                Cell cell3 = sheet.getCell(3, i);
-                                Cell cell4 = sheet.getCell(4, i);
-
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("category", cell.getContents());
-                                jsonObject.put("title", cell1.getContents());
-                                jsonObject.put("account", cell2.getContents());
-                                jsonObject.put("password", cell3.getContents());
-                                jsonObject.put("remarks", cell4.getContents());
-                                try {
-                                    Cell cell5 = sheet.getCell(5, i);
-                                    jsonObject.put("dataIcon", cell5.getContents());
-                                } catch (Exception e) {
-                                    jsonObject.put("dataIcon", R.mipmap.launcher_logo);
-                                }
-                                result.put(jsonObject);
-                            }
-                            workbook.close();
-                            if (result.toString().isEmpty()) {
-                                return;
-                            }
-                            ContextUtil.navigatePageTo(mContext, SecretManagerActivity.class, result.toString());
-                        } catch (IOException | BiffException | JSONException e) {
-                            e.printStackTrace();
-                        }
                         break;
                     default:
                         break;

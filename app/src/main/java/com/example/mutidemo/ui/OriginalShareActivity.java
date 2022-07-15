@@ -2,15 +2,17 @@ package com.example.mutidemo.ui;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.view.View;
 
 import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.mutidemo.databinding.ActivityOriginalBinding;
 import com.example.mutidemo.util.GlideLoadEngine;
-import com.huantansheng.easyphotos.EasyPhotos;
-import com.huantansheng.easyphotos.callback.SelectCallback;
-import com.huantansheng.easyphotos.models.album.entity.Photo;
+import com.luck.picture.lib.basic.PictureSelector;
+import com.luck.picture.lib.config.SelectMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
 import java.io.File;
@@ -32,24 +34,34 @@ public class OriginalShareActivity extends AndroidxBaseActivity<ActivityOriginal
 
     @Override
     public void initEvent() {
-        viewBinding.selectImageButton.setOnClickListener(v -> EasyPhotos.createAlbum(OriginalShareActivity.this, true, false, GlideLoadEngine.getInstance())
-                .setFileProviderAuthority("com.example.mutidemo.fileProvider")
-                .setCount(1)
-                .setMinFileSize(1024 * 10)
-                .start(new SelectCallback() {
-                    @Override
-                    public void onResult(ArrayList<Photo> photos, boolean isOriginal) {
-                        Photo resultMedia = photos.get(0);
-                        realPath = resultMedia.path;
-                        viewBinding.imagePathView.setText(realPath);
-                        Glide.with(OriginalShareActivity.this).load(realPath).into(viewBinding.imageView);
-                    }
+        viewBinding.selectImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PictureSelector.create(OriginalShareActivity.this)
+                        .openGallery(SelectMimeType.ofImage())
+                        .isGif(false)
+                        .isMaxSelectEnabledMask(true)
+                        .setFilterMinFileSize(100)
+                        .setMaxSelectNum(1)
+                        .isDisplayCamera(false)
+                        .setImageEngine(GlideLoadEngine.getInstance())
+                        .forResult(new OnResultCallbackListener<LocalMedia>() {
+                            @Override
+                            public void onResult(ArrayList<LocalMedia> result) {
+                                LocalMedia resultMedia = result.get(0);
+                                realPath = resultMedia.getRealPath();
+                                viewBinding.imagePathView.setText(realPath);
+                                Glide.with(OriginalShareActivity.this).load(realPath).into(viewBinding.imageView);
+                            }
 
-                    @Override
-                    public void onCancel() {
+                            @Override
+                            public void onCancel() {
 
-                    }
-                }));
+                            }
+                        });
+            }
+        });
+
         viewBinding.shareImageButton.setOnClickListener(v -> {
             if (realPath == null) {
                 return;

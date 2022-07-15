@@ -6,8 +6,10 @@ import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.media.FaceDetector;
 import android.media.Image;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Surface;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
@@ -26,13 +28,14 @@ import androidx.core.content.ContextCompat;
 import com.example.mutidemo.databinding.ActivityFaceCollectBinding;
 import com.example.mutidemo.util.FileUtils;
 import com.example.mutidemo.util.ImageHelper;
+import com.example.mutidemo.util.WindowHelper;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.utils.WeakReferenceHandler;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,6 +53,7 @@ public class FaceCollectionActivity extends AndroidxBaseActivity<ActivityFaceCol
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private ImageCapture imageCapture;
     private ImageAnalysis imageAnalysis;
+    private WeakReferenceHandler weakReferenceHandler;
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(16, 16,
             0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<>(1024),
@@ -63,10 +67,12 @@ public class FaceCollectionActivity extends AndroidxBaseActivity<ActivityFaceCol
 
     @Override
     public void initData() {
+        //调节屏幕亮度最大
+        WindowHelper.setScreenBrightness(getWindow(), WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL);
+
+        windowManager = getWindowManager();
         // Initialize our background executor
         cameraExecutor = Executors.newSingleThreadExecutor();
-        // Initialize WindowManager to retrieve display metrics
-        windowManager = getWindowManager();
         cameraProviderFuture = ProcessCameraProvider.getInstance(this);
         // 检查 CameraProvider 可用性
         cameraProviderFuture.addListener(() -> {
@@ -77,15 +83,10 @@ public class FaceCollectionActivity extends AndroidxBaseActivity<ActivityFaceCol
                 e.printStackTrace();
             }
         }, ContextCompat.getMainExecutor(this));
-    }
-
-    @Override
-    public void initEvent() {
-
+        weakReferenceHandler = new WeakReferenceHandler(callback);
     }
 
     private void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
-        // Get screen metrics used to setup camera for full screen resolution
         int screenAspectRatio;
         if (android.os.Build.VERSION.SDK_INT >= 30) {
             Rect metrics = windowManager.getCurrentWindowMetrics().getBounds();
@@ -96,44 +97,37 @@ public class FaceCollectionActivity extends AndroidxBaseActivity<ActivityFaceCol
             screenAspectRatio = aspectRatio(outMetrics.widthPixels, outMetrics.heightPixels);
         }
 
-        int rotation;
-        if (android.os.Build.VERSION.SDK_INT >= 30) {
-            rotation = Objects.requireNonNull(getDisplay()).getRotation();
-        } else {
-            rotation = windowManager.getDefaultDisplay().getRotation();
-        }
-
         // CameraSelector
         CameraSelector cameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
                 .build();
 
         // Preview
-        Preview cameraPreview = new Preview.Builder()
+        Preview cameraPreViewBuilder = new Preview.Builder()
                 .setTargetAspectRatio(screenAspectRatio)
-                .setTargetRotation(rotation)
+                .setTargetRotation(Surface.ROTATION_0)
                 .build();
 
         // ImageCapture
         imageCapture = new ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .setTargetAspectRatio(screenAspectRatio)
-                .setTargetRotation(rotation)
+                .setTargetRotation(Surface.ROTATION_0)
                 .build();
 
         // ImageAnalysis
         imageAnalysis = new ImageAnalysis.Builder()
                 .setTargetAspectRatio(screenAspectRatio)
-                .setTargetRotation(rotation)
+                .setTargetRotation(Surface.ROTATION_0)
                 .build();
 
         // Must unbind the use-cases before rebinding them
         cameraProvider.unbindAll();
         try {
-            Camera camera = cameraProvider.bindToLifecycle(this, cameraSelector, imageCapture, imageAnalysis, cameraPreview);
+            Camera camera = cameraProvider.bindToLifecycle(this, cameraSelector, imageCapture, imageAnalysis, cameraPreViewBuilder);
 
             // Attach the viewfinder's surface provider to preview use case
-            cameraPreview.setSurfaceProvider(viewBinding.cameraPreView.getSurfaceProvider());
+            cameraPreViewBuilder.setSurfaceProvider(viewBinding.cameraPreView.getSurfaceProvider());
             observeCameraState(camera.getCameraInfo());
         } catch (Exception e) {
             Log.e(TAG, "Use case binding failed", e);
@@ -165,10 +159,21 @@ public class FaceCollectionActivity extends AndroidxBaseActivity<ActivityFaceCol
                         executor.execute(() -> {
                             Image image = imageProxy.getImage();
                             if (image != null) {
-                                Bitmap bitmap = ImageHelper.ImageToBitmap(image);
-//                                viewBinding.faceCollectionView.setBitmap(bitmap);
-
-                                detectFace(bitmap);
+                                Bitmap bitmap = ImageHelper.ImageToBitmap(image, ImageFormat.YUV_420_888);
+                                /**
+                                 * Android内置的人脸识别，需要将Bitmap对象转为RGB_565格式，否则无法识别
+                                 * */
+                                Bitmap faceDetectBitmap = bitmap.copy(Bitmap.Config.RGB_565, true);
+                                FaceDetector.Face[] faces = new FaceDetector.Face[3];
+                                // 一次只检测一张人脸
+                                FaceDetector faceDetector = new FaceDetector(faceDetectBitmap.getWidth(), faceDetectBitmap.getHeight(), 1);
+                                int faceCount = faceDetector.findFaces(faceDetectBitmap, faces);
+                                /**
+                                 * 检测到人脸之后延迟几秒采集人脸数据
+                                 * */
+                                if (faceCount >= 1) {
+                                    weakReferenceHandler.sendEmptyMessageDelayed(2022071401, 3000);
+                                }
                             }
                             //检测完之后close就会继续生成下一帧图片，否则就会被阻塞不会继续生成下一帧
                             imageProxy.close();
@@ -179,46 +184,33 @@ public class FaceCollectionActivity extends AndroidxBaseActivity<ActivityFaceCol
         });
     }
 
-    private void detectFace(Bitmap bitmap) {
-        if (bitmap != null) {
-            /**
-             * Android内置的人脸识别，需要将Bitmap对象转为RGB_565格式，否则无法识别
-             * */
-            Bitmap detectBitmap = bitmap.copy(Bitmap.Config.RGB_565, true);
-            FaceDetector.Face[] faces = new FaceDetector.Face[1];
-            FaceDetector faceDetector = new FaceDetector(detectBitmap.getWidth(), detectBitmap.getHeight(), 1);
-            int faceCount = faceDetector.findFaces(detectBitmap, faces);
-            /**
-             * 检测到人脸之后采集人脸数据
-             * */
-            if (faceCount >= 1) {
-                takePicture();
-            }
-        }
-    }
-
-    public void takePicture() {
-        ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(FileUtils.getImageFile()).build();
-        imageCapture.takePicture(outputFileOptions, cameraExecutor,
-                new ImageCapture.OnImageSavedCallback() {
-                    @Override
-                    public void onImageSaved(@NotNull ImageCapture.OutputFileResults results) {
-                        Log.d(TAG, "onImageSaved: " + results.getSavedUri());
-                    }
-
-                    @Override
-                    public void onError(@NotNull ImageCaptureException error) {
-                        error.printStackTrace();
-                    }
+    private final Handler.Callback callback = msg -> {
+        if (msg.what == 2022071401) {
+            viewBinding.faceDetectTipsView.setText("人脸特征采集中，请勿晃动手机");
+            ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(FileUtils.getImageFile()).build();
+            imageCapture.takePicture(outputFileOptions, cameraExecutor, new ImageCapture.OnImageSavedCallback() {
+                @Override
+                public void onImageSaved(@NotNull ImageCapture.OutputFileResults results) {
+                    Log.d(TAG, "onImageSaved: " + results.getSavedUri());
                 }
-        );
+
+                @Override
+                public void onError(@NotNull ImageCaptureException error) {
+                    error.printStackTrace();
+                }
+            });
+        }
+        return true;
+    };
+
+    @Override
+    public void initEvent() {
+
     }
 
     @Override
     public void onDestroy() {
-        if (cameraExecutor != null) {
-            cameraExecutor.shutdown();
-        }
+        WindowHelper.setScreenBrightness(getWindow(), WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE);
         super.onDestroy();
     }
 }

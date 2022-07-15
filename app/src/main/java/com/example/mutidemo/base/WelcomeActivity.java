@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.amap.api.navi.NaviSetting;
 import com.example.mutidemo.MainActivity;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
     private static final int PERMISSIONS_CODE = 999;
     private static final String[] USER_PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
     @Override
@@ -45,6 +46,9 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
     }
 
     private void startMainActivity() {
+        //先把导航隐私政策声明，后面导航会用到
+        NaviSetting.updatePrivacyShow(this, true, true);
+        NaviSetting.updatePrivacyAgree(this, true);
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }

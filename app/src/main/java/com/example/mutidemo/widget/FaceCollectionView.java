@@ -92,7 +92,7 @@ public class FaceCollectionView extends View {
             mWidth = widthSpecSize;
         } else {
             // wrap_content，外边界宽
-            mWidth = DeviceSizeUtil.getScreenWidth(context);
+            mWidth = DeviceSizeUtil.obtainScreenWidth(context);
         }
         // 获取高
         if (heightSpecMode == MeasureSpec.EXACTLY) {
@@ -100,7 +100,7 @@ public class FaceCollectionView extends View {
             mHeight = heightSpecSize;
         } else {
             // wrap_content，外边界高
-            mHeight = DeviceSizeUtil.getScreenHeight(context);
+            mHeight = DeviceSizeUtil.obtainScreenHeight(context);
         }
         // 设置该view的宽高
         setMeasuredDimension(mWidth, mHeight);
@@ -110,7 +110,7 @@ public class FaceCollectionView extends View {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        int radius = DeviceSizeUtil.getScreenWidth(context) / 2;
+        int radius = DeviceSizeUtil.obtainScreenWidth(context) / 2;
         /**
          * 设置View背景为白色
          * */

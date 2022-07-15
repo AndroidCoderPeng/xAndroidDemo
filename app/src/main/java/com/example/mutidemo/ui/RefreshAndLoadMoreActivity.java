@@ -1,9 +1,7 @@
 package com.example.mutidemo.ui;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Handler;
-import android.os.Message;
 
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,8 +13,8 @@ import com.example.mutidemo.mvp.presenter.NewsPresenterImpl;
 import com.example.mutidemo.mvp.view.INewsView;
 import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.utils.WeakReferenceHandler;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +49,7 @@ public class RefreshAndLoadMoreActivity extends AndroidxBaseActivity<ActivityRef
 
     @Override
     public void initData() {
-        weakReferenceHandler = new WeakReferenceHandler(this);
+        weakReferenceHandler = new WeakReferenceHandler(callback);
         newsPresenter = new NewsPresenterImpl(this);
         newsPresenter.onReadyRetrofitRequest("娱乐", defaultPage);
     }
@@ -71,43 +69,35 @@ public class RefreshAndLoadMoreActivity extends AndroidxBaseActivity<ActivityRef
         });
     }
 
-    private static class WeakReferenceHandler extends Handler {
-        private final WeakReference<RefreshAndLoadMoreActivity> reference;
-
-        private WeakReferenceHandler(RefreshAndLoadMoreActivity activity) {
-            reference = new WeakReference<>(activity);
-        }
-
-        @SuppressLint("NotifyDataSetChanged")
-        @Override
-        public void handleMessage(Message msg) {
-            RefreshAndLoadMoreActivity activity = reference.get();
-            if (msg.what == 10000) {
-                if (activity.isRefresh || activity.isLoadMore) {
-                    activity.newsAdapter.notifyDataSetChanged();
-                } else {
-                    //首次加载数据
-                    activity.newsAdapter = new NewsAdapter(activity, activity.dataBeans);
-                    activity.viewBinding.newsRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
-                    activity.viewBinding.newsRecyclerView.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
-                    activity.viewBinding.newsRecyclerView.setAdapter(activity.newsAdapter);
-                    activity.newsAdapter.setOnNewsItemClickListener(position -> {
-                        NewsBean.ResultBeanX.ResultBean.ListBean bean = activity.dataBeans.get(position);
-                        Intent intent = new Intent(activity, NewsDetailsActivity.class);
-                        intent.putExtra("title", bean.getTitle());
-                        intent.putExtra("src", bean.getSrc());
-                        intent.putExtra("time", bean.getTime());
-                        intent.putExtra("content", bean.getContent());
-                        activity.startActivity(intent);
-                    });
-                }
+    private final Handler.Callback callback = msg -> {
+        if (msg.what == 10000) {
+            if (isRefresh || isLoadMore) {
+                newsAdapter.notifyDataSetChanged();
+            } else {
+                //首次加载数据
+                newsAdapter = new NewsAdapter(this, dataBeans);
+                viewBinding.newsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                viewBinding.newsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+                viewBinding.newsRecyclerView.setAdapter(newsAdapter);
+                newsAdapter.setOnNewsItemClickListener(position -> {
+                    NewsBean.ResultBeanX.ResultBean.ListBean bean = dataBeans.get(position);
+                    Intent intent = new Intent(this, NewsDetailsActivity.class);
+                    intent.putExtra("title", bean.getTitle());
+                    intent.putExtra("src", bean.getSrc());
+                    intent.putExtra("time", bean.getTime());
+                    intent.putExtra("content", bean.getContent());
+                    startActivity(intent);
+                });
             }
         }
-    }
+        return true;
+    };
 
     @Override
     public void showProgress() {
-        OtherUtils.showLoadingDialog(this, "加载数据中，请稍后...");
+        if (!isRefresh && !isLoadMore) {
+            OtherUtils.showLoadingDialog(this, "加载数据中，请稍后...");
+        }
     }
 
     @Override
