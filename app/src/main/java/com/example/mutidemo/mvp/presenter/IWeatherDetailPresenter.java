@@ -1,6 +1,6 @@
 package com.example.mutidemo.mvp.presenter;
 
-public interface IWeatherPresenter {
+public interface IWeatherDetailPresenter {
     /**
      * 将用户界面收集到的信息传递给Model，发起网络请求，此时并未真正发起请求，只是传递请求的数据
      * <p>

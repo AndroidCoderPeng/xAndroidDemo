@@ -8,7 +8,7 @@ import java.util.List;
  * @description: TODO
  * @date: 2020/2/21 19:27
  */
-public class NewsBean {
+public class NewsListBean {
 
     /**
      * code : 10000

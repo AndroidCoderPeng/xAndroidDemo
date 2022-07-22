@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mutidemo.R;
-import com.example.mutidemo.bean.WeatherBean;
+import com.example.mutidemo.bean.WeatherDetailBean;
 
 import java.util.List;
 
@@ -23,10 +23,10 @@ import java.util.List;
  */
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder> {
 
-    private final List<WeatherBean.ResultBeanX.ResultBean.DailyBean> mItemList;
+    private final List<WeatherDetailBean.ResultBeanX.ResultBean.DailyBean> mItemList;
     private final LayoutInflater inflater;
 
-    public WeatherAdapter(Context mContext, List<WeatherBean.ResultBeanX.ResultBean.DailyBean> list) {
+    public WeatherAdapter(Context mContext, List<WeatherDetailBean.ResultBeanX.ResultBean.DailyBean> list) {
         this.mItemList = list;
         inflater = LayoutInflater.from(mContext);
     }
@@ -47,23 +47,23 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
     @Override
     public void onBindViewHolder(@NonNull WeatherViewHolder holder, int position) {
         if (position == 0) {
-            WeatherBean.ResultBeanX.ResultBean.DailyBean dailyBean = mItemList.get(position);
-            WeatherBean.ResultBeanX.ResultBean.DailyBean.DayBean dayBean = dailyBean.getDay();
-            WeatherBean.ResultBeanX.ResultBean.DailyBean.NightBean nightBean = dailyBean.getNight();
+            WeatherDetailBean.ResultBeanX.ResultBean.DailyBean dailyBean = mItemList.get(position);
+            WeatherDetailBean.ResultBeanX.ResultBean.DailyBean.DayBean dayBean = dailyBean.getDay();
+            WeatherDetailBean.ResultBeanX.ResultBean.DailyBean.NightBean nightBean = dailyBean.getNight();
             holder.weatherWeek.setText("今天");
             holder.weatherLow.setText(nightBean.getTemplow() + "°");
             holder.weatherHigh.setText(dayBean.getTemphigh() + "°");
         } else if (position == 1) {
-            WeatherBean.ResultBeanX.ResultBean.DailyBean dailyBean = mItemList.get(position);
-            WeatherBean.ResultBeanX.ResultBean.DailyBean.DayBean dayBean = dailyBean.getDay();
-            WeatherBean.ResultBeanX.ResultBean.DailyBean.NightBean nightBean = dailyBean.getNight();
+            WeatherDetailBean.ResultBeanX.ResultBean.DailyBean dailyBean = mItemList.get(position);
+            WeatherDetailBean.ResultBeanX.ResultBean.DailyBean.DayBean dayBean = dailyBean.getDay();
+            WeatherDetailBean.ResultBeanX.ResultBean.DailyBean.NightBean nightBean = dailyBean.getNight();
             holder.weatherWeek.setText("明天");
             holder.weatherLow.setText(nightBean.getTemplow() + "°");
             holder.weatherHigh.setText(dayBean.getTemphigh() + "°");
         } else {
-            WeatherBean.ResultBeanX.ResultBean.DailyBean dailyBean = mItemList.get(position);
-            WeatherBean.ResultBeanX.ResultBean.DailyBean.DayBean dayBean = dailyBean.getDay();
-            WeatherBean.ResultBeanX.ResultBean.DailyBean.NightBean nightBean = dailyBean.getNight();
+            WeatherDetailBean.ResultBeanX.ResultBean.DailyBean dailyBean = mItemList.get(position);
+            WeatherDetailBean.ResultBeanX.ResultBean.DailyBean.DayBean dayBean = dailyBean.getDay();
+            WeatherDetailBean.ResultBeanX.ResultBean.DailyBean.NightBean nightBean = dailyBean.getNight();
 
             holder.weatherWeek.setText(dailyBean.getWeek());
             holder.weatherLow.setText(nightBean.getTemplow() + "°");

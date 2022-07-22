@@ -5,16 +5,16 @@ import android.annotation.SuppressLint;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mutidemo.adapter.WeatherAdapter;
-import com.example.mutidemo.bean.WeatherBean;
+import com.example.mutidemo.bean.WeatherDetailBean;
 import com.example.mutidemo.databinding.ActivityMvpBinding;
-import com.example.mutidemo.mvp.presenter.WeatherPresenterImpl;
-import com.example.mutidemo.mvp.view.IWeatherView;
+import com.example.mutidemo.mvp.presenter.WeatherDetailPresenterImpl;
+import com.example.mutidemo.mvp.view.IWeatherDetailView;
 import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
-public class MVPActivity extends AndroidxBaseActivity<ActivityMvpBinding> implements IWeatherView {
+public class MVPActivity extends AndroidxBaseActivity<ActivityMvpBinding> implements IWeatherDetailView {
 
-    private WeatherPresenterImpl weatherPresenter;
+    private WeatherDetailPresenterImpl weatherPresenter;
 
     @Override
     protected void setupTopBarLayout() {
@@ -23,7 +23,7 @@ public class MVPActivity extends AndroidxBaseActivity<ActivityMvpBinding> implem
 
     @Override
     public void initData() {
-        weatherPresenter = new WeatherPresenterImpl(this);
+        weatherPresenter = new WeatherDetailPresenterImpl(this);
     }
 
     @Override
@@ -43,9 +43,9 @@ public class MVPActivity extends AndroidxBaseActivity<ActivityMvpBinding> implem
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void showNetWorkData(WeatherBean weatherBean) {
+    public void showNetWorkData(WeatherDetailBean weatherBean) {
         if (weatherBean != null) {
-            WeatherBean.ResultBeanX.ResultBean result = weatherBean.getResult().getResult();
+            WeatherDetailBean.ResultBeanX.ResultBean result = weatherBean.getResult().getResult();
             viewBinding.tempView.setText(result.getTemp() + "°");
             viewBinding.weatherView.setText(result.getWeather());
             viewBinding.tempFieldView.setText(result.getTemplow() + "°~" + result.getTemphigh() + "°");

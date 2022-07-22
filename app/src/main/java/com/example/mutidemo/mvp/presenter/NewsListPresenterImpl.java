@@ -1,18 +1,18 @@
 package com.example.mutidemo.mvp.presenter;
 
-import com.example.mutidemo.bean.NewsBean;
+import com.example.mutidemo.bean.NewsListBean;
 import com.example.mutidemo.mvp.BasePresenter;
-import com.example.mutidemo.mvp.model.NewsModelImpl;
-import com.example.mutidemo.mvp.view.INewsView;
+import com.example.mutidemo.mvp.model.NewsListModelImpl;
+import com.example.mutidemo.mvp.view.INewsListView;
 
-public class NewsPresenterImpl extends BasePresenter implements INewsPresenter, NewsModelImpl.OnNewsListener {
+public class NewsListPresenterImpl extends BasePresenter implements INewsListPresenter, NewsListModelImpl.OnNewsListener {
 
-    private final INewsView view;
-    private final NewsModelImpl actionModel;
+    private final INewsListView view;
+    private final NewsListModelImpl actionModel;
 
-    public NewsPresenterImpl(INewsView newsView) {
+    public NewsListPresenterImpl(INewsListView newsView) {
         this.view = newsView;
-        actionModel = new NewsModelImpl(this);
+        actionModel = new NewsListModelImpl(this);
     }
 
     /**
@@ -33,7 +33,7 @@ public class NewsPresenterImpl extends BasePresenter implements INewsPresenter, 
     }
 
     @Override
-    public void onSuccess(NewsBean resultBean) {
+    public void onSuccess(NewsListBean resultBean) {
         view.hideProgress();
         view.showNetWorkData(resultBean);
     }

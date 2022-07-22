@@ -2,7 +2,7 @@ package com.example.mutidemo.bean;
 
 import java.util.List;
 
-public class WeatherBean {
+public class WeatherDetailBean {
 
     /**
      * code : 10000

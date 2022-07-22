@@ -8,6 +8,6 @@ import rx.Subscription;
  * @description: TODO
  * @date: 2020/3/30 15:11
  */
-public interface INewsModel {
+public interface INewsListModel {
     Subscription sendRetrofitRequest(String channel, int start);
 }

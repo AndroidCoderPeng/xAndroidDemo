@@ -7,10 +7,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.mutidemo.adapter.NewsAdapter;
-import com.example.mutidemo.bean.NewsBean;
+import com.example.mutidemo.bean.NewsListBean;
 import com.example.mutidemo.databinding.ActivityRefreshBinding;
-import com.example.mutidemo.mvp.presenter.NewsPresenterImpl;
-import com.example.mutidemo.mvp.view.INewsView;
+import com.example.mutidemo.mvp.presenter.NewsListPresenterImpl;
+import com.example.mutidemo.mvp.view.INewsListView;
 import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 import com.pengxh.androidx.lite.utils.WeakReferenceHandler;
@@ -24,12 +24,12 @@ import java.util.List;
  * @description: TODO
  * @date: 2020/2/21 19:16
  */
-public class RefreshAndLoadMoreActivity extends AndroidxBaseActivity<ActivityRefreshBinding> implements INewsView {
+public class RefreshAndLoadMoreActivity extends AndroidxBaseActivity<ActivityRefreshBinding> implements INewsListView {
 
     /**
      * 设置一个集合，用来存储网络请求到的数据
      */
-    private List<NewsBean.ResultBeanX.ResultBean.ListBean> dataBeans = new ArrayList<>();
+    private List<NewsListBean.ResultBeanX.ResultBean.ListBean> dataBeans = new ArrayList<>();
     /**
      * 自定义刷新和加载的标识，默认为false
      */
@@ -39,7 +39,7 @@ public class RefreshAndLoadMoreActivity extends AndroidxBaseActivity<ActivityRef
      */
     private int defaultPage = 0;
     private NewsAdapter newsAdapter;
-    private NewsPresenterImpl newsPresenter;
+    private NewsListPresenterImpl newsPresenter;
     private static WeakReferenceHandler weakReferenceHandler;
 
     @Override
@@ -50,7 +50,7 @@ public class RefreshAndLoadMoreActivity extends AndroidxBaseActivity<ActivityRef
     @Override
     public void initData() {
         weakReferenceHandler = new WeakReferenceHandler(callback);
-        newsPresenter = new NewsPresenterImpl(this);
+        newsPresenter = new NewsListPresenterImpl(this);
         newsPresenter.onReadyRetrofitRequest("娱乐", defaultPage);
     }
 
@@ -80,7 +80,7 @@ public class RefreshAndLoadMoreActivity extends AndroidxBaseActivity<ActivityRef
                 viewBinding.newsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
                 viewBinding.newsRecyclerView.setAdapter(newsAdapter);
                 newsAdapter.setOnNewsItemClickListener(position -> {
-                    NewsBean.ResultBeanX.ResultBean.ListBean bean = dataBeans.get(position);
+                    NewsListBean.ResultBeanX.ResultBean.ListBean bean = dataBeans.get(position);
                     Intent intent = new Intent(this, NewsDetailsActivity.class);
                     intent.putExtra("title", bean.getTitle());
                     intent.putExtra("src", bean.getSrc());
@@ -106,9 +106,9 @@ public class RefreshAndLoadMoreActivity extends AndroidxBaseActivity<ActivityRef
     }
 
     @Override
-    public void showNetWorkData(NewsBean response) {
+    public void showNetWorkData(NewsListBean response) {
         if (response.getCode().equals("10000")) {
-            List<NewsBean.ResultBeanX.ResultBean.ListBean> listBeans = response.getResult().getResult().getList();
+            List<NewsListBean.ResultBeanX.ResultBean.ListBean> listBeans = response.getResult().getResult().getList();
             if (isRefresh) {
                 dataBeans.clear();//下拉刷新必须先清空之前的List，不然会出现数据重复的问题
                 dataBeans = listBeans;

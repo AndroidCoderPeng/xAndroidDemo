@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.mutidemo.R;
-import com.example.mutidemo.bean.NewsBean;
+import com.example.mutidemo.bean.NewsListBean;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
 
 import java.util.List;
@@ -27,11 +27,11 @@ import java.util.List;
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsRecyclerViewHolder> {
 
     private final Context context;
-    private final List<NewsBean.ResultBeanX.ResultBean.ListBean> mItemList;
+    private final List<NewsListBean.ResultBeanX.ResultBean.ListBean> mItemList;
     private final LayoutInflater inflater;
     private OnNewsItemClickListener mOnItemClickListener;
 
-    public NewsAdapter(Context mContext, List<NewsBean.ResultBeanX.ResultBean.ListBean> list) {
+    public NewsAdapter(Context mContext, List<NewsListBean.ResultBeanX.ResultBean.ListBean> list) {
         this.context = mContext;
         this.mItemList = list;
         inflater = LayoutInflater.from(mContext);
@@ -76,7 +76,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsRecyclerVi
             newsTime = itemView.findViewById(R.id.newsTime);
         }
 
-        void bindHolder(NewsBean.ResultBeanX.ResultBean.ListBean listBean) {
+        void bindHolder(NewsListBean.ResultBeanX.ResultBean.ListBean listBean) {
             String img = listBean.getPic();
             if (img == null || img.equals("") || img.endsWith(".gif")) {
                 newsPicture.setVisibility(View.GONE);

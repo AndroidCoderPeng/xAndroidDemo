@@ -1,8 +1,8 @@
 package com.example.mutidemo.mvp.view;
 
-import com.example.mutidemo.bean.WeatherBean;
+import com.example.mutidemo.bean.NewsListBean;
 
-public interface IWeatherView {
+public interface INewsListView {
 
     void showProgress();
 
@@ -11,5 +11,5 @@ public interface IWeatherView {
     /**
      * 显示从后台服务器获取到的数据
      */
-    void showNetWorkData(WeatherBean weatherBean);
+    void showNetWorkData(NewsListBean resultBean);
 }

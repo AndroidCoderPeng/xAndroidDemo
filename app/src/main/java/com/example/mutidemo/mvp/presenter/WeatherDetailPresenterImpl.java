@@ -1,18 +1,18 @@
 package com.example.mutidemo.mvp.presenter;
 
-import com.example.mutidemo.bean.WeatherBean;
+import com.example.mutidemo.bean.WeatherDetailBean;
 import com.example.mutidemo.mvp.BasePresenter;
-import com.example.mutidemo.mvp.model.WeatherModelImpl;
-import com.example.mutidemo.mvp.view.IWeatherView;
+import com.example.mutidemo.mvp.model.WeatherDetailModelImpl;
+import com.example.mutidemo.mvp.view.IWeatherDetailView;
 
-public class WeatherPresenterImpl extends BasePresenter implements IWeatherPresenter, WeatherModelImpl.OnWeatherListener {
+public class WeatherDetailPresenterImpl extends BasePresenter implements IWeatherDetailPresenter, WeatherDetailModelImpl.OnWeatherListener {
 
-    private final IWeatherView view;
-    private final WeatherModelImpl weatherModel;
+    private final IWeatherDetailView view;
+    private final WeatherDetailModelImpl weatherModel;
 
-    public WeatherPresenterImpl(IWeatherView weatherView) {
+    public WeatherDetailPresenterImpl(IWeatherDetailView weatherView) {
         this.view = weatherView;
-        weatherModel = new WeatherModelImpl(this);
+        weatherModel = new WeatherDetailModelImpl(this);
     }
 
     /**
@@ -30,7 +30,7 @@ public class WeatherPresenterImpl extends BasePresenter implements IWeatherPrese
     }
 
     @Override
-    public void onSuccess(WeatherBean weatherBean) {
+    public void onSuccess(WeatherDetailBean weatherBean) {
         view.hideProgress();
         view.showNetWorkData(weatherBean);
     }
