@@ -5,13 +5,17 @@
       <map>
         <entry key="../../../../../layout/custom_preview.xml" value="0.24537037037037038" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_main.xml" value="0.32222222222222224" />
+        <entry key="app/src/main/res/drawable/anim.xml" value="0.21342592592592594" />
         <entry key="app/src/main/res/drawable/bg_audio_view.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable/bg_button.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable/bg_solid_layout_white_radius_10.xml" value="0.21342592592592594" />
         <entry key="app/src/main/res/drawable/ic_add_black.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable/ic_aim.xml" value="0.32916666666666666" />
+        <entry key="app/src/main/res/drawable/ic_load_error.xml" value="0.21342592592592594" />
+        <entry key="app/src/main/res/drawable/ic_logo.xml" value="0.21342592592592594" />
         <entry key="app/src/main/res/drawable/ic_minus.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable/ic_voice.xml" value="0.32916666666666666" />
+        <entry key="app/src/main/res/drawable/svg_logo.xml" value="0.21342592592592594" />
         <entry key="app/src/main/res/layout/activity_air_dash.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_audio.xml" value="0.75" />
         <entry key="app/src/main/res/layout/activity_big_picture.xml" value="0.19583333333333333" />
@@ -34,6 +38,7 @@
         <entry key="app/src/main/res/layout/activity_refresh.xml" value="0.19583333333333333" />
         <entry key="app/src/main/res/layout/activity_secret_manager.xml" value="0.19537037037037036" />
         <entry key="app/src/main/res/layout/activity_slide.xml" value="0.19583333333333333" />
+        <entry key="app/src/main/res/layout/activity_svg.xml" value="0.19537037037037036" />
         <entry key="app/src/main/res/layout/activity_video_compress.xml" value="0.19583333333333333" />
         <entry key="app/src/main/res/layout/activity_water_marker.xml" value="0.19583333333333333" />
         <entry key="app/src/main/res/layout/activity_water_ripple.xml" value="0.19583333333333333" />

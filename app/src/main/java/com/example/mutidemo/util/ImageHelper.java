@@ -2,19 +2,13 @@ package com.example.mutidemo.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ImageFormat;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.YuvImage;
-import android.media.Image;
 import android.text.TextPaint;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.example.mutidemo.base.BaseApplication;
 import com.example.mutidemo.util.callback.ICompressListener;
@@ -22,10 +16,8 @@ import com.example.mutidemo.util.callback.IWaterMarkAddListener;
 import com.pengxh.androidx.lite.utils.DeviceSizeUtil;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.ByteBuffer;
 
 import rx.Observable;
 import rx.Observer;
@@ -38,54 +30,6 @@ import top.zibin.luban.OnCompressListener;
 
 public class ImageHelper {
     private static final String TAG = "ImageHelper";
-
-    /**
-     * CameraX
-     */
-    public static Bitmap ImageToBitmap(Image image, int format) {
-        if (format == ImageFormat.YUV_420_888) {
-            Image.Plane[] planes = image.getPlanes();
-
-            ByteBuffer yBuffer = planes[0].getBuffer();
-            ByteBuffer uBuffer = planes[1].getBuffer();
-            ByteBuffer vBuffer = planes[2].getBuffer();
-
-            int ySize = yBuffer.remaining();
-            int uSize = uBuffer.remaining();
-            int vSize = vBuffer.remaining();
-
-            byte[] nv21 = new byte[ySize + uSize + vSize];
-            //U and V are swapped
-            yBuffer.get(nv21, 0, ySize);
-            vBuffer.get(nv21, ySize, vSize);
-            uBuffer.get(nv21, ySize + vSize, uSize);
-
-            YuvImage yuvImage = new YuvImage(nv21, ImageFormat.NV21, image.getWidth(), image.getHeight(), null);
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 75, out);
-
-            byte[] imageBytes = out.toByteArray();
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-            return rotateImageView(-90, bitmap);
-        } else if (format == ImageFormat.JPEG) {
-            ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-            byte[] bytes = new byte[buffer.capacity()];
-            buffer.get(bytes);
-            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
-        }
-        Log.e(TAG, "ImageToBitmap: ImageFormat error");
-        return null;
-    }
-
-    /**
-     * 旋转图片
-     */
-    public static Bitmap rotateImageView(int angle, Bitmap bitmap) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        // 创建新的图片
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-    }
 
     /**
      * 绘制文字到右下角

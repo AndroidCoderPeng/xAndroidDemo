@@ -27,12 +27,12 @@ import androidx.core.content.ContextCompat;
 
 import com.example.mutidemo.databinding.ActivityFaceCollectBinding;
 import com.example.mutidemo.util.FileUtils;
-import com.example.mutidemo.util.ImageHelper;
-import com.example.mutidemo.util.WindowHelper;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.utils.ImageUtil;
 import com.pengxh.androidx.lite.utils.WeakReferenceHandler;
+import com.pengxh.androidx.lite.utils.WindowHelper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -159,7 +159,7 @@ public class FaceCollectionActivity extends AndroidxBaseActivity<ActivityFaceCol
                         executor.execute(() -> {
                             Image image = imageProxy.getImage();
                             if (image != null) {
-                                Bitmap bitmap = ImageHelper.ImageToBitmap(image, ImageFormat.YUV_420_888);
+                                Bitmap bitmap = ImageUtil.imageToBitmap(image, ImageFormat.YUV_420_888);
                                 /**
                                  * Android内置的人脸识别，需要将Bitmap对象转为RGB_565格式，否则无法识别
                                  * */

@@ -29,9 +29,7 @@ public class GridViewActivity extends AndroidxBaseActivity<ActivityGridviewBindi
 
     @Override
     public void initData() {
-        viewBinding.nineRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        editableImageAdapter = new EditableImageAdapter(this, 9);
-        editableImageAdapter.setImageMargins(10, 10, 1);
+        editableImageAdapter = new EditableImageAdapter(this, 9,1f);
         viewBinding.nineRecyclerView.setAdapter(editableImageAdapter);
         editableImageAdapter.setOnItemClickListener(new EditableImageAdapter.OnItemClickListener() {
             @Override

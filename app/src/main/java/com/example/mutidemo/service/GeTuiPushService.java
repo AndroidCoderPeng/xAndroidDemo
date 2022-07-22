@@ -1,5 +1,7 @@
 package com.example.mutidemo.service;
 
-public class GeTuiPushService extends com.igexin.sdk.PushService {
+import com.igexin.sdk.PushService;
+
+public class GeTuiPushService extends PushService {
 
 }

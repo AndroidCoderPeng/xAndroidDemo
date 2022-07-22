@@ -6,7 +6,23 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class StringHelper {
+    public static int separateResponseCode(String value) {
+        if (value.isEmpty()) {
+            return 404;
+        }
+        int code = 500;
+        try {
+            code = new JSONObject(value).getInt("code");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return code;
+    }
+
     /**
      * 获取汉语拼音首字母
      */
