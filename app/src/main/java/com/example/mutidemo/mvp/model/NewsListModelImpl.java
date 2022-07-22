@@ -37,38 +37,35 @@ public class NewsListModelImpl implements INewsListModel {
     @Override
     public Subscription sendRetrofitRequest(String channel, int start) {
         Observable<ResponseBody> observable = RetrofitServiceManager.obtainNewsList(channel, start);
-        return observable
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ResponseBody>() {
-                    @Override
-                    public void onError(Throwable e) {
-                        if (newsListener != null) {
-                            newsListener.onFailure(e);
-                        }
-                    }
+        return observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<ResponseBody>() {
+            @Override
+            public void onError(Throwable e) {
+                if (newsListener != null) {
+                    newsListener.onFailure(e);
+                }
+            }
 
-                    @Override
-                    public void onNext(ResponseBody responseBody) {
-                        try {
-                            String response = responseBody.string();
-                            int responseCode = StringHelper.separateResponseCode(response);
-                            if (responseCode == 10000) {
-                                NewsListBean dataRows = gson.fromJson(response, new TypeToken<NewsListBean>() {
-                                }.getType());
-                                newsListener.onSuccess(dataRows);
-                            } else {
-                                newsListener.onFailure(new Exception("responseCode = " + responseCode));
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+            @Override
+            public void onNext(ResponseBody responseBody) {
+                try {
+                    String response = responseBody.string();
+                    int responseCode = StringHelper.separateResponseCode(response);
+                    if (responseCode == 10000) {
+                        NewsListBean dataRows = gson.fromJson(response, new TypeToken<NewsListBean>() {
+                        }.getType());
+                        newsListener.onSuccess(dataRows);
+                    } else {
+                        newsListener.onFailure(new Exception("responseCode = " + responseCode));
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
-                    @Override
-                    public void onCompleted() {
-                        Log.d(TAG, "onCompleted ===============> 数据请求完毕");
-                    }
-                });
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "onCompleted ===============> 数据请求完毕");
+            }
+        });
     }
 }
