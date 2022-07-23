@@ -11,6 +11,7 @@ import com.baidu.ocr.sdk.model.BankCardParams;
 import com.baidu.ocr.sdk.model.BankCardResult;
 import com.example.mutidemo.databinding.ActivityOcrBinding;
 import com.example.mutidemo.util.CameraPreviewHelper;
+import com.example.mutidemo.util.callback.OnCaptureImageCallback;
 import com.google.gson.Gson;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
@@ -19,7 +20,7 @@ import java.io.File;
 /***
  * 数字识别
  * */
-public class OcrNumberActivity extends AndroidxBaseActivity<ActivityOcrBinding> implements CameraPreviewHelper.OnCaptureImageCallback {
+public class OcrNumberActivity extends AndroidxBaseActivity<ActivityOcrBinding> implements OnCaptureImageCallback {
 
     private static final String TAG = "OcrNumberActivity";
     private CameraPreviewHelper cameraPreviewHelper;

@@ -4,12 +4,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.mutidemo.databinding.ActivityMvpBinding;
-import com.example.mutidemo.mvvm.LoadState;
 import com.example.mutidemo.mvvm.WeatherAdapter;
 import com.example.mutidemo.mvvm.model.WeatherModel;
 import com.example.mutidemo.mvvm.vm.WeatherDataViewModel;
 import com.example.mutidemo.util.OtherUtils;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.vm.LoadState;
 
 public class MVVMActivity extends AndroidxBaseActivity<ActivityMvpBinding> {
 

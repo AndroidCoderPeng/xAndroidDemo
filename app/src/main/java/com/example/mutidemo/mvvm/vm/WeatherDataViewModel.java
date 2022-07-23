@@ -2,15 +2,15 @@ package com.example.mutidemo.mvvm.vm;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.mutidemo.mvvm.BaseViewModel;
-import com.example.mutidemo.mvvm.LoadState;
 import com.example.mutidemo.mvvm.model.WeatherModel;
-import com.example.mutidemo.util.ObserverSubscriber;
 import com.example.mutidemo.util.StringHelper;
-import com.example.mutidemo.util.callback.OnObserverCallback;
 import com.example.mutidemo.util.retrofit.RetrofitServiceManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.pengxh.androidx.lite.callback.OnObserverCallback;
+import com.pengxh.androidx.lite.vm.BaseViewModel;
+import com.pengxh.androidx.lite.vm.LoadState;
+import com.pengxh.androidx.lite.vm.ObserverSubscriber;
 
 import java.io.IOException;
 

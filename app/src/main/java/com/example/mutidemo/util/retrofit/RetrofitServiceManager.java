@@ -1,6 +1,7 @@
 package com.example.mutidemo.util.retrofit;
 
 import com.example.mutidemo.util.DemoConstant;
+import com.pengxh.androidx.lite.utils.RetrofitFactory;
 
 import okhttp3.ResponseBody;
 import rx.Observable;

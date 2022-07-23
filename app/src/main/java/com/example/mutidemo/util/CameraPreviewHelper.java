@@ -29,6 +29,7 @@ import android.view.TextureView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.example.mutidemo.util.callback.OnCaptureImageCallback;
 import com.pengxh.androidx.lite.widget.EasyToast;
 
 import java.io.File;
@@ -263,13 +264,6 @@ public class CameraPreviewHelper {
             image.close();
         }
     };
-
-    /**
-     * 回调拍照本地路径和Bitmap
-     */
-    public interface OnCaptureImageCallback {
-        void captureImage(String localPath, Bitmap bitmap);
-    }
 
     /**
      * 停止预览
