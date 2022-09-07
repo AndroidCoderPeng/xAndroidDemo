@@ -1,5 +1,10 @@
 <resources>
 
+    <style name="AppTheme" parent="QMUI.Compat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorAccent">@color/mainColor</item>
+    </style>
+
     <style name="PopupAnimation">
         <!-- 指定显示的动画xml -->
         <item name="android:windowEnterAnimation">@anim/popup_show</item>

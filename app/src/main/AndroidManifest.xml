@@ -38,7 +38,7 @@
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
-        android:theme="@style/QMUI.Compat.NoActionBar"
+        android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="q">
@@ -63,7 +63,7 @@
         <activity android:name=".ui.ProcessBarActivity" />
         <activity android:name=".ui.FacePreViewActivity" />
         <activity android:name=".ui.RecodeAudioActivity" />
-        <activity android:name=".ui.GPSActivity" />
+        <activity android:name=".ui.DragMapActivity" />
         <activity android:name=".ui.WaterMarkerActivity" />
         <activity android:name=".ui.GCJ02ToWGS84Activity" />
         <activity android:name=".ui.BluetoothActivity" />
@@ -122,7 +122,7 @@
 
         <provider
             android:name="cn.bmob.v3.util.BmobContentProvider"
-            android:authorities="com.example.mutidemo.BmobContentProvider"></provider>
+            android:authorities="com.example.mutidemo.BmobContentProvider"/>
 
         <!--高德定位-->
         <service android:name="com.amap.api.location.APSService" />

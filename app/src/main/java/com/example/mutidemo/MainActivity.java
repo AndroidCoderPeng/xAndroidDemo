@@ -22,7 +22,7 @@ import com.example.mutidemo.ui.CheckDeviceActivity;
 import com.example.mutidemo.ui.FaceCollectionActivity;
 import com.example.mutidemo.ui.FacePreViewActivity;
 import com.example.mutidemo.ui.GCJ02ToWGS84Activity;
-import com.example.mutidemo.ui.GPSActivity;
+import com.example.mutidemo.ui.DragMapActivity;
 import com.example.mutidemo.ui.GridViewActivity;
 import com.example.mutidemo.ui.MVPActivity;
 import com.example.mutidemo.ui.NavigationActivity;
@@ -63,7 +63,7 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
     private final Context mContext = MainActivity.this;
     private final List<String> mItemNameList = Arrays.asList("MVP架构", "MVVM架构", "顶/底部导航栏", "ZBar扫一扫",
             "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
-            "自定义进度条", "GPS位置信息", "人脸检测", "音频录制与播放", "图片添加水印并压缩",
+            "自定义进度条", "拖拽地图选点", "人脸检测", "音频录制与播放", "图片添加水印并压缩",
             "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "可删减九宫格", "系统原生分享",
             "空气污染刻度盘", "Bmob数据库", "人脸采集框", "公交卡自定义View");
 
@@ -142,7 +142,7 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
                         ContextUtil.navigatePageTo(mContext, ProcessBarActivity.class);
                         break;
                     case 10:
-                        ContextUtil.navigatePageTo(mContext, GPSActivity.class);
+                        ContextUtil.navigatePageTo(mContext, DragMapActivity.class);
                         break;
                     case 11:
                         ContextUtil.navigatePageTo(mContext, FacePreViewActivity.class);

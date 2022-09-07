@@ -19,7 +19,6 @@ import com.esri.arcgisruntime.symbology.PictureMarkerSymbol;
 import com.esri.arcgisruntime.util.ListenableList;
 import com.example.mutidemo.R;
 import com.example.mutidemo.databinding.ActivityGisBinding;
-import com.example.mutidemo.databinding.ActivityGpsBinding;
 import com.example.mutidemo.util.LocationHelper;
 import com.example.mutidemo.util.OtherUtils;
 import com.example.mutidemo.util.callback.IAddressListener;
