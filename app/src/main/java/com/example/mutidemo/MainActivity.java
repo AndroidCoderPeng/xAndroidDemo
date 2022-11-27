@@ -180,13 +180,13 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
 //                        ContextUtil.navigatePageTo(mContext, FaceCollectionActivity.class);
                         break;
                     case 21:
-                        byte[] sendBytes = "Message Come From Client".getBytes(StandardCharsets.UTF_8);
+                        byte[] sendBytes = new byte[]{(byte) 0xFF, 0x01, 0x00, (byte) 0x95, 0x00, 0x00, (byte) 0x96};
                         new Timer().schedule(new TimerTask() {
                             @Override
                             public void run() {
                                 SocketManager.getInstance().sendData(sendBytes);
                             }
-                        }, 0, 500);
+                        }, 0, 1000);
                         break;
                     default:
                         break;
