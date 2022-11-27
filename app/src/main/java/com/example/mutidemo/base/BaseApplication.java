@@ -5,11 +5,8 @@ import android.util.Log;
 
 import com.esri.arcgisruntime.ArcGISRuntimeEnvironment;
 import com.example.mutidemo.R;
-import com.example.mutidemo.util.DemoConstant;
 import com.example.mutidemo.util.FileUtils;
 import com.igexin.sdk.IUserLoggerInterface;
-
-import cn.bmob.v3.Bmob;
 
 public class BaseApplication extends Application {
 
@@ -29,7 +26,6 @@ public class BaseApplication extends Application {
                 Log.d(TAG, s);
             }
         });
-        Bmob.initialize(this, DemoConstant.BMOB_APP_KEY);
         FileUtils.initFileConfig(this);
     }
 

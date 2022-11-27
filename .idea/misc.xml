@@ -5,7 +5,10 @@
       <map>
         <entry key="../../../../../layout/custom_preview.xml" value="0.24537037037037038" />
         <entry key="../../../.gradle/caches/transforms-2/files-2.1/2f7ae4ed4357514485d8603a70a3f566/jetified-Androidx-lite-lib-1.0.6/res/layout/dialog_alert.xml" value="0.19537037037037036" />
+        <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_bmob.xml" value="0.33541666666666664" />
+        <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_bus_card.xml" value="0.33541666666666664" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_main.xml" value="0.32222222222222224" />
+        <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_tcp_client.xml" value="0.33541666666666664" />
         <entry key="app/src/main/res/drawable/anim.xml" value="0.21342592592592594" />
         <entry key="app/src/main/res/drawable/bg_audio_view.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable/bg_button.xml" value="0.32916666666666666" />

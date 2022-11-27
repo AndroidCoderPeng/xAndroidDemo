@@ -1,9 +1,9 @@
-package com.example.mutidemo.ui.fragment;
+package com.example.mutidemo.fragment;
 
-import com.example.mutidemo.databinding.FragmentReadBinding;
+import com.example.mutidemo.databinding.FragmentThirdBinding;
 import com.pengxh.androidx.lite.base.AndroidxBaseFragment;
 
-public class ReadFragment extends AndroidxBaseFragment<FragmentReadBinding> {
+public class ThirdFragment extends AndroidxBaseFragment<FragmentThirdBinding> {
 
     @Override
     protected void setupTopBarLayout() {

@@ -70,12 +70,10 @@
         <activity android:name=".ui.GridViewActivity" />
         <activity android:name=".ui.OriginalShareActivity" />
         <activity android:name=".ui.AirDashBoardActivity" />
-        <activity android:name=".ui.BmobActivity" />
         <activity
             android:name=".ui.FaceCollectionActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".ui.BusCardActivity" />
         <activity
             android:name=".ui.VideoCompressActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -119,10 +117,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <provider
-            android:name="cn.bmob.v3.util.BmobContentProvider"
-            android:authorities="com.example.mutidemo.BmobContentProvider"/>
 
         <!--高德定位-->
         <service android:name="com.amap.api.location.APSService" />

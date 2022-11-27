@@ -16,13 +16,10 @@ import com.example.mutidemo.databinding.ActivityMainBinding;
 import com.example.mutidemo.mvvm.view.MVVMActivity;
 import com.example.mutidemo.ui.AirDashBoardActivity;
 import com.example.mutidemo.ui.BluetoothActivity;
-import com.example.mutidemo.ui.BmobActivity;
-import com.example.mutidemo.ui.BusCardActivity;
 import com.example.mutidemo.ui.CheckDeviceActivity;
-import com.example.mutidemo.ui.FaceCollectionActivity;
+import com.example.mutidemo.ui.DragMapActivity;
 import com.example.mutidemo.ui.FacePreViewActivity;
 import com.example.mutidemo.ui.GCJ02ToWGS84Activity;
-import com.example.mutidemo.ui.DragMapActivity;
 import com.example.mutidemo.ui.GridViewActivity;
 import com.example.mutidemo.ui.MVPActivity;
 import com.example.mutidemo.ui.NavigationActivity;
@@ -36,6 +33,7 @@ import com.example.mutidemo.ui.VideoCompressActivity;
 import com.example.mutidemo.ui.WaterMarkerActivity;
 import com.example.mutidemo.ui.WaterRippleActivity;
 import com.example.mutidemo.util.DemoConstant;
+import com.example.mutidemo.util.netty.SocketManager;
 import com.igexin.sdk.PushManager;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 import com.pengxh.androidx.lite.utils.ColorUtil;
@@ -45,9 +43,12 @@ import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cn.bertsir.zbar.Qr.ScanResult;
 import cn.bertsir.zbar.QrConfig;
@@ -65,7 +66,7 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
             "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
             "自定义进度条", "拖拽地图选点", "人脸检测", "音频录制与播放", "图片添加水印并压缩",
             "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "可删减九宫格", "系统原生分享",
-            "空气污染刻度盘", "Bmob数据库", "人脸采集框", "公交卡自定义View");
+            "空气污染刻度盘", "人脸采集框", "TCP客户端");
 
     @Override
     protected void setupTopBarLayout() {
@@ -86,6 +87,9 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
                         .into(holder.imageView);
             }
         }).addBannerLifecycleObserver(this).setIndicator(new CircleIndicator(this));
+
+        //初始化Netty
+        SocketManager.getInstance().connectNetty(DemoConstant.HOST, DemoConstant.TCP_PORT);
     }
 
     private List<BannerImageModel.DataBean> getData() {
@@ -172,13 +176,17 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
                         ContextUtil.navigatePageTo(mContext, AirDashBoardActivity.class);
                         break;
                     case 20:
-                        ContextUtil.navigatePageTo(mContext, BmobActivity.class);
+                        EasyToast.show(mContext, "FaceCollectionActivity待完善");
+//                        ContextUtil.navigatePageTo(mContext, FaceCollectionActivity.class);
                         break;
                     case 21:
-                        ContextUtil.navigatePageTo(mContext, FaceCollectionActivity.class);
-                        break;
-                    case 22:
-                        ContextUtil.navigatePageTo(mContext, BusCardActivity.class);
+                        byte[] sendBytes = "Message Come From Client".getBytes(StandardCharsets.UTF_8);
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                SocketManager.getInstance().sendData(sendBytes);
+                            }
+                        }, 0, 500);
                         break;
                     default:
                         break;

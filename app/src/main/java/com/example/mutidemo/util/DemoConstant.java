@@ -6,7 +6,6 @@ import java.util.List;
 public class DemoConstant {
     public static final String BASE_URL = "https://way.jd.com";
     public static final String APP_KEY = "e957ed7ad90436a57e604127d9d8fa32";
-    public static final String BMOB_APP_KEY = "8412e96df0cc08f343f42506d4d5030d";
 
     public static final byte[] ASK_DEV_CODE_COMMAND = new byte[]{0x01, 0x0D, 0x0A};// 查询设备编号命令
     public static final byte[] OPEN_TRANSFER_COMMAND = new byte[]{0x02, 0x0D, 0x0A}; // 开启数据发送命令
@@ -20,4 +19,6 @@ public class DemoConstant {
             "https://images.pexels.com/photos/296115/pexels-photo-296115.jpeg",
             "https://images.pexels.com/photos/4158/apple-iphone-smartphone-desk.jpg"
     );
+    public static final String HOST = "192.168.31.14";
+    public static final int TCP_PORT = 8000;
 }

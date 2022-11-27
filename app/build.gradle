@@ -7,7 +7,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 31
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
         ndk { abiFilters "armeabi", "armeabi-v7a", "x86_64", "x86" }
         manifestPlaceholders = [GETUI_APPID: "K8sjmN53eg7c3nK2xd5SX9"]
         multiDexEnabled true
@@ -87,10 +87,8 @@ dependencies {
     implementation 'com.amap.api:location:5.3.1'
     implementation 'com.amap.api:search:8.1.0'
     implementation 'com.amap.api:navi-3dmap:8.1.0_3dmap8.1.0'
-    //Bmob云数据库
-    implementation 'io.github.bmob:android-sdk:3.8.13'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    //TCP
+    implementation 'io.netty:netty-all:4.1.23.Final'
     //CameraX
     def CameraX_version = '1.1.0'
     implementation "androidx.camera:camera-core:${CameraX_version}"

@@ -3,15 +3,14 @@ package com.example.mutidemo.ui;
 import android.view.MenuItem;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.mutidemo.R;
+import com.example.mutidemo.adapter.ViewPagerAdapter;
 import com.example.mutidemo.databinding.ActivityNavigatBinding;
-import com.example.mutidemo.ui.fragment.FirstFragment;
-import com.example.mutidemo.ui.fragment.SecondFragment;
-import com.example.mutidemo.ui.fragment.ThirdFragment;
+import com.example.mutidemo.fragment.FirstFragment;
+import com.example.mutidemo.fragment.SecondFragment;
+import com.example.mutidemo.fragment.ThirdFragment;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 
 import java.util.ArrayList;
@@ -77,25 +76,5 @@ public class NavigationActivity extends AndroidxBaseActivity<ActivityNavigatBind
         });
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), fragmentList);
         viewBinding.mainViewPager.setAdapter(adapter);
-    }
-
-    static class ViewPagerAdapter extends FragmentPagerAdapter {
-
-        private final List<Fragment> mFragments;
-
-        ViewPagerAdapter(FragmentManager fm, List<Fragment> fragments) {
-            super(fm);
-            this.mFragments = fragments;
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            return mFragments.get(i);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragments.size();
-        }
     }
 }

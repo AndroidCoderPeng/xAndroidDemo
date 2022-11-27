@@ -1,4 +1,4 @@
-package com.example.mutidemo.ui.fragment;
+package com.example.mutidemo.fragment;
 
 import android.view.ViewGroup;
 
