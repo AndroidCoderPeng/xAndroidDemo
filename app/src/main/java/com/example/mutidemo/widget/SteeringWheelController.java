@@ -16,9 +16,9 @@ import androidx.annotation.Nullable;
 import com.example.mutidemo.R;
 import com.pengxh.androidx.lite.utils.DeviceSizeUtil;
 
-public class SteeringWheelView extends View implements View.OnTouchListener {
+public class SteeringWheelController extends View implements View.OnTouchListener {
 
-    private static final String TAG = "SteeringWheelView";
+    private static final String TAG = "SteeringWheelController";
     private float canvasCenterX;//画布中心x
     private float canvasCenterY;//画布中心y
     private final int borderColor;
@@ -60,22 +60,22 @@ public class SteeringWheelView extends View implements View.OnTouchListener {
     private boolean bottomTurn;
     private boolean centerTurn;
 
-    public SteeringWheelView(Context context) {
+    public SteeringWheelController(Context context) {
         this(context, null, 0);
     }
 
-    public SteeringWheelView(Context context, @Nullable AttributeSet attrs) {
+    public SteeringWheelController(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public SteeringWheelView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public SteeringWheelController(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        TypedArray type = context.obtainStyledAttributes(attrs, R.styleable.SteeringWheelView, defStyleAttr, 0);
-        int viewBackground = type.getColor(R.styleable.SteeringWheelView_casic_backgroundColor, Color.BLACK);
-        borderColor = type.getColor(R.styleable.SteeringWheelView_casic_borderColor, Color.RED);
-        int temp = type.getInt(R.styleable.SteeringWheelView_casic_outerCircleDiameter, 120);
+        TypedArray type = context.obtainStyledAttributes(attrs, R.styleable.SteeringWheelController, defStyleAttr, 0);
+        int viewBackground = type.getColor(R.styleable.SteeringWheelController_casic_backgroundColor, Color.BLACK);
+        borderColor = type.getColor(R.styleable.SteeringWheelController_casic_borderColor, Color.RED);
+        int temp = type.getInt(R.styleable.SteeringWheelController_casic_outerCircleDiameter, 120);
         outerCircleDiameter = DeviceSizeUtil.dp2px(context, temp);
-        borderStroke = type.getInt(R.styleable.SteeringWheelView_casic_borderStroke, 6);
+        borderStroke = type.getInt(R.styleable.SteeringWheelController_casic_borderStroke, 6);
         type.recycle();
 
         backgroundPaint = new Paint();
@@ -307,6 +307,8 @@ public class SteeringWheelView extends View implements View.OnTouchListener {
             innerCirclePaint.setColor(borderColor);
             centerSwitchPaint.setColor(Color.WHITE);
         }
+
+        invalidate();
     }
 
     private OnWheelTouchListener listener;
@@ -315,36 +317,40 @@ public class SteeringWheelView extends View implements View.OnTouchListener {
         /**
          * 左
          */
-        void leftTurn();
+        void onLeftTurn();
 
         /**
          * 上
          */
-        void topTurn();
+        void onTopTurn();
 
         /**
          * 右
          */
-        void rightTurn();
+        void onRightTurn();
 
         /**
          * 下
          */
-        void bottomTurn();
+        void onBottomTurn();
 
         /**
          * 中间
          */
-        void centerTurn();
+        void onCenterTurn();
 
         /**
-         * 松开方向
+         * 松开
          */
-        void onActionUp(String direction);
+        void onActionTurnUp(Direction dir);
     }
 
     public void setOnWheelTouchListener(OnWheelTouchListener listener) {
         this.listener = listener;
+    }
+
+    public enum Direction {
+        LEFT, TOP, RIGHT, BOTTOM, CENTER
     }
 
     @Override
@@ -374,37 +380,41 @@ public class SteeringWheelView extends View implements View.OnTouchListener {
                 if (mj > (float) outerCircleDiameter / 15 + 20) {
                     if (mk < -45 && mk > -180 + 45) {
                         topTurn = true;
-                        listener.topTurn();
+                        listener.onTopTurn();
                     } else if (mk > -45 && mk < 45) {
                         rightTurn = true;
-                        listener.rightTurn();
+                        listener.onRightTurn();
                     } else if (mk > 45 && mk < 180 - 45) {
                         bottomTurn = true;
-                        listener.bottomTurn();
+                        listener.onBottomTurn();
                     } else {
                         leftTurn = true;
-                        listener.leftTurn();
+                        listener.onLeftTurn();
                     }
                 } else {
                     centerTurn = true;
-                    listener.centerTurn();
+                    listener.onCenterTurn();
                 }
                 // 重绘
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
                 if (leftTurn) {
-                    listener.onActionUp("left");
+                    leftTurn = false;
+                    listener.onActionTurnUp(Direction.LEFT);
                 } else if (topTurn) {
-                    listener.onActionUp("top");
+                    topTurn = false;
+                    listener.onActionTurnUp(Direction.TOP);
                 } else if (rightTurn) {
-                    listener.onActionUp("right");
+                    rightTurn = false;
+                    listener.onActionTurnUp(Direction.RIGHT);
                 } else if (bottomTurn) {
-                    listener.onActionUp("bottom");
+                    bottomTurn = false;
+                    listener.onActionTurnUp(Direction.BOTTOM);
                 } else {
-                    listener.onActionUp("center");
+                    centerTurn = false;
+                    listener.onActionTurnUp(Direction.CENTER);
                 }
-                setDefaultValue();
                 invalidate();
                 break;
         }

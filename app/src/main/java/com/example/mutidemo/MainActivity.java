@@ -29,7 +29,7 @@ import com.example.mutidemo.ui.ProcessBarActivity;
 import com.example.mutidemo.ui.RecodeAudioActivity;
 import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
 import com.example.mutidemo.ui.SlideBarActivity;
-import com.example.mutidemo.ui.SteeringWheelViewActivity;
+import com.example.mutidemo.ui.SteeringWheelActivity;
 import com.example.mutidemo.ui.VideoCompressActivity;
 import com.example.mutidemo.ui.WaterMarkerActivity;
 import com.example.mutidemo.ui.WaterRippleActivity;
@@ -189,7 +189,7 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
                         }, 0, 1000);
                         break;
                     case 22:
-                        ContextUtil.navigatePageTo(mContext, SteeringWheelViewActivity.class);
+                        ContextUtil.navigatePageTo(mContext, SteeringWheelActivity.class);
                         break;
                     default:
                         break;

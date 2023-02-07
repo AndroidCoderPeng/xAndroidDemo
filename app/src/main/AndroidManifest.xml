@@ -70,7 +70,7 @@
         <activity android:name=".ui.GridViewActivity" />
         <activity android:name=".ui.OriginalShareActivity" />
         <activity android:name=".ui.AirDashBoardActivity" />
-        <activity android:name=".ui.SteeringWheelViewActivity" />
+        <activity android:name=".ui.SteeringWheelActivity" />
         <activity
             android:name=".ui.FaceCollectionActivity"
             android:screenOrientation="portrait"

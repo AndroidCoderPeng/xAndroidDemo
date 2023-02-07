@@ -72,7 +72,7 @@
         <attr name="card_radius" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="SteeringWheelView">
+    <declare-styleable name="SteeringWheelController">
         <attr name="casic_backgroundColor" format="color" />
         <attr name="casic_borderColor" format="color" />
         <attr name="casic_outerCircleDiameter" format="integer" />
