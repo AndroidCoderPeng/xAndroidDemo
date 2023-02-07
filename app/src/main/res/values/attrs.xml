@@ -71,4 +71,11 @@
         <attr name="card_tag_padding" format="dimension" />
         <attr name="card_radius" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="SteeringWheelView">
+        <attr name="casic_backgroundColor" format="color" />
+        <attr name="casic_borderColor" format="color" />
+        <attr name="casic_outerCircleDiameter" format="integer" />
+        <attr name="casic_borderStroke" format="integer" />
+    </declare-styleable>
 </resources>

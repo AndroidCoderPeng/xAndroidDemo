@@ -160,19 +160,23 @@ public class SocketClient {
 
     public void sendData(byte[] bytes) {
         if (bytes != null && bytes.length > 0) {
-            channel.writeAndFlush(bytes).addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    if (future.isSuccess()) {
-                        Log.d(TAG, "onClick ===> 发送成功");
-                    } else {
-                        // 关闭连接，节约资源
-                        Log.d(TAG, "onClick ===> 关闭连接，节约资源");
-                        future.channel().close();
-                        nioEventLoopGroup.shutdownGracefully();
+            try {
+                channel.writeAndFlush(bytes).addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture future) throws Exception {
+                        if (future.isSuccess()) {
+                            Log.d(TAG, "onClick ===> 发送成功");
+                        } else {
+                            // 关闭连接，节约资源
+                            Log.d(TAG, "onClick ===> 关闭连接，节约资源");
+                            future.channel().close();
+                            nioEventLoopGroup.shutdownGracefully();
+                        }
                     }
-                }
-            });
+                });
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

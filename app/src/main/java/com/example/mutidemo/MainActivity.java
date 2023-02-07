@@ -29,6 +29,7 @@ import com.example.mutidemo.ui.ProcessBarActivity;
 import com.example.mutidemo.ui.RecodeAudioActivity;
 import com.example.mutidemo.ui.RefreshAndLoadMoreActivity;
 import com.example.mutidemo.ui.SlideBarActivity;
+import com.example.mutidemo.ui.SteeringWheelViewActivity;
 import com.example.mutidemo.ui.VideoCompressActivity;
 import com.example.mutidemo.ui.WaterMarkerActivity;
 import com.example.mutidemo.ui.WaterRippleActivity;
@@ -43,7 +44,6 @@ import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,7 +66,7 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
             "上拉加载下拉刷新", "水波纹扩散动画", "设备自检动画", "联系人侧边滑动控件", "OCR识别银行卡",
             "自定义进度条", "拖拽地图选点", "人脸检测", "音频录制与播放", "图片添加水印并压缩",
             "视频压缩", "WCJ02ToWGS84", "蓝牙相关", "可删减九宫格", "系统原生分享",
-            "空气污染刻度盘", "人脸采集框", "TCP客户端");
+            "空气污染刻度盘", "人脸采集框", "TCP客户端", "方向控制盘");
 
     @Override
     protected void setupTopBarLayout() {
@@ -187,6 +187,9 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
                                 SocketManager.getInstance().sendData(sendBytes);
                             }
                         }, 0, 1000);
+                        break;
+                    case 22:
+                        ContextUtil.navigatePageTo(mContext, SteeringWheelViewActivity.class);
                         break;
                     default:
                         break;
