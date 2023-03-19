@@ -13,69 +13,8 @@
         <attr name="progress_text" format="string" />
     </declare-styleable>
 
-
-    <declare-styleable name="WaterRippleView">
-        <!--中心圆颜色-->
-        <attr name="ripple_centerColor" format="color" />
-        <!--扩散圆颜色-->
-        <attr name="ripple_spreadColor" format="color" />
-        <!--扩散延迟间隔-->
-        <attr name="ripple_animDuration" format="integer" />
-        <!--中心圆半径-->
-        <attr name="ripple_radius" format="dimension" />
-        <!--扩散间距，值越大，扩散速度越快-->
-        <attr name="ripple_distance" format="dimension" />
-        <!--扩散最大半径，值越小，扩散效果越明显-->
-        <attr name="ripple_maxDistance" format="dimension" />
-        <!--文字大小-->
-        <attr name="ripple_textSize" format="dimension" />
-        <!--文字-->
-        <attr name="ripple_text" format="string" />
-        <!--文字颜色-->
-        <attr name="ripple_textColor" format="color" />
-        <!--图片资源-->
-        <attr name="ripple_image" format="reference" />
-    </declare-styleable>
-
-    <declare-styleable name="CheckView">
-        <!--中心圆颜色-->
-        <attr name="view_centerColor" format="color" />
-        <!--中心圆颜色-->
-        <attr name="view_ringColor" format="color" />
-        <!--中心圆半径-->
-        <attr name="view_radius" format="dimension" />
-        <!--文字大小-->
-        <attr name="view_textSize" format="dimension" />
-        <!--文字-->
-        <attr name="view_text" format="string" />
-        <!--文字颜色-->
-        <attr name="view_textColor" format="color" />
-    </declare-styleable>
-
-    <declare-styleable name="RadarView">
-        <!--雷达线颜色-->
-        <attr name="radar_lineColor" format="color" />
-        <!--中心圆半径-->
-        <attr name="radar_radius" format="dimension" />
-        <!--圆环间距-->
-        <attr name="radar_distance" format="dimension" />
-    </declare-styleable>
-
     <declare-styleable name="SlideBarView">
         <attr name="slide_textSize" format="dimension" />
         <attr name="slide_textColor" format="color" />
-    </declare-styleable>
-
-    <declare-styleable name="BusCardView">
-        <attr name="card_tag_background" format="color" />
-        <attr name="card_tag_padding" format="dimension" />
-        <attr name="card_radius" format="dimension" />
-    </declare-styleable>
-
-    <declare-styleable name="SteeringWheelController">
-        <attr name="casic_backgroundColor" format="color" />
-        <attr name="casic_borderColor" format="color" />
-        <attr name="casic_outerCircleDiameter" format="integer" />
-        <attr name="casic_borderStroke" format="integer" />
     </declare-styleable>
 </resources>

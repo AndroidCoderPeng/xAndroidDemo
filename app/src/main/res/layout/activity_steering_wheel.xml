@@ -5,14 +5,14 @@
     android:layout_height="match_parent"
     android:background="#292A49">
 
-    <com.example.mutidemo.widget.SteeringWheelController
+    <com.pengxh.kt.lite.widget.SteeringWheelController
         android:id="@+id/steeringWheelView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:padding="@dimen/lib_dp_3"
-        app:casic_backgroundColor="#1F1F37"
-        app:casic_borderColor="#776CA6"
-        app:casic_borderStroke="6"
-        app:casic_outerCircleDiameter="180" />
+        app:controller_backgroundColor="#1F1F37"
+        app:controller_borderColor="#776CA6"
+        app:controller_borderStroke="6"
+        app:controller_outerCircleDiameter="180" />
 </RelativeLayout>

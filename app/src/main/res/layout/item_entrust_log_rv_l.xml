@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp_80"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="@dimen/dp_50"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/topLineView"
+            android:layout_width="@dimen/borderThickness"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/gray" />
+
+        <ImageView
+            android:id="@+id/tagImageView"
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:background="@drawable/ic_dot" />
+
+        <View
+            android:id="@+id/bottomLineView"
+            android:layout_width="@dimen/borderThickness"
+            android:layout_height="0dp"
+            android:layout_weight="6"
+            android:background="@color/gray" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/statusView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-black"
+                android:text="已接收"
+                android:textColor="@color/gray"
+                android:textSize="@dimen/sp_16" />
+
+            <View
+                android:id="@+id/dotView"
+                android:layout_width="@dimen/dp_3"
+                android:layout_height="@dimen/dp_3"
+                android:layout_margin="@dimen/dp_10"
+                android:background="@color/gray" />
+
+            <TextView
+                android:id="@+id/operatorNameView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="胡淑琦"
+                android:textColor="@color/gray"
+                android:textSize="@dimen/sp_12" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/remarkView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/dp_5"
+            android:text="信息有误"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/sp_12" />
+
+        <TextView
+            android:id="@+id/operateTimeView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2023-03-01 18:00:00"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/sp_12" />
+    </LinearLayout>
+</LinearLayout>

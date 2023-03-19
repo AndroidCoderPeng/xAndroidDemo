@@ -1,202 +1,174 @@
-package com.example.mutidemo.widget;
+package com.example.mutidemo.widget
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Typeface;
-import android.text.TextPaint;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.*
+import android.text.TextPaint
+import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.View
+import com.example.mutidemo.R
+import com.example.mutidemo.util.StringHelper
+import com.pengxh.kt.lite.extensions.dp2px
+import com.pengxh.kt.lite.extensions.sp2px
+import kotlin.math.abs
 
-import androidx.annotation.Nullable;
+class SlideBarView constructor(
+    private val ctx: Context, attrs: AttributeSet
+) : View(ctx, attrs), View.OnTouchListener {
 
-import com.example.mutidemo.R;
-import com.example.mutidemo.util.StringHelper;
-import com.pengxh.androidx.lite.utils.DeviceSizeUtil;
+    private var data: List<String> = ArrayList()
+    private val textSize: Int
+    private val textColor: Int
+    private val viewWidth = 25
+    private val letterArray = arrayOf(
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
+    )
+    private var centerX = 0f
+    private var radius = 0f
+    private var mHeight = 0
+    private var touchIndex = -1
+    private var letterHeight = 0
+    private var showBackground = false
+    private lateinit var textPaint: TextPaint
+    private lateinit var backgroundPaint: Paint
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class SlideBarView extends View implements View.OnTouchListener {
-
-    private static final int viewWidth = 25;
-    private List<String> data = new ArrayList<>();
-    private static final String[] letterArray = new String[]{
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
-    private final Context mContext;
-    private final int textSize;
-    private final int textColor;
-    private float centerX;//中心x
-    private float radius = 0f;//圆角半径
-    private int mHeight;//控件的实际尺寸
-    private int touchIndex = -1;
-    private int letterHeight;
-    private boolean showBackground = false;
-    private TextPaint textPaint;//文字画笔
-    private Paint backgroundPaint;
-
-    public SlideBarView(Context context) {
-        this(context, null, 0);
-    }
-
-    public SlideBarView(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public SlideBarView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        this.mContext = context;
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SlideBarView, defStyleAttr, 0);
-
-        textSize = a.getDimensionPixelOffset(R.styleable.SlideBarView_slide_textSize
-                , DeviceSizeUtil.sp2px(context, 18));
-        textColor = a.getColor(R.styleable.SlideBarView_slide_textColor, Color.LTGRAY);
-        a.recycle();
+    init {
+        val a = ctx.obtainStyledAttributes(attrs, R.styleable.SlideBarView)
+        textSize = a.getDimensionPixelOffset(
+            R.styleable.SlideBarView_slide_textSize, 18f.sp2px(ctx)
+        )
+        textColor = a.getColor(R.styleable.SlideBarView_slide_textColor, Color.LTGRAY)
+        a.recycle()
 
         //初始化画笔
-        initPaint();
+        initPaint()
         //触摸事件
-        setOnTouchListener(this);
+        setOnTouchListener(this)
     }
 
-    public void setData(List<String> cities) {
-        this.data = cities;
+    fun setData(cities: List<String>) {
+        data = cities
     }
 
-    private void initPaint() {
+    private fun initPaint() {
         //背景色画笔
-        backgroundPaint = new Paint();
-        backgroundPaint.setColor(Color.parseColor("#3F3F3F"));
-        backgroundPaint.setAntiAlias(true);
+        backgroundPaint = Paint()
+        backgroundPaint.color = Color.parseColor("#3F3F3F")
+        backgroundPaint.isAntiAlias = true
 
         //文字画笔
-        textPaint = new TextPaint();
-        textPaint.setAntiAlias(true);
-        textPaint.setTextSize(textSize);
-        textPaint.setColor(textColor);
+        textPaint = TextPaint()
+        textPaint.isAntiAlias = true
+        textPaint.textSize = textSize.toFloat()
+        textPaint.color = textColor
     }
 
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        centerX = w >> 1;
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        centerX = (w shr 1).toFloat()
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
-        int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val heightSpecMode = MeasureSpec.getMode(heightMeasureSpec)
+        val heightSpecSize = MeasureSpec.getSize(heightMeasureSpec)
         // 获取宽
-        int mWidth = DeviceSizeUtil.dp2px(mContext, viewWidth);
+        val mWidth: Int = viewWidth.toFloat().dp2px(ctx)
         // 获取高
         if (heightSpecMode == MeasureSpec.EXACTLY) {
             // match_parent/精确值
-            mHeight = heightSpecSize;
+            mHeight = heightSpecSize
         }
-        this.radius = mWidth >> 1;
+        radius = (mWidth shr 1).toFloat()
         // 设置该view的宽高
-        setMeasuredDimension(mWidth, mHeight);
+        setMeasuredDimension(mWidth, mHeight)
     }
 
     @SuppressLint("DrawAllocation")
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        letterHeight = mHeight / letterArray.length;
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        letterHeight = mHeight / letterArray.size
         if (showBackground) {
             //绘制进度条背景，圆角矩形
-            RectF bgRectF = new RectF();
-            bgRectF.left = (centerX - radius) * 2;
-            bgRectF.top = 0f;
-            bgRectF.right = centerX * 2;
-            bgRectF.bottom = mHeight;
-            canvas.drawRoundRect(bgRectF, radius, radius, backgroundPaint);
+            val bgRectF = RectF()
+            bgRectF.left = (centerX - radius) * 2
+            bgRectF.top = 0f
+            bgRectF.right = centerX * 2
+            bgRectF.bottom = mHeight.toFloat()
+            canvas.drawRoundRect(bgRectF, radius, radius, backgroundPaint)
         }
-        for (int i = 0; i < letterArray.length; i++) {
-            int y = (i + 1) * letterHeight;//每个字母的占位高度(不是字体高度)
+        for (i in letterArray.indices) {
+            val y = (i + 1) * letterHeight //每个字母的占位高度(不是字体高度)
 
             //字母变色
             if (touchIndex == i) {
                 //让当前字母变色
-                textPaint.setColor(Color.parseColor("#00CB87"));
-                textPaint.setTypeface(Typeface.DEFAULT_BOLD);
+                textPaint.color = Color.parseColor("#00CB87")
+                textPaint.typeface = Typeface.DEFAULT_BOLD
             } else {
                 //其他字母不变色
-                textPaint.setColor(textColor);
-                textPaint.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+                textPaint.color = textColor
+                textPaint.typeface = Typeface.defaultFromStyle(Typeface.NORMAL)
             }
 
             //绘制文字
-            String letter = letterArray[i];
-            Rect textRect = new Rect();
-            textPaint.getTextBounds(letter, 0, letter.length(), textRect);
-            int textWidth = textRect.width();
-            int textHeight = textRect.height();
+            val letter = letterArray[i]
+            val textRect = Rect()
+            textPaint.getTextBounds(letter, 0, letter.length, textRect)
+            val textWidth = textRect.width()
+            val textHeight = textRect.height()
             //计算文字左下角坐标
-            float textX = centerX - (textWidth >> 1);
-            float textY = y - (textHeight >> 1);
-            canvas.drawText(letter, textX, textY, textPaint);
+            val textX = centerX - (textWidth shr 1)
+            val textY = (y - (textHeight shr 1)).toFloat()
+            canvas.drawText(letter, textX, textY, textPaint)
         }
     }
 
     //侧边栏滑动事件
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        int action = event.getAction();
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_MOVE:
-                float y = Math.abs(event.getY());//取绝对值，不然y可能会取到负值
-                int index = (int) (y / letterHeight);//字母的索引
+    override fun onTouch(v: View, event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                val y: Float = abs(event.y) //取绝对值，不然y可能会取到负值
+                val index = (y / letterHeight).toInt() //字母的索引
                 if (index != touchIndex) {
-                    touchIndex = Math.min(index, letterArray.length - 1);
+                    touchIndex = index.coerceAtMost(letterArray.size - 1)
                     //点击设置中间字母
-                    if (onIndexChangeListener != null) {
-                        onIndexChangeListener.OnIndexChange(letterArray[touchIndex]);
-                    }
-                    invalidate();
+                    onIndexChangeListener?.onIndexChange(letterArray[touchIndex])
+                    invalidate()
                 }
-                showBackground = true;
-                break;
-            case MotionEvent.ACTION_UP:
-                showBackground = false;
-                touchIndex = -1;
-                invalidate();
-                break;
-            default:
-                break;
-        }
-        return true;
-    }
-
-    private OnIndexChangeListener onIndexChangeListener;
-
-    public void setOnIndexChangeListener(OnIndexChangeListener listener) {
-        onIndexChangeListener = listener;
-    }
-
-    public interface OnIndexChangeListener {
-        void OnIndexChange(String letter);
-    }
-
-    public int obtainFirstLetterIndex(String letter) {
-        int index = -1;
-        for (int i = 0; i < data.size(); i++) {
-            String firstLetter = StringHelper.obtainHanYuPinyin(data.get(i));
-            if (letter.equals(firstLetter)) {
-                index = i;
-                //当有相同的首字母之后就跳出循环
-                break;
+                showBackground = true
+            }
+            MotionEvent.ACTION_UP -> {
+                showBackground = false
+                touchIndex = -1
+                invalidate()
             }
         }
-        return index;
+        return true
+    }
+
+    private var onIndexChangeListener: OnIndexChangeListener? = null
+
+    fun setOnIndexChangeListener(listener: OnIndexChangeListener?) {
+        onIndexChangeListener = listener
+    }
+
+    interface OnIndexChangeListener {
+        fun onIndexChange(letter: String)
+    }
+
+    fun obtainFirstLetterIndex(letter: String): Int {
+        var index = -1
+        for (i in data.indices) {
+            val firstLetter = StringHelper.obtainHanYuPinyin(data[i])
+            if (letter == firstLetter) {
+                index = i
+                //当有相同的首字母之后就跳出循环
+                break
+            }
+        }
+        return index
     }
 }

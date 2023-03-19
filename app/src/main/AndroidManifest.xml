@@ -7,17 +7,18 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <!--危险权限，需要手动申请-->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!--允许读取手机状态 用于创建BmobInstallation-->
+    <!--允许读取手机状态-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <uses-feature android:name="android.hardware.camera" />
@@ -34,6 +35,7 @@
     <application
         android:name=".base.BaseApplication"
         android:allowBackup="true"
+        android:allowNativeHeapPointerTagging="false"
         android:icon="@mipmap/launcher_logo"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
@@ -42,7 +44,9 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="q">
-        <activity android:name=".base.WelcomeActivity">
+        <activity
+            android:name=".base.WelcomeActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,37 +55,35 @@
         </activity>
 
         <activity android:name=".MainActivity" />
-        <activity android:name=".ui.MVPActivity" />
-        <activity android:name=".mvvm.view.MVVMActivity" />
-        <activity android:name=".ui.NavigationActivity" />
-        <activity android:name=".ui.RefreshAndLoadMoreActivity" />
-        <activity android:name=".ui.NewsDetailsActivity" />
-        <activity android:name=".ui.WaterRippleActivity" />
-        <activity android:name=".ui.CheckDeviceActivity" />
-        <activity android:name=".ui.SlideBarActivity" />
-        <activity android:name=".ui.OcrNumberActivity" />
-        <activity android:name=".ui.ProcessBarActivity" />
-        <activity android:name=".ui.FacePreViewActivity" />
-        <activity android:name=".ui.RecodeAudioActivity" />
-        <activity android:name=".ui.DragMapActivity" />
-        <activity android:name=".ui.WaterMarkerActivity" />
-        <activity android:name=".ui.GCJ02ToWGS84Activity" />
-        <activity android:name=".ui.BluetoothActivity" />
-        <activity android:name=".ui.GridViewActivity" />
-        <activity android:name=".ui.OriginalShareActivity" />
-        <activity android:name=".ui.AirDashBoardActivity" />
-        <activity android:name=".ui.SteeringWheelActivity" />
+        <activity android:name=".view.MvvmActivity" />
+        <activity android:name=".view.NavigationActivity" />
+        <activity android:name=".view.RefreshAndLoadMoreActivity" />
+        <activity android:name=".view.NewsDetailsActivity" />
+        <activity android:name=".view.SlideBarActivity" />
+        <activity android:name=".view.OcrNumberActivity" />
+        <activity android:name=".view.ProcessBarActivity" />
+        <activity android:name=".view.FacePreViewActivity" />
+        <activity android:name=".view.RecodeAudioActivity" />
+        <activity android:name=".view.DragMapActivity" />
+        <activity android:name=".view.WaterMarkerActivity" />
+        <activity android:name=".view.GCJ02ToWGS84Activity" />
+        <activity android:name=".view.BluetoothActivity" />
+        <activity android:name=".view.GridViewActivity" />
+        <activity android:name=".view.OriginalShareActivity" />
+        <activity android:name=".view.AirDashBoardActivity" />
+        <activity android:name=".view.SteeringWheelActivity" />
+        <activity android:name=".view.TimeLineActivity" />
         <activity
-            android:name=".ui.FaceCollectionActivity"
+            android:name=".view.FaceCollectionActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".ui.VideoCompressActivity"
+            android:name=".view.VideoCompressActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="fullSensor" />
 
         <activity
-            android:name="com.pengxh.androidx.lite.activity.BigImageActivity"
+            android:name=".view.BigImageActivity"
             android:theme="@style/Theme.BigImageActivity" />
 
         <meta-data
