@@ -13,12 +13,10 @@ import com.pengxh.kt.lite.extensions.dp2px
  * @email : 290677893@qq.com
  * @apiNote :人脸框
  */
-class FaceDetectView constructor(
-    ctx: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : View(ctx, attrs, defStyleAttr) {
+class FaceDetectView constructor(ctx: Context, attrs: AttributeSet) : View(ctx, attrs) {
 
     private val borderPaint by lazy { Paint() }
-    private lateinit var mtx: Matrix
+    private var mtx: Matrix? = null
     private var faces: Array<Camera.Face>
     private var isClear = false
 

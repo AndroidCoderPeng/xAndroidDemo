@@ -70,8 +70,8 @@ class MainActivity : KotlinBaseActivity() {
             indicator = CircleIndicator(context)
         }
 
-        //初始化Netty
-        SocketManager.get.connectNetty(DemoConstant.HOST, DemoConstant.TCP_PORT)
+        //TODO 初始化Netty
+//        SocketManager.get.connectNetty(DemoConstant.HOST, DemoConstant.TCP_PORT)
     }
 
     private val data: List<BannerImageModel.DataBean>

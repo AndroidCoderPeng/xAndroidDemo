@@ -24,7 +24,7 @@ class FacePreViewActivity : KotlinBaseActivity(), Camera.PreviewCallback {
     private val kTag = "FacePreViewActivity"
     private val bitmapStack by lazy { Stack<Bitmap>() }
     private lateinit var surfaceHolder: SurfaceHolder
-    private var camera: Camera? = null
+    private lateinit var camera: Camera
 
     override fun observeRequestState() {
 
@@ -39,21 +39,19 @@ class FacePreViewActivity : KotlinBaseActivity(), Camera.PreviewCallback {
         surfaceHolder = surfaceView.holder
         surfaceHolder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceCreated(holder: SurfaceHolder) {
-                if (camera == null) {
-                    //打开相机
-                    openCamera()
-                }
+                //打开相机
+                openCamera()
                 try {
                     //预览画面
-                    camera?.setPreviewDisplay(surfaceHolder)
+                    camera.setPreviewDisplay(surfaceHolder)
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
                 //开始预览
-                camera?.startPreview()
+                camera.startPreview()
                 //人脸检测
-                camera?.startFaceDetection()
-                camera?.setFaceDetectionListener { faces, _ ->
+                camera.startFaceDetection()
+                camera.setFaceDetectionListener { faces, _ ->
                     if (faces.isNotEmpty()) {
                         val face = faces[0]
                         val rect = face.rect
@@ -93,7 +91,7 @@ class FacePreViewActivity : KotlinBaseActivity(), Camera.PreviewCallback {
         try {
             camera = Camera.open(1)
             initParameters(camera) //初始化相机配置信息
-            camera?.setPreviewCallback(this)
+            camera.setPreviewCallback(this)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -206,9 +204,8 @@ class FacePreViewActivity : KotlinBaseActivity(), Camera.PreviewCallback {
      * 释放相机资源
      */
     private fun releaseCamera() {
-        camera?.stopPreview()
-        camera?.setPreviewCallback(null)
-        camera?.release()
-        camera = null
+        camera.stopPreview()
+        camera.setPreviewCallback(null)
+        camera.release()
     }
 }

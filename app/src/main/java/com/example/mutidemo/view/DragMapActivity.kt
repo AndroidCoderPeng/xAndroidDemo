@@ -10,9 +10,11 @@ import com.amap.api.maps.UiSettings
 import com.amap.api.maps.model.CameraPosition
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.MyLocationStyle
+import com.example.mutidemo.R
 import com.example.mutidemo.widget.CenterMarkerView
 import kotlinx.android.synthetic.main.activity_drag_map.*
 
+//TODO 地理逆编码有问题
 class DragMapActivity : AppCompatActivity(), AMap.OnMapLoadedListener,
     AMap.OnCameraChangeListener {
 
@@ -21,6 +23,7 @@ class DragMapActivity : AppCompatActivity(), AMap.OnMapLoadedListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_drag_map)
         mapView.onCreate(savedInstanceState)
 
         aMap = mapView.map

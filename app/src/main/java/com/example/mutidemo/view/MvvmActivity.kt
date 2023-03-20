@@ -34,7 +34,7 @@ class MvvmActivity : KotlinBaseActivity() {
         weatherViewModel = ViewModelProvider(this)[WeatherViewModel::class.java]
         weatherViewModel.getWeatherDetail("北京", 1, 101010100)
         weatherViewModel.resultModel.observe(this) {
-            if (it.code == "200") {
+            if (it.code == "10000") {
                 val result = it.result.result
                 tempView.text = "${result.temp}°"
                 weatherView.text = result.weather

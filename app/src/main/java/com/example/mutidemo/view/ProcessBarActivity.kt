@@ -8,6 +8,7 @@ import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import kotlinx.android.synthetic.main.activity_progress.*
 
 class ProcessBarActivity : KotlinBaseActivity() {
+
     private lateinit var weakReferenceHandler: WeakReferenceHandler
 
     override fun setupTopBarLayout() {}

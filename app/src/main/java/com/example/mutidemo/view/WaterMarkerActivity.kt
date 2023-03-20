@@ -21,7 +21,6 @@ import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.formatFileSize
 import com.pengxh.kt.lite.extensions.navigatePageTo
-import com.pengxh.kt.lite.extensions.timestampToCompleteDate
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import kotlinx.android.synthetic.main.activity_water_marker.*
 import java.io.File
@@ -84,33 +83,31 @@ class WaterMarkerActivity : KotlinBaseActivity() {
         }
         addMarkerButton.setOnClickListener {
             if (!TextUtils.isEmpty(mediaRealPath)) {
-                val bitmap = BitmapFactory.decodeFile(mediaRealPath)
                 LoadingDialogHub.show(this, "水印添加中，请稍后...")
-                ImageHelper.drawTextToRightBottom(this, bitmap,
-                    System.currentTimeMillis().timestampToCompleteDate(),
-                    object : IWaterMarkAddListener {
-                        override fun onSuccess(file: File) {
-                            LoadingDialogHub.dismiss()
-                            ImageHelper.compressImage(file.path, FileUtils.imageCompressPath,
-                                object : ICompressListener {
-                                    override fun onSuccess(file: File) {
-                                        Glide.with(context)
-                                            .load(file)
-                                            .apply(RequestOptions().error(R.drawable.ic_load_error))
-                                            .into(markerImageView)
-                                        markerImageSizeView.text =
-                                            "压缩后：" + file.length().formatFileSize()
-                                        markerImageView.setOnClickListener {
-                                            val urls = ArrayList<String>()
-                                            urls.add(file.path)
-                                            navigatePageTo<BigImageActivity>(0, urls)
-                                        }
+                val bitmap = BitmapFactory.decodeFile(mediaRealPath)
+                ImageHelper.drawTextToRightBottom(bitmap, object : IWaterMarkAddListener {
+                    override fun onSuccess(file: File) {
+                        ImageHelper.compressImage(file.path, FileUtils.imageCompressPath,
+                            object : ICompressListener {
+                                override fun onSuccess(file: File) {
+                                    LoadingDialogHub.dismiss()
+                                    Glide.with(context)
+                                        .load(file)
+                                        .apply(RequestOptions().error(R.drawable.ic_load_error))
+                                        .into(markerImageView)
+                                    markerImageSizeView.text =
+                                        "压缩后：" + file.length().formatFileSize()
+                                    markerImageView.setOnClickListener {
+                                        val urls = ArrayList<String>()
+                                        urls.add(file.path)
+                                        navigatePageTo<BigImageActivity>(0, urls)
                                     }
+                                }
 
-                                    override fun onError(e: Throwable) {}
-                                })
-                        }
-                    })
+                                override fun onError(e: Throwable) {}
+                            })
+                    }
+                })
             }
         }
     }

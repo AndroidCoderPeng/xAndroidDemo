@@ -3,16 +3,12 @@ package com.example.mutidemo.util
 import android.graphics.*
 import android.text.TextPaint
 import android.text.TextUtils
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import com.example.mutidemo.base.BaseApplication
 import com.example.mutidemo.callback.ICompressListener
 import com.example.mutidemo.callback.IWaterMarkAddListener
 import com.pengxh.kt.lite.extensions.sp2px
+import com.pengxh.kt.lite.extensions.timestampToCompleteDate
 import com.qmuiteam.qmui.util.QMUIDisplayHelper
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import top.zibin.luban.Luban
 import top.zibin.luban.OnCompressListener
 import java.io.File
@@ -25,12 +21,7 @@ object ImageHelper {
     /**
      * 绘制文字到右下角
      */
-    fun drawTextToRightBottom(
-        lifecycleOwner: LifecycleOwner,
-        bitmap: Bitmap,
-        time: String,
-        markAddListener: IWaterMarkAddListener
-    ) {
+    fun drawTextToRightBottom(bitmap: Bitmap, markAddListener: IWaterMarkAddListener) {
         //初始化画笔
         val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG or Paint.DEV_KERN_TEXT_FLAG)
         textPaint.typeface = Typeface.DEFAULT // 采用默认的宽度
@@ -39,6 +30,7 @@ object ImageHelper {
         textPaint.isFilterBitmap = true
         textPaint.textSize = 36f.sp2px(BaseApplication.get()).toFloat()
         val timeBounds = Rect()
+        val time = System.currentTimeMillis().timestampToCompleteDate()
         textPaint.getTextBounds(time, 0, time.length, timeBounds)
 
         //添加水印
@@ -61,19 +53,10 @@ object ImageHelper {
         //将带有水印的图片保存
         val file = FileUtils.waterImageFile
         val fos = FileOutputStream(file)
-        //协程压缩图片
-        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-            withContext(Dispatchers.IO) {
-                try {
-                    copyBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-            markAddListener.onSuccess(file)
-        }
+        copyBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
         fos.flush()
         fos.close()
+        markAddListener.onSuccess(file)
     }
 
     /**

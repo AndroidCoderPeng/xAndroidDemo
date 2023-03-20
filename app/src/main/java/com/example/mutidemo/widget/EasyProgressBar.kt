@@ -11,8 +11,8 @@ import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.sp2px
 
 class EasyProgressBar constructor(
-    private val mContext: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : View(mContext, attrs, defStyleAttr) {
+    private val ctx: Context, attrs: AttributeSet
+) : View(ctx, attrs) {
 
     private val backgroundColor: Int
     private val startColor: Int
@@ -30,22 +30,22 @@ class EasyProgressBar constructor(
     private lateinit var textPaint: TextPaint
 
     init {
-        val a = mContext.obtainStyledAttributes(attrs, R.styleable.EasyProgressBar, defStyleAttr, 0)
+        val a = ctx.obtainStyledAttributes(attrs, R.styleable.EasyProgressBar)
         backgroundColor = a.getColor(
             R.styleable.EasyProgressBar_progress_backgroundColor,
-            R.color.lightGray.convertColor(mContext)
+            R.color.lightGray.convertColor(ctx)
         )
         startColor = a.getColor(
             R.styleable.EasyProgressBar_progress_startColor,
-            R.color.mainColor.convertColor(mContext)
+            R.color.mainColor.convertColor(ctx)
         )
         endColor = a.getColor(
             R.styleable.EasyProgressBar_progress_endColor,
-            R.color.mainColor.convertColor(mContext)
+            R.color.mainColor.convertColor(ctx)
         )
         textColor = a.getColor(
             R.styleable.EasyProgressBar_progress_textColor,
-            R.color.white.convertColor(mContext)
+            R.color.white.convertColor(ctx)
         )
         text = a.getString(R.styleable.EasyProgressBar_progress_text).toString()
         a.recycle()
@@ -67,7 +67,7 @@ class EasyProgressBar constructor(
         textPaint = TextPaint()
         textPaint.color = textColor
         textPaint.isAntiAlias = true
-        textPaint.textSize = 14f.sp2px(mContext).toFloat()
+        textPaint.textSize = 14f.sp2px(ctx).toFloat()
     }
 
     //计算出中心位置，便于定位
@@ -90,7 +90,7 @@ class EasyProgressBar constructor(
             widthSpecSize.toFloat()
         } else {
             // wrap_content
-            300f.dp2px(mContext).toFloat()
+            300f.dp2px(ctx).toFloat()
         }
         // 获取高
         viewHeight = if (heightSpecMode == MeasureSpec.EXACTLY) {
@@ -98,7 +98,7 @@ class EasyProgressBar constructor(
             heightSpecSize.toFloat()
         } else {
             // wrap_content
-            20f.dp2px(mContext).toFloat()
+            20f.dp2px(ctx).toFloat()
         }
         // 设置该view的宽高
         radius = viewHeight

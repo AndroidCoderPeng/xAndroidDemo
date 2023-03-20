@@ -2,14 +2,11 @@ package com.example.mutidemo.util.retrofit
 
 import com.example.mutidemo.util.DemoConstant
 import com.pengxh.kt.lite.utils.RetrofitFactory
-import com.pengxh.kt.lite.utils.SaveKeyValues
 
 object RetrofitServiceManager {
 
     private val api by lazy {
-        val httpConfig = SaveKeyValues.getValue(
-            DemoConstant.BASE_URL, "https://way.jd.com"
-        ) as String
+        val httpConfig = "https://way.jd.com"
         RetrofitFactory.createRetrofit<RetrofitService>(httpConfig)
     }
 
