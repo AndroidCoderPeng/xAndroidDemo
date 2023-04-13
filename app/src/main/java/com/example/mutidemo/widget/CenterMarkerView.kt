@@ -20,6 +20,7 @@ import com.amap.api.services.geocoder.GeocodeSearch
 import com.amap.api.services.geocoder.RegeocodeQuery
 import com.amap.api.services.geocoder.RegeocodeResult
 import com.example.mutidemo.R
+import com.example.mutidemo.extensions.breakLine
 
 class CenterMarkerView(private val context: Context, private var aMap: AMap) {
     private lateinit var centerMarker: Marker
@@ -44,14 +45,7 @@ class CenterMarkerView(private val context: Context, private var aMap: AMap) {
                         if (code == 1000) {
                             //手动换行
                             val address = regeocodeResult.regeocodeAddress.formatAddress
-                            val temp = StringBuilder()
-                            if (address.length > 20) {
-                                temp.append(address.substring(0, 20)).append("\r\n")
-                                    .append(address.substring(20))
-                            } else {
-                                temp.append(address)
-                            }
-                            locationView.text = temp
+                            locationView.text = address.breakLine(22)
                         }
                     }
 
