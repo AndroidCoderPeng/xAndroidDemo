@@ -2,19 +2,16 @@ package com.example.mutidemo.view
 
 import android.graphics.Rect
 import android.os.Build
-import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Surface
-import android.view.WindowManager
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.example.mutidemo.R
-import com.example.mutidemo.widget.RegionView
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.extensions.setScreenBrightness
-import com.pengxh.kt.lite.utils.WeakReferenceHandler
+import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.extensions.toJson
 import kotlinx.android.synthetic.main.activity_video_region.*
 import java.util.concurrent.ExecutionException
 import kotlin.math.abs
@@ -25,12 +22,8 @@ class VideoRegionActivity : KotlinBaseActivity() {
     private val kTag = "VideoRegionActivity"
     private val RATIO_4_3_VALUE = 4.0 / 3.0
     private val RATIO_16_9_VALUE = 16.0 / 9.0
-    private lateinit var weakReferenceHandler: WeakReferenceHandler
 
     override fun initData() {
-        //调节屏幕亮度最大
-        window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL)
-        weakReferenceHandler = WeakReferenceHandler(callback)
         // Initialize our background executor
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         // 检查 CameraProvider 可用性
@@ -58,7 +51,7 @@ class VideoRegionActivity : KotlinBaseActivity() {
 
         // CameraSelector
         val cameraSelector: CameraSelector = CameraSelector.Builder()
-            .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
+            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
             .build()
 
         // Preview
@@ -88,11 +81,6 @@ class VideoRegionActivity : KotlinBaseActivity() {
         }
     }
 
-    private val callback = Handler.Callback {
-
-        true
-    }
-
     private fun aspectRatio(width: Int, height: Int): Int {
         val ratio = width.coerceAtLeast(height).toDouble() / width.coerceAtMost(height)
         return if (abs(ratio - RATIO_4_3_VALUE) <= abs(ratio - RATIO_16_9_VALUE)) {
@@ -106,11 +94,10 @@ class VideoRegionActivity : KotlinBaseActivity() {
             regionView.clearRoutePath()
         }
 
-        regionView.setOnRegionConfirmedListener(object : RegionView.OnRegionConfirmedListener {
-            override fun onRegionConfirmed(leftTop: Float, rightBottom: Float) {
-                Log.d(kTag, "onRegionConfirmed => [$leftTop,$rightBottom]")
-            }
-        })
+        sendRegionButton.setOnClickListener {
+            val region = regionView.getConfirmedRegion()
+            region.toJson().show(this)
+        }
     }
 
     override fun initLayoutView(): Int = R.layout.activity_video_region
@@ -121,10 +108,5 @@ class VideoRegionActivity : KotlinBaseActivity() {
 
     override fun setupTopBarLayout() {
         titleView.text = "视频区域划分"
-    }
-
-    override fun onDestroy() {
-        window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
-        super.onDestroy()
     }
 }

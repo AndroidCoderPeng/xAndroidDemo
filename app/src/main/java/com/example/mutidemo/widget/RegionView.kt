@@ -13,24 +13,23 @@ import com.pengxh.kt.lite.extensions.obtainScreenWidth
 
 class RegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx, attrs) {
 
-    private val kTag = "RegionView"
     private val routePath: Path = Path()
     private val rectPath: Path = Path()
     private val routePaint: Paint = Paint()
     private val borderPaint: Paint = Paint()
-    private var xys = ArrayList<Point>()
+    private var routes = ArrayList<Point>()
 
     init {
         routePaint.isAntiAlias = true
         routePaint.color = Color.RED
         routePaint.style = Paint.Style.STROKE
-        routePaint.strokeWidth = 10f //设置线宽
+        routePaint.strokeWidth = 7f //设置线宽
         routePaint.isAntiAlias = true
 
         borderPaint.isAntiAlias = true
         borderPaint.color = Color.BLUE
         borderPaint.style = Paint.Style.STROKE
-        borderPaint.strokeWidth = 10f //设置线宽
+        borderPaint.strokeWidth = 7f //设置线宽
         borderPaint.isAntiAlias = true
     }
 
@@ -45,7 +44,7 @@ class RegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx, attr
 
         val x = event.x
         val y = event.y
-        xys.add(Point(x, y))
+        routes.add(Point(x, y))
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> routePath.moveTo(x, y)
@@ -61,8 +60,8 @@ class RegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx, attr
                  * 左下（x2，y1）
                  * 右下（x1，y1）
                  * */
-                val sortedX = xys.sortedBy { point -> point.x }
-                val sortedY = xys.sortedBy { point -> point.y }
+                val sortedX = routes.sortedBy { point -> point.x }
+                val sortedY = routes.sortedBy { point -> point.y }
                 val xMaxPoint = sortedX.last()
                 val xMinPoint = sortedX.first()
 
@@ -88,7 +87,8 @@ class RegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx, attr
                 val width = ctx.obtainScreenWidth()
                 val height = ctx.obtainScreenHeight()
 
-                confirmedListener?.onRegionConfirmed(0f, 0f)
+                region.leftTop = Point(leftTop.x / width, leftTop.y / height)
+                region.rightBottom = Point(rightBottom.x / width, rightBottom.y / height)
             }
         }
         invalidate()
@@ -98,23 +98,25 @@ class RegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx, attr
     fun clearRoutePath() {
         routePath.reset()
         rectPath.reset()
-        xys.clear()
+        routes.clear()
         invalidate()
     }
 
     data class Point(val x: Float, val y: Float)
 
-    private var confirmedListener: OnRegionConfirmedListener? = null
-
-    interface OnRegionConfirmedListener {
+    inner class Region {
         /**
-         * @param leftTop 点距离屏幕左上角百分比
-         * @param rightBottom 点距离屏幕右下角百分比
+         * 点距离屏幕左上角百分比
          * */
-        fun onRegionConfirmed(leftTop: Float, rightBottom: Float)
+        var leftTop = Point(0f, 0f)
+
+        /**
+         * 点距离屏幕右下角百分比
+         * */
+        var rightBottom = Point(1f, 1f)
     }
 
-    fun setOnRegionConfirmedListener(listener: OnRegionConfirmedListener) {
-        confirmedListener = listener
-    }
+    private var region = Region()
+
+    fun getConfirmedRegion(): Region = region
 }
