@@ -34,7 +34,7 @@ class MainActivity : KotlinBaseActivity() {
         "顶/底部导航栏", "ZBar扫一扫", "上拉加载下拉刷新", "联系人侧边滑动控件", "OCR识别银行卡",
         "自定义进度条", "拖拽地图选点", "人脸检测", "音频录制与播放", "图片添加水印并压缩", "视频压缩",
         "WCJ02ToWGS84", "蓝牙相关", "可删减九宫格", "系统原生分享", "空气污染刻度盘", "人脸采集框",
-        "TCP客户端", "方向控制盘", "时间轴"
+        "TCP客户端", "方向控制盘", "时间轴", "视频区域划分"
     )
 
     override fun setupTopBarLayout() {
@@ -132,6 +132,7 @@ class MainActivity : KotlinBaseActivity() {
                     }
                     18 -> navigatePageTo<SteeringWheelActivity>()
                     19 -> navigatePageTo<TimeLineActivity>()
+                    20 -> navigatePageTo<VideoRegionActivity>()
                 }
             }
         })
