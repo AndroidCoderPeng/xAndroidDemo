@@ -14,12 +14,11 @@ import com.example.mutidemo.R
 import com.example.mutidemo.widget.CenterMarkerView
 import kotlinx.android.synthetic.main.activity_drag_map.*
 
-//TODO 地理逆编码有问题
 class DragMapActivity : AppCompatActivity(), AMap.OnMapLoadedListener,
     AMap.OnCameraChangeListener {
 
     private lateinit var aMap: AMap
-    private var centerMarkerView: CenterMarkerView? = null
+    private lateinit var centerMarkerView: CenterMarkerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,26 +48,25 @@ class DragMapActivity : AppCompatActivity(), AMap.OnMapLoadedListener,
         uiSettings.isMyLocationButtonEnabled = true
         //改变地图的缩放级别
         aMap.moveCamera(CameraUpdateFactory.zoomTo(15f))
-        centerMarkerView = CenterMarkerView(this)
-        centerMarkerView?.initInfoWindowsView(aMap)
+        centerMarkerView = CenterMarkerView(this, aMap)
 
         aMap.setOnMapLoadedListener(this)
         aMap.setOnCameraChangeListener(this)
     }
 
     override fun onMapLoaded() {
-        centerMarkerView?.addCenterMarker(aMap)
+        centerMarkerView.addCenterMarker()
     }
 
     override fun onCameraChange(cameraPosition: CameraPosition) {
         //隐藏中心点marker的InfoWindow
-        centerMarkerView?.hideCenterMarkerInfoWindow()
+        centerMarkerView.hideCenterMarkerInfoWindow()
     }
 
     override fun onCameraChangeFinish(cameraPosition: CameraPosition) {
         val latLng: LatLng = cameraPosition.target
         //显示infoWindow
-        centerMarkerView?.showInfoWindow(latLng)
+        centerMarkerView.showInfoWindow(latLng)
         longitudeView.text = latLng.longitude.toString()
         latitudeView.text = latLng.latitude.toString()
     }
@@ -84,10 +82,7 @@ class DragMapActivity : AppCompatActivity(), AMap.OnMapLoadedListener,
     }
 
     override fun onDestroy() {
-        if (null != centerMarkerView) {
-            centerMarkerView!!.destroy()
-            centerMarkerView = null
-        }
+        centerMarkerView.destroy()
         mapView.onDestroy()
         super.onDestroy()
     }

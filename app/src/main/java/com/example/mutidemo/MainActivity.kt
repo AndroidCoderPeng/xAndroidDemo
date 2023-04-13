@@ -31,7 +31,7 @@ class MainActivity : KotlinBaseActivity() {
     private var clickTime: Long = 0
     private val context: Context = this@MainActivity
     private val itemNames = listOf(
-        "MVVM架构", "顶/底部导航栏", "ZBar扫一扫", "上拉加载下拉刷新", "联系人侧边滑动控件", "OCR识别银行卡",
+        "顶/底部导航栏", "ZBar扫一扫", "上拉加载下拉刷新", "联系人侧边滑动控件", "OCR识别银行卡",
         "自定义进度条", "拖拽地图选点", "人脸检测", "音频录制与播放", "图片添加水印并压缩", "视频压缩",
         "WCJ02ToWGS84", "蓝牙相关", "可删减九宫格", "系统原生分享", "空气污染刻度盘", "人脸采集框",
         "TCP客户端", "方向控制盘", "时间轴"
@@ -97,25 +97,24 @@ class MainActivity : KotlinBaseActivity() {
             NormalRecyclerAdapter.OnItemClickedListener<String> {
             override fun onItemClicked(position: Int, t: String) {
                 when (position) {
-                    0 -> navigatePageTo<MvvmActivity>()
-                    1 -> navigatePageTo<NavigationActivity>()
-                    2 -> startScannerActivity()
-                    3 -> navigatePageTo<RefreshAndLoadMoreActivity>()
-                    4 -> navigatePageTo<SlideBarActivity>()
-                    5 -> navigatePageTo<OcrNumberActivity>()
-                    6 -> navigatePageTo<ProcessBarActivity>()
-                    7 -> navigatePageTo<DragMapActivity>()
-                    8 -> navigatePageTo<FacePreViewActivity>()
-                    9 -> navigatePageTo<RecodeAudioActivity>()
-                    10 -> navigatePageTo<WaterMarkerActivity>()
-                    11 -> navigatePageTo<VideoCompressActivity>()
-                    12 -> navigatePageTo<GCJ02ToWGS84Activity>()
-                    13 -> navigatePageTo<BluetoothActivity>()
-                    14 -> navigatePageTo<GridViewActivity>()
-                    15 -> navigatePageTo<OriginalShareActivity>()
-                    16 -> navigatePageTo<AirDashBoardActivity>()
-                    17 -> "FaceCollectionActivity待完善".show(context)
-                    18 -> {
+                    0 -> navigatePageTo<NavigationActivity>()
+                    1 -> startScannerActivity()
+                    2 -> navigatePageTo<RefreshAndLoadMoreActivity>()
+                    3 -> navigatePageTo<SlideBarActivity>()
+                    4 -> navigatePageTo<OcrNumberActivity>()
+                    5 -> navigatePageTo<ProcessBarActivity>()
+                    6 -> navigatePageTo<DragMapActivity>()
+                    7 -> navigatePageTo<FacePreViewActivity>()
+                    8 -> navigatePageTo<RecodeAudioActivity>()
+                    9 -> navigatePageTo<WaterMarkerActivity>()
+                    10 -> navigatePageTo<VideoCompressActivity>()
+                    11 -> navigatePageTo<GCJ02ToWGS84Activity>()
+                    12 -> navigatePageTo<BluetoothActivity>()
+                    13 -> navigatePageTo<GridViewActivity>()
+                    14 -> navigatePageTo<OriginalShareActivity>()
+                    15 -> navigatePageTo<AirDashBoardActivity>()
+                    16 -> "FaceCollectionActivity待完善".show(context)
+                    17 -> {
                         val sendBytes = byteArrayOf(
                             0xFF.toByte(),
                             0x01,
@@ -131,8 +130,8 @@ class MainActivity : KotlinBaseActivity() {
                             }
                         }, 0, 1000)
                     }
-                    19 -> navigatePageTo<SteeringWheelActivity>()
-                    20 -> navigatePageTo<TimeLineActivity>()
+                    18 -> navigatePageTo<SteeringWheelActivity>()
+                    19 -> navigatePageTo<TimeLineActivity>()
                 }
             }
         })

@@ -1,7 +1,6 @@
 package com.example.mutidemo.model;
 
 /**
- * @description: TODO
  * @author: Pengxh
  * @email: 290677893@qq.com
  * @date: 2020/9/27 22:42

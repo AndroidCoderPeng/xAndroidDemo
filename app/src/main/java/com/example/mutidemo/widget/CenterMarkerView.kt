@@ -21,38 +21,21 @@ import com.amap.api.services.geocoder.RegeocodeQuery
 import com.amap.api.services.geocoder.RegeocodeResult
 import com.example.mutidemo.R
 
-class CenterMarkerView(private val context: Context) {
-    private var centerMarker: Marker? = null
-    private var latLng: LatLng? = null
+class CenterMarkerView(private val context: Context, private var aMap: AMap) {
+    private lateinit var centerMarker: Marker
+
+    //拿到地图中心点的坐标
+    private var latLng = aMap.cameraPosition.target
     private val geocoderSearch by lazy { GeocodeSearch(context) }
 
-    fun addCenterMarker(aMap: AMap) {
-        val options = MarkerOptions()
-        //对应Marker.setIcon方法  设置Marker的图片
-        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.map_pin))
-        //设置infoWindow与锚点的相对位置
-        options.anchor(0.5f, 1f)
-        //拿到地图中心点的坐标。
-        val latLng: LatLng = aMap.cameraPosition.target
-        //把中心点的坐标转换成屏幕像素位置
-        val screenPosition: Point = aMap.projection.toScreenLocation(latLng)
-        //在地图上添加Marker并获取到Marker.
-        centerMarker = aMap.addMarker(options)
-        //给marker设置像素位置。
-        centerMarker!!.setPositionByPixels(screenPosition.x, screenPosition.y)
-        centerMarker!!.setAnchor(0.5f, 1f)
-    }
-
-    fun initInfoWindowsView(aMap: AMap) {
+    init {
         aMap.setInfoWindowAdapter(object : AMap.InfoWindowAdapter {
             override fun getInfoWindow(marker: Marker): View {
                 val infoWindow =
                     LayoutInflater.from(context).inflate(R.layout.map_info_window, null)
                 val locationView: TextView = infoWindow.findViewById(R.id.locationView)
                 val queryParam = RegeocodeQuery(
-                    LatLonPoint(latLng!!.latitude, latLng!!.longitude),
-                    200f,
-                    GeocodeSearch.AMAP
+                    LatLonPoint(latLng.latitude, latLng.longitude), 200f, GeocodeSearch.AMAP
                 )
                 geocoderSearch.getFromLocationAsyn(queryParam)
                 geocoderSearch.setOnGeocodeSearchListener(object :
@@ -83,31 +66,40 @@ class CenterMarkerView(private val context: Context) {
         })
     }
 
-    fun showInfoWindow(latLng: LatLng?) {
+    fun addCenterMarker() {
+        val options = MarkerOptions()
+        //对应Marker.setIcon方法  设置Marker的图片
+        options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.map_pin))
+        //设置infoWindow与锚点的相对位置
+        options.anchor(0.5f, 1f)
+        //把中心点的坐标转换成屏幕像素位置
+        val screenPosition: Point = aMap.projection.toScreenLocation(latLng)
+        //在地图上添加Marker并获取到Marker.
+        centerMarker = aMap.addMarker(options)
+        //给marker设置像素位置。
+        centerMarker.setPositionByPixels(screenPosition.x, screenPosition.y)
+        centerMarker.setAnchor(0.5f, 1f)
+    }
+
+    fun showInfoWindow(latLng: LatLng) {
         this.latLng = latLng
-        if (null != centerMarker) {
-            //缩放动画
-            val scaleAnimation: Animation = ScaleAnimation(1f, 1f, 0.75f, 1f)
-            //时间设置短点
-            scaleAnimation.setDuration(500)
-            centerMarker!!.setAnimation(scaleAnimation)
-            centerMarker!!.startAnimation()
-            centerMarker!!.showInfoWindow()
-        }
+        //缩放动画
+        val scaleAnimation: Animation = ScaleAnimation(1f, 1f, 0.75f, 1f)
+        //时间设置短点
+        scaleAnimation.setDuration(500)
+        centerMarker.setAnimation(scaleAnimation)
+        centerMarker.startAnimation()
+        centerMarker.showInfoWindow()
     }
 
     fun hideCenterMarkerInfoWindow() {
-        centerMarker!!.hideInfoWindow()
-        if (null != centerMarker) {
-            val bitmap: Bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.map_pin)
-            centerMarker!!.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap))
-        }
+        centerMarker.hideInfoWindow()
+        val bitmap: Bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.map_pin)
+        centerMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap))
     }
 
     fun destroy() {
-        if (null != centerMarker) {
-            centerMarker!!.destroy()
-            centerMarker!!.showInfoWindow()
-        }
+        centerMarker.destroy()
+        centerMarker.showInfoWindow()
     }
 }

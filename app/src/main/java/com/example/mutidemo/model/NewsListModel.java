@@ -5,7 +5,6 @@ import java.util.List;
 /**
  * @author: Pengxh
  * @email: 290677893@qq.com
- * @description: TODO
  * @date: 2020/2/21 19:27
  */
 public class NewsListModel {

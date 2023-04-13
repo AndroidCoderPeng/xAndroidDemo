@@ -4,7 +4,6 @@ import java.util.List;
 
 /**
  * @author Administrator
- * @description TODO
  * @package com.example.mutidemo.bean
  * @date 2022/2/17 23:43
  * @email 290677893@qq.com

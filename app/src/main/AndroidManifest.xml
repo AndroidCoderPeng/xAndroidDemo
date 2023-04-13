@@ -56,7 +56,6 @@
         </activity>
 
         <activity android:name=".MainActivity" />
-        <activity android:name=".view.MvvmActivity" />
         <activity android:name=".view.NavigationActivity" />
         <activity android:name=".view.RefreshAndLoadMoreActivity" />
         <activity android:name=".view.NewsDetailsActivity" />
