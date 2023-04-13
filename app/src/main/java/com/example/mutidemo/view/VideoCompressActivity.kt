@@ -10,7 +10,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.mutidemo.R
 import com.example.mutidemo.util.FileUtils
 import com.example.mutidemo.util.GlideLoadEngine
-import com.example.mutidemo.util.JZMediaExo
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
@@ -112,8 +111,7 @@ class VideoCompressActivity : KotlinBaseActivity() {
                                 compressedVideoView.setUp(
                                     outputVideoFile,
                                     "",
-                                    JzvdStd.SCREEN_NORMAL,
-                                    JZMediaExo::class.java
+                                    JzvdStd.SCREEN_NORMAL
                                 )
                                 Glide.with(this@VideoCompressActivity)
                                     .setDefaultRequestOptions(RequestOptions().frame(4000000))
@@ -131,13 +129,13 @@ class VideoCompressActivity : KotlinBaseActivity() {
 
     private fun testMediaInterface() {
         val url = "http://111.198.10.15:11409/static/2021-05/b9d0e7bf520f4f50a0dedb76bf4b70aa.mp4"
-        //        compressedVideoView.setUp(url, "", JzvdStd.SCREEN_NORMAL);
-        compressedVideoView.setUp(
-            url,
-            "",
-            JzvdStd.SCREEN_NORMAL,
-            JZMediaExo::class.java
-        )
+        compressedVideoView.setUp(url, "", JzvdStd.SCREEN_NORMAL)
+//        compressedVideoView.setUp(
+//            url,
+//            "",
+//            JzvdStd.SCREEN_NORMAL,
+//            JZMediaExo::class.java
+//        )
         Glide.with(this)
             .setDefaultRequestOptions(RequestOptions().frame(4000000))
             .load(url)

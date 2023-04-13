@@ -100,8 +100,6 @@ dependencies {
     implementation 'io.github.lucksiege:pictureselector:v3.0.4'
     //视频播放器
     implementation 'cn.jzvd:jiaozivideoplayer:7.6.0'
-    //exo播放内核
-    implementation 'com.google.android.exoplayer:exoplayer:2.17.1'
     //视频压缩
     implementation 'com.zolad:videoslimmer:1.0.0'
     //图片压缩
