@@ -1,6 +1,5 @@
 package com.example.mutidemo
 
-import android.content.Context
 import android.graphics.Color
 import android.view.KeyEvent
 import cn.bertsir.zbar.QrConfig
@@ -29,11 +28,10 @@ import java.util.*
 class MainActivity : KotlinBaseActivity() {
 
     private var clickTime: Long = 0
-    private val context: Context = this@MainActivity
     private val itemNames = listOf(
         "顶/底部导航栏", "ZBar扫一扫", "上拉加载下拉刷新", "联系人侧边滑动控件", "OCR识别银行卡",
-        "自定义进度条", "拖拽地图选点", "人脸检测", "音频录制与播放", "图片添加水印并压缩", "视频压缩",
-        "WCJ02ToWGS84", "蓝牙相关", "可删减九宫格", "系统原生分享", "空气污染刻度盘", "人脸采集框",
+        "自定义进度条", "拖拽地图选点", "音频录制与播放", "图片添加水印并压缩", "视频压缩",
+        "WCJ02ToWGS84", "蓝牙相关", "可删减九宫格", "系统原生分享", "空气污染刻度盘", "人脸检测",
         "TCP客户端", "方向控制盘", "时间轴", "视频区域划分"
     )
 
@@ -104,17 +102,16 @@ class MainActivity : KotlinBaseActivity() {
                     4 -> navigatePageTo<OcrNumberActivity>()
                     5 -> navigatePageTo<ProcessBarActivity>()
                     6 -> navigatePageTo<DragMapActivity>()
-                    7 -> navigatePageTo<FacePreViewActivity>()
-                    8 -> navigatePageTo<RecodeAudioActivity>()
-                    9 -> navigatePageTo<WaterMarkerActivity>()
-                    10 -> navigatePageTo<VideoCompressActivity>()
-                    11 -> navigatePageTo<GCJ02ToWGS84Activity>()
-                    12 -> navigatePageTo<BluetoothActivity>()
-                    13 -> navigatePageTo<GridViewActivity>()
-                    14 -> navigatePageTo<OriginalShareActivity>()
-                    15 -> navigatePageTo<AirDashBoardActivity>()
-                    16 -> "FaceCollectionActivity待完善".show(context)
-                    17 -> {
+                    7 -> navigatePageTo<RecodeAudioActivity>()
+                    8 -> navigatePageTo<WaterMarkerActivity>()
+                    9 -> navigatePageTo<VideoCompressActivity>()
+                    10 -> navigatePageTo<GCJ02ToWGS84Activity>()
+                    11 -> navigatePageTo<BluetoothActivity>()
+                    12 -> navigatePageTo<GridViewActivity>()
+                    13 -> navigatePageTo<OriginalShareActivity>()
+                    14 -> navigatePageTo<AirDashBoardActivity>()
+                    15 -> navigatePageTo<FaceCollectionActivity>()
+                    16 -> {
                         val sendBytes = byteArrayOf(
                             0xFF.toByte(),
                             0x01,
@@ -130,9 +127,9 @@ class MainActivity : KotlinBaseActivity() {
                             }
                         }, 0, 1000)
                     }
-                    18 -> navigatePageTo<SteeringWheelActivity>()
-                    19 -> navigatePageTo<TimeLineActivity>()
-                    20 -> navigatePageTo<VideoRegionActivity>()
+                    17 -> navigatePageTo<SteeringWheelActivity>()
+                    18 -> navigatePageTo<TimeLineActivity>()
+                    19 -> navigatePageTo<VideoRegionActivity>()
                 }
             }
         })

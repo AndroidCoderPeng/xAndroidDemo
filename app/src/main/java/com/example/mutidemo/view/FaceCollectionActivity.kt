@@ -3,6 +3,7 @@ package com.example.mutidemo.view
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.ImageFormat
+import android.graphics.PointF
 import android.graphics.Rect
 import android.media.FaceDetector
 import android.os.Build
@@ -16,7 +17,6 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.example.mutidemo.R
-import com.example.mutidemo.util.FileUtils
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
@@ -27,14 +27,15 @@ import kotlinx.android.synthetic.main.activity_face_collect.*
 import java.util.concurrent.*
 import kotlin.math.abs
 
+
 class FaceCollectionActivity : KotlinBaseActivity() {
 
     companion object {
-        private const val TAG = "FaceCollectionActivity"
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
         private const val RATIO_16_9_VALUE = 16.0 / 9.0
     }
 
+    private val kTag = "FaceCollectionActivity"
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     private lateinit var imageCapture: ImageCapture
@@ -127,15 +128,13 @@ class FaceCollectionActivity : KotlinBaseActivity() {
             cameraPreViewBuilder.setSurfaceProvider(cameraPreView.surfaceProvider)
             observeCameraState(camera.cameraInfo)
         } catch (e: Exception) {
-            Log.e(TAG, "Use case binding failed", e)
+            Log.e(kTag, "Use case binding failed", e)
         }
     }
 
     private fun aspectRatio(width: Int, height: Int): Int {
         val ratio = width.coerceAtLeast(height).toDouble() / width.coerceAtMost(height)
-        return if (abs(ratio - RATIO_4_3_VALUE) <= abs(
-                ratio - RATIO_16_9_VALUE
-            )
+        return if (abs(ratio - RATIO_4_3_VALUE) <= abs(ratio - RATIO_16_9_VALUE)
         ) {
             AspectRatio.RATIO_4_3
         } else AspectRatio.RATIO_16_9
@@ -146,6 +145,7 @@ class FaceCollectionActivity : KotlinBaseActivity() {
         cameraInfo.cameraState.observe(this) { cameraState: CameraState ->
             //开始预览之后才人脸检测
             if (cameraState.type == CameraState.Type.OPEN) {
+                weakReferenceHandler.sendEmptyMessage(2023041401)
                 imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
                     /**
                      * CameraX 可通过 setOutputImageFormat(int) 支持 YUV_420_888 和 RGBA_8888。默认格式为 YUV_420_888
@@ -165,32 +165,39 @@ class FaceCollectionActivity : KotlinBaseActivity() {
                         executor.execute {
                             val image = imageProxy.image
                             val bitmap = image?.toBitmap(ImageFormat.YUV_420_888) ?: return@execute
-                            /**
-                             * Android内置的人脸识别，需要将Bitmap对象转为RGB_565格式，否则无法识别
-                             */
+
                             /**
                              * Android内置的人脸识别，需要将Bitmap对象转为RGB_565格式，否则无法识别
                              */
                             val faceDetectBitmap = bitmap.copy(Bitmap.Config.RGB_565, true)
                             val faces = arrayOfNulls<FaceDetector.Face>(3)
-                            // 一次只检测一张人脸
                             val faceDetector = FaceDetector(
-                                faceDetectBitmap.width,
-                                faceDetectBitmap.height,
-                                1
+                                faceDetectBitmap.width, faceDetectBitmap.height, 3
                             )
-                            val faceCount: Int =
-                                faceDetector.findFaces(faceDetectBitmap, faces)
+                            val faceCount = faceDetector.findFaces(faceDetectBitmap, faces)
+
                             /**
-                             * 检测到人脸之后延迟几秒采集人脸数据
+                             * 检测到人脸之后采集人脸数据
                              */
-                            /**
-                             * 检测到人脸之后延迟几秒采集人脸数据
-                             */
-                            if (faceCount >= 1) {
-                                weakReferenceHandler.sendEmptyMessageDelayed(
-                                    2022071401, 3000
-                                )
+                            if (faceCount > 0) {
+                                //画框
+                                for (face in faces) {
+                                    if (face != null) {
+                                        //可信度，0~1
+                                        val confidence = face.confidence()
+                                        Log.d(kTag, "人脸可信度：$confidence")
+                                        if (confidence > 0.5) {
+                                            val pointF = PointF()
+                                            // 双眼的中点
+                                            face.getMidPoint(pointF)
+                                            // 获取双眼的间距
+                                            val eyesDistance = face.eyesDistance()
+                                            faceDetectView.updateFacePosition(pointF, eyesDistance)
+
+                                            weakReferenceHandler.sendEmptyMessage(2023041402)
+                                        }
+                                    }
+                                }
                             }
                             //检测完之后close就会继续生成下一帧图片，否则就会被阻塞不会继续生成下一帧
                             imageProxy.close()
@@ -202,27 +209,31 @@ class FaceCollectionActivity : KotlinBaseActivity() {
     }
 
     private val callback = Handler.Callback { msg: Message ->
-        if (msg.what == 2022071401) {
+        if (msg.what == 2023041401) {
+            faceDetectTipsView.text = "人脸识别中，请勿晃动手机"
+        } else if (msg.what == 2023041402) {
             faceDetectTipsView.text = "人脸特征采集中，请勿晃动手机"
-            val outputFileOptions: ImageCapture.OutputFileOptions =
-                ImageCapture.OutputFileOptions.Builder(FileUtils.imageFile).build()
-            imageCapture.takePicture(
-                outputFileOptions,
-                cameraExecutor,
-                object : ImageCapture.OnImageSavedCallback {
-                    override fun onImageSaved(results: ImageCapture.OutputFileResults) {
-                        Log.d(TAG, "onImageSaved: " + results.savedUri)
-                    }
-
-                    override fun onError(error: ImageCaptureException) {
-                        error.printStackTrace()
-                    }
-                })
+//            val outputFileOptions: ImageCapture.OutputFileOptions =
+//                ImageCapture.OutputFileOptions.Builder(FileUtils.imageFile).build()
+//            imageCapture.takePicture(
+//                outputFileOptions,
+//                cameraExecutor,
+//                object : ImageCapture.OnImageSavedCallback {
+//                    override fun onImageSaved(results: ImageCapture.OutputFileResults) {
+//                        Log.d(TAG, "onImageSaved: " + results.savedUri)
+//                    }
+//
+//                    override fun onError(error: ImageCaptureException) {
+//                        error.printStackTrace()
+//                    }
+//                })
         }
         true
     }
 
-    override fun initEvent() {}
+    override fun initEvent() {
+        leftBackView.setOnClickListener { finish() }
+    }
 
     override fun onDestroy() {
         window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)

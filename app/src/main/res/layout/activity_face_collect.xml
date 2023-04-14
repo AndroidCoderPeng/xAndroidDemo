@@ -38,6 +38,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <com.example.mutidemo.widget.FaceDetectView
+            android:id="@+id/faceDetectView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
             android:id="@+id/faceDetectTipsView"
             android:layout_width="match_parent"

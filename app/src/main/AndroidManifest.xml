@@ -62,7 +62,6 @@
         <activity android:name=".view.SlideBarActivity" />
         <activity android:name=".view.OcrNumberActivity" />
         <activity android:name=".view.ProcessBarActivity" />
-        <activity android:name=".view.FacePreViewActivity" />
         <activity android:name=".view.RecodeAudioActivity" />
         <activity android:name=".view.DragMapActivity" />
         <activity android:name=".view.WaterMarkerActivity" />
