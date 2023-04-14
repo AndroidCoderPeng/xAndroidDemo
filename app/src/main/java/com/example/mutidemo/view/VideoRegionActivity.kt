@@ -95,8 +95,9 @@ class VideoRegionActivity : KotlinBaseActivity() {
         }
 
         sendRegionButton.setOnClickListener {
-            val region = regionView.getConfirmedRegion()
-            region.toJson().show(this)
+            val region = regionView.getConfirmedPoints()
+            region.reformat().show(this)
+            Log.d(kTag, "initEvent => ${region.reformat()}")
         }
     }
 
@@ -108,5 +109,20 @@ class VideoRegionActivity : KotlinBaseActivity() {
 
     override fun setupTopBarLayout() {
         titleView.text = "视频区域划分"
+    }
+
+    //将集合格式化成满足上传格式的数据
+    private fun ArrayList<FloatArray>.reformat(): String {
+        if (this.isEmpty()) return ""
+        val builder = StringBuilder()
+        //循环遍历元素，同时得到元素index(下标)
+        this.forEachIndexed { index, it ->
+            if (index == this.size - 1) {
+                builder.append(it.toJson())
+            } else {
+                builder.append(it.toJson()).append(",")
+            }
+        }
+        return builder.toString()
     }
 }

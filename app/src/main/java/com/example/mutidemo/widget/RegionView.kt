@@ -87,8 +87,27 @@ class RegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx, attr
                 val width = ctx.obtainScreenWidth()
                 val height = ctx.obtainScreenHeight()
 
-                region.leftTop = Point(leftTop.x / width, leftTop.y / height)
-                region.rightBottom = Point(rightBottom.x / width, rightBottom.y / height)
+                /**
+                 * 区域
+                 * */
+                if (region.isNotEmpty()) {
+                    region.clear()
+                }
+                region.add(Point(leftTop.x / width, leftTop.y / height))
+                region.add(Point(rightTop.x / width, rightTop.y / height))
+                region.add(Point(leftBottom.x / width, leftBottom.y / height))
+                region.add(Point(rightBottom.x / width, rightBottom.y / height))
+
+                /**
+                 * 点集合
+                 * */
+                if (points.isNotEmpty()) {
+                    points.clear()
+                }
+                points.add(floatArrayOf(leftTop.x / width, leftTop.y / height))
+                points.add(floatArrayOf(rightTop.x / width, rightTop.y / height))
+                points.add(floatArrayOf(leftBottom.x / width, leftBottom.y / height))
+                points.add(floatArrayOf(rightBottom.x / width, rightBottom.y / height))
             }
         }
         invalidate()
@@ -102,21 +121,17 @@ class RegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx, attr
         invalidate()
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     data class Point(val x: Float, val y: Float)
 
-    inner class Region {
-        /**
-         * 点距离屏幕左上角百分比
-         * */
-        var leftTop = Point(0f, 0f)
+    private var region = ArrayList<Point>()
 
-        /**
-         * 点距离屏幕右下角百分比
-         * */
-        var rightBottom = Point(1f, 1f)
-    }
+    fun getConfirmedRegion(): ArrayList<Point> = region
 
-    private var region = Region()
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun getConfirmedRegion(): Region = region
+    private var points = ArrayList<FloatArray>()
+
+    fun getConfirmedPoints(): ArrayList<FloatArray> = points
 }
