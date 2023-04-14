@@ -9,8 +9,13 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.example.mutidemo.R
+import com.example.mutidemo.model.Point
+import com.example.mutidemo.util.DemoConstant
+import com.example.mutidemo.util.netty.SocketManager
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.toJson
 import kotlinx.android.synthetic.main.activity_video_region.*
 import java.util.concurrent.ExecutionException
@@ -24,6 +29,7 @@ class VideoRegionActivity : KotlinBaseActivity() {
     private val RATIO_16_9_VALUE = 16.0 / 9.0
 
     override fun initData() {
+        SocketManager.get.connectNetty(DemoConstant.HOST, DemoConstant.TCP_PORT)
         // Initialize our background executor
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         // 检查 CameraProvider 可用性
@@ -51,7 +57,7 @@ class VideoRegionActivity : KotlinBaseActivity() {
 
         // CameraSelector
         val cameraSelector: CameraSelector = CameraSelector.Builder()
-            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+            .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
             .build()
 
         // Preview
@@ -88,6 +94,9 @@ class VideoRegionActivity : KotlinBaseActivity() {
         } else AspectRatio.RATIO_16_9
     }
 
+    private val gson by lazy { Gson() }
+    private val typeToken = object : TypeToken<ArrayList<Point>>() {}.type
+
     override fun initEvent() {
         leftBackView.setOnClickListener { finish() }
         clearView.setOnClickListener {
@@ -95,9 +104,25 @@ class VideoRegionActivity : KotlinBaseActivity() {
         }
 
         sendRegionButton.setOnClickListener {
-            val region = regionView.getConfirmedPoints()
-            region.reformat().show(this)
-            Log.d(kTag, "initEvent => ${region.reformat()}")
+//            val region = regionView.getConfirmedPoints()
+//            val data = region.reformat()
+//            data.show(this)
+//            Log.d(kTag, "initEvent => $data")
+//
+//            val body = JsonObject()
+//            body.addProperty("position", data)
+//            body.addProperty("color", "#FF0000")
+//            body.addProperty("code", "11,12")
+//            SocketManager.get.sendData(body.toJson().toByteArray())
+
+            val region = regionView.getConfirmedRegion()
+            val body = JsonObject()
+            body.add("position", gson.toJsonTree(region, typeToken).asJsonArray)
+            body.addProperty("color", "#FF0000")
+            body.addProperty("code", "11,12")
+            Log.d(kTag, "initEvent => ${body.toJson()}")
+
+            SocketManager.get.sendData(body.toJson().toByteArray())
         }
     }
 
@@ -124,5 +149,10 @@ class VideoRegionActivity : KotlinBaseActivity() {
             }
         }
         return builder.toString()
+    }
+
+    override fun onDestroy() {
+        SocketManager.get.close()
+        super.onDestroy()
     }
 }

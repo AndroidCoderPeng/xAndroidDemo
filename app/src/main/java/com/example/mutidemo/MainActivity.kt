@@ -8,7 +8,6 @@ import cn.bertsir.zbar.view.ScanLineView
 import com.bumptech.glide.Glide
 import com.example.mutidemo.model.BannerImageModel
 import com.example.mutidemo.util.DemoConstant
-import com.example.mutidemo.util.netty.SocketManager
 import com.example.mutidemo.view.*
 import com.igexin.sdk.PushManager
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
@@ -28,6 +27,7 @@ import java.util.*
 class MainActivity : KotlinBaseActivity() {
 
     private var clickTime: Long = 0
+    private val timer by lazy { Timer() }
     private val itemNames = listOf(
         "顶/底部导航栏", "ZBar扫一扫", "上拉加载下拉刷新", "联系人侧边滑动控件", "OCR识别银行卡",
         "自定义进度条", "拖拽地图选点", "音频录制与播放", "图片添加水印并压缩", "视频压缩",
@@ -68,7 +68,6 @@ class MainActivity : KotlinBaseActivity() {
             indicator = CircleIndicator(context)
         }
 
-        //TODO 初始化Netty
 //        SocketManager.get.connectNetty(DemoConstant.HOST, DemoConstant.TCP_PORT)
     }
 
@@ -112,20 +111,20 @@ class MainActivity : KotlinBaseActivity() {
                     14 -> navigatePageTo<AirDashBoardActivity>()
                     15 -> navigatePageTo<FaceCollectionActivity>()
                     16 -> {
-                        val sendBytes = byteArrayOf(
-                            0xFF.toByte(),
-                            0x01,
-                            0x00,
-                            0x95.toByte(),
-                            0x00,
-                            0x00,
-                            0x96.toByte()
-                        )
-                        Timer().schedule(object : TimerTask() {
-                            override fun run() {
-                                SocketManager.get.sendData(sendBytes)
-                            }
-                        }, 0, 1000)
+//                        val sendBytes = byteArrayOf(
+//                            0xFF.toByte(),
+//                            0x01,
+//                            0x00,
+//                            0x95.toByte(),
+//                            0x00,
+//                            0x00,
+//                            0x96.toByte()
+//                        )
+//                        timer.schedule(object : TimerTask() {
+//                            override fun run() {
+//                                SocketManager.get.sendData(sendBytes)
+//                            }
+//                        }, 0, 1000)
                     }
                     17 -> navigatePageTo<SteeringWheelActivity>()
                     18 -> navigatePageTo<TimeLineActivity>()

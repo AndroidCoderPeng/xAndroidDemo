@@ -8,6 +8,7 @@ import android.graphics.Path
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.example.mutidemo.model.Point
 import com.pengxh.kt.lite.extensions.obtainScreenHeight
 import com.pengxh.kt.lite.extensions.obtainScreenWidth
 
@@ -122,8 +123,6 @@ class RegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx, attr
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    data class Point(val x: Float, val y: Float)
 
     private var region = ArrayList<Point>()
 

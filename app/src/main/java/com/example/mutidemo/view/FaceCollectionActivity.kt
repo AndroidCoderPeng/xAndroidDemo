@@ -154,13 +154,6 @@ class FaceCollectionActivity : KotlinBaseActivity() {
                      * NV21是Android中有的模式，它的存储顺序是先存Y分量，再VU交替存储。
                      * NV12和NV21格式都属于YUV420SP类型
                      */
-                    /**
-                     * CameraX 可通过 setOutputImageFormat(int) 支持 YUV_420_888 和 RGBA_8888。默认格式为 YUV_420_888
-                     *
-                     * NV12是iOS中有的模式，它的存储顺序是先存Y分量，再YV进行交替存储。
-                     * NV21是Android中有的模式，它的存储顺序是先存Y分量，再VU交替存储。
-                     * NV12和NV21格式都属于YUV420SP类型
-                     */
                     if (imageProxy.format == ImageFormat.YUV_420_888) {
                         executor.execute {
                             val image = imageProxy.image
