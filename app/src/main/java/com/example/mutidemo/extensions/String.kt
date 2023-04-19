@@ -12,8 +12,12 @@ import android.view.View
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
+import com.example.mutidemo.model.ErrorMessageModel
 import com.example.mutidemo.view.BigImageActivity
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.pengxh.kt.lite.extensions.navigatePageTo
+import org.json.JSONObject
 import org.xml.sax.XMLReader
 import java.util.*
 import java.util.concurrent.ExecutionException
@@ -21,6 +25,21 @@ import java.util.concurrent.ExecutionException
 /**
  * String扩展方法
  */
+fun String.separateResponseCode(): Int {
+    if (this.isBlank()) {
+        return 404
+    }
+    return JSONObject(this).getInt("code")
+}
+
+
+fun String.toErrorMessage(): String {
+    val errorModel = Gson().fromJson<ErrorMessageModel>(
+        this, object : TypeToken<ErrorMessageModel>() {}.type
+    )
+    return errorModel.message.toString()
+}
+
 fun String.formatTextFromHtml(activity: Activity?, textView: TextView?, width: Int) {
     if (activity == null || textView == null || this.isBlank()) {
         return

@@ -8,15 +8,14 @@ import android.view.Surface
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.example.mutidemo.R
-import com.example.mutidemo.model.Point
-import com.example.mutidemo.util.DemoConstant
-import com.example.mutidemo.util.netty.SocketManager
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.google.gson.reflect.TypeToken
+import com.example.mutidemo.util.LoadingDialogHub
+import com.example.mutidemo.vm.RegionViewModel
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.toJson
+import com.pengxh.kt.lite.vm.LoadState
 import kotlinx.android.synthetic.main.activity_video_region.*
 import java.util.concurrent.ExecutionException
 import kotlin.math.abs
@@ -27,9 +26,16 @@ class VideoRegionActivity : KotlinBaseActivity() {
     private val kTag = "VideoRegionActivity"
     private val RATIO_4_3_VALUE = 4.0 / 3.0
     private val RATIO_16_9_VALUE = 16.0 / 9.0
+    private lateinit var regionViewModel: RegionViewModel
 
     override fun initData() {
-        SocketManager.get.connectNetty(DemoConstant.HOST, DemoConstant.TCP_PORT)
+        regionViewModel = ViewModelProvider(this)[RegionViewModel::class.java]
+        regionViewModel.postResult.observe(this) {
+            if (it.code == 200) {
+                "设置成功".show(this)
+            }
+        }
+
         // Initialize our background executor
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         // 检查 CameraProvider 可用性
@@ -94,9 +100,6 @@ class VideoRegionActivity : KotlinBaseActivity() {
         } else AspectRatio.RATIO_16_9
     }
 
-    private val gson by lazy { Gson() }
-    private val typeToken = object : TypeToken<ArrayList<Point>>() {}.type
-
     override fun initEvent() {
         leftBackView.setOnClickListener { finish() }
         clearView.setOnClickListener {
@@ -104,32 +107,34 @@ class VideoRegionActivity : KotlinBaseActivity() {
         }
 
         sendRegionButton.setOnClickListener {
-//            val region = regionView.getConfirmedPoints()
-//            val data = region.reformat()
-//            data.show(this)
-//            Log.d(kTag, "initEvent => $data")
-//
+            val region = regionView.getConfirmedPoints()
+            val data = region.reformat()
+
 //            val body = JsonObject()
 //            body.addProperty("position", data)
 //            body.addProperty("color", "#FF0000")
 //            body.addProperty("code", "11,12")
-//            SocketManager.get.sendData(body.toJson().toByteArray())
 
-            val region = regionView.getConfirmedRegion()
-            val body = JsonObject()
-            body.add("position", gson.toJsonTree(region, typeToken).asJsonArray)
-            body.addProperty("color", "#FF0000")
-            body.addProperty("code", "11,12")
-            Log.d(kTag, "initEvent => ${body.toJson()}")
+//            val region = regionView.getConfirmedRegion()
+//            val body = JsonObject()
+//            body.add("position", gson.toJsonTree(region, typeToken).asJsonArray)
+//            body.addProperty("color", "#FF0000")
+//            body.addProperty("code", "11,12")
 
-            SocketManager.get.sendData(body.toJson().toByteArray())
+            //发送数据
+            regionViewModel.postRegion("11,12", "#FF0000", data)
         }
     }
 
     override fun initLayoutView(): Int = R.layout.activity_video_region
 
     override fun observeRequestState() {
-
+        regionViewModel.loadState.observe(this) {
+            when (it) {
+                LoadState.Loading -> LoadingDialogHub.show(this, "区域设置中...")
+                else -> LoadingDialogHub.dismiss()
+            }
+        }
     }
 
     override fun setupTopBarLayout() {
@@ -149,10 +154,5 @@ class VideoRegionActivity : KotlinBaseActivity() {
             }
         }
         return builder.toString()
-    }
-
-    override fun onDestroy() {
-        SocketManager.get.close()
-        super.onDestroy()
     }
 }

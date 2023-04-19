@@ -1,6 +1,9 @@
 package com.example.mutidemo.util.retrofit
 
+import okhttp3.RequestBody
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface RetrofitService {
@@ -14,4 +17,10 @@ interface RetrofitService {
         @Query("num") num: Int,
         @Query("start") start: Int
     ): String
+
+    /**
+     * 提交算法区域
+     */
+    @POST("/set_position")
+    suspend fun postRegion(@Body requestBody: RequestBody): String
 }
