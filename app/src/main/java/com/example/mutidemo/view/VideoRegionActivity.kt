@@ -10,8 +10,14 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.mutidemo.R
+import com.example.mutidemo.model.Point
+import com.example.mutidemo.util.DemoConstant
 import com.example.mutidemo.util.LoadingDialogHub
+import com.example.mutidemo.util.netty.SocketManager
 import com.example.mutidemo.vm.RegionViewModel
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.toJson
@@ -26,9 +32,13 @@ class VideoRegionActivity : KotlinBaseActivity() {
     private val kTag = "VideoRegionActivity"
     private val RATIO_4_3_VALUE = 4.0 / 3.0
     private val RATIO_16_9_VALUE = 16.0 / 9.0
+    private val gson by lazy { Gson() }
+    private val typeToken = object : TypeToken<ArrayList<Point>>() {}.type
     private lateinit var regionViewModel: RegionViewModel
 
     override fun initData() {
+        SocketManager.get.connectNetty(DemoConstant.HOST, DemoConstant.TCP_PORT)
+
         regionViewModel = ViewModelProvider(this)[RegionViewModel::class.java]
         regionViewModel.postResult.observe(this) {
             if (it.code == 200) {
@@ -106,20 +116,20 @@ class VideoRegionActivity : KotlinBaseActivity() {
             regionView.clearRoutePath()
         }
 
-        sendRegionButton.setOnClickListener {
+        socketSendButton.setOnClickListener {
+            val region = regionView.getConfirmedRegion()
+            val body = JsonObject()
+            body.add("position", gson.toJsonTree(region, typeToken).asJsonArray)
+            body.addProperty("color", "#FF0000")
+            body.addProperty("code", "11,12")
+
+            //发送数据
+            SocketManager.get.sendData(body.toJson().toByteArray())
+        }
+
+        httpSendButton.setOnClickListener {
             val region = regionView.getConfirmedPoints()
             val data = region.reformat()
-
-//            val body = JsonObject()
-//            body.addProperty("position", data)
-//            body.addProperty("color", "#FF0000")
-//            body.addProperty("code", "11,12")
-
-//            val region = regionView.getConfirmedRegion()
-//            val body = JsonObject()
-//            body.add("position", gson.toJsonTree(region, typeToken).asJsonArray)
-//            body.addProperty("color", "#FF0000")
-//            body.addProperty("code", "11,12")
 
             //发送数据
             regionViewModel.postRegion("11,12", "#FF0000", data)

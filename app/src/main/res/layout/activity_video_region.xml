@@ -53,12 +53,24 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <Button
-            android:id="@+id/sendRegionButton"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginVertical="@dimen/dp_50"
-            android:text="发送区域" />
+            android:layout_gravity="bottom"
+            android:layout_margin="@dimen/dp_30">
+
+            <Button
+                android:id="@+id/socketSendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Socket方式发送" />
+
+            <Button
+                android:id="@+id/httpSendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="Http方式发送" />
+        </RelativeLayout>
     </FrameLayout>
 </LinearLayout>

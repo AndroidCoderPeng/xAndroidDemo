@@ -15,7 +15,7 @@ object DemoConstant {
         "https://images.pexels.com/photos/296115/pexels-photo-296115.jpeg",
         "https://images.pexels.com/photos/4158/apple-iphone-smartphone-desk.jpg"
     )
-    const val HOST = "192.168.31.233"
+    const val HOST = "192.168.43.77"
     const val TCP_PORT = 7777
 
     const val STATUS_CONNECT_SUCCESS = 1 //连接成功
