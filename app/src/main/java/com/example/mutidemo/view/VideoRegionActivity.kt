@@ -11,9 +11,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.mutidemo.R
 import com.example.mutidemo.model.Point
-import com.example.mutidemo.util.DemoConstant
 import com.example.mutidemo.util.LoadingDialogHub
-import com.example.mutidemo.util.netty.SocketManager
+import com.example.mutidemo.util.netty.UdpClient
 import com.example.mutidemo.vm.RegionViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -35,10 +34,9 @@ class VideoRegionActivity : KotlinBaseActivity() {
     private val gson by lazy { Gson() }
     private val typeToken = object : TypeToken<ArrayList<Point>>() {}.type
     private lateinit var regionViewModel: RegionViewModel
+    private val udpClient by lazy { UdpClient() }
 
     override fun initData() {
-        SocketManager.get.connectNetty(DemoConstant.HOST, DemoConstant.TCP_PORT)
-
         regionViewModel = ViewModelProvider(this)[RegionViewModel::class.java]
         regionViewModel.postResult.observe(this) {
             if (it.code == 200) {
@@ -124,7 +122,7 @@ class VideoRegionActivity : KotlinBaseActivity() {
             body.addProperty("code", "11,12")
 
             //发送数据
-            SocketManager.get.sendData(body.toJson().toByteArray())
+            udpClient.send(body.toString())
         }
 
         httpSendButton.setOnClickListener {
