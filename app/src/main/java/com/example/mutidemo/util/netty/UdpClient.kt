@@ -71,6 +71,10 @@ class UdpClient : UdpChannelInboundHandler(), Runnable {
         sendDatagramPacket(datagramPacket)
     }
 
+    fun release() {
+        releasePort()
+    }
+
     override fun receivedMessage(data: String) {
 
     }

@@ -24,6 +24,10 @@ abstract class UdpChannelInboundHandler : SimpleChannelInboundHandler<DatagramPa
         handlerContext?.writeAndFlush(obj)
     }
 
+    fun releasePort() {
+        handlerContext?.close()
+    }
+
     override fun channelRead0(ctx: ChannelHandlerContext, datagramPacket: DatagramPacket) {
         receivedMessage(datagramPacket.content().toString(CharsetUtil.UTF_8))
     }

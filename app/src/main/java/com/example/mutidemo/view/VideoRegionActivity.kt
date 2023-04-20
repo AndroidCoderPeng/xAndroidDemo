@@ -163,4 +163,9 @@ class VideoRegionActivity : KotlinBaseActivity() {
         }
         return builder.toString()
     }
+
+    override fun onDestroy() {
+        udpClient.release()
+        super.onDestroy()
+    }
 }
