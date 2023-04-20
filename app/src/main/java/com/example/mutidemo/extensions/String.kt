@@ -21,6 +21,7 @@ import org.json.JSONObject
 import org.xml.sax.XMLReader
 import java.util.*
 import java.util.concurrent.ExecutionException
+import java.util.regex.Pattern
 
 /**
  * String扩展方法
@@ -38,6 +39,13 @@ fun String.toErrorMessage(): String {
         this, object : TypeToken<ErrorMessageModel>() {}.type
     )
     return errorModel.message.toString()
+}
+
+fun String.getChannel(): String {
+    val regEx = "[^0-9]"
+    val p = Pattern.compile(regEx)
+    val m = p.matcher(this)
+    return m.replaceAll("").trim { it <= ' ' }
 }
 
 fun String.formatTextFromHtml(activity: Activity?, textView: TextView?, width: Int) {

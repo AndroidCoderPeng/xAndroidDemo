@@ -74,6 +74,9 @@
         <activity android:name=".view.TimeLineActivity" />
         <activity android:name=".view.VideoRegionActivity" />
         <activity
+            android:name=".view.HikVisionActivity"
+            android:screenOrientation="landscape" />
+        <activity
             android:name=".view.FaceCollectionActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />

@@ -18,6 +18,12 @@ object DemoConstant {
     const val HOST = "192.168.43.77"
     const val TCP_PORT = 7777
 
+    //海康摄像头参数
+    const val HK_NET_IP = "192.168.10.101"
+    const val HK_NET_PORT = "8000"
+    const val HK_NET_USERNAME = "admin"
+    const val HK_NET_PASSWORD = "1234qwer"
+
     const val STATUS_CONNECT_SUCCESS = 1 //连接成功
     const val STATUS_CONNECT_CLOSED = 0 //关闭连接
     const val STATUS_CONNECT_ERROR = 0 //连接失败
