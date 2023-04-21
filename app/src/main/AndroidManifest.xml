@@ -72,7 +72,6 @@
         <activity android:name=".view.AirDashBoardActivity" />
         <activity android:name=".view.SteeringWheelActivity" />
         <activity android:name=".view.TimeLineActivity" />
-        <activity android:name=".view.VideoRegionActivity" />
         <activity
             android:name=".view.HikVisionActivity"
             android:screenOrientation="landscape" />

@@ -1,27 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <SurfaceView
-        android:id="@+id/videoSurfaceView"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/closeCameraButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/dp_20"
-        android:text="关闭摄像头" />
+        <SurfaceView
+            android:id="@+id/videoSurfaceView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    <Button
-        android:id="@+id/openCameraButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/dp_20"
-        android:text="打开摄像头" />
-</RelativeLayout>
+        <com.example.mutidemo.widget.RegionView
+            android:id="@+id/regionView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:gravity="end"
+            android:orientation="vertical"
+            android:padding="@dimen/dp_10">
+
+            <Button
+                android:id="@+id/leftBackView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="10dp"
+                android:text="返回" />
+
+            <Button
+                android:id="@+id/clearView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="重画" />
+
+            <Button
+                android:id="@+id/openCameraButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="打开摄像头" />
+
+            <Button
+                android:id="@+id/closeCameraButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="关闭摄像头" />
+
+            <Button
+                android:id="@+id/httpSendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Http方式发送" />
+
+            <Button
+                android:id="@+id/socketSendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Socket方式发送" />
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

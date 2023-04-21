@@ -32,7 +32,7 @@ public class SDKGuider {
     }
 
     //清理
-    public void finalize() {
+    protected void finalize() {
         cleanupNetSdk_jna();
     }
 

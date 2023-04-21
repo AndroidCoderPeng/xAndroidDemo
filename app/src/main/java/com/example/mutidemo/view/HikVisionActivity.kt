@@ -3,15 +3,25 @@ package com.example.mutidemo.view
 import android.graphics.PixelFormat
 import android.util.Log
 import android.view.SurfaceHolder
+import androidx.lifecycle.ViewModelProvider
 import com.example.mutidemo.R
 import com.example.mutidemo.extensions.getChannel
+import com.example.mutidemo.extensions.reformat
+import com.example.mutidemo.model.Point
 import com.example.mutidemo.util.DemoConstant
+import com.example.mutidemo.util.LoadingDialogHub
 import com.example.mutidemo.util.hk.MessageCodeHub
 import com.example.mutidemo.util.hk.SDKGuider
+import com.example.mutidemo.util.netty.UdpClient
+import com.example.mutidemo.vm.RegionViewModel
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 import com.gyf.immersionbar.ImmersionBar
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.vm.LoadState
 import kotlinx.android.synthetic.main.activity_hikvision.*
 
 class HikVisionActivity : KotlinBaseActivity(), SurfaceHolder.Callback {
@@ -19,29 +29,29 @@ class HikVisionActivity : KotlinBaseActivity(), SurfaceHolder.Callback {
     private val kTag = "HikVisionActivity"
     private var previewHandle = -1
     private var selectChannel = -1
-    private var selectStreamType = -1
-
-    // return by NET_DVR_Login_v30
     private var returnUserID = -1
-
-    // analog channel nums
     private var aChannelNum = 0
-
-    //start analog channel
     private var startAChannel = 0
-
-    //digital channel nums
     private var dChannelNum = 0
-
-    //start digital channel
     private var startDChannel = 0
     private var isPreviewSuccess = false
 
-    override fun initData() {
+    private val gson by lazy { Gson() }
+    private val typeToken = object : TypeToken<ArrayList<Point>>() {}.type
+    private lateinit var regionViewModel: RegionViewModel
+    private val udpClient by lazy { UdpClient() }
 
+    override fun initData() {
+        regionViewModel = ViewModelProvider(this)[RegionViewModel::class.java]
     }
 
     override fun initEvent() {
+        leftBackView.setOnClickListener { finish() }
+
+        clearView.setOnClickListener {
+            regionView.clearRoutePath()
+        }
+
         openCameraButton.setOnClickListener {
             val deviceItem = SDKGuider.g_sdkGuider.m_comDMGuider.DeviceItem()
             deviceItem.m_szDevName = ""
@@ -94,15 +104,13 @@ class HikVisionActivity : KotlinBaseActivity(), SurfaceHolder.Callback {
                     streamList.add("sub_stream")
                     streamList.add("third_stream")
 
-                    selectStreamType = 0
-
                     //开始预览
                     if (previewHandle != -1) {
                         SDKGuider.g_sdkGuider.m_comPreviewGuider.RealPlay_Stop_jni(previewHandle)
                     }
                     val strutPlayInfo = NET_DVR_PREVIEWINFO()
                     strutPlayInfo.lChannel = selectChannel
-                    strutPlayInfo.dwStreamType = selectStreamType
+                    strutPlayInfo.dwStreamType = 1
                     strutPlayInfo.bBlocked = 1
                     strutPlayInfo.hHwnd = videoSurfaceView.holder
                     previewHandle = SDKGuider.g_sdkGuider.m_comPreviewGuider.RealPlay_V40_jni(
@@ -131,12 +139,36 @@ class HikVisionActivity : KotlinBaseActivity(), SurfaceHolder.Callback {
             previewHandle = -1
             isPreviewSuccess = false
         }
+
+        socketSendButton.setOnClickListener {
+            val region = regionView.getConfirmedRegion()
+            val body = JsonObject()
+            body.add("position", gson.toJsonTree(region, typeToken).asJsonArray)
+            body.addProperty("color", "#FF0000")
+            body.addProperty("code", "11,12")
+
+            //发送数据
+            udpClient.send(body.toString())
+        }
+
+        httpSendButton.setOnClickListener {
+            val region = regionView.getConfirmedPoints()
+            val data = region.reformat()
+
+            //发送数据
+            regionViewModel.postRegion("11,12", "#FF0000", data)
+        }
     }
 
     override fun initLayoutView(): Int = R.layout.activity_hikvision
 
     override fun observeRequestState() {
-
+        regionViewModel.loadState.observe(this) {
+            when (it) {
+                LoadState.Loading -> LoadingDialogHub.show(this, "区域设置中...")
+                else -> LoadingDialogHub.dismiss()
+            }
+        }
     }
 
     override fun setupTopBarLayout() {
@@ -175,5 +207,10 @@ class HikVisionActivity : KotlinBaseActivity(), SurfaceHolder.Callback {
                 Log.d(kTag, "surfaceCreated: ${MessageCodeHub.getErrorCode()}")
             }
         }
+    }
+
+    override fun onDestroy() {
+        udpClient.release()
+        super.onDestroy()
     }
 }
