@@ -31,7 +31,7 @@ class RecodeAudioActivity : KotlinBaseActivity() {
     override fun initData() {
         AudioPopupWindow.create(this, object : AudioPopupWindow.IWindowListener {
             override fun onViewCreated(
-                window: PopupWindow?, imageView: ImageView?, textView: TextView?
+                window: PopupWindow, imageView: ImageView, textView: TextView
             ) {
                 recodeAudioButton.setOnTouchListener { v, event ->
                     when (event.action) {
@@ -39,12 +39,12 @@ class RecodeAudioActivity : KotlinBaseActivity() {
                             recodeAudioButton.animate()
                                 .scaleX(0.75f).scaleY(0.75f)
                                 .setDuration(100).start()
-                            window?.showAtLocation(parentLayout, Gravity.CENTER, 0, 0)
+                            window.showAtLocation(parentLayout, Gravity.CENTER, 0, 0)
                             audioRecodeHelper.startRecordAudio(createAudioFile().toString())
                         }
                         MotionEvent.ACTION_UP -> {
                             audioRecodeHelper.stopRecordAudio() //结束录音（保存录音文件）
-                            window?.dismiss()
+                            window.dismiss()
                             recodeAudioButton.animate()
                                 .scaleX(1.0f).scaleY(1.0f)
                                 .setDuration(100).start()
@@ -55,8 +55,8 @@ class RecodeAudioActivity : KotlinBaseActivity() {
                 audioRecodeHelper.setOnAudioStatusUpdateListener(object :
                     AudioRecodeHelper.OnAudioStatusUpdateListener {
                     override fun onUpdate(db: Double, time: Long) {
-                        imageView?.drawable?.level = (3000 + 6000 * db / 100).toInt()
-                        textView?.text = time.millsToTime()
+                        imageView.drawable?.level = (3000 + 6000 * db / 100).toInt()
+                        textView.text = time.millsToTime()
                     }
 
                     override fun onStop(filePath: String?) {

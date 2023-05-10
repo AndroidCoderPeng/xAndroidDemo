@@ -19,7 +19,7 @@ object RetrofitServiceManager {
     }
 
     suspend fun getNewsList(channel: String, start: Int): String {
-        return api.getNewsList(DemoConstant.APP_KEY, channel, 20, start)
+        return api.getNewsList(DemoConstant.APP_KEY, channel, 10, start)
     }
 
     suspend fun postRegion(code: String, color: String, position: String): String {

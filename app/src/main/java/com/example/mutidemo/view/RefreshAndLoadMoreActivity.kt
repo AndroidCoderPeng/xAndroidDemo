@@ -4,9 +4,6 @@ import android.os.Handler
 import android.os.Message
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DividerItemDecoration
-import com.bumptech.glide.Glide
 import com.example.mutidemo.R
 import com.example.mutidemo.extensions.addAll
 import com.example.mutidemo.model.NewsListModel
@@ -15,15 +12,14 @@ import com.example.mutidemo.vm.NewsViewModel
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.divider.ItemDecoration
+import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.vm.LoadState
 import kotlinx.android.synthetic.main.activity_refresh.*
 import kotlinx.android.synthetic.main.item_news_rv_l.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * @author: Pengxh
@@ -65,9 +61,8 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
                         refreshLayout.finishLoadMore()
                         isLoadMore = false
                     }
-                    else -> {
-                        dataBeans = dataRows
-                    }
+                    //首次加载数据
+                    else -> dataBeans = dataRows
                 }
                 weakReferenceHandler.sendEmptyMessage(2023031301)
             }
@@ -113,57 +108,38 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
 
     private val callback = Handler.Callback { msg: Message ->
         if (msg.what == 2023031301) {
-            if (isRefresh || isLoadMore) {
-                newsAdapter.notifyDataSetChanged()
-            } else {
-                //首次加载数据
-                newsAdapter =
-                    object : NormalRecyclerAdapter<NewsListModel.ResultBeanX.ResultBean.ListBean>(
-                        R.layout.item_news_rv_l, dataBeans
+            newsAdapter =
+                object : NormalRecyclerAdapter<NewsListModel.ResultBeanX.ResultBean.ListBean>(
+                    R.layout.item_news_rv_l, dataBeans
+                ) {
+                    override fun convertView(
+                        viewHolder: ViewHolder, position: Int,
+                        item: NewsListModel.ResultBeanX.ResultBean.ListBean
                     ) {
-                        override fun convertView(
-                            viewHolder: ViewHolder, position: Int,
-                            item: NewsListModel.ResultBeanX.ResultBean.ListBean
-                        ) {
-                            val img: String = item.pic
-                            if (img == "" || img.endsWith(".gif")) {
-                                newsPicture.visibility = View.GONE
-                            } else {
-                                lifecycleScope.launch(Dispatchers.Main) {
-                                    try {
-                                        val drawable = withContext(Dispatchers.IO) {
-                                            Glide.with(this@RefreshAndLoadMoreActivity)
-                                                .load(img).submit().get()
-                                        }
-                                        viewHolder.setImageResource(R.id.newsPicture, drawable)
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                    }
-                                }
-                            }
-
-                            viewHolder.setText(R.id.newsTitle, item.title)
-                                .setText(R.id.newsSrc, item.src)
-                                .setText(R.id.newsTime, item.time)
+                        val img: String = item.pic
+                        if (img == "" || img.endsWith(".gif")) {
+                            newsPicture.visibility = View.GONE
+                        } else {
+                            viewHolder.setImageResource(R.id.newsPicture, img)
                         }
+
+                        viewHolder.setText(R.id.newsTitle, item.title)
+                            .setText(R.id.newsSrc, item.src)
+                            .setText(R.id.newsTime, item.time)
                     }
-                newsRecyclerView.addItemDecoration(
-                    DividerItemDecoration(
-                        this, DividerItemDecoration.VERTICAL
-                    )
-                )
-                newsRecyclerView.adapter = newsAdapter
-                newsAdapter.setOnItemClickedListener(object :
-                    NormalRecyclerAdapter.OnItemClickedListener<NewsListModel.ResultBeanX.ResultBean.ListBean> {
-                    override fun onItemClicked(
-                        position: Int, t: NewsListModel.ResultBeanX.ResultBean.ListBean
-                    ) {
-                        navigatePageTo<NewsDetailsActivity>(
-                            addAll(t.title, t.src, t.time, t.content)
-                        )
-                    }
-                })
-            }
+                }
+            newsRecyclerView.addItemDecoration(
+                ItemDecoration(0f, 130f.dp2px(this@RefreshAndLoadMoreActivity).toFloat())
+            )
+            newsRecyclerView.adapter = newsAdapter
+            newsAdapter.setOnItemClickedListener(object :
+                NormalRecyclerAdapter.OnItemClickedListener<NewsListModel.ResultBeanX.ResultBean.ListBean> {
+                override fun onItemClicked(
+                    position: Int, t: NewsListModel.ResultBeanX.ResultBean.ListBean
+                ) {
+                    navigatePageTo<NewsDetailsActivity>(addAll(t.title, t.src, t.time, t.content))
+                }
+            })
         }
         true
     }
