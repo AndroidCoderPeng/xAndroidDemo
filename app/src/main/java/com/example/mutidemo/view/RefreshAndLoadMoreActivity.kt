@@ -48,8 +48,7 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
                 val dataRows = it.result.result.list
                 when {
                     isRefresh -> {
-                        dataBeans.clear()
-                        dataBeans = dataRows
+                        newsAdapter.setRefreshData(dataRows)
                         refreshLayout.finishRefresh()
                         isRefresh = false
                     }
@@ -57,14 +56,16 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
                         if (dataRows.size == 0) {
                             "到底了，别拉了".show(this)
                         }
-                        dataBeans.addAll(dataRows)
+                        newsAdapter.setLoadMoreData(dataRows)
                         refreshLayout.finishLoadMore()
                         isLoadMore = false
                     }
                     //首次加载数据
-                    else -> dataBeans = dataRows
+                    else -> {
+                        dataBeans = dataRows
+                        weakReferenceHandler.sendEmptyMessage(2023031301)
+                    }
                 }
-                weakReferenceHandler.sendEmptyMessage(2023031301)
             }
         }
     }
@@ -108,26 +109,26 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
 
     private val callback = Handler.Callback { msg: Message ->
         if (msg.what == 2023031301) {
-            newsAdapter =
-                object : NormalRecyclerAdapter<NewsListModel.ResultBeanX.ResultBean.ListBean>(
+            newsAdapter = object :
+                NormalRecyclerAdapter<NewsListModel.ResultBeanX.ResultBean.ListBean>(
                     R.layout.item_news_rv_l, dataBeans
                 ) {
-                    override fun convertView(
-                        viewHolder: ViewHolder, position: Int,
-                        item: NewsListModel.ResultBeanX.ResultBean.ListBean
-                    ) {
-                        val img: String = item.pic
-                        if (img == "" || img.endsWith(".gif")) {
-                            newsPicture.visibility = View.GONE
-                        } else {
-                            viewHolder.setImageResource(R.id.newsPicture, img)
-                        }
-
-                        viewHolder.setText(R.id.newsTitle, item.title)
-                            .setText(R.id.newsSrc, item.src)
-                            .setText(R.id.newsTime, item.time)
+                override fun convertView(
+                    viewHolder: ViewHolder, position: Int,
+                    item: NewsListModel.ResultBeanX.ResultBean.ListBean
+                ) {
+                    val img: String = item.pic
+                    if (img == "" || img.endsWith(".gif")) {
+                        newsPicture.visibility = View.GONE
+                    } else {
+                        viewHolder.setImageResource(R.id.newsPicture, img)
                     }
+
+                    viewHolder.setText(R.id.newsTitle, item.title)
+                        .setText(R.id.newsSrc, item.src)
+                        .setText(R.id.newsTime, item.time)
                 }
+            }
             newsRecyclerView.addItemDecoration(
                 ItemDecoration(0f, 130f.dp2px(this@RefreshAndLoadMoreActivity).toFloat())
             )

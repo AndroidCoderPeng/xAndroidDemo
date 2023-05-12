@@ -84,7 +84,8 @@ class MainActivity : KotlinBaseActivity() {
         }
 
     override fun initEvent() {
-        val adapter = object : NormalRecyclerAdapter<String>(R.layout.item_main_rv_g, itemNames) {
+        val adapter = object :
+            NormalRecyclerAdapter<String>(R.layout.item_main_rv_g, itemNames.toMutableList()) {
             override fun convertView(viewHolder: ViewHolder, position: Int, item: String) {
                 viewHolder.setText(R.id.itemTitleView, item)
             }

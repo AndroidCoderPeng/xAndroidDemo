@@ -59,7 +59,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //基础依赖库
-    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.0.4.3'
+    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.0.4.5'
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.6.1'
@@ -72,7 +72,7 @@ dependencies {
     //控件注解
     implementation files('libs/ocr-sdk.jar')
     //单项/数字、二三级联动、日期/时间等滚轮选择器
-    implementation 'com.github.gzu-liyujiang.AndroidPicker:WheelPicker:4.1.8'
+    implementation 'com.github.gzu-liyujiang.AndroidPicker:WheelPicker:4.1.11'
     //Kotlin协程
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     //MVVM+LiveData
@@ -100,8 +100,8 @@ dependencies {
     implementation 'com.qmuiteam:arch:0.3.1'
     //沉浸式状态栏。基础依赖包，必须要依赖
     implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
-    implementation 'com.getui:gtsdk:3.2.10.0'  //个推SDK
-    implementation 'com.getui:gtc:3.1.9.0'  //个推核心组件
+    implementation 'com.getui:gtsdk:3.2.15.0'  //个推SDK
+    implementation 'com.getui:gtc:3.2.1.0'  //个推核心组件
     //图片选择框架
     implementation 'io.github.lucksiege:pictureselector:v3.0.4'
     //视频播放器

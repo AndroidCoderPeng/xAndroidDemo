@@ -93,17 +93,16 @@ class SlideBarActivity : KotlinBaseActivity() {
 
     override fun initData() {
         val cityBeans: List<CityModel> = obtainCityData()
-        val cityAdapter =
-            object : NormalRecyclerAdapter<CityModel>(R.layout.item_city_rv_l, cityBeans) {
-                override fun convertView(viewHolder: ViewHolder, position: Int, item: CityModel) {
-                    viewHolder.setText(R.id.cityName, item.city)
-                }
+        val cityAdapter = object : NormalRecyclerAdapter<CityModel>(
+            R.layout.item_city_rv_l, cityBeans.toMutableList()
+        ) {
+            override fun convertView(viewHolder: ViewHolder, position: Int, item: CityModel) {
+                viewHolder.setText(R.id.cityName, item.city)
             }
+        }
         val layoutManager: LinearLayoutManager = object : LinearLayoutManager(this) {
             override fun smoothScrollToPosition(
-                recyclerView: RecyclerView,
-                state: RecyclerView.State,
-                position: Int
+                recyclerView: RecyclerView, state: RecyclerView.State, position: Int
             ) {
                 val scroller = VerticalItemDecoration.TopSmoothScroller(recyclerView.context)
                 scroller.targetPosition = position
