@@ -12,6 +12,7 @@ import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
+import com.pengxh.kt.lite.adapter.ReadOnlyImageAdapter
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.realFilePath
@@ -66,6 +67,15 @@ class CreateIconActivity : KotlinBaseActivity() {
 
                     override fun onCancel() {}
                 })
+        }
+
+        searchIconButton.setOnClickListener {
+            val paths = ArrayList<String>()
+            createImageFileDir().list()?.forEach { path ->
+                paths.add("${createImageFileDir().absolutePath}/$path")
+            }
+            val imageAdapter = ReadOnlyImageAdapter(this, paths)
+            iconGridView.adapter = imageAdapter
         }
     }
 
