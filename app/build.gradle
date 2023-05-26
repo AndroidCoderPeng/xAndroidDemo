@@ -104,6 +104,8 @@ dependencies {
     implementation 'com.getui:gtc:3.2.1.0'  //个推核心组件
     //图片选择框架
     implementation 'io.github.lucksiege:pictureselector:v3.0.4'
+    //图片裁剪
+    implementation 'com.github.yalantis:ucrop:2.2.8-native'
     //视频播放器
     implementation 'cn.jzvd:jiaozivideoplayer:7.6.0'
     //视频压缩
