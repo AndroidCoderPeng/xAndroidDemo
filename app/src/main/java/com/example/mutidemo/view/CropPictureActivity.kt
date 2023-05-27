@@ -22,9 +22,9 @@ import kotlinx.android.synthetic.main.activity_create_icon.*
 import java.io.File
 
 
-class CreateIconActivity : KotlinBaseActivity() {
+class CropPictureActivity : KotlinBaseActivity() {
 
-    private val context: Context = this@CreateIconActivity
+    private val context: Context = this@CropPictureActivity
     private val kTag = "CreateIconActivity"
     private val cropOptions by lazy { UCrop.Options() }
 
@@ -50,7 +50,7 @@ class CreateIconActivity : KotlinBaseActivity() {
                         }
                         val uri = Uri.parse(result[0].availablePath)
 
-                        Glide.with(this@CreateIconActivity)
+                        Glide.with(this@CropPictureActivity)
                             .load(uri)
                             .into(originalImageView)
 
@@ -62,7 +62,7 @@ class CreateIconActivity : KotlinBaseActivity() {
                             .withAspectRatio(1f, 1f)
                             .withMaxResultSize(512, 512)
                             .withOptions(cropOptions)
-                            .start(this@CreateIconActivity)
+                            .start(this@CropPictureActivity)
                     }
 
                     override fun onCancel() {}
@@ -91,7 +91,7 @@ class CreateIconActivity : KotlinBaseActivity() {
         }
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_create_icon
+    override fun initLayoutView(): Int = R.layout.activity_crop_picture
 
     override fun observeRequestState() {
 

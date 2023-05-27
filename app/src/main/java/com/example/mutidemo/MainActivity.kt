@@ -130,7 +130,7 @@ class MainActivity : KotlinBaseActivity() {
                     17 -> navigatePageTo<SteeringWheelActivity>()
                     18 -> navigatePageTo<TimeLineActivity>()
                     19 -> navigatePageTo<HikVisionActivity>()
-                    20 -> navigatePageTo<CreateIconActivity>()
+                    20 -> navigatePageTo<CropPictureActivity>()
                 }
             }
         })

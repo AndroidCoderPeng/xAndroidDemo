@@ -74,7 +74,7 @@
         <activity android:name=".view.AirDashBoardActivity" />
         <activity android:name=".view.SteeringWheelActivity" />
         <activity android:name=".view.TimeLineActivity" />
-        <activity android:name=".view.CreateIconActivity" />
+        <activity android:name=".view.CropPictureActivity" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:theme="@style/AppTheme" />
