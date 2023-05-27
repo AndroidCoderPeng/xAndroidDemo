@@ -8,8 +8,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <!--这是一个普通权限，不需要动态申请，但是在小米手机里需要动态申请-->
-    <uses-permission android:name="android.permission.NFC" />
 
     <!--危险权限，需要手动申请-->
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -65,7 +63,6 @@
         <activity android:name=".view.RefreshAndLoadMoreActivity" />
         <activity android:name=".view.NewsDetailsActivity" />
         <activity android:name=".view.SlideBarActivity" />
-        <activity android:name=".view.OcrNumberActivity" />
         <activity android:name=".view.ProcessBarActivity" />
         <activity android:name=".view.RecodeAudioActivity" />
         <activity android:name=".view.DragMapActivity" />

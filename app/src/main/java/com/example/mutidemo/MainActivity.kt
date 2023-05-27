@@ -29,7 +29,7 @@ class MainActivity : KotlinBaseActivity() {
     private var clickTime: Long = 0
     private val timer by lazy { Timer() }
     private val itemNames = listOf(
-        "顶/底部导航栏", "ZBar扫一扫", "上拉加载下拉刷新", "联系人侧边滑动控件", "OCR识别银行卡",
+        "顶/底部导航栏", "ZBar扫一扫", "上拉加载下拉刷新", "联系人侧边滑动控件", "Secret",
         "自定义进度条", "拖拽地图选点", "音频录制与播放", "图片添加水印并压缩", "视频压缩",
         "WCJ02ToWGS84", "蓝牙相关", "可删减九宫格", "系统原生分享", "空气污染刻度盘", "人脸检测",
         "TCP客户端", "方向控制盘", "时间轴", "海康摄像头", "裁剪图片"
@@ -99,7 +99,7 @@ class MainActivity : KotlinBaseActivity() {
                     1 -> startScannerActivity()
                     2 -> navigatePageTo<RefreshAndLoadMoreActivity>()
                     3 -> navigatePageTo<SlideBarActivity>()
-                    4 -> navigatePageTo<OcrNumberActivity>()
+                    4 -> {}
                     5 -> navigatePageTo<ProcessBarActivity>()
                     6 -> navigatePageTo<DragMapActivity>()
                     7 -> navigatePageTo<RecodeAudioActivity>()

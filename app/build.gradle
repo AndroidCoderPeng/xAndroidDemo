@@ -15,7 +15,7 @@ android {
         multiDexEnabled true
 
         ndk {
-            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86_64'
+            abiFilters 'arm64-v8a'
         }
     }
 
@@ -69,8 +69,6 @@ dependencies {
     //图片加载库
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     implementation 'io.github.youth5201314:banner:2.2.2'
-    //控件注解
-    implementation files('libs/ocr-sdk.jar')
     //单项/数字、二三级联动、日期/时间等滚轮选择器
     implementation 'com.github.gzu-liyujiang.AndroidPicker:WheelPicker:4.1.11'
     //Kotlin协程
