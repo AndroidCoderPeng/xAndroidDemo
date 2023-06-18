@@ -1,6 +1,24 @@
 package com.example.mutidemo.fragment
 
-import androidx.fragment.app.Fragment
+import com.example.mutidemo.R
+import com.pengxh.kt.lite.base.KotlinBaseFragment
 
-class MinePageFragment : Fragment() {
+class MinePageFragment : KotlinBaseFragment() {
+    override fun initData() {
+
+    }
+
+    override fun initEvent() {
+
+    }
+
+    override fun initLayoutView(): Int = R.layout.fragment_mine
+
+    override fun observeRequestState() {
+
+    }
+
+    override fun setupTopBarLayout() {
+
+    }
 }

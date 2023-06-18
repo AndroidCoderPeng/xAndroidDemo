@@ -5,9 +5,8 @@
     android:orientation="horizontal">
 
     <RelativeLayout
-        android:layout_width="0dp"
+        android:layout_width="@dimen/dp_80"
         android:layout_height="match_parent"
-        android:layout_weight="1.25"
         android:background="@color/mainColor">
 
         <ListView
@@ -19,11 +18,10 @@
             android:scrollbars="none" />
     </RelativeLayout>
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/contentLayout"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="4"
-        android:background="#F8F8F8">
-
-    </LinearLayout>
+        android:layout_weight="1"
+        android:background="#F8F8F8" />
 </LinearLayout>

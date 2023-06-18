@@ -60,7 +60,9 @@
 
         <activity android:name=".MainActivity" />
         <activity android:name=".view.NavigationActivity" />
-        <activity android:name=".view.SlideNavigationActivity" />
+        <activity
+            android:name=".view.SlideNavigationActivity"
+            android:screenOrientation="landscape" />
         <activity android:name=".view.RefreshAndLoadMoreActivity" />
         <activity android:name=".view.NewsDetailsActivity" />
         <activity android:name=".view.SlideBarActivity" />

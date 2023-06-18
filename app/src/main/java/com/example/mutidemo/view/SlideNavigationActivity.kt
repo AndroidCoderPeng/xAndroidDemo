@@ -9,8 +9,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import com.example.mutidemo.R
+import com.example.mutidemo.fragment.AlarmPageFragment
+import com.example.mutidemo.fragment.HomePageFragment
+import com.example.mutidemo.fragment.MinePageFragment
+import com.example.mutidemo.fragment.TaskPageFragment
+import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
 import kotlinx.android.synthetic.main.activity_slide_navigation.*
@@ -19,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_slide_navigation.*
 class SlideNavigationActivity : KotlinBaseActivity() {
 
     private val slideItems = ArrayList<SlideItem>()
+    private val fragmentPages = ArrayList<Fragment>()
     private val slideAdapter by lazy { SlideAdapter(this) }
 
     init {
@@ -26,6 +31,11 @@ class SlideNavigationActivity : KotlinBaseActivity() {
         slideItems.add(SlideItem(R.drawable.ic_alarm, "报警记录"))
         slideItems.add(SlideItem(R.drawable.ic_task, "任务"))
         slideItems.add(SlideItem(R.drawable.ic_user, "我的"))
+
+        fragmentPages.add(HomePageFragment())
+        fragmentPages.add(AlarmPageFragment())
+        fragmentPages.add(TaskPageFragment())
+        fragmentPages.add(MinePageFragment())
     }
 
     override fun initData() {
@@ -35,8 +45,8 @@ class SlideNavigationActivity : KotlinBaseActivity() {
         slideAdapter.setSelectItem(0)
         slideAdapter.notifyDataSetInvalidated()
 
-        //导航到首页
-
+        //显示首页
+        switchPage(fragmentPages[0])
     }
 
     override fun initEvent() {
@@ -45,27 +55,14 @@ class SlideNavigationActivity : KotlinBaseActivity() {
             slideAdapter.notifyDataSetInvalidated()
 
             //切换页面
-            when (position) {
-                0 -> {
-                    val transaction = supportFragmentManager.beginTransaction()
-                    transaction.replace(R.layout.fragment_home,)
-                    transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    transaction.commit()
-                }
-                1 -> {}
-                2 -> {}
-                4 -> {}
-            }
+            switchPage(fragmentPages[position])
         }
     }
 
-    /**
-     * 切换页面显示
-     * */
-    private inline fun <reified T> Fragment.navigatePageTo() {
-        if () {
-
-        }
+    private fun switchPage(description: Fragment) {
+        val transition = supportFragmentManager.beginTransaction()
+        transition.replace(R.id.contentLayout, description)
+        transition.commit()
     }
 
     override fun initLayoutView(): Int = R.layout.activity_slide_navigation
@@ -75,7 +72,7 @@ class SlideNavigationActivity : KotlinBaseActivity() {
     }
 
     override fun setupTopBarLayout() {
-
+        ImmersionBar.with(this).statusBarDarkFont(true).init()
     }
 
     /**
