@@ -5,6 +5,19 @@
       <map>
         <entry key="../../../../../layout/custom_preview.xml" value="0.24537037037037038" />
         <entry key="../../../.gradle/caches/transforms-2/files-2.1/2f7ae4ed4357514485d8603a70a3f566/jetified-Androidx-lite-lib-1.0.6/res/layout/dialog_alert.xml" value="0.19537037037037036" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/bg_layout_solid_white.xml" value="0.441" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/ic_alarm.xml" value="0.441" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/ic_home.xml" value="0.441" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/ic_task.xml" value="0.441" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/ic_user.xml" value="0.441" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/layout/activity_crop_picture.xml" value="0.4921875" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/layout/activity_slide_navigation.xml" value="0.4921875" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/layout/fragment_alarm.xml" value="0.4901041666666667" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/layout/fragment_home.xml" value="0.4921875" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/layout/fragment_mine.xml" value="0.4901041666666667" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/layout/fragment_task.xml" value="0.4901041666666667" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/layout/item_secret_rv_l.xml" value="0.4921875" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/layout/item_slide_list.xml" value="0.4901041666666667" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/drawable/ic_dot.xml" value="0.4495" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/drawable/ic_dot_gray.xml" value="0.2915" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_air_dash.xml" value="0.5208333333333334" />
@@ -13,6 +26,7 @@
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_bmob.xml" value="0.33541666666666664" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_bus_card.xml" value="0.33541666666666664" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_check.xml" value="0.5208333333333334" />
+        <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_create_icon.xml" value="0.4921875" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_drag_map.xml" value="0.5208333333333334" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_face.xml" value="0.5211047420531527" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_face_collect.xml" value="0.5208333333333334" />
@@ -27,6 +41,7 @@
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_ocr.xml" value="0.4921875" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_progress.xml" value="0.5208333333333334" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_refresh.xml" value="0.5208333333333334" />
+        <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_secret.xml" value="0.4921875" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_slide.xml" value="0.5208333333333334" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_steering_wheel.xml" value="0.33541666666666664" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/activity_tcp_client.xml" value="0.33541666666666664" />
@@ -43,6 +58,7 @@
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/item_main_rv_g.xml" value="0.5208333333333334" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/item_news_rv.xml" value="0.5208333333333334" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/item_news_rv_l.xml" value="0.37083333333333335" />
+        <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/item_secret_rv_l.xml" value="0.4901041666666667" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/item_unread_lv.xml" value="0.37083333333333335" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/item_weather_rv.xml" value="0.5208333333333334" />
         <entry key="..\:/Code/xAndroidDemo/app/src/main/res/layout/item_weather_rv_l.xml" value="0.5208333333333334" />

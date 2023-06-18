@@ -18,7 +18,7 @@ import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.realFilePath
 import com.pengxh.kt.lite.extensions.show
 import com.yalantis.ucrop.UCrop
-import kotlinx.android.synthetic.main.activity_create_icon.*
+import kotlinx.android.synthetic.main.activity_crop_picture.*
 import java.io.File
 
 
