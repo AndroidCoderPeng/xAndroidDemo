@@ -2,7 +2,6 @@ package com.example.mutidemo.view
 
 import android.graphics.Color
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.amap.api.maps.AMap
 import com.amap.api.maps.AMapOptions
 import com.amap.api.maps.CameraUpdateFactory
@@ -12,17 +11,16 @@ import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.MyLocationStyle
 import com.example.mutidemo.R
 import com.example.mutidemo.widget.CenterMarkerView
+import com.pengxh.kt.lite.base.KotlinBaseActivity
 import kotlinx.android.synthetic.main.activity_drag_map.*
 
-class DragMapActivity : AppCompatActivity(), AMap.OnMapLoadedListener,
+class DragMapActivity : KotlinBaseActivity(), AMap.OnMapLoadedListener,
     AMap.OnCameraChangeListener {
 
     private lateinit var aMap: AMap
     private lateinit var centerMarkerView: CenterMarkerView
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_drag_map)
+    override fun initData(savedInstanceState: Bundle?) {
         mapView.onCreate(savedInstanceState)
 
         aMap = mapView.map
@@ -52,6 +50,16 @@ class DragMapActivity : AppCompatActivity(), AMap.OnMapLoadedListener,
 
         aMap.setOnMapLoadedListener(this)
         aMap.setOnCameraChangeListener(this)
+    }
+
+    override fun initEvent() {
+
+    }
+
+    override fun initLayoutView(): Int = R.layout.activity_drag_map
+
+    override fun observeRequestState() {
+
     }
 
     override fun onMapLoaded() {
@@ -90,5 +98,9 @@ class DragMapActivity : AppCompatActivity(), AMap.OnMapLoadedListener,
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)
+    }
+
+    override fun setupTopBarLayout() {
+
     }
 }

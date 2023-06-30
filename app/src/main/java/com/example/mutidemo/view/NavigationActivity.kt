@@ -1,5 +1,6 @@
 package com.example.mutidemo.view
 
+import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
@@ -37,7 +38,7 @@ class NavigationActivity : KotlinBaseActivity() {
 
     override fun initLayoutView(): Int = R.layout.activity_navigation
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
 
     }
 

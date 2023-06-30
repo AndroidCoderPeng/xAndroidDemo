@@ -1,5 +1,6 @@
 package com.example.mutidemo.view
 
+import android.os.Bundle
 import android.util.Log
 import com.example.mutidemo.R
 import com.pengxh.kt.lite.base.KotlinBaseActivity
@@ -10,7 +11,7 @@ class SteeringWheelActivity : KotlinBaseActivity() {
 
     private val kTag = "SteeringWheelActivity"
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
 
     }
 

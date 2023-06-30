@@ -7,8 +7,13 @@
         <entry key="../../../.gradle/caches/transforms-2/files-2.1/2f7ae4ed4357514485d8603a70a3f566/jetified-Androidx-lite-lib-1.0.6/res/layout/dialog_alert.xml" value="0.19537037037037036" />
         <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/bg_layout_solid_white.xml" value="0.441" />
         <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/ic_alarm.xml" value="0.441" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/ic_alarm_selected.xml" value="0.441" />
         <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/ic_home.xml" value="0.441" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/ic_home_selected.xml" value="0.441" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/ic_mine_selected.xml" value="0.441" />
         <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/ic_task.xml" value="0.441" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/ic_task_selected.xml" value="0.441" />
+        <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/ic_task_unselected.xml" value="0.441" />
         <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/drawable/ic_user.xml" value="0.441" />
         <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/layout/activity_crop_picture.xml" value="0.4921875" />
         <entry key="..\:/Code/AndroidProjects/xAndroidDemo/app/src/main/res/layout/activity_slide_navigation.xml" value="0.4921875" />

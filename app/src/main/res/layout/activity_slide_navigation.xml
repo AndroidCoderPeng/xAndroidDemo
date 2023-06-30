@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="@dimen/dp_80"
         android:layout_height="match_parent"
-        android:background="@color/mainColor">
+        android:background="@color/lightGray">
 
         <ListView
             android:id="@+id/slideListView"

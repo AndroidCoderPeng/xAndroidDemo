@@ -1,6 +1,7 @@
 package com.example.mutidemo.view
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.MotionEvent
@@ -28,7 +29,7 @@ class RecodeAudioActivity : KotlinBaseActivity() {
 
     }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         AudioPopupWindow.create(this, object : AudioPopupWindow.IWindowListener {
             override fun onViewCreated(
                 window: PopupWindow, imageView: ImageView, textView: TextView

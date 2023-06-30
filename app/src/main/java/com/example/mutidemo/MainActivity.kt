@@ -1,6 +1,7 @@
 package com.example.mutidemo
 
 import android.graphics.Color
+import android.os.Bundle
 import android.view.KeyEvent
 import cn.bertsir.zbar.QrConfig
 import cn.bertsir.zbar.QrManager
@@ -45,7 +46,7 @@ class MainActivity : KotlinBaseActivity() {
 
     override fun initLayoutView(): Int = R.layout.activity_main
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         //个推初始化
         PushManager.getInstance().initialize(this)
         //轮播图

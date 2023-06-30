@@ -7,6 +7,7 @@ import android.graphics.PointF
 import android.graphics.Rect
 import android.media.FaceDetector
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.DisplayMetrics
@@ -59,7 +60,7 @@ class FaceCollectionActivity : KotlinBaseActivity() {
 
     override fun initLayoutView(): Int = R.layout.activity_face_collect
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(callback)
         //调节屏幕亮度最大
         window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL)

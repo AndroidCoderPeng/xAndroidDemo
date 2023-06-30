@@ -1,6 +1,7 @@
 package com.example.mutidemo.view
 
 import android.graphics.PixelFormat
+import android.os.Bundle
 import android.util.Log
 import android.view.SurfaceHolder
 import androidx.lifecycle.ViewModelProvider
@@ -41,7 +42,7 @@ class HikVisionActivity : KotlinBaseActivity(), SurfaceHolder.Callback {
     private lateinit var regionViewModel: RegionViewModel
     private val udpClient by lazy { UdpClient() }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         regionViewModel = ViewModelProvider(this)[RegionViewModel::class.java]
     }
 

@@ -2,6 +2,7 @@ package com.example.mutidemo.view
 
 import android.app.ProgressDialog
 import android.media.MediaMetadataRetriever
+import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import cn.jzvd.JzvdStd
@@ -38,7 +39,7 @@ class VideoCompressActivity : KotlinBaseActivity() {
 
     override fun initLayoutView(): Int = R.layout.activity_video_compress
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         progressDialog = ProgressDialog(this)
         progressDialog.setMessage("视频压缩中...")
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)

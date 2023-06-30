@@ -2,6 +2,7 @@ package com.example.mutidemo.view
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
 import com.example.mutidemo.R
@@ -18,7 +19,7 @@ class OriginalShareActivity : KotlinBaseActivity() {
 
     private var realPath: String? = null
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
 
     }
 

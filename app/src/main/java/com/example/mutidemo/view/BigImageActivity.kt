@@ -2,6 +2,7 @@ package com.example.mutidemo.view
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +26,7 @@ class BigImageActivity : KotlinBaseActivity() {
         leftBackView.setOnClickListener { finish() }
     }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
 
     }
 

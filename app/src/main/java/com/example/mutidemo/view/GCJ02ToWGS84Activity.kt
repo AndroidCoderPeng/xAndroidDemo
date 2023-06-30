@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.location.Location
+import android.os.Bundle
 import android.util.Log
 import com.amap.api.location.AMapLocation
 import com.amap.api.services.core.AMapException
@@ -35,7 +36,7 @@ class GCJ02ToWGS84Activity : KotlinBaseActivity() {
 
     override fun initLayoutView(): Int = R.layout.activity_gis
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         mapView.isAttributionTextVisible = false //去掉左下角属性标识
         mapView.setViewpointScaleAsync(2800.0) //数字越大，放大比例越小，缩放比例[36000,250]
         val arcGISMap = ArcGISMap(BasemapStyle.ARCGIS_STREETS)

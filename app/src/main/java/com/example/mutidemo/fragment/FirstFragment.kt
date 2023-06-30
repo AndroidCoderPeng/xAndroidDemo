@@ -1,5 +1,6 @@
 package com.example.mutidemo.fragment
 
+import android.os.Bundle
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -28,7 +29,7 @@ class FirstFragment : KotlinBaseFragment() {
 
     }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         subViewPager.adapter = SubViewPagerAdapter(childFragmentManager, fragmentList, pageTitles)
         //绑定
         topTabLayout.setupWithViewPager(subViewPager)

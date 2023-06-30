@@ -1,5 +1,6 @@
 package com.example.mutidemo.view
 
+import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.Gravity
@@ -91,7 +92,7 @@ class SlideBarActivity : KotlinBaseActivity() {
 
     }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         val cityBeans: List<CityModel> = obtainCityData()
         val cityAdapter = object : NormalRecyclerAdapter<CityModel>(
             R.layout.item_city_rv_l, cityBeans.toMutableList()

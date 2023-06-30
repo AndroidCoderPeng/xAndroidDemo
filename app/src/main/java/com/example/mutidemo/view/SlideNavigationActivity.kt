@@ -1,12 +1,12 @@
 package com.example.mutidemo.view
 
 import android.content.Context
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.mutidemo.R
@@ -22,15 +22,21 @@ import kotlinx.android.synthetic.main.activity_slide_navigation.*
 
 class SlideNavigationActivity : KotlinBaseActivity() {
 
-    private val slideItems = ArrayList<SlideItem>()
+    private val slideUnSelectedItems = ArrayList<SlideItem>()
+    private val slideSelectedItems = ArrayList<SlideItem>()
     private val fragmentPages = ArrayList<Fragment>()
     private val slideAdapter by lazy { SlideAdapter(this) }
 
     init {
-        slideItems.add(SlideItem(R.drawable.ic_home, "首页"))
-        slideItems.add(SlideItem(R.drawable.ic_alarm, "报警记录"))
-        slideItems.add(SlideItem(R.drawable.ic_task, "任务"))
-        slideItems.add(SlideItem(R.drawable.ic_user, "我的"))
+        slideUnSelectedItems.add(SlideItem(R.drawable.ic_home_unselected, "首页"))
+        slideUnSelectedItems.add(SlideItem(R.drawable.ic_alarm_unselected, "报警记录"))
+        slideUnSelectedItems.add(SlideItem(R.drawable.ic_task_unselected, "任务"))
+        slideUnSelectedItems.add(SlideItem(R.drawable.ic_mine_unselected, "我的"))
+
+        slideSelectedItems.add(SlideItem(R.drawable.ic_home_selected, "首页"))
+        slideSelectedItems.add(SlideItem(R.drawable.ic_alarm_selected, "报警记录"))
+        slideSelectedItems.add(SlideItem(R.drawable.ic_task_selected, "任务"))
+        slideSelectedItems.add(SlideItem(R.drawable.ic_mine_selected, "我的"))
 
         fragmentPages.add(HomePageFragment())
         fragmentPages.add(AlarmPageFragment())
@@ -38,7 +44,7 @@ class SlideNavigationActivity : KotlinBaseActivity() {
         fragmentPages.add(MinePageFragment())
     }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         slideListView.adapter = slideAdapter
 
         //默认选中第一个
@@ -50,7 +56,7 @@ class SlideNavigationActivity : KotlinBaseActivity() {
     }
 
     override fun initEvent() {
-        slideListView.setOnItemClickListener { parent, view, position, id ->
+        slideListView.setOnItemClickListener { _, _, position, _ ->
             slideAdapter.setSelectItem(position)
             slideAdapter.notifyDataSetInvalidated()
 
@@ -88,9 +94,9 @@ class SlideNavigationActivity : KotlinBaseActivity() {
         private var inflater: LayoutInflater = LayoutInflater.from(context)
         private var selectedPosition = -1
 
-        override fun getCount(): Int = slideItems.size
+        override fun getCount(): Int = slideUnSelectedItems.size
 
-        override fun getItem(position: Int): Any = slideItems[position]
+        override fun getItem(position: Int): Any = slideUnSelectedItems[position]
 
         override fun getItemId(position: Int): Long = position.toLong()
 
@@ -100,20 +106,20 @@ class SlideNavigationActivity : KotlinBaseActivity() {
             if (view == null) {
                 view = inflater.inflate(R.layout.item_slide_list, parent, false)
                 holder = SlideItemViewHolder()
-                holder.rootLayout = view.findViewById(R.id.rootLayout) as LinearLayout
                 holder.imageView = view.findViewById(R.id.imageView) as ImageView
                 holder.textView = view.findViewById(R.id.textView) as TextView
                 view.tag = holder
             } else {
                 holder = view.tag as SlideItemViewHolder
             }
-            holder.imageView.setImageResource(slideItems[position].icon)
-            holder.textView.text = slideItems[position].title
             if (selectedPosition == position) {
-                holder.rootLayout.setBackgroundColor(R.color.darkMainColor.convertColor(context))
+                holder.imageView.setImageResource(slideSelectedItems[position].icon)
+                holder.textView.setTextColor(R.color.mainColor.convertColor(context))
             } else {
-                holder.rootLayout.setBackgroundColor(R.color.mainColor.convertColor(context))
+                holder.imageView.setImageResource(slideUnSelectedItems[position].icon)
+                holder.textView.setTextColor(R.color.white.convertColor(context))
             }
+            holder.textView.text = slideUnSelectedItems[position].title
             return view
         }
 
@@ -123,7 +129,6 @@ class SlideNavigationActivity : KotlinBaseActivity() {
     }
 
     inner class SlideItemViewHolder {
-        lateinit var rootLayout: LinearLayout
         lateinit var imageView: ImageView
         lateinit var textView: TextView
     }

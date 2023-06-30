@@ -1,5 +1,6 @@
 package com.example.mutidemo.view
 
+import android.os.Bundle
 import android.view.View
 import com.example.mutidemo.R
 import com.example.mutidemo.util.GlideLoadEngine
@@ -27,7 +28,7 @@ class GridViewActivity : KotlinBaseActivity() {
 
     }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         editableImageAdapter = EditableImageAdapter(this, 9, 1f)
         nineRecyclerView.adapter = editableImageAdapter
         editableImageAdapter.setOnItemClickListener(object :

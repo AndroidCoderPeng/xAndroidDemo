@@ -1,5 +1,6 @@
 package com.example.mutidemo.view
 
+import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import com.example.mutidemo.R
@@ -19,7 +20,7 @@ class ProcessBarActivity : KotlinBaseActivity() {
 
     }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(callback)
         easyProgressBar.maxProgress = 100f
         Thread {

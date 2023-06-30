@@ -3,6 +3,7 @@ package com.example.mutidemo.view
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import com.bumptech.glide.Glide
@@ -28,7 +29,7 @@ class CropPictureActivity : KotlinBaseActivity() {
     private val kTag = "CreateIconActivity"
     private val cropOptions by lazy { UCrop.Options() }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         cropOptions.setStatusBarColor(R.color.mainColor.convertColor(this))
     }
 

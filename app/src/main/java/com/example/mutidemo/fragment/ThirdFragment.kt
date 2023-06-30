@@ -1,11 +1,12 @@
 package com.example.mutidemo.fragment
 
+import android.os.Bundle
 import com.example.mutidemo.R
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 
 class ThirdFragment : KotlinBaseFragment() {
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
 
     }
 

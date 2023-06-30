@@ -2,6 +2,7 @@ package com.example.mutidemo.view
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
@@ -40,7 +41,7 @@ class WaterMarkerActivity : KotlinBaseActivity() {
 
     override fun initLayoutView(): Int = R.layout.activity_water_marker
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(callback)
     }
 

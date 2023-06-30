@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
@@ -45,7 +46,7 @@ class BluetoothActivity : KotlinBaseActivity() {
 
     override fun initLayoutView(): Int = R.layout.activity_bluetooth
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         broadcastManager = BroadcastManager.obtainInstance(this)
         broadcastManager.addAction(object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {

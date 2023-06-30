@@ -1,5 +1,6 @@
 package com.example.mutidemo.fragment
 
+import android.os.Bundle
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -49,7 +50,7 @@ class UnreadFragment : KotlinBaseFragment() {
 
     }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         swipeViewAdapter = SwipeViewAdapter(requireContext())
         swipeViewAdapter.setData(data)
     }

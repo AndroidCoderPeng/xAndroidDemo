@@ -1,5 +1,6 @@
 package com.example.mutidemo.view
 
+import android.os.Bundle
 import com.example.mutidemo.R
 import com.example.mutidemo.extensions.formatTextFromHtml
 import com.pengxh.kt.lite.base.KotlinBaseActivity
@@ -22,7 +23,7 @@ class NewsDetailsActivity : KotlinBaseActivity() {
 
     override fun initLayoutView(): Int = R.layout.activity_news_details
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         val params = intent.getStringArrayListExtra(Constant.INTENT_PARAM)!!
 
         newsTitle.text = params[0]

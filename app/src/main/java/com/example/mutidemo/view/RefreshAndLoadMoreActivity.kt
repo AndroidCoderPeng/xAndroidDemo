@@ -1,5 +1,6 @@
 package com.example.mutidemo.view
 
+import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.view.View
@@ -40,7 +41,7 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
 
     override fun initLayoutView(): Int = R.layout.activity_refresh
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(callback)
         newsViewModel = ViewModelProvider(this)[NewsViewModel::class.java]
         newsViewModel.resultModel.observe(this) {

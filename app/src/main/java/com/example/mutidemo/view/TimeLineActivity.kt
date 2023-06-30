@@ -1,6 +1,7 @@
 package com.example.mutidemo.view
 
 import android.graphics.Color
+import android.os.Bundle
 import android.view.View
 import com.example.mutidemo.R
 import com.example.mutidemo.model.TimeLineDataModel
@@ -16,7 +17,7 @@ class TimeLineActivity : KotlinBaseActivity() {
 
     private val gson by lazy { Gson() }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         val data = readAssetsFile("TestData.json")
         val models = gson.fromJson<TimeLineDataModel>(
             data, object : TypeToken<TimeLineDataModel>() {}.type
