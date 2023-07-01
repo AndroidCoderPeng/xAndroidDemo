@@ -8,6 +8,7 @@ import com.example.mutidemo.R
 import com.example.mutidemo.adapter.SubViewPagerAdapter
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import kotlinx.android.synthetic.main.fragment_first.*
+import kotlinx.android.synthetic.main.fragment_first.view.*
 
 class FirstFragment : KotlinBaseFragment() {
 
@@ -30,10 +31,11 @@ class FirstFragment : KotlinBaseFragment() {
     }
 
     override fun initData(savedInstanceState: Bundle?) {
-        subViewPager.adapter = SubViewPagerAdapter(childFragmentManager, fragmentList, pageTitles)
+        baseView.subViewPager.adapter =
+            SubViewPagerAdapter(childFragmentManager, fragmentList, pageTitles)
         //绑定
-        topTabLayout.setupWithViewPager(subViewPager)
-        val linearLayout = topTabLayout.getChildAt(0) as LinearLayout
+        baseView.topTabLayout.setupWithViewPager(subViewPager)
+        val linearLayout = baseView.topTabLayout.getChildAt(0) as LinearLayout
         linearLayout.showDividers = LinearLayout.SHOW_DIVIDER_MIDDLE
         linearLayout.dividerDrawable = ContextCompat.getDrawable(
             requireContext(), R.drawable.layout_divider_vertical

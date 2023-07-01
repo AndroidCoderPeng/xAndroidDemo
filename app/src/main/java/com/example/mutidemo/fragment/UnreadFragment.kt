@@ -11,6 +11,7 @@ import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.qmuiteam.qmui.recyclerView.QMUIRVItemSwipeAction
 import com.qmuiteam.qmui.recyclerView.QMUISwipeAction
 import kotlinx.android.synthetic.main.fragment_unread.*
+import kotlinx.android.synthetic.main.fragment_unread.view.*
 
 class UnreadFragment : KotlinBaseFragment() {
 
@@ -78,7 +79,7 @@ class UnreadFragment : KotlinBaseFragment() {
             }
         })
         swipeAction.attachToRecyclerView(swipeRecyclerView)
-        swipeRecyclerView.layoutManager = object : LinearLayoutManager(context) {
+        baseView.swipeRecyclerView.layoutManager = object : LinearLayoutManager(context) {
             override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {
                 return RecyclerView.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -86,11 +87,11 @@ class UnreadFragment : KotlinBaseFragment() {
                 )
             }
         }
-        swipeRecyclerView.addItemDecoration(
+        baseView.swipeRecyclerView.addItemDecoration(
             DividerItemDecoration(
                 requireContext(), DividerItemDecoration.VERTICAL
             )
         )
-        swipeRecyclerView.adapter = swipeViewAdapter
+        baseView.swipeRecyclerView.adapter = swipeViewAdapter
     }
 }
