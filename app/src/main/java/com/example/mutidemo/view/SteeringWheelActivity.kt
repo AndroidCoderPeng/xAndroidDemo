@@ -3,6 +3,7 @@ package com.example.mutidemo.view
 import android.os.Bundle
 import android.util.Log
 import com.example.mutidemo.R
+import com.example.mutidemo.widget.SteeringWheelView
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.widget.SteeringWheelController
 import kotlinx.android.synthetic.main.activity_steering_wheel.*
@@ -16,7 +17,7 @@ class SteeringWheelActivity : KotlinBaseActivity() {
     }
 
     override fun initEvent() {
-        steeringWheelView.setOnWheelTouchListener(object :
+        steeringWheelController.setOnWheelTouchListener(object :
             SteeringWheelController.OnWheelTouchListener {
             override fun onLeftTurn() {
                 Log.d(kTag, "onLeftTurn: 按下")
@@ -39,6 +40,32 @@ class SteeringWheelActivity : KotlinBaseActivity() {
             }
 
             override fun onActionTurnUp(dir: SteeringWheelController.Direction) {
+                Log.d(kTag, "onActionTurnUp: 松开" + dir.name)
+            }
+        })
+
+        steeringWheelView.setOnWheelTouchListener(object : SteeringWheelView.OnWheelTouchListener {
+            override fun onLeftTurn() {
+                Log.d(kTag, "onLeftTurn: 按下")
+            }
+
+            override fun onTopTurn() {
+                Log.d(kTag, "onTopTurn: 按下")
+            }
+
+            override fun onRightTurn() {
+                Log.d(kTag, "onRightTurn: 按下")
+            }
+
+            override fun onBottomTurn() {
+                Log.d(kTag, "onBottomTurn: 按下")
+            }
+
+            override fun onCenterTurn() {
+                Log.d(kTag, "onCenterTurn: 按下")
+            }
+
+            override fun onActionTurnUp(dir: SteeringWheelView.Direction) {
                 Log.d(kTag, "onActionTurnUp: 松开" + dir.name)
             }
         })
