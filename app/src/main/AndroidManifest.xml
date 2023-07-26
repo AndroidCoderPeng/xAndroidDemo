@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.mutidemo">
+    package="com.example.multidemo">
 
     <!--普通权限，无需手动申请-->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -80,24 +80,10 @@
             android:name=".view.BigImageActivity"
             android:theme="@style/Theme.BigImageActivity" />
 
-        <meta-data
-            android:name="PUSH_APPID"
-            android:value="${GETUI_APPID}" />
-
-        <service
-            android:name=".service.GeTuiPushService"
-            android:exported="true"
-            android:label="PushService"
-            android:process=":pushservice" />
-
-        <service
-            android:name=".service.GeTuiIntentService"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
         <!-- 拍照压缩图片用 FileProvider -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.mutidemo.fileProvider"
+            android:authorities="com.example.multidemo.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -107,7 +93,7 @@
 
         <provider
             android:name=".util.WaterImageFileProvider"
-            android:authorities="com.example.mutidemo.water.fileProvider"
+            android:authorities="com.example.multidemo.water.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

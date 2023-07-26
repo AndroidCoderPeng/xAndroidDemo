@@ -8,12 +8,11 @@ android {
     compileSdkVersion 31
 
     defaultConfig {
-        applicationId "com.example.mutidemo"
+        applicationId "com.example.multidemo"
         minSdkVersion 23
         targetSdkVersion 31
         versionCode 1
         versionName "1.0.0"
-        manifestPlaceholders = [GETUI_APPID: "K8sjmN53eg7c3nK2xd5SX9"]
         multiDexEnabled true
 
         ndk {
@@ -109,8 +108,6 @@ dependencies {
     implementation 'com.qmuiteam:arch:0.3.1'
     //沉浸式状态栏。基础依赖包，必须要依赖
     implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
-    implementation 'com.getui:gtsdk:3.2.15.0'  //个推SDK
-    implementation 'com.getui:gtc:3.2.1.0'  //个推核心组件
     //图片选择框架
     implementation 'io.github.lucksiege:pictureselector:v3.0.4'
     //图片裁剪
@@ -135,6 +132,4 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
     // CameraX View class
     implementation "androidx.camera:camera-view:$camerax_version"
-    //
-    implementation group: 'net.sourceforge.jexcelapi', name: 'jxl', version: '2.6.12'
 }

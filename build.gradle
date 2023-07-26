@@ -20,10 +20,6 @@ allprojects {
     repositories {
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         google()
-        //个推
-        maven {
-            url "http://mvn.gt.getui.com/nexus/content/repositories/releases/"
-        }
         maven { url "https://jitpack.io" }
     }
 }
