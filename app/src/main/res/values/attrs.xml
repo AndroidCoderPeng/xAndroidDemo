@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="EasyProgressBar">
-        <!--进度条底色-->
-        <attr name="progress_backgroundColor" format="color" />
-        <!--进度条开始前景色-->
-        <attr name="progress_startColor" format="color" />
-        <!--进度条结束前景色-->
-        <attr name="progress_endColor" format="color" />
-        <!--字体颜色-->
-        <attr name="progress_textColor" format="color" />
-        <!--文字-->
-        <attr name="progress_text" format="string" />
-    </declare-styleable>
-
     <declare-styleable name="SlideBarView">
         <attr name="slide_textSize" format="dimension" />
         <attr name="slide_textColor" format="color" />

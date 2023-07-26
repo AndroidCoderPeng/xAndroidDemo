@@ -1,62 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
+    <androidx.camera.view.PreviewView
+        android:id="@+id/cameraPreView"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:background="@color/mainColor">
+        android:layout_height="match_parent" />
 
-        <ImageView
-            android:id="@+id/leftBackView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingHorizontal="10dp"
-            android:src="@drawable/ic_left_white" />
-
-        <TextView
-            android:id="@+id/titleView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:gravity="center"
-            android:text="@string/app_name"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
-    </RelativeLayout>
-
-    <FrameLayout
-        android:id="@+id/rootView"
+    <com.example.mutidemo.widget.FaceDetectView
+        android:id="@+id/faceDetectView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
 
-        <androidx.camera.view.PreviewView
-            android:id="@+id/cameraPreView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <com.example.mutidemo.widget.FaceDetectView
-            android:id="@+id/faceDetectView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
-            android:id="@+id/faceDetectTipsView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginHorizontal="50dp"
-            android:layout_marginBottom="90dp"
-            android:gravity="center"
-            android:paddingVertical="10dp"
-            android:text="未知"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:qmui_backgroundColor="#99000000"
-            app:qmui_borderWidth="0dp"
-            app:qmui_radius="5dp" />
-    </FrameLayout>
-</LinearLayout>
+    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+        android:id="@+id/faceDetectTipsView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginBottom="90dp"
+        android:gravity="center"
+        android:paddingVertical="10dp"
+        android:text="未知"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:qmui_backgroundColor="#99000000"
+        app:qmui_borderWidth="0dp"
+        app:qmui_radius="5dp" />
+</FrameLayout>

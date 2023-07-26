@@ -69,6 +69,8 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
                 }
             }
         }
+
+        getNewsList()
     }
 
     override fun initEvent() {
@@ -96,12 +98,6 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
                 else -> LoadingDialogHub.dismiss()
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        pageIndex = 1
-        getNewsList()
     }
 
     private fun getNewsList() {

@@ -25,16 +25,6 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
-    <uses-feature
-        android:name="android.hardware.nfc"
-        android:required="false" />
-
-    <uses-sdk tools:overrideLibrary="com.esri.arcgisruntime" />
-
-    <!--OpenGL ES支持 -->
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="true" />
 
     <application
         android:name=".base.BaseApplication"
@@ -45,9 +35,7 @@
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true"
-        tools:ignore="GoogleAppIndexingWarning"
-        tools:targetApi="q">
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".base.WelcomeActivity"
             android:exported="true">
@@ -59,22 +47,17 @@
         </activity>
 
         <activity android:name=".MainActivity" />
-        <activity android:name=".view.NavigationActivity" />
         <activity
             android:name=".view.SlideNavigationActivity"
             android:screenOrientation="landscape" />
         <activity android:name=".view.RefreshAndLoadMoreActivity" />
         <activity android:name=".view.NewsDetailsActivity" />
         <activity android:name=".view.SlideBarActivity" />
-        <activity android:name=".view.ProcessBarActivity" />
         <activity android:name=".view.RecodeAudioActivity" />
         <activity android:name=".view.DragMapActivity" />
         <activity android:name=".view.WaterMarkerActivity" />
-        <activity android:name=".view.GCJ02ToWGS84Activity" />
         <activity android:name=".view.BluetoothActivity" />
         <activity android:name=".view.GridViewActivity" />
-        <activity android:name=".view.OriginalShareActivity" />
-        <activity android:name=".view.AirDashBoardActivity" />
         <activity android:name=".view.SteeringWheelActivity" />
         <activity android:name=".view.TimeLineActivity" />
         <activity android:name=".view.CropPictureActivity" />

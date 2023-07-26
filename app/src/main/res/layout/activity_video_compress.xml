@@ -5,7 +5,7 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <cn.jzvd.JzvdStd
+    <com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
         android:id="@+id/originalVideoView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:text="压缩视频" />
 
-    <cn.jzvd.JzvdStd
+    <com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
         android:id="@+id/compressedVideoView"
         android:layout_width="match_parent"
         android:layout_height="0dp"

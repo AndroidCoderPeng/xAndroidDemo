@@ -27,11 +27,12 @@ import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import kotlinx.android.synthetic.main.activity_water_marker.*
 import java.io.File
 
-class WaterMarkerActivity : KotlinBaseActivity() {
+class WaterMarkerActivity : KotlinBaseActivity(), Handler.Callback {
 
     private val kTag = "WaterMarkerActivity"
     private val context: Context = this@WaterMarkerActivity
     private lateinit var weakReferenceHandler: WeakReferenceHandler
+    private var mediaRealPath: String? = null
 
     override fun setupTopBarLayout() {}
 
@@ -42,7 +43,7 @@ class WaterMarkerActivity : KotlinBaseActivity() {
     override fun initLayoutView(): Int = R.layout.activity_water_marker
 
     override fun initData(savedInstanceState: Bundle?) {
-        weakReferenceHandler = WeakReferenceHandler(callback)
+        weakReferenceHandler = WeakReferenceHandler(this)
     }
 
     override fun initEvent() {
@@ -71,33 +72,12 @@ class WaterMarkerActivity : KotlinBaseActivity() {
                     override fun onCancel() {}
                 })
         }
-    }
 
-    private val callback = Handler.Callback {
-        if (it.what == 2022061702) {
-            val obj = it.obj as LocalMedia
-            val mediaRealPath = obj.realPath
-            Log.d(kTag, "initData => $mediaRealPath")
-
-            Glide.with(this)
-                .load(mediaRealPath)
-                .apply(RequestOptions().error(R.drawable.ic_load_error))
-                .into(originalImageView)
-
-            originalImageSizeView.text = "压缩前：" + obj.size.formatFileSize()
-            originalImageView.setOnClickListener {
-                val urls = ArrayList<String>()
-                urls.add(mediaRealPath)
-                navigatePageTo<BigImageActivity>(0, urls)
-            }
-
-            addMarker(mediaRealPath)
-        }
-        true
-    }
-
-    private fun addMarker(mediaRealPath: String) {
         addMarkerButton.setOnClickListener {
+            if (mediaRealPath == null) {
+                "请先选择图片再添加水印".show(this)
+                return@setOnClickListener
+            }
             LoadingDialogHub.show(this, "水印添加中，请稍后...")
             val bitmap = BitmapFactory.decodeFile(mediaRealPath)
             ImageHelper.drawTextToRightBottom(bitmap, object : IWaterMarkAddListener {
@@ -110,8 +90,7 @@ class WaterMarkerActivity : KotlinBaseActivity() {
                                     .load(file)
                                     .apply(RequestOptions().error(R.drawable.ic_load_error))
                                     .into(markerImageView)
-                                markerImageSizeView.text =
-                                    "压缩后：" + file.length().formatFileSize()
+                                markerImageSizeView.text = "压缩后：" + file.length().formatFileSize()
                                 markerImageView.setOnClickListener {
                                     val urls = ArrayList<String>()
                                     urls.add(file.path)
@@ -124,5 +103,26 @@ class WaterMarkerActivity : KotlinBaseActivity() {
                 }
             })
         }
+    }
+
+    override fun handleMessage(msg: Message): Boolean {
+        if (msg.what == 2022061702) {
+            val obj = msg.obj as LocalMedia
+            mediaRealPath = obj.realPath
+            Log.d(kTag, "handleMessage => $mediaRealPath")
+
+            Glide.with(this)
+                .load(mediaRealPath)
+                .apply(RequestOptions().error(R.drawable.ic_load_error))
+                .into(originalImageView)
+
+            originalImageSizeView.text = "压缩前：" + obj.size.formatFileSize()
+            originalImageView.setOnClickListener {
+                val urls = ArrayList<String>()
+                urls.add(mediaRealPath!!)
+                navigatePageTo<BigImageActivity>(0, urls)
+            }
+        }
+        return true
     }
 }

@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -54,6 +56,17 @@ android {
     viewBinding {
         enabled true
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "X_" + getBuildDate() + "_" + defaultConfig.versionName + ".apk"
+        }
+    }
+}
+
+static def getBuildDate() {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd", Locale.CHINA)
+    return dateFormat.format(System.currentTimeMillis())
 }
 
 dependencies {
@@ -63,7 +76,6 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.6.1'
-    implementation 'androidx.navigation:navigation-fragment:2.3.5'
     implementation 'androidx.cardview:cardview:1.0.0'
     //Google官方授权库
     implementation 'pub.devrel:easypermissions:3.0.0'
@@ -87,8 +99,6 @@ dependencies {
     //网络请求和接口封装
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
-    //ZBar扫一扫
-    implementation 'cn.bertsir.zbarLibary:zbarlibary:1.4.2'
     //上拉加载下拉刷新
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0'
     //查看大图
@@ -106,15 +116,13 @@ dependencies {
     //图片裁剪
     implementation 'com.github.yalantis:ucrop:2.2.8-native'
     //视频播放器
-    implementation 'cn.jzvd:jiaozivideoplayer:7.6.0'
+    implementation 'com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer:v8.3.5-release-jitpack'
     //视频压缩
     implementation 'com.zolad:videoslimmer:1.0.0'
     //图片压缩
     implementation 'top.zibin:Luban:1.1.8'
-    //ArcGIS
-    implementation 'com.esri.arcgisruntime:arcgis-android:100.14.0'
-    //高德导航、定位、地图三合一
-    implementation 'com.amap.api:navi-3dmap:latest.integration'
+    //高德地图
+    implementation 'com.amap.api:3dmap:latest.integration'
     implementation 'com.amap.api:search:8.1.0'
     //TCP
     implementation 'io.netty:netty-all:4.1.23.Final'

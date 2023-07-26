@@ -39,20 +39,6 @@ object FileUtils {
         documentDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "")
     }
 
-    val imageFile: File
-        get() {
-            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(Date())
-            val imageFile = File(imageDir.toString() + File.separator + "IMG_" + timeStamp + ".jpg")
-            if (!imageFile.exists()) {
-                try {
-                    imageFile.createNewFile()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-            }
-            return imageFile
-        }
-
     //index用来区分for循环太快会导致多想图片覆盖压缩问题
     val waterImageFile: File
         get() {

@@ -226,7 +226,7 @@ class FaceCollectionActivity : KotlinBaseActivity() {
     }
 
     override fun initEvent() {
-        leftBackView.setOnClickListener { finish() }
+
     }
 
     override fun onDestroy() {

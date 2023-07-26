@@ -4,7 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.amap.api.navi.NaviSetting
+import com.amap.api.maps.MapsInitializer
 import com.example.mutidemo.MainActivity
 import pub.devrel.easypermissions.EasyPermissions
 import pub.devrel.easypermissions.EasyPermissions.PermissionCallbacks
@@ -39,8 +39,8 @@ class WelcomeActivity : AppCompatActivity(), PermissionCallbacks {
 
     private fun startMainActivity() {
         //先把导航隐私政策声明，后面导航会用到
-        NaviSetting.updatePrivacyShow(this, true, true)
-        NaviSetting.updatePrivacyAgree(this, true)
+        MapsInitializer.updatePrivacyShow(this, true, true)
+        MapsInitializer.updatePrivacyAgree(this, true)
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }

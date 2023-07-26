@@ -6,7 +6,6 @@ import android.text.TextUtils
 import com.example.mutidemo.base.BaseApplication
 import com.example.mutidemo.callback.ICompressListener
 import com.example.mutidemo.callback.IWaterMarkAddListener
-import com.pengxh.kt.lite.extensions.sp2px
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
 import com.qmuiteam.qmui.util.QMUIDisplayHelper
 import top.zibin.luban.Luban
@@ -16,8 +15,6 @@ import java.io.FileOutputStream
 import java.util.*
 
 object ImageHelper {
-    private val kTag = "ImageHelper"
-
     /**
      * 绘制文字到右下角
      */
@@ -25,10 +22,10 @@ object ImageHelper {
         //初始化画笔
         val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG or Paint.DEV_KERN_TEXT_FLAG)
         textPaint.typeface = Typeface.DEFAULT // 采用默认的宽度
-        textPaint.color = Color.WHITE
+        textPaint.color = Color.RED
         textPaint.isDither = true // 获取跟清晰的图像采样
         textPaint.isFilterBitmap = true
-        textPaint.textSize = 36f.sp2px(BaseApplication.get()).toFloat()
+        textPaint.textSize = 36f
         val timeBounds = Rect()
         val time = System.currentTimeMillis().timestampToCompleteDate()
         textPaint.getTextBounds(time, 0, time.length, timeBounds)

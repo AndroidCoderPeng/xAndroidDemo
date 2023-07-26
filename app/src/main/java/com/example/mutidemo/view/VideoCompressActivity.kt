@@ -1,13 +1,11 @@
 package com.example.mutidemo.view
 
 import android.app.ProgressDialog
+import android.content.res.Configuration
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import cn.jzvd.JzvdStd
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.example.mutidemo.R
 import com.example.mutidemo.util.FileUtils
 import com.example.mutidemo.util.GlideLoadEngine
@@ -17,6 +15,11 @@ import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
+import com.shuyu.gsyvideoplayer.GSYVideoManager
+import com.shuyu.gsyvideoplayer.builder.GSYVideoOptionBuilder
+import com.shuyu.gsyvideoplayer.listener.GSYSampleCallBack
+import com.shuyu.gsyvideoplayer.utils.OrientationUtils
+import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 import com.zolad.videoslimmer.VideoSlimmer
 import kotlinx.android.synthetic.main.activity_video_compress.*
 
@@ -28,8 +31,11 @@ class VideoCompressActivity : KotlinBaseActivity() {
     private var defaultWidth = 720
     private var defaultHeight = 1280
     private var defaultRotation = "90" //视频为竖屏，0为横屏
+    private var isPlay = false
+    private var isPause = false
     private lateinit var mediaOriginalPath: String
     private lateinit var progressDialog: ProgressDialog
+    private var orientationUtils: OrientationUtils? = null
 
     override fun setupTopBarLayout() {}
 
@@ -49,7 +55,6 @@ class VideoCompressActivity : KotlinBaseActivity() {
     }
 
     override fun initEvent() {
-        testMediaInterface()
         selectVideoButton.setOnClickListener {
             PictureSelector.create(this)
                 .openGallery(SelectMimeType.ofVideo())
@@ -72,12 +77,7 @@ class VideoCompressActivity : KotlinBaseActivity() {
                             MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION
                         )!!
                         Log.d(kTag, "defaultRotation: $defaultRotation")
-                        originalVideoView.setUp(mediaOriginalPath, media.fileName)
-                        //设置第一帧为封面
-                        Glide.with(this@VideoCompressActivity)
-                            .setDefaultRequestOptions(RequestOptions().frame(4000000))
-                            .load(mediaOriginalPath)
-                            .into(originalVideoView.posterImageView)
+                        configVideo(media.fileName, mediaOriginalPath, compressedVideoView)
                     }
 
                     override fun onCancel() {}
@@ -109,15 +109,7 @@ class VideoCompressActivity : KotlinBaseActivity() {
                         override fun onFinish(result: Boolean) {
                             //convert finish,result(true is success,false is fail)
                             if (result) {
-                                compressedVideoView.setUp(
-                                    outputVideoFile,
-                                    "",
-                                    JzvdStd.SCREEN_NORMAL
-                                )
-                                Glide.with(this@VideoCompressActivity)
-                                    .setDefaultRequestOptions(RequestOptions().frame(4000000))
-                                    .load(outputVideoFile)
-                                    .into(compressedVideoView.posterImageView)
+                                configVideo("", outputVideoFile, compressedVideoView)
                             } else {
                                 "压缩失败".show(this@VideoCompressActivity)
                             }
@@ -128,18 +120,85 @@ class VideoCompressActivity : KotlinBaseActivity() {
         }
     }
 
-    private fun testMediaInterface() {
-        val url = "http://111.198.10.15:11409/static/2021-05/b9d0e7bf520f4f50a0dedb76bf4b70aa.mp4"
-        compressedVideoView.setUp(url, "", JzvdStd.SCREEN_NORMAL)
-//        compressedVideoView.setUp(
-//            url,
-//            "",
-//            JzvdStd.SCREEN_NORMAL,
-//            JZMediaExo::class.java
-//        )
-        Glide.with(this)
-            .setDefaultRequestOptions(RequestOptions().frame(4000000))
-            .load(url)
-            .into(compressedVideoView.posterImageView)
+    private fun configVideo(
+        title: String, videoPath: String, videoPlayerView: StandardGSYVideoPlayer
+    ) {
+        orientationUtils = OrientationUtils(this, videoPlayerView)
+        //初始化不打开外部的旋转
+        orientationUtils?.isEnable = false
+
+        val videoOption = GSYVideoOptionBuilder()
+        videoOption.setIsTouchWiget(true)
+            .setRotateViewAuto(false)
+            .setLockLand(false)
+            .setAutoFullWithSize(true)
+            .setShowFullAnimation(false)
+            .setNeedLockFull(true)
+            .setUrl(videoPath)
+            .setCacheWithPlay(false)
+            .setVideoTitle(title)
+            .setVideoAllCallBack(object : GSYSampleCallBack() {
+                override fun onPrepared(url: String, vararg objects: Any) {
+                    super.onPrepared(url, *objects)
+                    //开始播放了才能旋转和全屏
+                    orientationUtils?.isEnable = true
+                    isPlay = true
+                }
+
+                override fun onQuitFullscreen(url: String, vararg objects: Any) {
+                    super.onQuitFullscreen(url, *objects)
+                    orientationUtils?.backToProtVideo()
+                }
+            }).setLockClickListener { _, lock ->
+                orientationUtils?.isEnable = !lock
+            }.build(videoPlayerView)
+        videoPlayerView.fullscreenButton.setOnClickListener { //直接横屏
+            orientationUtils?.resolveByClick()
+            videoPlayerView.startWindowFullscreen(this, true, true)
+        }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        orientationUtils?.backToProtVideo()
+        if (GSYVideoManager.backFromWindowFull(this)) {
+            return
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        originalVideoView.currentPlayer.onVideoPause()
+        compressedVideoView.currentPlayer.onVideoPause()
+        isPause = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        originalVideoView.currentPlayer.onVideoResume(false)
+        compressedVideoView.currentPlayer.onVideoResume(false)
+        isPause = false
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isPlay) {
+            originalVideoView.currentPlayer.release()
+            compressedVideoView.currentPlayer.release()
+        }
+        orientationUtils?.releaseListener()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        //如果旋转了就全屏
+        if (isPlay && !isPause) {
+            originalVideoView.onConfigurationChanged(
+                this, newConfig, orientationUtils, true, true
+            )
+            compressedVideoView.onConfigurationChanged(
+                this, newConfig, orientationUtils, true, true
+            )
+        }
     }
 }
