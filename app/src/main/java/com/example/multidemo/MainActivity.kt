@@ -6,7 +6,6 @@ import com.bumptech.glide.Glide
 import com.example.multidemo.model.BannerImageModel
 import com.example.multidemo.util.DemoConstant
 import com.example.multidemo.view.*
-import com.example.mutidemo.view.FaceCollectionActivity
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity

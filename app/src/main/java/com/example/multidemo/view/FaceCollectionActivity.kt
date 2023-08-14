@@ -1,4 +1,4 @@
-package com.example.mutidemo.view
+package com.example.multidemo.view
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap

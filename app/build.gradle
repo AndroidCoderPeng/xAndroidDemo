@@ -71,7 +71,7 @@ static def getBuildDate() {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //基础依赖库
-    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.0.4.8'
+    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.0.4.9'
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.6.1'
@@ -120,6 +120,7 @@ dependencies {
     implementation 'top.zibin:Luban:1.1.8'
     //高德地图
     implementation 'com.amap.api:3dmap:latest.integration'
+    //高德地图搜索
     implementation 'com.amap.api:search:8.1.0'
     //TCP
     implementation 'io.netty:netty-all:4.1.23.Final'

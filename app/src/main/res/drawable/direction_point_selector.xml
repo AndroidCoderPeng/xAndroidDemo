@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="false">
+        <shape android:shape="oval">
+            <size android:width="@dimen/lib_dp_15" android:height="@dimen/lib_dp_15" />
+            <solid android:color="#1D55C6" />
+        </shape>
+    </item>
+
+    <item android:state_pressed="true">
+        <shape android:shape="oval">
+            <size android:width="@dimen/lib_dp_15" android:height="@dimen/lib_dp_15" />
+            <!-- 点击按钮时候改变背景色50% -->
+            <solid android:color="#801D55C6" />
+        </shape>
+    </item>
+</selector>

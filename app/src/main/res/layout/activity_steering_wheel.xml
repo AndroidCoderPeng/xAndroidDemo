@@ -23,23 +23,15 @@
             app:controller_outerCircleDiameter="200" />
     </RelativeLayout>
 
-    <RelativeLayout
+    <com.example.multidemo.widget.SteeringWheelView
+        android:id="@+id/steeringWheelView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#F7F7F7">
-
-        <com.example.multidemo.widget.SteeringWheelView
-            android:id="@+id/steeringWheelView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:padding="@dimen/lib_dp_3"
-            app:ctrl_borderColor="#64BFEB"
-            app:ctrl_borderStroke="5dp"
-            app:ctrl_diameter="200dp"
-            app:ctrl_directionColor="#2A68BF"
-            app:ctrl_directionDiameter="15dp"
-            app:ctrl_switchColor="@color/white" />
-    </RelativeLayout>
+        android:background="#F7F7F7"
+        android:gravity="center"
+        app:ctrl_backgroundColor="@color/white"
+        app:ctrl_borderColor="#64BFEB"
+        app:ctrl_borderStroke="@dimen/dp_5"
+        app:ctrl_diameter="@dimen/dp_200" />
 </LinearLayout>

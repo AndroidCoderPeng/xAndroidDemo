@@ -45,6 +45,10 @@ class SteeringWheelActivity : KotlinBaseActivity() {
         })
 
         steeringWheelView.setOnWheelTouchListener(object : SteeringWheelView.OnWheelTouchListener {
+            override fun onCenterClicked() {
+                Log.d(kTag, "onCenterClicked: 点击")
+            }
+
             override fun onLeftTurn() {
                 Log.d(kTag, "onLeftTurn: 按下")
             }
@@ -59,10 +63,6 @@ class SteeringWheelActivity : KotlinBaseActivity() {
 
             override fun onBottomTurn() {
                 Log.d(kTag, "onBottomTurn: 按下")
-            }
-
-            override fun onCenterTurn() {
-                Log.d(kTag, "onCenterTurn: 按下")
             }
 
             override fun onActionTurnUp(dir: SteeringWheelView.Direction) {

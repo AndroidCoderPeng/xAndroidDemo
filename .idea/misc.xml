@@ -53,11 +53,14 @@
         <entry key="app/src/main/res/drawable/bg_solid_layout_white_radius_10.xml" value="0.21342592592592594" />
         <entry key="app/src/main/res/drawable/bg_solid_text_blue_radius_top_5.xml" value="0.21342592592592594" />
         <entry key="app/src/main/res/drawable/bg_stroke_layout_blue.xml" value="0.21342592592592594" />
+        <entry key="app/src/main/res/drawable/center_circle_selector.xml" value="0.2425" />
+        <entry key="app/src/main/res/drawable/direction_point_selector.xml" value="0.2425" />
         <entry key="app/src/main/res/drawable/ic_add_black.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable/ic_aim.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable/ic_load_error.xml" value="0.21342592592592594" />
         <entry key="app/src/main/res/drawable/ic_logo.xml" value="0.21342592592592594" />
         <entry key="app/src/main/res/drawable/ic_minus.xml" value="0.32916666666666666" />
+        <entry key="app/src/main/res/drawable/ic_power_off.xml" value="0.2425" />
         <entry key="app/src/main/res/drawable/ic_voice.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable/svg_logo.xml" value="0.21342592592592594" />
         <entry key="app/src/main/res/layout/activity_air_dash.xml" value="0.1" />
@@ -116,6 +119,7 @@
         <entry key="app/src/main/res/layout/layout_popup.xml" value="0.19583333333333333" />
         <entry key="app/src/main/res/layout/map_info_window.xml" value="0.375" />
         <entry key="app/src/main/res/layout/popu_microphone.xml" value="0.19583333333333333" />
+        <entry key="app/src/main/res/layout/widget_view_steering_wheel.xml" value="0.21851851851851853" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.3111111111111111" />
       </map>
     </option>
