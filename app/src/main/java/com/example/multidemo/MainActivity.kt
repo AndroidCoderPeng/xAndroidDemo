@@ -26,8 +26,8 @@ class MainActivity : KotlinBaseActivity() {
     private val itemNames = listOf(
         "侧边导航栏", "上拉加载下拉刷新", "联系人侧边滑动控件",
         "拖拽地图选点", "音频录制与播放", "图片添加水印并压缩", "视频压缩",
-        "蓝牙相关", "可删减九宫格", "人脸检测",
-        "TCP客户端", "方向控制盘", "时间轴", "海康摄像头", "裁剪图片"
+        "蓝牙相关", "可删减九宫格", "人脸检测", "TCP客户端", "方向控制盘",
+        "时间轴", "海康摄像头", "裁剪图片","RadioButton联动RV"
     )
 
     override fun setupTopBarLayout() {
@@ -118,6 +118,7 @@ class MainActivity : KotlinBaseActivity() {
                     12 -> navigatePageTo<TimeLineActivity>()
                     13 -> navigatePageTo<HikVisionActivity>()
                     14 -> navigatePageTo<CropPictureActivity>()
+                    15 -> navigatePageTo<RadioButtonActivity>()
                 }
             }
         })

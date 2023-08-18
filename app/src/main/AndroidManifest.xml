@@ -61,6 +61,7 @@
         <activity android:name=".view.SteeringWheelActivity" />
         <activity android:name=".view.TimeLineActivity" />
         <activity android:name=".view.CropPictureActivity" />
+        <activity android:name=".view.RadioButtonActivity" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:theme="@style/AppTheme" />
