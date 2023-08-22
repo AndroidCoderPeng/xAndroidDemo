@@ -1,19 +1,13 @@
 package com.example.multidemo.util
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.widget.ImageView
-import androidx.annotation.Nullable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.example.multidemo.R
 import com.luck.picture.lib.engine.ImageEngine
-import com.luck.picture.lib.interfaces.OnCallbackListener
 import com.luck.picture.lib.utils.ActivityCompatHelper
 
 class GlideLoadEngine private constructor() : ImageEngine {
@@ -30,33 +24,20 @@ class GlideLoadEngine private constructor() : ImageEngine {
         Glide.with(context).load(url).into(imageView);
     }
 
-    override fun loadImageBitmap(
+    override fun loadImage(
         context: Context,
+        imageView: ImageView,
         url: String,
         maxWidth: Int,
-        maxHeight: Int,
-        call: OnCallbackListener<Bitmap>?
+        maxHeight: Int
     ) {
         if (!ActivityCompatHelper.assertValidRequest(context)) {
             return
         }
         Glide.with(context)
-            .asBitmap()
-            .override(maxWidth, maxHeight)
             .load(url)
-            .into(object : CustomTarget<Bitmap?>() {
-                override fun onResourceReady(
-                    resource: Bitmap, @Nullable transition: Transition<in Bitmap?>?
-                ) {
-                    call?.onCall(resource)
-                }
-
-                override fun onLoadFailed(@Nullable errorDrawable: Drawable?) {
-                    call?.onCall(null)
-                }
-
-                override fun onLoadCleared(@Nullable placeholder: Drawable?) {}
-            })
+            .override(maxWidth, maxHeight)
+            .into(imageView)
     }
 
     override fun loadAlbumCover(context: Context, url: String, imageView: ImageView) {
