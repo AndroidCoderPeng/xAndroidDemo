@@ -11,7 +11,9 @@ import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.pengxh.kt.lite.adapter.EditableImageAdapter
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.navigatePageTo
-import kotlinx.android.synthetic.main.activity_gridview.*
+import kotlinx.android.synthetic.main.activity_gridview.button
+import kotlinx.android.synthetic.main.activity_gridview.imagePathView
+import kotlinx.android.synthetic.main.activity_gridview.nineRecyclerView
 
 class GridViewActivity : KotlinBaseActivity() {
 

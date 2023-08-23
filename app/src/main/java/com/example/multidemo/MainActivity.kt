@@ -5,7 +5,20 @@ import android.view.KeyEvent
 import com.bumptech.glide.Glide
 import com.example.multidemo.model.BannerImageModel
 import com.example.multidemo.util.DemoConstant
-import com.example.multidemo.view.*
+import com.example.multidemo.view.BluetoothActivity
+import com.example.multidemo.view.DragMapActivity
+import com.example.multidemo.view.FaceCollectionActivity
+import com.example.multidemo.view.GridViewActivity
+import com.example.multidemo.view.HikVisionActivity
+import com.example.multidemo.view.RadioButtonActivity
+import com.example.multidemo.view.RecodeAudioActivity
+import com.example.multidemo.view.RefreshAndLoadMoreActivity
+import com.example.multidemo.view.SlideBarActivity
+import com.example.multidemo.view.SlideNavigationActivity
+import com.example.multidemo.view.SteeringWheelActivity
+import com.example.multidemo.view.TimeLineActivity
+import com.example.multidemo.view.VideoCompressActivity
+import com.example.multidemo.view.WaterMarkerActivity
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
@@ -16,8 +29,9 @@ import com.youth.banner.adapter.BannerImageAdapter
 import com.youth.banner.holder.BannerImageHolder
 import com.youth.banner.indicator.CircleIndicator
 import com.youth.banner.transformer.ScaleInTransformer
-import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
+import kotlinx.android.synthetic.main.activity_main.bannerView
+import kotlinx.android.synthetic.main.activity_main.mainRecyclerView
+import java.util.Timer
 
 class MainActivity : KotlinBaseActivity() {
 
@@ -27,7 +41,7 @@ class MainActivity : KotlinBaseActivity() {
         "侧边导航栏", "上拉加载下拉刷新", "联系人侧边滑动控件",
         "拖拽地图选点", "音频录制与播放", "图片添加水印并压缩", "视频压缩",
         "蓝牙相关", "可删减九宫格", "人脸检测", "TCP客户端", "方向控制盘",
-        "时间轴", "海康摄像头", "裁剪图片","RadioButton联动RV"
+        "时间轴", "海康摄像头","RadioButton联动RV"
     )
 
     override fun setupTopBarLayout() {
@@ -117,8 +131,7 @@ class MainActivity : KotlinBaseActivity() {
                     11 -> navigatePageTo<SteeringWheelActivity>()
                     12 -> navigatePageTo<TimeLineActivity>()
                     13 -> navigatePageTo<HikVisionActivity>()
-                    14 -> navigatePageTo<CropPictureActivity>()
-                    15 -> navigatePageTo<RadioButtonActivity>()
+                    14 -> navigatePageTo<RadioButtonActivity>()
                 }
             }
         })
