@@ -13,8 +13,15 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <!-- Android 10以下 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Android 11 ～ Android 12 -->
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <!-- Android 13+ -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -60,11 +67,7 @@
         <activity android:name=".view.GridViewActivity" />
         <activity android:name=".view.SteeringWheelActivity" />
         <activity android:name=".view.TimeLineActivity" />
-        <activity android:name=".view.CropPictureActivity" />
         <activity android:name=".view.RadioButtonActivity" />
-        <activity
-            android:name="com.yalantis.ucrop.UCropActivity"
-            android:theme="@style/AppTheme" />
         <activity
             android:name=".view.HikVisionActivity"
             android:screenOrientation="landscape" />
@@ -114,9 +117,6 @@
     <queries>
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
-        </intent>
-        <intent>
-            <action android:name="android.media.action.ACTION_VIDEO_CAPTURE" />
         </intent>
     </queries>
 </manifest>

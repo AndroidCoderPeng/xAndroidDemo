@@ -1,6 +1,5 @@
 package com.example.multidemo.view
 
-import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Handler
@@ -24,13 +23,19 @@ import com.pengxh.kt.lite.extensions.formatFileSize
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
-import kotlinx.android.synthetic.main.activity_water_marker.*
+import kotlinx.android.synthetic.main.activity_water_marker.addMarkerButton
+import kotlinx.android.synthetic.main.activity_water_marker.markerImageSizeView
+import kotlinx.android.synthetic.main.activity_water_marker.markerImageView
+import kotlinx.android.synthetic.main.activity_water_marker.originalImageSizeView
+import kotlinx.android.synthetic.main.activity_water_marker.originalImageView
+import kotlinx.android.synthetic.main.activity_water_marker.selectImageButton
+import kotlinx.android.synthetic.main.activity_water_marker.takePictureButton
 import java.io.File
 
 class WaterMarkerActivity : KotlinBaseActivity(), Handler.Callback {
 
     private val kTag = "WaterMarkerActivity"
-    private val context: Context = this@WaterMarkerActivity
+    private val context = this@WaterMarkerActivity
     private lateinit var weakReferenceHandler: WeakReferenceHandler
     private var mediaRealPath: String? = null
 
@@ -63,13 +68,34 @@ class WaterMarkerActivity : KotlinBaseActivity(), Handler.Callback {
                             return
                         }
 
-                        val message: Message = weakReferenceHandler.obtainMessage()
+                        val message = weakReferenceHandler.obtainMessage()
                         message.obj = result[0]
                         message.what = 2022061702
                         weakReferenceHandler.handleMessage(message)
                     }
 
                     override fun onCancel() {}
+                })
+        }
+
+        takePictureButton.setOnClickListener {
+            PictureSelector.create(this)
+                .openCamera(SelectMimeType.ofImage())
+                .forResult(object : OnResultCallbackListener<LocalMedia> {
+                    override fun onResult(result: ArrayList<LocalMedia>?) {
+                        if (result == null) {
+                            "拍照失败，请重试".show(context)
+                            return
+                        }
+                        val message = weakReferenceHandler.obtainMessage()
+                        message.obj = result[0]
+                        message.what = 2022061702
+                        weakReferenceHandler.handleMessage(message)
+                    }
+
+                    override fun onCancel() {
+
+                    }
                 })
         }
 
@@ -90,7 +116,8 @@ class WaterMarkerActivity : KotlinBaseActivity(), Handler.Callback {
                                     .load(file)
                                     .apply(RequestOptions().error(R.drawable.ic_load_error))
                                     .into(markerImageView)
-                                markerImageSizeView.text = "压缩后：" + file.length().formatFileSize()
+                                markerImageSizeView.text =
+                                    "压缩后：" + file.length().formatFileSize()
                                 markerImageView.setOnClickListener {
                                     val urls = ArrayList<String>()
                                     urls.add(file.path)
