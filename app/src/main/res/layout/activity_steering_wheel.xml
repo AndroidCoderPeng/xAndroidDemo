@@ -19,11 +19,11 @@
             android:padding="@dimen/lib_dp_3"
             app:controller_backgroundColor="#1F1F37"
             app:controller_borderColor="#776CA6"
-            app:controller_borderStroke="6"
-            app:controller_outerCircleDiameter="200" />
+            app:controller_borderStroke="@dimen/dp_5"
+            app:controller_outerCircleDiameter="@dimen/dp_300" />
     </RelativeLayout>
 
-    <com.example.multidemo.widget.SteeringWheelView
+    <com.pengxh.kt.lite.widget.SteeringWheelView
         android:id="@+id/steeringWheelView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -33,5 +33,5 @@
         app:ctrl_backgroundColor="@color/white"
         app:ctrl_borderColor="#64BFEB"
         app:ctrl_borderStroke="@dimen/dp_5"
-        app:ctrl_diameter="@dimen/dp_200" />
+        app:ctrl_diameter="@dimen/dp_300" />
 </LinearLayout>

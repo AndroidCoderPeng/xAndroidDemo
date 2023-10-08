@@ -1,19 +1,18 @@
 package com.example.multidemo.view
 
 import android.os.Bundle
-import com.example.multidemo.R
+import com.example.multidemo.databinding.ActivityNewsDetailsBinding
 import com.example.multidemo.extensions.formatTextFromHtml
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.extensions.obtainScreenWidth
+import com.pengxh.kt.lite.extensions.getScreenWidth
 import com.pengxh.kt.lite.utils.Constant
-import kotlinx.android.synthetic.main.activity_news_details.*
 
 /**
  * @author: Pengxh
  * @email: 290677893@qq.com
  * @date: 2020/3/5 20:18
  */
-class NewsDetailsActivity : KotlinBaseActivity() {
+class NewsDetailsActivity : KotlinBaseActivity<ActivityNewsDetailsBinding>() {
 
     override fun setupTopBarLayout() {}
 
@@ -21,16 +20,18 @@ class NewsDetailsActivity : KotlinBaseActivity() {
 
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_news_details
+    override fun initViewBinding(): ActivityNewsDetailsBinding {
+        return ActivityNewsDetailsBinding.inflate(layoutInflater)
+    }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         val params = intent.getStringArrayListExtra(Constant.INTENT_PARAM)!!
 
-        newsTitle.text = params[0]
-        newsSrc.text = params[1]
-        newsTime.text = params[2]
+        binding.newsTitle.text = params[0]
+        binding.newsSrc.text = params[1]
+        binding.newsTime.text = params[2]
 
-        params[3].formatTextFromHtml(this, newsContent, obtainScreenWidth())
+        params[3].formatTextFromHtml(this, binding.newsContent, getScreenWidth())
     }
 
     override fun initEvent() {}

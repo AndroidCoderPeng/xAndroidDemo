@@ -2,7 +2,7 @@ package com.example.multidemo.view
 
 import android.os.Bundle
 import android.view.View
-import com.example.multidemo.R
+import com.example.multidemo.databinding.ActivityGridviewBinding
 import com.example.multidemo.util.GlideLoadEngine
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
@@ -11,11 +11,8 @@ import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.pengxh.kt.lite.adapter.EditableImageAdapter
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.navigatePageTo
-import kotlinx.android.synthetic.main.activity_gridview.button
-import kotlinx.android.synthetic.main.activity_gridview.imagePathView
-import kotlinx.android.synthetic.main.activity_gridview.nineRecyclerView
 
-class GridViewActivity : KotlinBaseActivity() {
+class GridViewActivity : KotlinBaseActivity<ActivityGridviewBinding>() {
 
     private lateinit var editableImageAdapter: EditableImageAdapter
     private val recyclerViewImages = ArrayList<String>()
@@ -24,15 +21,17 @@ class GridViewActivity : KotlinBaseActivity() {
 
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_gridview
+    override fun initViewBinding(): ActivityGridviewBinding {
+        return ActivityGridviewBinding.inflate(layoutInflater)
+    }
 
     override fun observeRequestState() {
 
     }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         editableImageAdapter = EditableImageAdapter(this, 9, 1f)
-        nineRecyclerView.adapter = editableImageAdapter
+        binding.nineRecyclerView.adapter = editableImageAdapter
         editableImageAdapter.setOnItemClickListener(object :
             EditableImageAdapter.OnItemClickListener {
             override fun onAddImageClick() {
@@ -71,8 +70,8 @@ class GridViewActivity : KotlinBaseActivity() {
     }
 
     override fun initEvent() {
-        button.setOnClickListener {
-            imagePathView.text = reformatURL(recyclerViewImages)
+        binding.button.setOnClickListener {
+            binding.imagePathView.text = reformatURL(recyclerViewImages)
         }
     }
 

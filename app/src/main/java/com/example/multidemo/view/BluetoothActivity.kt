@@ -13,7 +13,7 @@ import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.view.View
-import com.example.multidemo.R
+import com.example.multidemo.databinding.ActivityBluetoothBinding
 import com.example.multidemo.util.DemoConstant
 import com.example.multidemo.util.LoadingDialogHub
 import com.pengxh.kt.lite.base.KotlinBaseActivity
@@ -26,10 +26,9 @@ import com.pengxh.kt.lite.utils.ble.BlueToothBean
 import com.pengxh.kt.lite.utils.ble.OnBleConnectListener
 import com.pengxh.kt.lite.utils.ble.OnDeviceDiscoveredListener
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet
-import kotlinx.android.synthetic.main.activity_bluetooth.*
 import java.util.*
 
-class BluetoothActivity : KotlinBaseActivity() {
+class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
 
     private val kTag = "BluetoothActivity"
     private val blueToothBeans: MutableList<BlueToothBean> = ArrayList<BlueToothBean>()
@@ -44,9 +43,11 @@ class BluetoothActivity : KotlinBaseActivity() {
 
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_bluetooth
+    override fun initViewBinding(): ActivityBluetoothBinding {
+        return ActivityBluetoothBinding.inflate(layoutInflater)
+    }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         broadcastManager = BroadcastManager.obtainInstance(this)
         broadcastManager.addAction(object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -63,9 +64,9 @@ class BluetoothActivity : KotlinBaseActivity() {
 
         if (BLEManager.initBLE(this)) {
             if (BLEManager.isBluetoothEnable()) {
-                bluetoothStateView.text = "蓝牙状态: ON"
+                binding.bluetoothStateView.text = "蓝牙状态: ON"
             } else {
-                bluetoothStateView.text = "蓝牙状态: OFF"
+                binding.bluetoothStateView.text = "蓝牙状态: OFF"
                 BLEManager.openBluetooth(true)
             }
         } else {
@@ -74,9 +75,9 @@ class BluetoothActivity : KotlinBaseActivity() {
     }
 
     override fun initEvent() {
-        disconnectButton.setChangeAlphaWhenPress(true)
-        searchButton.setChangeAlphaWhenPress(true)
-        disconnectButton.setOnClickListener {
+        binding.disconnectButton.setChangeAlphaWhenPress(true)
+        binding.searchButton.setChangeAlphaWhenPress(true)
+        binding.disconnectButton.setOnClickListener {
             if (isConnected) {
                 //断开连接
                 BLEManager.disConnectDevice()
@@ -85,7 +86,7 @@ class BluetoothActivity : KotlinBaseActivity() {
                 "设备未连接，无需断开".show(this)
             }
         }
-        searchButton.setOnClickListener { //搜索蓝牙
+        binding.searchButton.setOnClickListener { //搜索蓝牙
             if (BLEManager.isDiscovery()) { //当前正在搜索设备...
                 BLEManager.stopDiscoverDevice()
             }
@@ -193,12 +194,14 @@ class BluetoothActivity : KotlinBaseActivity() {
         when (msg.what) {
             Constant.BLUETOOTH_ON -> {
                 "蓝牙已开启".show(this)
-                bluetoothStateView.text = "蓝牙状态: ON"
+                binding.bluetoothStateView.text = "蓝牙状态: ON"
             }
+
             Constant.BLUETOOTH_OFF -> {
                 "蓝牙已关闭".show(this)
-                bluetoothStateView.text = "蓝牙状态: ON"
+                binding.bluetoothStateView.text = "蓝牙状态: ON"
             }
+
             Constant.DISCOVERY_DEVICE -> {
                 val bean: BlueToothBean = msg.obj as BlueToothBean
                 if (blueToothBeans.size == 0) {
@@ -217,6 +220,7 @@ class BluetoothActivity : KotlinBaseActivity() {
                     }
                 }
             }
+
             Constant.DISCOVERY_OUT_TIME -> {
                 LoadingDialogHub.dismiss()
                 val sheetBuilder = QMUIBottomSheet.BottomListSheetBuilder(this)
@@ -230,24 +234,29 @@ class BluetoothActivity : KotlinBaseActivity() {
                         startConnectDevice(blueToothBeans[position].bluetoothDevice)
                     }.build().show()
             }
+
             Constant.CONNECT_SUCCESS -> {
                 LoadingDialogHub.dismiss()
                 isConnected = true
                 BLEManager.sendCommand(DemoConstant.ASK_DEV_CODE_COMMAND)
             }
+
             Constant.CONNECT_FAILURE -> {
                 isConnected = false
                 Log.d(kTag, "handleMessage: curConnectState" + false)
             }
+
             Constant.DISCONNECT_SUCCESS -> isConnected = false
             Constant.SEND_SUCCESS -> {
                 val sendSuccess = msg.obj as ByteArray
                 Log.d(kTag, "发送成功->sendSuccessBuffer: " + sendSuccess.contentToString())
             }
+
             Constant.SEND_FAILURE -> {
                 val sendFail = msg.obj as ByteArray
                 Log.d(kTag, "发送失败->sendFailBuffer: " + sendFail.contentToString())
             }
+
             Constant.RECEIVE_SUCCESS -> {
                 val receiveByteArray = msg.obj as ByteArray
                 //根据返回值标头判断是设备编号还是数据值
@@ -258,18 +267,19 @@ class BluetoothActivity : KotlinBaseActivity() {
                         builder.append("设备返回值: ")
                             .append(receiveByteArray.contentToString())
                             .append("\r\n")
-                        deviceValueView.text = builder.toString()
+                        binding.deviceValueView.text = builder.toString()
                     } else {
                         Log.d(kTag, "设备返回值长度异常，无法解析")
                     }
                 } else if (firstByte == 51.toByte() && receiveByteArray.size >= 14) {
                     //51, 51, 50, 48, 50, 49, 48, 49, 48, 48, 48, 51, 13, 10, -86, 0, 0, 0, 0, 0
-                    deviceCodeView.text = "设备编号: ${receiveByteArray.toDeviceCode()}"
+                    binding.deviceCodeView.text = "设备编号: ${receiveByteArray.toDeviceCode()}"
                     BLEManager.sendCommand(DemoConstant.OPEN_TRANSFER_COMMAND)
                 } else {
                     Log.d(kTag, "未知返回值，无法解析")
                 }
             }
+
             Constant.RECEIVE_FAILURE -> {
                 val receiveString = msg.obj as String
                 Log.d(kTag, "接收失败->receiveString: $receiveString")

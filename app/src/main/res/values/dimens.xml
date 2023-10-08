@@ -33,6 +33,8 @@
     <dimen name="dp_125">125dp</dimen>
     <dimen name="dp_150">150dp</dimen>
     <dimen name="dp_200">200dp</dimen>
+    <dimen name="dp_275">275dp</dimen>
+    <dimen name="dp_300">300dp</dimen>
 
     <!--分割线-->
     <dimen name="dividerLine">1dp</dimen>

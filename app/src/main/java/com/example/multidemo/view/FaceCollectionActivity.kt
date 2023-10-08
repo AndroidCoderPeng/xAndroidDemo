@@ -17,19 +17,18 @@ import android.view.WindowManager
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import com.example.multidemo.R
+import com.example.multidemo.databinding.ActivityFaceCollectBinding
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.setScreenBrightness
 import com.pengxh.kt.lite.extensions.toBitmap
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
-import kotlinx.android.synthetic.main.activity_face_collect.*
 import java.util.concurrent.*
 import kotlin.math.abs
 
 
-class FaceCollectionActivity : KotlinBaseActivity() {
+class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() {
 
     companion object {
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
@@ -58,9 +57,11 @@ class FaceCollectionActivity : KotlinBaseActivity() {
 
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_face_collect
+    override fun initViewBinding(): ActivityFaceCollectBinding {
+        return ActivityFaceCollectBinding.inflate(layoutInflater)
+    }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(callback)
         //调节屏幕亮度最大
         window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL)
@@ -126,7 +127,7 @@ class FaceCollectionActivity : KotlinBaseActivity() {
             )
 
             // Attach the viewfinder's surface provider to preview use case
-            cameraPreViewBuilder.setSurfaceProvider(cameraPreView.surfaceProvider)
+            cameraPreViewBuilder.setSurfaceProvider(binding.cameraPreView.surfaceProvider)
             observeCameraState(camera.cameraInfo)
         } catch (e: Exception) {
             Log.e(kTag, "Use case binding failed", e)
@@ -186,7 +187,9 @@ class FaceCollectionActivity : KotlinBaseActivity() {
                                             face.getMidPoint(pointF)
                                             // 获取双眼的间距
                                             val eyesDistance = face.eyesDistance()
-                                            faceDetectView.updateFacePosition(pointF, eyesDistance)
+                                            binding.faceDetectView.updateFacePosition(
+                                                pointF, eyesDistance
+                                            )
 
                                             weakReferenceHandler.sendEmptyMessage(2023041402)
                                         }
@@ -204,9 +207,9 @@ class FaceCollectionActivity : KotlinBaseActivity() {
 
     private val callback = Handler.Callback { msg: Message ->
         if (msg.what == 2023041401) {
-            faceDetectTipsView.text = "人脸识别中，请勿晃动手机"
+            binding.faceDetectTipsView.text = "人脸识别中，请勿晃动手机"
         } else if (msg.what == 2023041402) {
-            faceDetectTipsView.text = "人脸特征采集中，请勿晃动手机"
+            binding.faceDetectTipsView.text = "人脸特征采集中，请勿晃动手机"
 //            val outputFileOptions: ImageCapture.OutputFileOptions =
 //                ImageCapture.OutputFileOptions.Builder(FileUtils.imageFile).build()
 //            imageCapture.takePicture(

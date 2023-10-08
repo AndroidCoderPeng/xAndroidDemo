@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.multidemo.R
 import com.example.multidemo.callback.DecorationCallback
+import com.example.multidemo.databinding.ActivitySlideBinding
 import com.example.multidemo.model.CityModel
 import com.example.multidemo.util.StringHelper
 import com.example.multidemo.util.VerticalItemDecoration
@@ -22,11 +23,11 @@ import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
-import kotlinx.android.synthetic.main.activity_slide.*
 import java.text.Collator
-import java.util.*
+import java.util.Collections
+import java.util.Locale
 
-class SlideBarActivity : KotlinBaseActivity() {
+class SlideBarActivity : KotlinBaseActivity<ActivitySlideBinding>() {
 
     private val kTag = "SlideBarActivity"
     private val CITY = listOf(
@@ -86,13 +87,15 @@ class SlideBarActivity : KotlinBaseActivity() {
 
     override fun setupTopBarLayout() {}
 
-    override fun initLayoutView(): Int = R.layout.activity_slide
+    override fun initViewBinding(): ActivitySlideBinding {
+        return ActivitySlideBinding.inflate(layoutInflater)
+    }
 
     override fun observeRequestState() {
 
     }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         val cityBeans: List<CityModel> = obtainCityData()
         val cityAdapter = object : NormalRecyclerAdapter<CityModel>(
             R.layout.item_city_rv_l, cityBeans.toMutableList()
@@ -110,8 +113,8 @@ class SlideBarActivity : KotlinBaseActivity() {
                 startSmoothScroll(scroller)
             }
         }
-        cityRecyclerView.layoutManager = layoutManager
-        cityRecyclerView.addItemDecoration(
+        binding.cityRecyclerView.layoutManager = layoutManager
+        binding.cityRecyclerView.addItemDecoration(
             VerticalItemDecoration(this, object : DecorationCallback {
                 override fun getGroupTag(position: Int): Long {
                     return cityBeans[position].tag[0].code.toLong()
@@ -122,8 +125,8 @@ class SlideBarActivity : KotlinBaseActivity() {
                 }
             })
         )
-        cityRecyclerView.adapter = cityAdapter
-        cityRecyclerView.setOnScrollChangeListener { _, _, _, _, _ -> }
+        binding.cityRecyclerView.adapter = cityAdapter
+        binding.cityRecyclerView.setOnScrollChangeListener { _, _, _, _, _ -> }
         cityAdapter.setOnItemClickedListener(object :
             NormalRecyclerAdapter.OnItemClickedListener<CityModel> {
             override fun onItemClicked(position: Int, t: CityModel) {
@@ -170,17 +173,17 @@ class SlideBarActivity : KotlinBaseActivity() {
                 popupWindow.dismiss()
             }
         }
-        slideBarView.setData(CITY)
-        slideBarView.setOnIndexChangeListener(object : SlideBarView.OnIndexChangeListener {
+        binding.slideBarView.setData(CITY)
+        binding.slideBarView.setOnIndexChangeListener(object : SlideBarView.OnIndexChangeListener {
             override fun onIndexChange(letter: String) {
                 letterView.text = letter
                 popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0)
                 countDownTimer.start()
 
                 //根据滑动显示的字母索引到城市名字第一个汉字
-                val letterIndex: Int = slideBarView.obtainFirstLetterIndex(letter)
+                val letterIndex = binding.slideBarView.obtainFirstLetterIndex(letter)
                 if (letterIndex != -1) {
-                    cityRecyclerView.smoothScrollToPosition(letterIndex)
+                    binding.cityRecyclerView.smoothScrollToPosition(letterIndex)
                 }
             }
         })

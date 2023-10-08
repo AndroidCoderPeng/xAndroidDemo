@@ -1,12 +1,14 @@
 package com.example.multidemo.fragment
 
 import android.os.Bundle
-import com.example.multidemo.R
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import com.example.multidemo.databinding.FragmentAlarmBinding
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 
-class AlarmPageFragment : KotlinBaseFragment() {
+class AlarmPageFragment : KotlinBaseFragment<FragmentAlarmBinding>() {
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
 
     }
 
@@ -14,7 +16,12 @@ class AlarmPageFragment : KotlinBaseFragment() {
 
     }
 
-    override fun initLayoutView(): Int = R.layout.fragment_alarm
+    override fun initViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentAlarmBinding {
+        return FragmentAlarmBinding.inflate(inflater, container, false)
+    }
 
     override fun observeRequestState() {
 

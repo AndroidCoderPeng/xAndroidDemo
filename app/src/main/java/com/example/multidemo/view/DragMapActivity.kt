@@ -9,21 +9,20 @@ import com.amap.api.maps.UiSettings
 import com.amap.api.maps.model.CameraPosition
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.MyLocationStyle
-import com.example.multidemo.R
+import com.example.multidemo.databinding.ActivityDragMapBinding
 import com.example.multidemo.widget.CenterMarkerView
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import kotlinx.android.synthetic.main.activity_drag_map.*
 
-class DragMapActivity : KotlinBaseActivity(), AMap.OnMapLoadedListener,
+class DragMapActivity : KotlinBaseActivity<ActivityDragMapBinding>(), AMap.OnMapLoadedListener,
     AMap.OnCameraChangeListener {
 
     private lateinit var aMap: AMap
     private lateinit var centerMarkerView: CenterMarkerView
 
-    override fun initData(savedInstanceState: Bundle?) {
-        mapView.onCreate(savedInstanceState)
+    override fun initOnCreate(savedInstanceState: Bundle?) {
+        binding.mapView.onCreate(savedInstanceState)
 
-        aMap = mapView.map
+        aMap = binding.mapView.map
         aMap.mapType = AMap.MAP_TYPE_NORMAL
         val locationStyle = MyLocationStyle()
         //定位一次，且将视角移动到地图中心点
@@ -56,7 +55,9 @@ class DragMapActivity : KotlinBaseActivity(), AMap.OnMapLoadedListener,
 
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_drag_map
+    override fun initViewBinding(): ActivityDragMapBinding {
+        return ActivityDragMapBinding.inflate(layoutInflater)
+    }
 
     override fun observeRequestState() {
 
@@ -75,29 +76,29 @@ class DragMapActivity : KotlinBaseActivity(), AMap.OnMapLoadedListener,
         val latLng: LatLng = cameraPosition.target
         //显示infoWindow
         centerMarkerView.showInfoWindow(latLng)
-        longitudeView.text = latLng.longitude.toString()
-        latitudeView.text = latLng.latitude.toString()
+        binding.longitudeView.text = latLng.longitude.toString()
+        binding.latitudeView.text = latLng.latitude.toString()
     }
 
     override fun onResume() {
         super.onResume()
-        mapView.onResume()
+        binding.mapView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.onPause()
+        binding.mapView.onPause()
     }
 
     override fun onDestroy() {
         centerMarkerView.destroy()
-        mapView.onDestroy()
+        binding.mapView.onDestroy()
         super.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mapView.onSaveInstanceState(outState)
+        binding.mapView.onSaveInstanceState(outState)
     }
 
     override fun setupTopBarLayout() {

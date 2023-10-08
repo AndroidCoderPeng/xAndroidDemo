@@ -1,12 +1,14 @@
 package com.example.multidemo.fragment
 
 import android.os.Bundle
-import com.example.multidemo.R
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import com.example.multidemo.databinding.FragmentTaskBinding
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 
-class TaskPageFragment : KotlinBaseFragment() {
+class TaskPageFragment : KotlinBaseFragment<FragmentTaskBinding>() {
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
 
     }
 
@@ -14,7 +16,12 @@ class TaskPageFragment : KotlinBaseFragment() {
 
     }
 
-    override fun initLayoutView(): Int = R.layout.fragment_task
+    override fun initViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentTaskBinding {
+        return FragmentTaskBinding.inflate(inflater, container, false)
+    }
 
     override fun observeRequestState() {
 

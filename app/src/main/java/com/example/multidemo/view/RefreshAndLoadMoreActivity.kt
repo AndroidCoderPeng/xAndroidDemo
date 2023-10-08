@@ -6,6 +6,7 @@ import android.os.Message
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.example.multidemo.R
+import com.example.multidemo.databinding.ActivityRefreshBinding
 import com.example.multidemo.extensions.addAll
 import com.example.multidemo.model.NewsListModel
 import com.example.multidemo.util.LoadingDialogHub
@@ -19,15 +20,14 @@ import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.vm.LoadState
-import kotlinx.android.synthetic.main.activity_refresh.*
-import kotlinx.android.synthetic.main.item_news_rv_l.*
+import com.qmuiteam.qmui.widget.QMUIRadiusImageView
 
 /**
  * @author: Pengxh
  * @email: 290677893@qq.com
  * @date: 2020/2/21 19:16
  */
-class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
+class RefreshAndLoadMoreActivity : KotlinBaseActivity<ActivityRefreshBinding>() {
 
     private lateinit var weakReferenceHandler: WeakReferenceHandler
     private lateinit var newsViewModel: NewsViewModel
@@ -39,9 +39,11 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
 
     override fun setupTopBarLayout() {}
 
-    override fun initLayoutView(): Int = R.layout.activity_refresh
+    override fun initViewBinding(): ActivityRefreshBinding {
+        return ActivityRefreshBinding.inflate(layoutInflater)
+    }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(callback)
         newsViewModel = ViewModelProvider(this)[NewsViewModel::class.java]
         newsViewModel.resultModel.observe(this) {
@@ -50,15 +52,16 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
                 when {
                     isRefresh -> {
                         newsAdapter.setRefreshData(dataRows)
-                        refreshLayout.finishRefresh()
+                        binding.refreshLayout.finishRefresh()
                         isRefresh = false
                     }
+
                     isLoadMore -> {
                         if (dataRows.size == 0) {
                             "到底了，别拉了".show(this)
                         }
                         newsAdapter.setLoadMoreData(dataRows)
-                        refreshLayout.finishLoadMore()
+                        binding.refreshLayout.finishLoadMore()
                         isLoadMore = false
                     }
                     //首次加载数据
@@ -74,13 +77,13 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
     }
 
     override fun initEvent() {
-        refreshLayout.setOnRefreshListener {
+        binding.refreshLayout.setOnRefreshListener {
             isRefresh = true
             //刷新之后页码重置
             pageIndex = 0
             getNewsList()
         }
-        refreshLayout.setOnLoadMoreListener {
+        binding.refreshLayout.setOnLoadMoreListener {
             isLoadMore = true
             pageIndex++
             getNewsList()
@@ -95,6 +98,7 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
                         LoadingDialogHub.show(this, "加载数据中，请稍后...")
                     }
                 }
+
                 else -> LoadingDialogHub.dismiss()
             }
         }
@@ -116,7 +120,8 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
                 ) {
                     val img: String = item.pic
                     if (img == "" || img.endsWith(".gif")) {
-                        newsPicture.visibility = View.GONE
+                        val imageView = viewHolder.getView<QMUIRadiusImageView>(R.id.newsPicture)
+                        imageView.visibility = View.GONE
                     } else {
                         viewHolder.setImageResource(R.id.newsPicture, img)
                     }
@@ -126,10 +131,10 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity() {
                         .setText(R.id.newsTime, item.time)
                 }
             }
-            newsRecyclerView.addItemDecoration(
+            binding.newsRecyclerView.addItemDecoration(
                 ItemDecoration(0f, 130f.dp2px(this@RefreshAndLoadMoreActivity).toFloat())
             )
-            newsRecyclerView.adapter = newsAdapter
+            binding.newsRecyclerView.adapter = newsAdapter
             newsAdapter.setOnItemClickedListener(object :
                 NormalRecyclerAdapter.OnItemClickedListener<NewsListModel.ResultBeanX.ResultBean.ListBean> {
                 override fun onItemClicked(

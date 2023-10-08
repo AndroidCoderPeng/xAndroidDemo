@@ -3,6 +3,7 @@ package com.example.multidemo
 import android.os.Bundle
 import android.view.KeyEvent
 import com.bumptech.glide.Glide
+import com.example.multidemo.databinding.ActivityMainBinding
 import com.example.multidemo.model.BannerImageModel
 import com.example.multidemo.util.DemoConstant
 import com.example.multidemo.view.BluetoothActivity
@@ -29,11 +30,9 @@ import com.youth.banner.adapter.BannerImageAdapter
 import com.youth.banner.holder.BannerImageHolder
 import com.youth.banner.indicator.CircleIndicator
 import com.youth.banner.transformer.ScaleInTransformer
-import kotlinx.android.synthetic.main.activity_main.bannerView
-import kotlinx.android.synthetic.main.activity_main.mainRecyclerView
 import java.util.Timer
 
-class MainActivity : KotlinBaseActivity() {
+class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
 
     private var clickTime: Long = 0
     private val timer by lazy { Timer() }
@@ -41,7 +40,7 @@ class MainActivity : KotlinBaseActivity() {
         "侧边导航栏", "上拉加载下拉刷新", "联系人侧边滑动控件",
         "拖拽地图选点", "音频录制与播放", "图片添加水印并压缩", "视频压缩",
         "蓝牙相关", "可删减九宫格", "人脸检测", "TCP客户端", "方向控制盘",
-        "时间轴", "海康摄像头","RadioButton联动RV"
+        "时间轴", "海康摄像头", "RadioButton联动RV"
     )
 
     override fun setupTopBarLayout() {
@@ -52,11 +51,13 @@ class MainActivity : KotlinBaseActivity() {
 
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_main
+    override fun initViewBinding(): ActivityMainBinding {
+        return ActivityMainBinding.inflate(layoutInflater)
+    }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         //轮播图
-        val banner = bannerView
+        val banner = binding.bannerView
                 as Banner<BannerImageModel.DataBean, BannerImageAdapter<BannerImageModel.DataBean>>
         banner.apply {
             setBannerRound(15f)
@@ -97,7 +98,7 @@ class MainActivity : KotlinBaseActivity() {
                 viewHolder.setText(R.id.itemTitleView, item)
             }
         }
-        mainRecyclerView.adapter = adapter
+        binding.mainRecyclerView.adapter = adapter
         adapter.setOnItemClickedListener(object :
             NormalRecyclerAdapter.OnItemClickedListener<String> {
             override fun onItemClicked(position: Int, t: String) {
@@ -128,6 +129,7 @@ class MainActivity : KotlinBaseActivity() {
 //                            }
 //                        }, 0, 1000)
                     }
+
                     11 -> navigatePageTo<SteeringWheelActivity>()
                     12 -> navigatePageTo<TimeLineActivity>()
                     13 -> navigatePageTo<HikVisionActivity>()

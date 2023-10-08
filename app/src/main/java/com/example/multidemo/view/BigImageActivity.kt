@@ -11,22 +11,24 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.example.multidemo.R
+import com.example.multidemo.databinding.ActivityBigImageBinding
 import com.luck.picture.lib.photoview.PhotoView
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.utils.Constant
 import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
-import kotlinx.android.synthetic.main.activity_big_image.*
 
-class BigImageActivity : KotlinBaseActivity() {
+class BigImageActivity : KotlinBaseActivity<ActivityBigImageBinding>() {
 
-    override fun initLayoutView(): Int = R.layout.activity_big_image
+    override fun initViewBinding(): ActivityBigImageBinding {
+        return ActivityBigImageBinding.inflate(layoutInflater)
+    }
 
     override fun setupTopBarLayout() {
         ImmerseStatusBarUtil.setColor(this, Color.BLACK)
-        leftBackView.setOnClickListener { finish() }
+        binding.leftBackView.setOnClickListener { finish() }
     }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
 
     }
 
@@ -41,18 +43,19 @@ class BigImageActivity : KotlinBaseActivity() {
             return
         }
         val imageSize = urls.size
-        pageNumberView.text = String.format("(" + (index + 1) + "/" + imageSize + ")")
-        imagePagerView.adapter = BigImageAdapter(this, urls)
-        imagePagerView.currentItem = index
-        imagePagerView.offscreenPageLimit = imageSize
-        imagePagerView.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        binding.pageNumberView.text = String.format("(" + (index + 1) + "/" + imageSize + ")")
+        binding.imagePagerView.adapter = BigImageAdapter(this, urls)
+        binding.imagePagerView.currentItem = index
+        binding.imagePagerView.offscreenPageLimit = imageSize
+        binding.imagePagerView.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int, positionOffset: Float, positionOffsetPixels: Int
             ) {
             }
 
             override fun onPageSelected(position: Int) {
-                pageNumberView.text = String.format("(" + (position + 1) + "/" + imageSize + ")")
+                binding.pageNumberView.text =
+                    String.format("(" + (position + 1) + "/" + imageSize + ")")
             }
 
             override fun onPageScrollStateChanged(state: Int) {}

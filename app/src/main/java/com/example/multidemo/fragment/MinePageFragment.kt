@@ -1,12 +1,14 @@
 package com.example.multidemo.fragment
 
 import android.os.Bundle
-import com.example.multidemo.R
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import com.example.multidemo.databinding.FragmentMineBinding
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 
-class MinePageFragment : KotlinBaseFragment() {
+class MinePageFragment : KotlinBaseFragment<FragmentMineBinding>() {
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
 
     }
 
@@ -14,7 +16,12 @@ class MinePageFragment : KotlinBaseFragment() {
 
     }
 
-    override fun initLayoutView(): Int = R.layout.fragment_mine
+    override fun initViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentMineBinding {
+        return FragmentMineBinding.inflate(inflater, container, false)
+    }
 
     override fun observeRequestState() {
 

@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import com.example.multidemo.R
+import com.example.multidemo.databinding.ActivityTimeLineBinding
 import com.example.multidemo.model.TimeLineDataModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -11,13 +12,12 @@ import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.readAssetsFile
-import kotlinx.android.synthetic.main.activity_time_line.*
 
-class TimeLineActivity : KotlinBaseActivity() {
+class TimeLineActivity : KotlinBaseActivity<ActivityTimeLineBinding>() {
 
     private val gson by lazy { Gson() }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         val data = readAssetsFile("TestData.json")
         val models = gson.fromJson<TimeLineDataModel>(
             data, object : TypeToken<TimeLineDataModel>() {}.type
@@ -43,10 +43,12 @@ class TimeLineActivity : KotlinBaseActivity() {
                         viewHolder.setVisibility(R.id.topLineView, View.INVISIBLE)
                         viewHolder.setImageResource(R.id.tagImageView, R.drawable.ic_dot_red)
                     }
+
                     models.data.size - 1 -> {
                         viewHolder.setVisibility(R.id.bottomLineView, View.INVISIBLE)
                         viewHolder.setImageResource(R.id.tagImageView, R.drawable.ic_dot_gray)
                     }
+
                     else -> {
                         viewHolder.setImageResource(R.id.tagImageView, R.drawable.ic_dot)
                     }
@@ -58,14 +60,16 @@ class TimeLineActivity : KotlinBaseActivity() {
                     .setText(R.id.remarkView, item.recordContent)
             }
         }
-        recyclerView.adapter = logAdapter
+        binding.recyclerView.adapter = logAdapter
     }
 
     override fun initEvent() {
 
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_time_line
+    override fun initViewBinding(): ActivityTimeLineBinding {
+        return ActivityTimeLineBinding.inflate(layoutInflater)
+    }
 
     override fun observeRequestState() {
 

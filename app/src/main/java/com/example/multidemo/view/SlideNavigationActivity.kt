@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.multidemo.R
+import com.example.multidemo.databinding.ActivitySlideNavigationBinding
 import com.example.multidemo.fragment.AlarmPageFragment
 import com.example.multidemo.fragment.HomePageFragment
 import com.example.multidemo.fragment.MinePageFragment
@@ -17,10 +18,8 @@ import com.example.multidemo.fragment.TaskPageFragment
 import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
-import kotlinx.android.synthetic.main.activity_slide_navigation.*
 
-
-class SlideNavigationActivity : KotlinBaseActivity() {
+class SlideNavigationActivity : KotlinBaseActivity<ActivitySlideNavigationBinding>() {
 
     private val slideUnSelectedItems = ArrayList<SlideItem>()
     private val slideSelectedItems = ArrayList<SlideItem>()
@@ -44,8 +43,8 @@ class SlideNavigationActivity : KotlinBaseActivity() {
         fragmentPages.add(MinePageFragment())
     }
 
-    override fun initData(savedInstanceState: Bundle?) {
-        slideListView.adapter = slideAdapter
+    override fun initOnCreate(savedInstanceState: Bundle?) {
+        binding.slideListView.adapter = slideAdapter
 
         //默认选中第一个
         slideAdapter.setSelectItem(0)
@@ -56,7 +55,7 @@ class SlideNavigationActivity : KotlinBaseActivity() {
     }
 
     override fun initEvent() {
-        slideListView.setOnItemClickListener { _, _, position, _ ->
+        binding.slideListView.setOnItemClickListener { _, _, position, _ ->
             slideAdapter.setSelectItem(position)
             slideAdapter.notifyDataSetInvalidated()
 
@@ -71,7 +70,9 @@ class SlideNavigationActivity : KotlinBaseActivity() {
         transition.commit()
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_slide_navigation
+    override fun initViewBinding(): ActivitySlideNavigationBinding {
+        return ActivitySlideNavigationBinding.inflate(layoutInflater)
+    }
 
     override fun observeRequestState() {
 

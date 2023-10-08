@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import com.example.multidemo.R
+import com.example.multidemo.databinding.ActivityVideoCompressBinding
 import com.example.multidemo.util.FileUtils
 import com.example.multidemo.util.GlideLoadEngine
 import com.luck.picture.lib.basic.PictureSelector
@@ -21,9 +22,8 @@ import com.shuyu.gsyvideoplayer.listener.GSYSampleCallBack
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 import com.zolad.videoslimmer.VideoSlimmer
-import kotlinx.android.synthetic.main.activity_video_compress.*
 
-class VideoCompressActivity : KotlinBaseActivity() {
+class VideoCompressActivity : KotlinBaseActivity<ActivityVideoCompressBinding>() {
 
     private val kTag = "VideoCompressActivity"
     private val retriever by lazy { MediaMetadataRetriever() }
@@ -43,9 +43,11 @@ class VideoCompressActivity : KotlinBaseActivity() {
 
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_video_compress
+    override fun initViewBinding(): ActivityVideoCompressBinding {
+        return ActivityVideoCompressBinding.inflate(layoutInflater)
+    }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         progressDialog = ProgressDialog(this)
         progressDialog.setMessage("视频压缩中...")
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
@@ -55,7 +57,7 @@ class VideoCompressActivity : KotlinBaseActivity() {
     }
 
     override fun initEvent() {
-        selectVideoButton.setOnClickListener {
+        binding.selectVideoButton.setOnClickListener {
             PictureSelector.create(this)
                 .openGallery(SelectMimeType.ofVideo())
                 .isGif(false)
@@ -77,13 +79,13 @@ class VideoCompressActivity : KotlinBaseActivity() {
                             MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION
                         )!!
                         Log.d(kTag, "defaultRotation: $defaultRotation")
-                        configVideo(media.fileName, mediaOriginalPath, compressedVideoView)
+                        configVideo(media.fileName, mediaOriginalPath, binding.compressedVideoView)
                     }
 
                     override fun onCancel() {}
                 })
         }
-        compressVideoButton.setOnClickListener {
+        binding.compressVideoButton.setOnClickListener {
             if (!TextUtils.isEmpty(mediaOriginalPath)) {
                 val outputVideoFile = FileUtils.videoFilePath
                 val width: Int
@@ -109,7 +111,7 @@ class VideoCompressActivity : KotlinBaseActivity() {
                         override fun onFinish(result: Boolean) {
                             //convert finish,result(true is success,false is fail)
                             if (result) {
-                                configVideo("", outputVideoFile, compressedVideoView)
+                                configVideo("", outputVideoFile, binding.compressedVideoView)
                             } else {
                                 "压缩失败".show(this@VideoCompressActivity)
                             }
@@ -168,23 +170,23 @@ class VideoCompressActivity : KotlinBaseActivity() {
 
     override fun onPause() {
         super.onPause()
-        originalVideoView.currentPlayer.onVideoPause()
-        compressedVideoView.currentPlayer.onVideoPause()
+        binding.originalVideoView.currentPlayer.onVideoPause()
+        binding.compressedVideoView.currentPlayer.onVideoPause()
         isPause = true
     }
 
     override fun onResume() {
         super.onResume()
-        originalVideoView.currentPlayer.onVideoResume(false)
-        compressedVideoView.currentPlayer.onVideoResume(false)
+        binding.originalVideoView.currentPlayer.onVideoResume(false)
+        binding.compressedVideoView.currentPlayer.onVideoResume(false)
         isPause = false
     }
 
     override fun onDestroy() {
         super.onDestroy()
         if (isPlay) {
-            originalVideoView.currentPlayer.release()
-            compressedVideoView.currentPlayer.release()
+            binding.originalVideoView.currentPlayer.release()
+            binding.compressedVideoView.currentPlayer.release()
         }
         orientationUtils?.releaseListener()
     }
@@ -193,10 +195,10 @@ class VideoCompressActivity : KotlinBaseActivity() {
         super.onConfigurationChanged(newConfig)
         //如果旋转了就全屏
         if (isPlay && !isPause) {
-            originalVideoView.onConfigurationChanged(
+            binding.originalVideoView.onConfigurationChanged(
                 this, newConfig, orientationUtils, true, true
             )
-            compressedVideoView.onConfigurationChanged(
+            binding.compressedVideoView.onConfigurationChanged(
                 this, newConfig, orientationUtils, true, true
             )
         }

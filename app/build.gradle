@@ -2,7 +2,6 @@ import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 33
@@ -14,10 +13,6 @@ android {
         versionCode 1
         versionName "1.0.0"
         multiDexEnabled true
-
-        ndk {
-            abiFilters 'arm64-v8a'
-        }
     }
 
     packagingOptions {
@@ -71,7 +66,7 @@ static def getBuildDate() {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //基础依赖库
-    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.0.4.9'
+    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.0.5'
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.cardview:cardview:1.0.0'

@@ -10,6 +10,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.multidemo.R
 import com.example.multidemo.callback.ICompressListener
 import com.example.multidemo.callback.IWaterMarkAddListener
+import com.example.multidemo.databinding.ActivityWaterMarkerBinding
 import com.example.multidemo.util.FileUtils
 import com.example.multidemo.util.GlideLoadEngine
 import com.example.multidemo.util.ImageHelper
@@ -23,16 +24,9 @@ import com.pengxh.kt.lite.extensions.formatFileSize
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
-import kotlinx.android.synthetic.main.activity_water_marker.addMarkerButton
-import kotlinx.android.synthetic.main.activity_water_marker.markerImageSizeView
-import kotlinx.android.synthetic.main.activity_water_marker.markerImageView
-import kotlinx.android.synthetic.main.activity_water_marker.originalImageSizeView
-import kotlinx.android.synthetic.main.activity_water_marker.originalImageView
-import kotlinx.android.synthetic.main.activity_water_marker.selectImageButton
-import kotlinx.android.synthetic.main.activity_water_marker.takePictureButton
 import java.io.File
 
-class WaterMarkerActivity : KotlinBaseActivity(), Handler.Callback {
+class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>(), Handler.Callback {
 
     private val kTag = "WaterMarkerActivity"
     private val context = this@WaterMarkerActivity
@@ -45,14 +39,16 @@ class WaterMarkerActivity : KotlinBaseActivity(), Handler.Callback {
 
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_water_marker
+    override fun initViewBinding(): ActivityWaterMarkerBinding {
+        return ActivityWaterMarkerBinding.inflate(layoutInflater)
+    }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(this)
     }
 
     override fun initEvent() {
-        selectImageButton.setOnClickListener {
+        binding.selectImageButton.setOnClickListener {
             PictureSelector.create(this)
                 .openGallery(SelectMimeType.ofImage())
                 .isGif(false)
@@ -78,7 +74,7 @@ class WaterMarkerActivity : KotlinBaseActivity(), Handler.Callback {
                 })
         }
 
-        takePictureButton.setOnClickListener {
+        binding.takePictureButton.setOnClickListener {
             PictureSelector.create(this)
                 .openCamera(SelectMimeType.ofImage())
                 .forResult(object : OnResultCallbackListener<LocalMedia> {
@@ -99,7 +95,7 @@ class WaterMarkerActivity : KotlinBaseActivity(), Handler.Callback {
                 })
         }
 
-        addMarkerButton.setOnClickListener {
+        binding.addMarkerButton.setOnClickListener {
             if (mediaRealPath == null) {
                 "请先选择图片再添加水印".show(this)
                 return@setOnClickListener
@@ -115,10 +111,10 @@ class WaterMarkerActivity : KotlinBaseActivity(), Handler.Callback {
                                 Glide.with(context)
                                     .load(file)
                                     .apply(RequestOptions().error(R.drawable.ic_load_error))
-                                    .into(markerImageView)
-                                markerImageSizeView.text =
+                                    .into(binding.markerImageView)
+                                binding.markerImageSizeView.text =
                                     "压缩后：" + file.length().formatFileSize()
-                                markerImageView.setOnClickListener {
+                                binding.markerImageView.setOnClickListener {
                                     val urls = ArrayList<String>()
                                     urls.add(file.path)
                                     navigatePageTo<BigImageActivity>(0, urls)
@@ -141,10 +137,10 @@ class WaterMarkerActivity : KotlinBaseActivity(), Handler.Callback {
             Glide.with(this)
                 .load(mediaRealPath)
                 .apply(RequestOptions().error(R.drawable.ic_load_error))
-                .into(originalImageView)
+                .into(binding.originalImageView)
 
-            originalImageSizeView.text = "压缩前：" + obj.size.formatFileSize()
-            originalImageView.setOnClickListener {
+            binding.originalImageSizeView.text = "压缩前：" + obj.size.formatFileSize()
+            binding.originalImageView.setOnClickListener {
                 val urls = ArrayList<String>()
                 urls.add(mediaRealPath!!)
                 navigatePageTo<BigImageActivity>(0, urls)

@@ -36,7 +36,6 @@ class WelcomeActivity : AppCompatActivity(), PermissionCallbacks {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //判断是否有权限，如果版本大于5.1才需要判断（即6.0以上），其他则不需要判断。
         if (EasyPermissions.hasPermissions(this, *USER_PERMISSIONS)) {
             startMainActivity()
         } else {

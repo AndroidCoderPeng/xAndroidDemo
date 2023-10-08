@@ -2,22 +2,21 @@ package com.example.multidemo.view
 
 import android.os.Bundle
 import android.util.Log
-import com.example.multidemo.R
-import com.example.multidemo.widget.SteeringWheelView
+import com.example.multidemo.databinding.ActivitySteeringWheelBinding
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.widget.SteeringWheelController
-import kotlinx.android.synthetic.main.activity_steering_wheel.*
+import com.pengxh.kt.lite.widget.SteeringWheelView
 
-class SteeringWheelActivity : KotlinBaseActivity() {
+class SteeringWheelActivity : KotlinBaseActivity<ActivitySteeringWheelBinding>() {
 
     private val kTag = "SteeringWheelActivity"
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
 
     }
 
     override fun initEvent() {
-        steeringWheelController.setOnWheelTouchListener(object :
+        binding.steeringWheelController.setOnWheelTouchListener(object :
             SteeringWheelController.OnWheelTouchListener {
             override fun onLeftTurn() {
                 Log.d(kTag, "onLeftTurn: 按下")
@@ -44,7 +43,8 @@ class SteeringWheelActivity : KotlinBaseActivity() {
             }
         })
 
-        steeringWheelView.setOnWheelTouchListener(object : SteeringWheelView.OnWheelTouchListener {
+        binding.steeringWheelView.setOnWheelTouchListener(object :
+            SteeringWheelView.OnWheelTouchListener {
             override fun onCenterClicked() {
                 Log.d(kTag, "onCenterClicked: 点击")
             }
@@ -71,7 +71,9 @@ class SteeringWheelActivity : KotlinBaseActivity() {
         })
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_steering_wheel
+    override fun initViewBinding(): ActivitySteeringWheelBinding {
+        return ActivitySteeringWheelBinding.inflate(layoutInflater)
+    }
 
     override fun observeRequestState() {
 
@@ -80,5 +82,4 @@ class SteeringWheelActivity : KotlinBaseActivity() {
     override fun setupTopBarLayout() {
 
     }
-
 }

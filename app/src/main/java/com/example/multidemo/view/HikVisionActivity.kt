@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.SurfaceHolder
 import androidx.lifecycle.ViewModelProvider
-import com.example.multidemo.R
+import com.example.multidemo.databinding.ActivityHikvisionBinding
 import com.example.multidemo.extensions.getChannel
 import com.example.multidemo.extensions.reformat
 import com.example.multidemo.model.Point
@@ -23,9 +23,8 @@ import com.hikvision.netsdk.NET_DVR_PREVIEWINFO
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.vm.LoadState
-import kotlinx.android.synthetic.main.activity_hikvision.*
 
-class HikVisionActivity : KotlinBaseActivity(), SurfaceHolder.Callback {
+class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), SurfaceHolder.Callback {
 
     private val kTag = "HikVisionActivity"
     private var previewHandle = -1
@@ -42,18 +41,18 @@ class HikVisionActivity : KotlinBaseActivity(), SurfaceHolder.Callback {
     private lateinit var regionViewModel: RegionViewModel
     private val udpClient by lazy { UdpClient() }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         regionViewModel = ViewModelProvider(this)[RegionViewModel::class.java]
     }
 
     override fun initEvent() {
-        leftBackView.setOnClickListener { finish() }
+        binding.leftBackView.setOnClickListener { finish() }
 
-        clearView.setOnClickListener {
-            regionView.clearRoutePath()
+        binding.clearView.setOnClickListener {
+            binding.regionView.clearRoutePath()
         }
 
-        openCameraButton.setOnClickListener {
+        binding.openCameraButton.setOnClickListener {
             val deviceItem = SDKGuider.g_sdkGuider.m_comDMGuider.DeviceItem()
             deviceItem.m_szDevName = ""
             deviceItem.m_struNetInfo = SDKGuider.g_sdkGuider.m_comDMGuider.DevNetInfo(
@@ -113,7 +112,7 @@ class HikVisionActivity : KotlinBaseActivity(), SurfaceHolder.Callback {
                     strutPlayInfo.lChannel = selectChannel
                     strutPlayInfo.dwStreamType = 1
                     strutPlayInfo.bBlocked = 1
-                    strutPlayInfo.hHwnd = videoSurfaceView.holder
+                    strutPlayInfo.hHwnd = binding.videoSurfaceView.holder
                     previewHandle = SDKGuider.g_sdkGuider.m_comPreviewGuider.RealPlay_V40_jni(
                         returnUserID, strutPlayInfo, null
                     )
@@ -132,7 +131,7 @@ class HikVisionActivity : KotlinBaseActivity(), SurfaceHolder.Callback {
             }
         }
 
-        closeCameraButton.setOnClickListener {
+        binding.closeCameraButton.setOnClickListener {
             if (!SDKGuider.g_sdkGuider.m_comPreviewGuider.RealPlay_Stop_jni(previewHandle)) {
                 return@setOnClickListener
             }
@@ -141,8 +140,8 @@ class HikVisionActivity : KotlinBaseActivity(), SurfaceHolder.Callback {
             isPreviewSuccess = false
         }
 
-        socketSendButton.setOnClickListener {
-            val region = regionView.getConfirmedRegion()
+        binding.socketSendButton.setOnClickListener {
+            val region = binding.regionView.getConfirmedRegion()
             val body = JsonObject()
             body.add("position", gson.toJsonTree(region, typeToken).asJsonArray)
             body.addProperty("color", "#FF0000")
@@ -152,8 +151,8 @@ class HikVisionActivity : KotlinBaseActivity(), SurfaceHolder.Callback {
             udpClient.send(body.toString())
         }
 
-        httpSendButton.setOnClickListener {
-            val region = regionView.getConfirmedPoints()
+        binding.httpSendButton.setOnClickListener {
+            val region = binding.regionView.getConfirmedPoints()
             val data = region.reformat()
 
             //发送数据
@@ -161,7 +160,9 @@ class HikVisionActivity : KotlinBaseActivity(), SurfaceHolder.Callback {
         }
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_hikvision
+    override fun initViewBinding(): ActivityHikvisionBinding {
+        return ActivityHikvisionBinding.inflate(layoutInflater)
+    }
 
     override fun observeRequestState() {
         regionViewModel.loadState.observe(this) {
@@ -177,7 +178,7 @@ class HikVisionActivity : KotlinBaseActivity(), SurfaceHolder.Callback {
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        videoSurfaceView.holder.setFormat(PixelFormat.TRANSLUCENT)
+        binding.videoSurfaceView.holder.setFormat(PixelFormat.TRANSLUCENT)
         if (-1 == previewHandle) {
             return
         }
