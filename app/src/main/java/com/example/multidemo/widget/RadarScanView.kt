@@ -47,8 +47,8 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
         postDelayed(object : Runnable {
             override fun run() {
                 degrees++
-                //为矩阵设置旋转坐标
-                matrix.setRotate(degrees, 0f, 0f)
+                //为矩阵设置旋转坐标，顺时针。因为翻转过坐标轴，所以需要-
+                matrix.setRotate(-degrees, 0f, 0f)
 
                 invalidate()
                 if (degrees == 360f) {
@@ -83,7 +83,7 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
         shaderPaint = Paint()
         shaderPaint.isAntiAlias = true
         shaderPaint.style = Paint.Style.FILL
-        sweepGradient = SweepGradient(0f, 0f, Color.TRANSPARENT, borderColor)
+        sweepGradient = SweepGradient(0f, 0f, borderColor, Color.TRANSPARENT)
         shaderPaint.shader = sweepGradient
 
         //数据点画笔
@@ -106,9 +106,13 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         /**
-         * 画布移到中心位置
+         * 画布移到中心位置，方便绘制一系列图形
          */
         canvas.translate(centerX, centerY)
+        /**
+         * 上下翻转画布，因为手机等设备Y轴和生活中的坐标轴Y轴是反的
+         * */
+        canvas.scale(1f, -1f)
 
         //每道同心圆的半径差
         var tempR = radius
@@ -141,7 +145,9 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
      * @param distance 数据点和圆心的相对距离
      * */
     fun renderPointData(angle: Float, distance: Float) {
-        dataAngle = recursionAngle(angle)
+        val result = recursionAngle(angle)
+        //转为弧度
+        dataAngle = (result * Math.PI / 180).toFloat()
         dataDistance = recursionDistance(distance)
     }
 
