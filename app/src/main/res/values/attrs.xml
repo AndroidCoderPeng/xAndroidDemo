@@ -5,12 +5,14 @@
         <attr name="slide_textColor" format="color" />
     </declare-styleable>
 
-    <declare-styleable name="SteeringWheelView">
-        <attr name="ctrl_diameter" format="dimension" />
-        <!--方向盘外边框颜色-->
-        <attr name="ctrl_borderColor" format="color" />
-        <!--方向盘外边框粗细-->
-        <attr name="ctrl_borderStroke" format="dimension" />
-        <attr name="ctrl_backgroundColor" format="color" />
+    <declare-styleable name="RadarScanView">
+        <!-- 雷达图半径 -->
+        <attr name="radar_radius" format="dimension" />
+        <!-- 雷达主体线条颜色 -->
+        <attr name="radar_borderColor" format="color" />
+        <!-- 雷达主体线条粗细 -->
+        <attr name="radar_border" format="dimension" />
+        <!-- 雷达同心圆个数 -->
+        <attr name="radar_circleCount" format="integer" />
     </declare-styleable>
 </resources>

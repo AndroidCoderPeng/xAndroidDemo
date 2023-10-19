@@ -11,6 +11,7 @@ import com.example.multidemo.view.DragMapActivity
 import com.example.multidemo.view.FaceCollectionActivity
 import com.example.multidemo.view.GridViewActivity
 import com.example.multidemo.view.HikVisionActivity
+import com.example.multidemo.view.RadarScanActivity
 import com.example.multidemo.view.RadioButtonActivity
 import com.example.multidemo.view.RecodeAudioActivity
 import com.example.multidemo.view.RefreshAndLoadMoreActivity
@@ -40,7 +41,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
         "侧边导航栏", "上拉加载下拉刷新", "联系人侧边滑动控件",
         "拖拽地图选点", "音频录制与播放", "图片添加水印并压缩", "视频压缩",
         "蓝牙相关", "可删减九宫格", "人脸检测", "TCP客户端", "方向控制盘",
-        "时间轴", "海康摄像头", "RadioButton联动RV"
+        "时间轴", "海康摄像头", "RadioButton联动RV", "雷达扫描效果"
     )
 
     override fun setupTopBarLayout() {
@@ -134,6 +135,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                     12 -> navigatePageTo<TimeLineActivity>()
                     13 -> navigatePageTo<HikVisionActivity>()
                     14 -> navigatePageTo<RadioButtonActivity>()
+                    15 -> navigatePageTo<RadarScanActivity>()
                 }
             }
         })
