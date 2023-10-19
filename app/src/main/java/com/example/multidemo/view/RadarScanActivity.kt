@@ -11,7 +11,7 @@ class RadarScanActivity : KotlinBaseActivity<ActivityRadarScanBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-
+        binding.radarScanView.renderPointData(45f, 300f)
     }
 
     override fun initViewBinding(): ActivityRadarScanBinding {

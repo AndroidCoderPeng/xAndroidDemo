@@ -5,11 +5,12 @@
     android:layout_height="match_parent">
 
     <com.example.multidemo.widget.RadarScanView
+        android:id="@+id/radarScanView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        app:radar_border="@dimen/dp_3"
-        app:radar_borderColor="#776CA6"
+        app:radar_border="@dimen/dp_1"
+        app:radar_borderColor="#BF008B00"
         app:radar_circleCount="4"
-        app:radar_radius="@dimen/dp_300" />
+        app:radar_radius="@dimen/dp_150" />
 </RelativeLayout>

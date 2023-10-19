@@ -6,12 +6,11 @@ import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.SweepGradient
-import android.os.Handler
-import android.os.Looper
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import com.example.multidemo.R
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(context, attrs) {
@@ -25,41 +24,51 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
     private var centerX = 0f
     private var centerY = 0f
     private var degrees = 0f
+    private var dataAngle = 0f
+    private var dataDistance = 0f
 
     private lateinit var borderPaint: Paint
     private lateinit var shaderPaint: Paint
+    private lateinit var dataPaint: Paint
     private lateinit var sweepGradient: SweepGradient
     private lateinit var matrix: Matrix
-
-    private val rotateAngleHandler = Handler(Looper.getMainLooper())
 
     init {
         val type = context.obtainStyledAttributes(attrs, R.styleable.RadarScanView)
         borderColor = type.getColor(R.styleable.RadarScanView_radar_borderColor, Color.GRAY)
-        border = type.getDimensionPixelOffset(R.styleable.RadarScanView_radar_border, 5)
+        border = type.getDimensionPixelOffset(R.styleable.RadarScanView_radar_border, 1)
         circleCount = type.getInt(R.styleable.RadarScanView_radar_circleCount, 4)
-        radius = type.getDimensionPixelOffset(R.styleable.RadarScanView_radar_radius, 300)
+        radius = type.getDimensionPixelOffset(R.styleable.RadarScanView_radar_radius, 150)
         type.recycle()
 
         initPaint()
 
         //控制转动
-        rotateAngleHandler.postDelayed(object : Runnable {
+        postDelayed(object : Runnable {
             override fun run() {
-                degrees += 1f
+                degrees++
                 //为矩阵设置旋转坐标
                 matrix.setRotate(degrees, 0f, 0f)
-
-                Log.d(kTag, "degrees => $degrees")
 
                 invalidate()
                 if (degrees == 360f) {
                     degrees = 0f
                 }
 
-                postDelayed(this, 50)
+                //周期10ms
+                postDelayed(this, 10)
             }
-        }, 50)
+            //延迟100ms启动
+        }, 100)
+
+        //渲染点
+//        postDelayed(object : Runnable {
+//            override fun run() {
+//                //周期10ms
+//                postDelayed(this, 30)
+//            }
+//            //延迟100ms启动
+//        }, 100)
     }
 
     private fun initPaint() {
@@ -76,6 +85,12 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
         shaderPaint.style = Paint.Style.FILL
         sweepGradient = SweepGradient(0f, 0f, Color.TRANSPARENT, borderColor)
         shaderPaint.shader = sweepGradient
+
+        //数据点画笔
+        dataPaint = Paint()
+        dataPaint.color = borderColor
+        dataPaint.isAntiAlias = true
+        dataPaint.style = Paint.Style.FILL
 
         //矩阵
         matrix = Matrix()
@@ -107,8 +122,52 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
         canvas.drawLine(0f, -radius.toFloat(), 0f, radius.toFloat(), borderPaint)
         canvas.drawLine(-radius.toFloat(), 0f, radius.toFloat(), 0f, borderPaint)
 
-        //新建扫描渲染，扫描边由透明->指定颜色进行渐变
+        //画数据点
+        canvas.drawCircle(
+            dataDistance * cos(dataAngle),
+            dataDistance * sin(dataAngle),
+            15f,
+            dataPaint
+        )
+
+        //关联矩阵
         canvas.concat(matrix)
         canvas.drawCircle(0f, 0f, radius.toFloat(), shaderPaint)
+    }
+
+    /**
+     * 设置数据点
+     * @param angle 数据点和圆心的方位角
+     * @param distance 数据点和圆心的相对距离
+     * */
+    fun renderPointData(angle: Float, distance: Float) {
+        dataAngle = recursionAngle(angle)
+        dataDistance = recursionDistance(distance)
+    }
+
+    /**
+     * 递归计算周期性角度
+     * */
+    private fun recursionAngle(angle: Float): Float {
+        return if (angle < -360) {
+            recursionAngle(angle + 360)
+        } else if (angle > 360) {
+            recursionAngle(angle - 360)
+        } else {
+            angle
+        }
+    }
+
+    /**
+     * 递归计算周期性距离
+     * */
+    private fun recursionDistance(distance: Float): Float {
+        return if (distance <= 0) {
+            0f
+        } else if (distance >= radius) {
+            recursionDistance(distance - radius)
+        } else {
+            distance
+        }
     }
 }
