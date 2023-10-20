@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.PointF
 import android.graphics.SweepGradient
 import android.util.AttributeSet
 import android.view.View
@@ -17,21 +18,39 @@ import kotlin.math.sin
 class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val kTag = "RadarScanView"
+
+    //View边框线条颜色
     private val borderColor: Int
+
+    //View边框线条粗细
     private val border: Int
+
+    //同心圆数量
     private val circleCount: Int
+
+    //最外层圆半径
     private var radius: Int
 
+    //需要渲染的数据点集合
+    private val points = ArrayList<PointF>()
+
+    //View中心X坐标
     private var centerX = 0f
+
+    //View中心Y坐标
     private var centerY = 0f
+
+    //雷达扫描角度步长
     private var degrees = 0f
 
-    //需要渲染的数据点集合
-    private val points = ArrayList<DataPoint>()
     private lateinit var borderPaint: Paint
     private lateinit var shaderPaint: Paint
     private lateinit var dataPaint: Paint
+
+    //雷达扫描线后面的渐变梯度
     private lateinit var sweepGradient: SweepGradient
+
+    //雷达旋转矩阵
     private lateinit var matrix: Matrix
 
     init {
@@ -61,15 +80,6 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
             }
             //延迟100ms启动
         }, 100)
-
-        //渲染点
-//        postDelayed(object : Runnable {
-//            override fun run() {
-//                //周期10ms
-//                postDelayed(this, 30)
-//            }
-//            //延迟100ms启动
-//        }, 100)
     }
 
     private fun initPaint() {
@@ -129,9 +139,7 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
 
         //画数据点
         points.forEach {
-            canvas.drawCircle(
-                it.distance * cos(it.angle), it.distance * sin(it.angle), 10f, dataPaint
-            )
+            canvas.drawCircle(it.x, it.y, 10f, dataPaint)
         }
 
         //关联矩阵
@@ -150,7 +158,11 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
             val dataAngle = (result * Math.PI / 180).toFloat()
             val dataDistance = recursionDistance(it.distance.dp2px(context).toFloat())
 
-            points.add(DataPoint(dataAngle, dataDistance))
+            //计算实际圆心坐标
+            val x = dataDistance * cos(dataAngle)
+            val y = dataDistance * sin(dataAngle)
+
+            points.add(PointF(x, y))
         }
     }
 
