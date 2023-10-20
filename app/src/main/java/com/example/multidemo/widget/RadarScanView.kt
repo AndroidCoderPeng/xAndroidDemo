@@ -9,6 +9,7 @@ import android.graphics.SweepGradient
 import android.util.AttributeSet
 import android.view.View
 import com.example.multidemo.R
+import com.pengxh.kt.lite.extensions.dp2px
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -24,9 +25,9 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
     private var centerX = 0f
     private var centerY = 0f
     private var degrees = 0f
-    private var dataAngle = 0f
-    private var dataDistance = 0f
 
+    //需要渲染的数据点集合
+    private val points = ArrayList<DataPoint>()
     private lateinit var borderPaint: Paint
     private lateinit var shaderPaint: Paint
     private lateinit var dataPaint: Paint
@@ -127,12 +128,11 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
         canvas.drawLine(-radius.toFloat(), 0f, radius.toFloat(), 0f, borderPaint)
 
         //画数据点
-        canvas.drawCircle(
-            dataDistance * cos(dataAngle),
-            dataDistance * sin(dataAngle),
-            15f,
-            dataPaint
-        )
+        points.forEach {
+            canvas.drawCircle(
+                it.distance * cos(it.angle), it.distance * sin(it.angle), 10f, dataPaint
+            )
+        }
 
         //关联矩阵
         canvas.concat(matrix)
@@ -140,16 +140,26 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
     }
 
     /**
-     * 设置数据点
+     * 数据点
+     * @param dataPoints 数据点集合
+     * */
+    fun renderPointData(dataPoints: ArrayList<DataPoint>) {
+        dataPoints.forEach {
+            val result = recursionAngle(it.angle)
+            //转为弧度
+            val dataAngle = (result * Math.PI / 180).toFloat()
+            val dataDistance = recursionDistance(it.distance.dp2px(context).toFloat())
+
+            points.add(DataPoint(dataAngle, dataDistance))
+        }
+    }
+
+    /**
+     * 数据点
      * @param angle 数据点和圆心的方位角
      * @param distance 数据点和圆心的相对距离
      * */
-    fun renderPointData(angle: Float, distance: Float) {
-        val result = recursionAngle(angle)
-        //转为弧度
-        dataAngle = (result * Math.PI / 180).toFloat()
-        dataDistance = recursionDistance(distance)
-    }
+    data class DataPoint(val angle: Float, val distance: Float)
 
     /**
      * 递归计算周期性角度
@@ -171,7 +181,7 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
         return if (distance <= 0) {
             0f
         } else if (distance >= radius) {
-            recursionDistance(distance - radius)
+            radius.toFloat()
         } else {
             distance
         }
