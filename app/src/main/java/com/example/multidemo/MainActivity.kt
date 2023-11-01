@@ -1,11 +1,14 @@
 package com.example.multidemo
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.view.KeyEvent
 import com.bumptech.glide.Glide
 import com.example.multidemo.databinding.ActivityMainBinding
 import com.example.multidemo.model.BannerImageModel
 import com.example.multidemo.util.DemoConstant
+import com.example.multidemo.util.netty.SocketManager
 import com.example.multidemo.view.BluetoothActivity
 import com.example.multidemo.view.DragMapActivity
 import com.example.multidemo.view.FaceCollectionActivity
@@ -26,14 +29,23 @@ import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.youth.banner.Banner
 import com.youth.banner.adapter.BannerImageAdapter
 import com.youth.banner.holder.BannerImageHolder
 import com.youth.banner.indicator.CircleIndicator
 import com.youth.banner.transformer.ScaleInTransformer
+import java.util.Stack
 import java.util.Timer
+import java.util.TimerTask
 
-class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
+class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), Handler.Callback {
+
+    private val kTag = "MainActivity"
+
+    companion object {
+        lateinit var weakReferenceHandler: WeakReferenceHandler
+    }
 
     private var clickTime: Long = 0
     private val timer by lazy { Timer() }
@@ -43,6 +55,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
         "蓝牙相关", "可删减九宫格", "人脸检测", "TCP客户端", "方向控制盘",
         "时间轴", "海康摄像头", "RadioButton联动RV", "雷达扫描效果"
     )
+    private val responseCache = Stack<String>()
 
     override fun setupTopBarLayout() {
 
@@ -56,7 +69,16 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
         return ActivityMainBinding.inflate(layoutInflater)
     }
 
+    override fun handleMessage(msg: Message): Boolean {
+        if (msg.what == 20231101) {
+            responseCache.push(msg.obj.toString())
+        }
+        return true
+    }
+
     override fun initOnCreate(savedInstanceState: Bundle?) {
+        weakReferenceHandler = WeakReferenceHandler(this)
+
         //轮播图
         val banner = binding.bannerView
                 as Banner<BannerImageModel.DataBean, BannerImageAdapter<BannerImageModel.DataBean>>
@@ -77,7 +99,21 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
             indicator = CircleIndicator(context)
         }
 
-//        SocketManager.get.connectNetty(DemoConstant.HOST, DemoConstant.TCP_PORT)
+        SocketManager.get.connectNetty(DemoConstant.HOST, DemoConstant.TCP_PORT)
+        timer.schedule(object : TimerTask() {
+            override fun run() {
+                if (responseCache.isEmpty()) {
+                    runOnUiThread {
+
+                    }
+                } else {
+                    runOnUiThread {
+
+                    }
+                    responseCache.pop()
+                }
+            }
+        }, 1000, 1000)
     }
 
     private val data: List<BannerImageModel.DataBean>
