@@ -3,6 +3,7 @@ package com.example.multidemo
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.util.Log
 import android.view.KeyEvent
 import com.bumptech.glide.Glide
 import com.example.multidemo.databinding.ActivityMainBinding
@@ -35,9 +36,7 @@ import com.youth.banner.adapter.BannerImageAdapter
 import com.youth.banner.holder.BannerImageHolder
 import com.youth.banner.indicator.CircleIndicator
 import com.youth.banner.transformer.ScaleInTransformer
-import java.util.Stack
 import java.util.Timer
-import java.util.TimerTask
 
 class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), Handler.Callback {
 
@@ -55,7 +54,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), Handler.Callback
         "蓝牙相关", "可删减九宫格", "人脸检测", "TCP客户端", "方向控制盘",
         "时间轴", "海康摄像头", "RadioButton联动RV", "雷达扫描效果"
     )
-    private val responseCache = Stack<String>()
 
     override fun setupTopBarLayout() {
 
@@ -71,7 +69,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), Handler.Callback
 
     override fun handleMessage(msg: Message): Boolean {
         if (msg.what == 20231101) {
-            responseCache.push(msg.obj.toString())
+            Log.d(kTag, "handleMessage: ${msg.obj}")
         }
         return true
     }
@@ -100,20 +98,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), Handler.Callback
         }
 
         SocketManager.get.connectNetty(DemoConstant.HOST, DemoConstant.TCP_PORT)
-        timer.schedule(object : TimerTask() {
-            override fun run() {
-                if (responseCache.isEmpty()) {
-                    runOnUiThread {
-
-                    }
-                } else {
-                    runOnUiThread {
-
-                    }
-                    responseCache.pop()
-                }
-            }
-        }, 1000, 1000)
     }
 
     private val data: List<BannerImageModel.DataBean>

@@ -18,8 +18,8 @@ object RetrofitServiceManager {
         RetrofitFactory.createRetrofit<RetrofitService>(httpConfig)
     }
 
-    suspend fun getNewsList(channel: String, start: Int): String {
-        return api.getNewsList(DemoConstant.APP_KEY, channel, 15, start)
+    suspend fun getNewsByPage(channel: String, start: Int): String {
+        return api.getNewsByPage(DemoConstant.APP_KEY, channel, 10, start)
     }
 
     suspend fun postRegion(code: String, color: String, position: String): String {
