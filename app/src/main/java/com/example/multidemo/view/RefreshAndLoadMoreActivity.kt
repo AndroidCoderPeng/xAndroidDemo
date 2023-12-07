@@ -35,7 +35,7 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity<ActivityRefreshBinding>() 
     private var dataBeans: MutableList<NewsListModel.ResultBeanX.ResultBean.ListBean> = ArrayList()
     private var isRefresh = false
     private var isLoadMore = false
-    private var pageIndex = 0
+    private var offset = 1
 
     override fun setupTopBarLayout() {}
 
@@ -73,20 +73,20 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity<ActivityRefreshBinding>() 
             }
         }
 
-        getNewsList()
+        getNewsByPage()
     }
 
     override fun initEvent() {
         binding.refreshLayout.setOnRefreshListener {
             isRefresh = true
             //刷新之后页码重置
-            pageIndex = 0
-            getNewsList()
+            offset = 1
+            getNewsByPage()
         }
         binding.refreshLayout.setOnLoadMoreListener {
             isLoadMore = true
-            pageIndex++
-            getNewsList()
+            offset++
+            getNewsByPage()
         }
     }
 
@@ -104,8 +104,8 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity<ActivityRefreshBinding>() 
         }
     }
 
-    private fun getNewsList() {
-        newsViewModel.getNewsList("头条", pageIndex)
+    private fun getNewsByPage() {
+        newsViewModel.getNewsByPage("头条", offset)
     }
 
     private val callback = Handler.Callback { msg: Message ->

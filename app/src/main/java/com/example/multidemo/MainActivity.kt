@@ -1,13 +1,16 @@
 package com.example.multidemo
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
+import android.util.Log
 import android.view.KeyEvent
 import com.bumptech.glide.Glide
 import com.example.multidemo.databinding.ActivityMainBinding
 import com.example.multidemo.model.BannerImageModel
 import com.example.multidemo.util.DemoConstant
+import com.example.multidemo.util.netty.SocketManager
 import com.example.multidemo.view.BluetoothActivity
-import com.example.multidemo.view.CompassActivity
 import com.example.multidemo.view.DragMapActivity
 import com.example.multidemo.view.FaceCollectionActivity
 import com.example.multidemo.view.GridViewActivity
@@ -22,11 +25,13 @@ import com.example.multidemo.view.SteeringWheelActivity
 import com.example.multidemo.view.TimeLineActivity
 import com.example.multidemo.view.VideoCompressActivity
 import com.example.multidemo.view.WaterMarkerActivity
+import com.example.multidemo.view.WebsiteCrawlerActivity
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.youth.banner.Banner
 import com.youth.banner.adapter.BannerImageAdapter
 import com.youth.banner.holder.BannerImageHolder
@@ -34,15 +39,21 @@ import com.youth.banner.indicator.CircleIndicator
 import com.youth.banner.transformer.ScaleInTransformer
 import java.util.Timer
 
-class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
+class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), Handler.Callback {
+
+    private val kTag = "MainActivity"
+
+    companion object {
+        lateinit var weakReferenceHandler: WeakReferenceHandler
+    }
 
     private var clickTime: Long = 0
     private val timer by lazy { Timer() }
     private val itemNames = listOf(
-        "侧边导航栏", "上拉加载下拉刷新", "联系人侧边滑动控件",
-        "拖拽地图选点", "音频录制与播放", "图片添加水印并压缩", "视频压缩",
-        "蓝牙相关", "可删减九宫格", "人脸检测", "TCP客户端", "方向控制盘",
-        "时间轴", "海康摄像头", "RadioButton联动RV", "雷达扫描效果", "指南针"
+        "侧边导航栏", "上拉加载下拉刷新", "联系人侧边滑动控件", "拖拽地图选点",
+        "音频录制与播放", "图片添加水印并压缩", "视频压缩", "蓝牙相关",
+        "可删减九宫格", "人脸检测", "TCP客户端", "方向控制盘", "时间轴",
+        "海康摄像头", "RadioButton联动RV", "雷达扫描效果", "WebsiteCrawler"
     )
 
     override fun setupTopBarLayout() {
@@ -57,7 +68,16 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
         return ActivityMainBinding.inflate(layoutInflater)
     }
 
+    override fun handleMessage(msg: Message): Boolean {
+        if (msg.what == 20231101) {
+            Log.d(kTag, "handleMessage: ${msg.obj}")
+        }
+        return true
+    }
+
     override fun initOnCreate(savedInstanceState: Bundle?) {
+        weakReferenceHandler = WeakReferenceHandler(this)
+
         //轮播图
         val banner = binding.bannerView
                 as Banner<BannerImageModel.DataBean, BannerImageAdapter<BannerImageModel.DataBean>>
@@ -78,7 +98,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
             indicator = CircleIndicator(context)
         }
 
-//        SocketManager.get.connectNetty(DemoConstant.HOST, DemoConstant.TCP_PORT)
+        SocketManager.get.connectNetty(DemoConstant.HOST, DemoConstant.TCP_PORT)
     }
 
     private val data: List<BannerImageModel.DataBean>
@@ -137,7 +157,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                     13 -> navigatePageTo<HikVisionActivity>()
                     14 -> navigatePageTo<RadioButtonActivity>()
                     15 -> navigatePageTo<RadarScanActivity>()
-                    16 -> navigatePageTo<CompassActivity>()
+                    16 -> navigatePageTo<WebsiteCrawlerActivity>()
                 }
             }
         })

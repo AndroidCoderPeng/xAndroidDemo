@@ -4,9 +4,6 @@ import android.util.Log
 import com.example.multidemo.util.DemoConstant
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
-import io.netty.handler.timeout.IdleState
-import io.netty.handler.timeout.IdleStateEvent
-import java.nio.charset.StandardCharsets
 
 class SocketChannelHandle(private val listener: ISocketListener) :
     SimpleChannelInboundHandler<ByteArray>() {
@@ -22,20 +19,6 @@ class SocketChannelHandle(private val listener: ISocketListener) :
     override fun channelInactive(ctx: ChannelHandlerContext) {
         super.channelInactive(ctx)
         Log.e(kTag, "channelInactive: 连接断开")
-    }
-
-    override fun userEventTriggered(ctx: ChannelHandlerContext, evt: Any) {
-        super.userEventTriggered(ctx, evt)
-        if (evt is IdleStateEvent) {
-            if (evt.state() == IdleState.WRITER_IDLE) {
-                //写超时，此时可以发送心跳数据给服务器
-                val temp = "FF"
-                ctx.writeAndFlush(temp.toByteArray(StandardCharsets.UTF_8))
-            } else if (evt.state() == IdleState.READER_IDLE) {
-                //读超时，此时代表没有收到心跳返回可以关闭当前连接进行重连
-                ctx.close()
-            }
-        }
     }
 
     override fun channelRead0(ctx: ChannelHandlerContext, data: ByteArray?) {

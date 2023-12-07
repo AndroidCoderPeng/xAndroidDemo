@@ -17,9 +17,9 @@ class NewsViewModel : BaseViewModel() {
     private val gson by lazy { Gson() }
     var resultModel: MutableLiveData<NewsListModel> = MutableLiveData<NewsListModel>()
 
-    fun getNewsList(channel: String, offset: Int) = launch({
+    fun getNewsByPage(channel: String, offset: Int) = launch({
         loadState.value = LoadState.Loading
-        val response = RetrofitServiceManager.getNewsList(channel, offset)
+        val response = RetrofitServiceManager.getNewsByPage(channel, offset)
         val responseCode = JSONObject(response).getString("code")
         if (responseCode == "10000") {
             loadState.value = LoadState.Success

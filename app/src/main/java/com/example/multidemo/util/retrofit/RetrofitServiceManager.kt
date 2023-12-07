@@ -1,10 +1,7 @@
 package com.example.multidemo.util.retrofit
 
 import com.example.multidemo.util.DemoConstant
-import com.google.gson.JsonObject
 import com.pengxh.kt.lite.utils.RetrofitFactory
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
 
 object RetrofitServiceManager {
 
@@ -13,24 +10,16 @@ object RetrofitServiceManager {
         RetrofitFactory.createRetrofit<RetrofitService>(httpConfig)
     }
 
-    private val regionApi by lazy {
-        val httpConfig = "http://192.168.10.104:5000"
+    private val crawlerApi by lazy {
+        val httpConfig = "http://192.168.3.2:8080"
         RetrofitFactory.createRetrofit<RetrofitService>(httpConfig)
     }
 
-    suspend fun getNewsList(channel: String, start: Int): String {
-        return api.getNewsList(DemoConstant.APP_KEY, channel, 15, start)
+    suspend fun getNewsByPage(channel: String, start: Int): String {
+        return api.getNewsByPage(DemoConstant.APP_KEY, channel, 10, start)
     }
 
-    suspend fun postRegion(code: String, color: String, position: String): String {
-        val param = JsonObject()
-        param.addProperty("code", code)
-        param.addProperty("color", color)
-        param.addProperty("position", position)
-
-        val requestBody = param.toString().toRequestBody(
-            "application/json;charset=UTF-8".toMediaType()
-        )
-        return regionApi.postRegion(requestBody)
+    suspend fun getCrawlerResultsByPage(beginDate: String, endDate: String, offset: Int): String {
+        return crawlerApi.getCrawlerResultsByPage(beginDate, endDate, offset)
     }
 }

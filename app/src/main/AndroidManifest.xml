@@ -69,7 +69,8 @@
         <activity android:name=".view.TimeLineActivity" />
         <activity android:name=".view.RadioButtonActivity" />
         <activity android:name=".view.RadarScanActivity" />
-        <activity android:name=".view.CompassActivity" />
+        <activity android:name=".view.WebsiteCrawlerActivity" />
+        <activity android:name=".view.CrawlerResultActivity" />
         <activity
             android:name=".view.HikVisionActivity"
             android:screenOrientation="landscape" />

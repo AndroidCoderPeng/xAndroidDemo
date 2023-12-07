@@ -4,17 +4,13 @@ import android.graphics.PixelFormat
 import android.os.Bundle
 import android.util.Log
 import android.view.SurfaceHolder
-import androidx.lifecycle.ViewModelProvider
 import com.example.multidemo.databinding.ActivityHikvisionBinding
 import com.example.multidemo.extensions.getChannel
-import com.example.multidemo.extensions.reformat
 import com.example.multidemo.model.Point
 import com.example.multidemo.util.DemoConstant
-import com.example.multidemo.util.LoadingDialogHub
 import com.example.multidemo.util.hk.MessageCodeHub
 import com.example.multidemo.util.hk.SDKGuider
 import com.example.multidemo.util.netty.UdpClient
-import com.example.multidemo.vm.RegionViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
@@ -22,7 +18,6 @@ import com.gyf.immersionbar.ImmersionBar
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
-import com.pengxh.kt.lite.vm.LoadState
 
 class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), SurfaceHolder.Callback {
 
@@ -38,11 +33,10 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
 
     private val gson by lazy { Gson() }
     private val typeToken = object : TypeToken<ArrayList<Point>>() {}.type
-    private lateinit var regionViewModel: RegionViewModel
     private val udpClient by lazy { UdpClient() }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        regionViewModel = ViewModelProvider(this)[RegionViewModel::class.java]
+
     }
 
     override fun initEvent() {
@@ -153,10 +147,6 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
 
         binding.httpSendButton.setOnClickListener {
             val region = binding.regionView.getConfirmedPoints()
-            val data = region.reformat()
-
-            //发送数据
-            regionViewModel.postRegion("11,12", "#FF0000", data)
         }
     }
 
@@ -165,12 +155,7 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
     }
 
     override fun observeRequestState() {
-        regionViewModel.loadState.observe(this) {
-            when (it) {
-                LoadState.Loading -> LoadingDialogHub.show(this, "区域设置中...")
-                else -> LoadingDialogHub.dismiss()
-            }
-        }
+
     }
 
     override fun setupTopBarLayout() {
@@ -212,7 +197,7 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
     }
 
     override fun onDestroy() {
-        udpClient.release()
         super.onDestroy()
+        udpClient.release()
     }
 }
