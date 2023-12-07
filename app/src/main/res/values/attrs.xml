@@ -15,4 +15,16 @@
         <!-- 雷达同心圆个数 -->
         <attr name="radar_circleCount" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="CompassDialView">
+        <!-- 指南针表盘半径 -->
+        <attr name="cps_radius" format="dimension" />
+        <!-- 指南针表盘中心文字大小 -->
+        <attr name="cps_degree_textSize" format="dimension" />
+        <!-- 指南针表盘外环文字大小 -->
+        <attr name="cps_outer_textSize" format="dimension" />
+        <!-- 指南针表盘内环文字大小 -->
+        <attr name="cps_inner_textSize" format="dimension" />
+        <!-- 别的属性，如颜色等自行添加，然后在CompassDialView实现即可 -->
+    </declare-styleable>
 </resources>
