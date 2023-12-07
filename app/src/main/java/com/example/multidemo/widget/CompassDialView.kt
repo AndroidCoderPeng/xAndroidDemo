@@ -44,14 +44,17 @@ class CompassDialView constructor(context: Context, attrs: AttributeSet) : View(
     //表盘刻度
     private lateinit var tickPaint: Paint
     private lateinit var currentTickPaint: Paint
+    private lateinit var trianglePaint: Paint
     private lateinit var valuePaint: TextPaint
     private lateinit var innerPaint: TextPaint
     private lateinit var outerPaint: TextPaint
 
+    private lateinit var innerTextPath: Path
     private lateinit var outerTextPath: Path
+    private lateinit var trianglePath: Path
 
     //刻度长度
-    private val tickLength = 10f.dp2px(context)
+    private val tickLength = 15f.dp2px(context)
 
     init {
         val type = context.obtainStyledAttributes(attrs, R.styleable.CompassDialView)
@@ -59,7 +62,7 @@ class CompassDialView constructor(context: Context, attrs: AttributeSet) : View(
             R.styleable.CompassDialView_cps_radius, 300
         )
         //需要给外围刻度留位置
-        viewSideLength = compassDialRadius + 20f.dp2px(context)
+        viewSideLength = compassDialRadius + 30f.dp2px(context)
 
         valueTextSize = type.getDimensionPixelOffset(
             R.styleable.CompassDialView_cps_degree_textSize, 30
@@ -86,7 +89,7 @@ class CompassDialView constructor(context: Context, attrs: AttributeSet) : View(
         tickPaint.isAntiAlias = true
 
         valuePaint = TextPaint()
-        valuePaint.color = Color.BLACK
+        valuePaint.color = Color.WHITE
         valuePaint.isAntiAlias = true
         valuePaint.textAlign = Paint.Align.CENTER
         valuePaint.textSize = valueTextSize.toFloat()
@@ -95,31 +98,47 @@ class CompassDialView constructor(context: Context, attrs: AttributeSet) : View(
         innerPaint.isAntiAlias = true
         innerPaint.textAlign = Paint.Align.CENTER
         innerPaint.textSize = innerTextSize.toFloat()
-
-        innerRadius = compassDialRadius - 25f.dp2px(context)
+        innerTextPath = Path()
+        innerRadius = compassDialRadius - 30f.dp2px(context)
+        val innerRectF = RectF(
+            -innerRadius.toFloat(),
+            -innerRadius.toFloat(),
+            innerRadius.toFloat(),
+            innerRadius.toFloat()
+        )
+        innerTextPath.addArc(innerRectF, -90f, 360f)
 
         outerPaint = TextPaint()
         outerPaint.color = Color.DKGRAY
         outerPaint.isAntiAlias = true
         outerPaint.textAlign = Paint.Align.CENTER
         outerPaint.textSize = outerTextSize.toFloat()
-
         outerTextPath = Path()
-        outerRadius = compassDialRadius + 5f.dp2px(context)
-        val rectF = RectF(
+        outerRadius = compassDialRadius + 15f.dp2px(context)
+        val outRectF = RectF(
             -outerRadius.toFloat(),
             -outerRadius.toFloat(),
             outerRadius.toFloat(),
             outerRadius.toFloat()
         )
         //起点是正北方
-        outerTextPath.addArc(rectF, -90f, 360f)
+        outerTextPath.addArc(outRectF, -90f, 360f)
 
         currentTickPaint = Paint()
         currentTickPaint.color = Color.RED
         currentTickPaint.style = Paint.Style.STROKE
         currentTickPaint.strokeWidth = 2f.dp2px(context).toFloat()
         currentTickPaint.isAntiAlias = true
+
+        trianglePaint = Paint()
+        trianglePaint.color = Color.RED
+        trianglePaint.style = Paint.Style.FILL
+        trianglePaint.isAntiAlias = true
+        trianglePath = Path()
+        trianglePath.moveTo(0f, -outerRadius.toFloat() + tickLength * 0.25f)
+        trianglePath.lineTo(tickLength * 0.25f, -outerRadius.toFloat() + tickLength * 0.75f)
+        trianglePath.lineTo(-tickLength * 0.25f, -outerRadius.toFloat() + tickLength * 0.75f)
+        trianglePath.close()
     }
 
     //计算出中心位置，便于定位
@@ -189,10 +208,9 @@ class CompassDialView constructor(context: Context, attrs: AttributeSet) : View(
         //画方位
         for (angle in 0 until 360 step 90) {
             //角度需要转为弧度
-            val radians = (angle - 90) * (Math.PI / 180)
+            val radians = (angle - 180) * (Math.PI / 180)
 
-            val startX = innerRadius * cos(radians)
-            val stopY = innerRadius * sin(radians)
+            val hOffset = innerRadius * radians
 
             var direction = ""
             when (angle) {
@@ -221,10 +239,11 @@ class CompassDialView constructor(context: Context, attrs: AttributeSet) : View(
             val top = fontMetrics.top //基线到字体上边框的距离,即上图中的top
             val bottom = fontMetrics.bottom //基线到字体下边框的距离,即上图中的bottom
             val fontHeight = top + bottom
-            canvas.drawText(
+            canvas.drawTextOnPath(
                 direction,
-                startX.toFloat(),
-                (stopY - fontHeight / 2).toFloat(),
+                innerTextPath,
+                hOffset.toFloat(),
+                -fontHeight / 2,
                 innerPaint
             )
         }
@@ -248,6 +267,9 @@ class CompassDialView constructor(context: Context, attrs: AttributeSet) : View(
                 outerPaint
             )
         }
+
+        //画正北方小三角
+        canvas.drawPath(trianglePath, trianglePaint)
 
         val fontMetrics = valuePaint.fontMetrics
         val top = fontMetrics.top
@@ -327,6 +349,9 @@ class CompassDialView constructor(context: Context, attrs: AttributeSet) : View(
 
         //外层表盘刻度文字基准线
         canvas.drawPath(outerTextPath, tickPaint)
+
+        //内层表盘方向文字基准线
+        canvas.drawPath(innerTextPath, tickPaint)
 
         //中心横线
         canvas.drawLine(

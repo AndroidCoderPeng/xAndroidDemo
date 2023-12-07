@@ -2,16 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black">
 
     <com.example.multidemo.widget.CompassDialView
         android:id="@+id/compassView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        app:cps_degree_textSize="40sp"
+        app:cps_degree_textSize="50sp"
         app:cps_inner_textSize="@dimen/sp_16"
         app:cps_outer_textSize="@dimen/sp_14"
-        app:cps_radius="@dimen/dp_100" />
+        app:cps_radius="@dimen/dp_125" />
 
 </RelativeLayout>
