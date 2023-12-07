@@ -66,10 +66,12 @@ class CompassActivity : KotlinBaseActivity<ActivityCompassBinding>(), SensorEven
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-
+        //精度发生变化时触发
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
+        //值发生变化时触发
+
         val type = event?.sensor?.type
 
         if (type == Sensor.TYPE_ACCELEROMETER) {

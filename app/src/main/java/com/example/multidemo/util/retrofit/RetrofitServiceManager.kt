@@ -18,8 +18,4 @@ object RetrofitServiceManager {
     suspend fun getNewsByPage(channel: String, start: Int): String {
         return api.getNewsByPage(DemoConstant.APP_KEY, channel, 10, start)
     }
-
-    suspend fun getCrawlerResultsByPage(beginDate: String, endDate: String, offset: Int): String {
-        return crawlerApi.getCrawlerResultsByPage(beginDate, endDate, offset)
-    }
 }

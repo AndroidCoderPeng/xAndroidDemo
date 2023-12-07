@@ -125,6 +125,4 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
     // CameraX View class
     implementation "androidx.camera:camera-view:$camerax_version"
-    //WebView
-    implementation 'com.just.agentweb:agentweb-androidx:4.1.4'
 }

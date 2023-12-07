@@ -14,11 +14,4 @@ interface RetrofitService {
         @Query("num") num: Int,
         @Query("start") start: Int
     ): String
-
-    @GET("/article/listPage")
-    suspend fun getCrawlerResultsByPage(
-        @Query("beginDate") beginDate: String,
-        @Query("endDate") endDate: String,
-        @Query("offset") offset: Int
-    ): String
 }
