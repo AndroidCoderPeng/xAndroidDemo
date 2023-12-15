@@ -1,5 +1,6 @@
 package com.example.multidemo.view
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -9,8 +10,7 @@ import com.example.multidemo.databinding.ActivityRadioRvBinding
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.divider.ItemDecoration
-import com.pengxh.kt.lite.extensions.dp2px
+import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import java.util.UUID
@@ -44,7 +44,7 @@ class RadioButtonActivity : KotlinBaseActivity<ActivityRadioRvBinding>(), Handle
             }
             binding.recyclerView.adapter = baseAdapter
             binding.recyclerView.addItemDecoration(
-                ItemDecoration(10f.dp2px(this).toFloat(), 10f.dp2px(this).toFloat())
+                RecyclerViewItemDivider(1, Color.LTGRAY)
             )
         }
         return true

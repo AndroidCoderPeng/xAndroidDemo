@@ -15,11 +15,11 @@ import android.util.Log
 import android.view.View
 import com.example.multidemo.databinding.ActivityBluetoothBinding
 import com.example.multidemo.util.DemoConstant
-import com.example.multidemo.util.LoadingDialogHub
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.BroadcastManager
 import com.pengxh.kt.lite.utils.Constant
+import com.pengxh.kt.lite.utils.LoadingDialogHub
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.utils.ble.BLEManager
 import com.pengxh.kt.lite.utils.ble.BlueToothBean
@@ -48,7 +48,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        broadcastManager = BroadcastManager.obtainInstance(this)
+        broadcastManager = BroadcastManager.get(this)
         broadcastManager.addAction(object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 if (BluetoothAdapter.ACTION_STATE_CHANGED == Objects.requireNonNull<String>(intent.action)) {
@@ -304,7 +304,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
     }
 
     override fun onDestroy() {
-        broadcastManager.destroy(Constant.BLUETOOTH_STATE_CHANGED)
         super.onDestroy()
+        broadcastManager.destroy(Constant.BLUETOOTH_STATE_CHANGED)
     }
 }

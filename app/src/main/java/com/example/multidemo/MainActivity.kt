@@ -9,7 +9,6 @@ import com.bumptech.glide.Glide
 import com.example.multidemo.databinding.ActivityMainBinding
 import com.example.multidemo.model.BannerImageModel
 import com.example.multidemo.util.DemoConstant
-import com.example.multidemo.util.netty.SocketManager
 import com.example.multidemo.view.BluetoothActivity
 import com.example.multidemo.view.CompassActivity
 import com.example.multidemo.view.DragMapActivity
@@ -32,6 +31,7 @@ import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
+import com.pengxh.kt.lite.utils.socket.tcp.SocketManager
 import com.youth.banner.Banner
 import com.youth.banner.adapter.BannerImageAdapter
 import com.youth.banner.holder.BannerImageHolder
@@ -98,7 +98,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), Handler.Callback
             indicator = CircleIndicator(context)
         }
 
-        SocketManager.get.connectNetty(DemoConstant.HOST, DemoConstant.TCP_PORT)
+        SocketManager.get.connectServer(DemoConstant.HOST, DemoConstant.TCP_PORT)
     }
 
     private val data: List<BannerImageModel.DataBean>

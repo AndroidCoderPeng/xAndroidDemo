@@ -14,7 +14,6 @@ import com.example.multidemo.databinding.ActivityWaterMarkerBinding
 import com.example.multidemo.util.FileUtils
 import com.example.multidemo.util.GlideLoadEngine
 import com.example.multidemo.util.ImageHelper
-import com.example.multidemo.util.LoadingDialogHub
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
@@ -23,6 +22,7 @@ import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.formatFileSize
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.utils.LoadingDialogHub
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import java.io.File
 

@@ -9,8 +9,8 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import com.example.multidemo.model.Point
-import com.pengxh.kt.lite.extensions.obtainScreenHeight
-import com.pengxh.kt.lite.extensions.obtainScreenWidth
+import com.pengxh.kt.lite.extensions.getScreenHeight
+import com.pengxh.kt.lite.extensions.getScreenWidth
 
 class RegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx, attrs) {
 
@@ -85,8 +85,8 @@ class RegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx, attr
                 /**
                  * 计算出点的相对位置返回给一体机计算
                  * */
-                val width = ctx.obtainScreenWidth()
-                val height = ctx.obtainScreenHeight()
+                val width = ctx.getScreenWidth()
+                val height = ctx.getScreenHeight()
 
                 /**
                  * 区域

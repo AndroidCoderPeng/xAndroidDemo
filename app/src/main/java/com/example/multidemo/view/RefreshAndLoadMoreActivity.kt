@@ -1,5 +1,6 @@
 package com.example.multidemo.view
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -9,15 +10,14 @@ import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityRefreshBinding
 import com.example.multidemo.extensions.addAll
 import com.example.multidemo.model.NewsListModel
-import com.example.multidemo.util.LoadingDialogHub
 import com.example.multidemo.vm.NewsViewModel
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.divider.ItemDecoration
-import com.pengxh.kt.lite.extensions.dp2px
+import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.utils.LoadingDialogHub
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.vm.LoadState
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView
@@ -132,7 +132,7 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity<ActivityRefreshBinding>() 
                 }
             }
             binding.newsRecyclerView.addItemDecoration(
-                ItemDecoration(0f, 130f.dp2px(this@RefreshAndLoadMoreActivity).toFloat())
+                RecyclerViewItemDivider(1, Color.LTGRAY)
             )
             binding.newsRecyclerView.adapter = newsAdapter
             newsAdapter.setOnItemClickedListener(object :

@@ -10,7 +10,6 @@ import com.example.multidemo.model.Point
 import com.example.multidemo.util.DemoConstant
 import com.example.multidemo.util.hk.MessageCodeHub
 import com.example.multidemo.util.hk.SDKGuider
-import com.example.multidemo.util.netty.UdpClient
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
@@ -18,6 +17,7 @@ import com.gyf.immersionbar.ImmersionBar
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.utils.socket.udp.UdpClient
 
 class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), SurfaceHolder.Callback {
 
@@ -33,7 +33,7 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
 
     private val gson by lazy { Gson() }
     private val typeToken = object : TypeToken<ArrayList<Point>>() {}.type
-    private val udpClient by lazy { UdpClient() }
+    private val udpClient by lazy { UdpClient(DemoConstant.HOST, DemoConstant.TCP_PORT) }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
 
