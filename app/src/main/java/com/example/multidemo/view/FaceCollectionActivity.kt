@@ -146,7 +146,7 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
 
     //分配人脸空间
     private lateinit var faces: Array<FaceDetector.Face?>
-    private val maxFaceCount = 3
+    private val maxFaceCount = 1
     private lateinit var eyeMidPointF: PointF
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -193,9 +193,9 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
                                             // 获取人脸中心点和眼间距离参数
                                             val eyesDistance =
                                                 eyesDistance().dp2px(context).toFloat()
-                                            binding.faceDetectView.updateFacePosition(
-                                                eyeMidPointF, eyesDistance
-                                            )
+//                                            binding.faceDetectView.updateFacePosition(
+//                                                eyeMidPointF, eyesDistance
+//                                            )
                                         }
                                     }
                                 }

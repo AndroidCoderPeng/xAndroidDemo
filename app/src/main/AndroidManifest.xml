@@ -70,6 +70,7 @@
         <activity android:name=".view.RadarScanActivity" />
         <activity android:name=".view.CompassActivity" />
         <activity android:name=".view.GalleryActivity" />
+        <activity android:name=".FaceTestActivity" />
         <activity
             android:name=".view.HikVisionActivity"
             android:screenOrientation="landscape" />

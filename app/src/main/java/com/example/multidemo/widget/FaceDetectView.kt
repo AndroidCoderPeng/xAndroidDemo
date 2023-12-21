@@ -4,10 +4,9 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.PointF
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
-import com.pengxh.kt.lite.extensions.dp2px
 
 /**
  * @author : Pengxh
@@ -28,23 +27,15 @@ class FaceDetectView constructor(context: Context, attrs: AttributeSet) : View(c
         borderPaint.isAntiAlias = true
     }
 
-    private var eyeMidPointF = PointF()
-    private var eyesDistance = 0f
+    private var eyeRectF = RectF()
 
-    fun updateFacePosition(eyeMidPointF: PointF, eyesDistance: Float) {
-        this.eyeMidPointF = eyeMidPointF
-        this.eyesDistance = eyesDistance
+    fun updateFacePosition(eyeRectF: RectF) {
+        this.eyeRectF = eyeRectF
         invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawRect(
-            eyeMidPointF.x.dp2px(context) - eyesDistance,
-            eyeMidPointF.y.dp2px(context) - eyesDistance,
-            eyeMidPointF.x.dp2px(context) + eyesDistance,
-            eyeMidPointF.y.dp2px(context) + eyesDistance,
-            borderPaint
-        )
+        canvas.drawRect(eyeRectF, borderPaint)
     }
 }
