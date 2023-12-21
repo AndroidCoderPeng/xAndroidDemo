@@ -67,9 +67,9 @@
         <activity android:name=".view.GridViewActivity" />
         <activity android:name=".view.SteeringWheelActivity" />
         <activity android:name=".view.TimeLineActivity" />
-        <activity android:name=".view.RadioButtonActivity" />
         <activity android:name=".view.RadarScanActivity" />
         <activity android:name=".view.CompassActivity" />
+        <activity android:name=".view.GalleryActivity" />
         <activity
             android:name=".view.HikVisionActivity"
             android:screenOrientation="landscape" />
