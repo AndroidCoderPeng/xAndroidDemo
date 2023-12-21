@@ -21,6 +21,7 @@ import com.example.multidemo.databinding.ActivityFaceCollectBinding
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.setScreenBrightness
 import com.pengxh.kt.lite.extensions.toBitmap
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
@@ -36,6 +37,7 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
     }
 
     private val kTag = "FaceCollectionActivity"
+    private val context = this@FaceCollectionActivity
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     private lateinit var imageCapture: ImageCapture
@@ -142,12 +144,16 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
         } else AspectRatio.RATIO_16_9
     }
 
+    //分配人脸空间
+    private lateinit var faces: Array<FaceDetector.Face?>
+    private val maxFaceCount = 3
+    private lateinit var eyeMidPointF: PointF
+
     @SuppressLint("UnsafeOptInUsageError")
     private fun observeCameraState(cameraInfo: CameraInfo) {
         cameraInfo.cameraState.observe(this) { cameraState: CameraState ->
             //开始预览之后才人脸检测
             if (cameraState.type == CameraState.Type.OPEN) {
-                weakReferenceHandler.sendEmptyMessage(2023041401)
                 imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
                     /**
                      * CameraX 可通过 setOutputImageFormat(int) 支持 YUV_420_888 和 RGBA_8888。默认格式为 YUV_420_888
@@ -161,13 +167,13 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
                             val image = imageProxy.image
                             val bitmap = image?.toBitmap(ImageFormat.YUV_420_888) ?: return@execute
 
+                            faces = arrayOfNulls(maxFaceCount)
                             /**
                              * Android内置的人脸识别，需要将Bitmap对象转为RGB_565格式，否则无法识别
                              */
                             val faceDetectBitmap = bitmap.copy(Bitmap.Config.RGB_565, true)
-                            val faces = arrayOfNulls<FaceDetector.Face>(3)
                             val faceDetector = FaceDetector(
-                                faceDetectBitmap.width, faceDetectBitmap.height, 3
+                                faceDetectBitmap.width, faceDetectBitmap.height, maxFaceCount
                             )
                             val faceCount = faceDetector.findFaces(faceDetectBitmap, faces)
 
@@ -176,25 +182,26 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
                              */
                             if (faceCount > 0) {
                                 //画框
-                                for (face in faces) {
-                                    if (face != null) {
+                                faces.forEach { face ->
+                                    face?.apply {
                                         //可信度，0~1
-                                        val confidence = face.confidence()
-                                        Log.d(kTag, "人脸可信度：$confidence")
+                                        val confidence = confidence()
                                         if (confidence > 0.5) {
-                                            val pointF = PointF()
-                                            // 双眼的中点
-                                            face.getMidPoint(pointF)
-                                            // 获取双眼的间距
-                                            val eyesDistance = face.eyesDistance()
+                                            eyeMidPointF = PointF()
+                                            // 设置双眼的中点
+                                            getMidPoint(eyeMidPointF)
+                                            // 获取人脸中心点和眼间距离参数
+                                            val eyesDistance =
+                                                eyesDistance().dp2px(context).toFloat()
                                             binding.faceDetectView.updateFacePosition(
-                                                pointF, eyesDistance
+                                                eyeMidPointF, eyesDistance
                                             )
-
-                                            weakReferenceHandler.sendEmptyMessage(2023041402)
                                         }
                                     }
                                 }
+                                weakReferenceHandler.sendEmptyMessage(2023041402)
+                            } else {
+                                weakReferenceHandler.sendEmptyMessage(2023041401)
                             }
                             //检测完之后close就会继续生成下一帧图片，否则就会被阻塞不会继续生成下一帧
                             imageProxy.close()
@@ -209,7 +216,7 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
         if (msg.what == 2023041401) {
             binding.faceDetectTipsView.text = "人脸识别中，请勿晃动手机"
         } else if (msg.what == 2023041402) {
-            binding.faceDetectTipsView.text = "人脸特征采集中，请勿晃动手机"
+            binding.faceDetectTipsView.text = "已检测到人脸，请勿晃动手机"
 //            val outputFileOptions: ImageCapture.OutputFileOptions =
 //                ImageCapture.OutputFileOptions.Builder(FileUtils.imageFile).build()
 //            imageCapture.takePicture(
@@ -233,7 +240,7 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
     }
 
     override fun onDestroy() {
-        window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
         super.onDestroy()
+        window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
     }
 }

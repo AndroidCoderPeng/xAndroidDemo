@@ -15,8 +15,9 @@ import com.pengxh.kt.lite.extensions.dp2px
  * @email : 290677893@qq.com
  * @apiNote :人脸框
  */
-class FaceDetectView constructor(private val ctx: Context, attrs: AttributeSet) : View(ctx, attrs) {
+class FaceDetectView constructor(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
+    private val kTag = "FaceDetectView"
     private val borderPaint by lazy { Paint() }
 
     init {
@@ -27,22 +28,22 @@ class FaceDetectView constructor(private val ctx: Context, attrs: AttributeSet) 
         borderPaint.isAntiAlias = true
     }
 
-    private var pointF = PointF()
+    private var eyeMidPointF = PointF()
     private var eyesDistance = 0f
 
-    fun updateFacePosition(pointF: PointF, eyesDistance: Float) {
-        this.pointF = pointF
-        this.eyesDistance = eyesDistance.dp2px(ctx).toFloat()
+    fun updateFacePosition(eyeMidPointF: PointF, eyesDistance: Float) {
+        this.eyeMidPointF = eyeMidPointF
+        this.eyesDistance = eyesDistance
         invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.drawRect(
-            ((pointF.x.dp2px(ctx).toFloat() - eyesDistance)),
-            ((pointF.y.dp2px(ctx).toFloat() - eyesDistance)),
-            ((pointF.x.dp2px(ctx).toFloat() + eyesDistance / 2)),//宽度减半，画矩形
-            ((pointF.y.dp2px(ctx).toFloat() + eyesDistance)),
+            eyeMidPointF.x.dp2px(context) - eyesDistance,
+            eyeMidPointF.y.dp2px(context) - eyesDistance,
+            eyeMidPointF.x.dp2px(context) + eyesDistance,
+            eyeMidPointF.y.dp2px(context) + eyesDistance,
             borderPaint
         )
     }
