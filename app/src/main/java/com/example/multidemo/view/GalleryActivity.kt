@@ -53,11 +53,9 @@ class GalleryActivity : KotlinBaseActivity<ActivityGalleryBinding>() {
         scaleHelper.attachToRecyclerView(binding.recyclerView)
         renderBackground(scaleHelper.getCurrentIndex())
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    renderBackground(scaleHelper.getCurrentIndex())
-                }
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                renderBackground(scaleHelper.getCurrentIndex())
             }
         })
     }
