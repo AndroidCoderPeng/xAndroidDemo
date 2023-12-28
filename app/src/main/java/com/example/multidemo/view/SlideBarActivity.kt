@@ -30,7 +30,7 @@ import java.util.Locale
 class SlideBarActivity : KotlinBaseActivity<ActivitySlideBinding>() {
 
     private val kTag = "SlideBarActivity"
-    private val CITY = listOf(
+    private val cities = listOf(
         "安徽",
         "北京",
         "滨海",
@@ -95,16 +95,36 @@ class SlideBarActivity : KotlinBaseActivity<ActivitySlideBinding>() {
 
     }
 
+    /**
+     * 将城市整理成分组数据
+     */
+    private fun sortCity(): MutableList<CityModel> {
+        //先将数据按照字母排序
+        Collections.sort(cities, Collator.getInstance(Locale.CHINA))
+        //格式化数据
+        val cityBeans = ArrayList<CityModel>()
+        for (city in cities) {
+            val cityBean = CityModel()
+            cityBean.city = city
+            val firstLetter = StringHelper.obtainHanYuPinyin(city)
+            cityBean.tag = firstLetter
+            cityBeans.add(cityBean)
+        }
+        Log.d(kTag, "sortCity: " + Gson().toJson(cityBeans))
+        return cityBeans
+    }
+
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        val cityBeans: List<CityModel> = obtainCityData()
+        val cityBeans = sortCity()
+        binding.slideBarView.setSlideDataSet(cities.toMutableList())
         val cityAdapter = object : NormalRecyclerAdapter<CityModel>(
-            R.layout.item_city_rv_l, cityBeans.toMutableList()
+            R.layout.item_city_rv_l, cityBeans
         ) {
             override fun convertView(viewHolder: ViewHolder, position: Int, item: CityModel) {
                 viewHolder.setText(R.id.cityName, item.city)
             }
         }
-        val layoutManager: LinearLayoutManager = object : LinearLayoutManager(this) {
+        val layoutManager = object : LinearLayoutManager(this) {
             override fun smoothScrollToPosition(
                 recyclerView: RecyclerView, state: RecyclerView.State, position: Int
             ) {
@@ -135,26 +155,6 @@ class SlideBarActivity : KotlinBaseActivity<ActivitySlideBinding>() {
         })
     }
 
-    /**
-     * 将城市整理成分组数据
-     */
-    private fun obtainCityData(): List<CityModel> {
-        //先将数据按照字母排序
-        val comparator: Comparator<Any> = Collator.getInstance(Locale.CHINA)
-        Collections.sort(CITY, comparator)
-        //格式化数据
-        val cityBeans: MutableList<CityModel> = ArrayList<CityModel>()
-        for (city in CITY) {
-            val cityBean = CityModel()
-            cityBean.city = city
-            val firstLetter = StringHelper.obtainHanYuPinyin(city)
-            cityBean.tag = firstLetter
-            cityBeans.add(cityBean)
-        }
-        Log.d(kTag, "obtainCityData: " + Gson().toJson(cityBeans))
-        return cityBeans
-    }
-
     override fun initEvent() {
         val layoutInflater: LayoutInflater = LayoutInflater.from(this)
         val rootView: View = layoutInflater.inflate(R.layout.activity_slide, null)
@@ -166,22 +166,22 @@ class SlideBarActivity : KotlinBaseActivity<ActivitySlideBinding>() {
             false
         )
         popupWindow.contentView = contentView
-        val letterView: TextView = contentView.findViewById(R.id.letterView)
+        val letterView = contentView.findViewById<TextView>(R.id.letterView)
         val countDownTimer: CountDownTimer = object : CountDownTimer(1000, 1000) {
             override fun onTick(millisUntilFinished: Long) {}
             override fun onFinish() {
                 popupWindow.dismiss()
             }
         }
-        binding.slideBarView.setData(CITY)
-        binding.slideBarView.setOnIndexChangeListener(object : SlideBarView.OnIndexChangeListener {
-            override fun onIndexChange(letter: String) {
+        binding.slideBarView.setOnLetterIndexChangeListener(object :
+            SlideBarView.OnLetterIndexChangeListener {
+            override fun onLetterIndexChange(letter: String) {
                 letterView.text = letter
                 popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0)
                 countDownTimer.start()
 
                 //根据滑动显示的字母索引到城市名字第一个汉字
-                val letterIndex = binding.slideBarView.obtainFirstLetterIndex(letter)
+                val letterIndex = binding.slideBarView.getFirstLetterIndex(letter)
                 if (letterIndex != -1) {
                     binding.cityRecyclerView.smoothScrollToPosition(letterIndex)
                 }

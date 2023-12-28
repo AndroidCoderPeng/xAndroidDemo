@@ -17,5 +17,6 @@
         android:layout_height="match_parent"
         android:layout_marginVertical="30dp"
         app:slide_textColor="@color/gray"
-        app:slide_textSize="18sp" />
+        app:slide_textSize="18sp"
+        app:slide_width="@dimen/dp_20" />
 </LinearLayout>
