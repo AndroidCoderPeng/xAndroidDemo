@@ -14,8 +14,8 @@ object DemoConstant {
         "https://images.pexels.com/photos/296115/pexels-photo-296115.jpeg",
         "https://images.pexels.com/photos/4158/apple-iphone-smartphone-desk.jpg"
     )
-    const val HOST = "192.168.10.4"
-    const val TCP_PORT = 7777
+    const val HOST = "192.168.16.213"
+    const val TCP_PORT = 8000
 
     //海康摄像头参数
     const val HK_NET_IP = "192.168.10.101"

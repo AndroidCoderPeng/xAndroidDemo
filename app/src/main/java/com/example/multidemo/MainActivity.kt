@@ -1,14 +1,8 @@
 package com.example.multidemo
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
-import android.util.Log
 import android.view.KeyEvent
-import com.bumptech.glide.Glide
 import com.example.multidemo.databinding.ActivityMainBinding
-import com.example.multidemo.model.BannerImageModel
-import com.example.multidemo.util.DemoConstant
 import com.example.multidemo.view.BluetoothActivity
 import com.example.multidemo.view.CompassActivity
 import com.example.multidemo.view.DragMapActivity
@@ -30,21 +24,11 @@ import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
-import com.pengxh.kt.lite.utils.WeakReferenceHandler
-import com.youth.banner.Banner
-import com.youth.banner.adapter.BannerImageAdapter
-import com.youth.banner.holder.BannerImageHolder
-import com.youth.banner.indicator.CircleIndicator
-import com.youth.banner.transformer.ScaleInTransformer
 import java.util.Timer
 
-class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), Handler.Callback {
+class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
 
     private val kTag = "MainActivity"
-
-    companion object {
-        lateinit var weakReferenceHandler: WeakReferenceHandler
-    }
 
     private var clickTime: Long = 0
     private val timer by lazy { Timer() }
@@ -67,50 +51,9 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), Handler.Callback
         return ActivityMainBinding.inflate(layoutInflater)
     }
 
-    override fun handleMessage(msg: Message): Boolean {
-        if (msg.what == 20231101) {
-            Log.d(kTag, "handleMessage: ${msg.obj}")
-        }
-        return true
-    }
-
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        weakReferenceHandler = WeakReferenceHandler(this)
-
-        //轮播图
-        val banner = binding.bannerView
-                as Banner<BannerImageModel.DataBean, BannerImageAdapter<BannerImageModel.DataBean>>
-        banner.apply {
-            setBannerRound(15f)
-            setAdapter(object : BannerImageAdapter<BannerImageModel.DataBean>(data) {
-                override fun onBindView(
-                    holder: BannerImageHolder,
-                    data: BannerImageModel.DataBean,
-                    position: Int,
-                    size: Int
-                ) {
-                    Glide.with(holder.itemView).load(data.imageLink).into(holder.imageView)
-                }
-            })
-            addPageTransformer(ScaleInTransformer())
-            addBannerLifecycleObserver(this@MainActivity)
-            indicator = CircleIndicator(context)
-        }
-
 //        SocketManager.get.connectServer(DemoConstant.HOST, DemoConstant.TCP_PORT)
     }
-
-    private val data: List<BannerImageModel.DataBean>
-        get() {
-            val list = ArrayList<BannerImageModel.DataBean>()
-            for (i in 0..4) {
-                val dataBean = BannerImageModel.DataBean()
-                dataBean.imageTitle = "测试标题$i"
-                dataBean.imageLink = DemoConstant.images[i]
-                list.add(dataBean)
-            }
-            return list
-        }
 
     override fun initEvent() {
         val adapter = object :
