@@ -97,16 +97,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <provider
-            android:name=".util.WaterImageFileProvider"
-            android:authorities="com.example.multidemo.water.fileProvider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
-
         <!--高德定位-->
         <service android:name="com.amap.api.location.APSService" />
 
