@@ -1,10 +1,8 @@
 package com.example.multidemo.view
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.multidemo.R
@@ -17,17 +15,22 @@ import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.createCompressImageDir
+import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.formatFileSize
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.sp2px
 import com.pengxh.kt.lite.utils.LoadingDialogHub
+import java.io.File
+
 
 class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
 
     private val kTag = "WaterMarkerActivity"
     private val context = this@WaterMarkerActivity
     private var mediaRealPath: String? = null
+    private val compressImageDir by lazy { createCompressImageDir() }
 
     override fun setupTopBarLayout() {}
 
@@ -68,7 +71,7 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
                             .apply(RequestOptions().error(R.drawable.ic_load_error))
                             .into(binding.originalImageView)
 
-                        binding.originalImageSizeView.text = "压缩前：" + media.size.formatFileSize()
+                        binding.originalImageSizeView.text = "压缩前：${media.size.formatFileSize()}"
                         binding.originalImageView.setOnClickListener {
                             val urls = ArrayList<String>()
                             urls.add(mediaRealPath!!)
@@ -89,29 +92,28 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
             val bitmap = BitmapFactory.decodeFile(mediaRealPath)
             WaterMarkEngine().setContext(context)
                 .setOriginalBitmap(bitmap)
-                .setTextMaker("水印添加中，请稍后")
+                .setTextMaker(this.localClassName)
                 .setTextColor(Color.RED)
-                .setTextSize(18f.sp2px(context).toFloat())
-                .setMarkerPosition(WaterMarkPosition.RIGHT_TOP)
+                .setTextSize(30f.sp2px(context).toFloat())
+                .setMarkerPosition(WaterMarkPosition.RIGHT_BOTTOM)
+                .setTextPadding(50f.dp2px(context).toFloat())
+                .setMarkedSavePath("${compressImageDir}/${System.currentTimeMillis()}.png")
                 .setOnWaterMarkAddedListener(object : WaterMarkEngine.OnWaterMarkAddedListener {
                     override fun onStart() {
-                        Log.d(kTag, "onStart: WaterMarkerActivity")
                         LoadingDialogHub.show(this@WaterMarkerActivity, "水印添加中，请稍后...")
                     }
 
-                    override fun onMarkAdded(bitmap: Bitmap) {
-                        Log.d(kTag, "onAdded: WaterMarkerActivity")
-                        LoadingDialogHub.dismiss()
+                    override fun onMarkAdded(file: File) {
                         Glide.with(context)
-                            .load(bitmap)
+                            .load(file)
                             .apply(RequestOptions().error(R.drawable.ic_load_error))
                             .into(binding.markerImageView)
-
-//                        binding.markerImageSizeView.text =
-//                            "压缩后：" + file.length().formatFileSize()
+                        binding.markerImageSizeView.text =
+                            "压缩后：${file.length().formatFileSize()}"
+                        LoadingDialogHub.dismiss()
 //                        binding.markerImageView.setOnClickListener {
 //                            val urls = ArrayList<String>()
-//                            urls.add(file.path)
+//                            urls.add(file.absolutePath)
 //                            navigatePageTo<BigImageActivity>(0, urls)
 //                        }
                     }

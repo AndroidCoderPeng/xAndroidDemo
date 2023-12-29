@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.text.TextPaint
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -14,6 +15,8 @@ import com.example.multidemo.enums.WaterMarkPosition
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 
 /**
  * 绘制水印
@@ -25,47 +28,82 @@ class WaterMarkEngine : LifecycleOwner {
     private val textRect by lazy { Rect() }
 
     private lateinit var context: Context
-
-    /**
-     * 原始Bitmap
-     * */
     private lateinit var originalBitmap: Bitmap
     private lateinit var marker: String
     private var textColor = Color.WHITE
     private var textSize = 16f
+    private var textPadding = 10f
     private lateinit var addedListener: OnWaterMarkAddedListener
     private lateinit var position: WaterMarkPosition
+    private lateinit var fileName: String
 
+    /**
+     * 设置上下文
+     * */
     fun setContext(context: Context): WaterMarkEngine {
         this.context = context
         return this
     }
 
+    /**
+     * 设置原始Bitmap
+     * */
     fun setOriginalBitmap(bitmap: Bitmap): WaterMarkEngine {
         this.originalBitmap = bitmap
         return this
     }
 
+    /**
+     * 设置水印文字
+     * */
     fun setTextMaker(marker: String): WaterMarkEngine {
         this.marker = marker
         return this
     }
 
+    /**
+     * 设置水印文字颜色
+     * */
     fun setTextColor(textColor: Int): WaterMarkEngine {
         this.textColor = textColor
         return this
     }
 
+    /**
+     * 设置水印文字大小
+     * */
     fun setTextSize(textSize: Float): WaterMarkEngine {
         this.textSize = textSize
         return this
     }
 
+    /**
+     * 设置水印文字位置
+     * */
     fun setMarkerPosition(position: WaterMarkPosition): WaterMarkEngine {
         this.position = position
         return this
     }
 
+    /**
+     * 设置水印文字距离Bitmap内边距
+     * */
+    fun setTextPadding(textPadding: Float): WaterMarkEngine {
+        this.textPadding = textPadding
+        return this
+    }
+
+    /**
+     * 设置水印图片保存路径
+     * */
+    fun setMarkedSavePath(fileName: String): WaterMarkEngine {
+        this.fileName = fileName
+        return this
+    }
+
+    /**
+     * 设置水印图片回调监听
+     * */
     fun setOnWaterMarkAddedListener(addedListener: OnWaterMarkAddedListener): WaterMarkEngine {
         this.addedListener = addedListener
         return this
@@ -78,6 +116,7 @@ class WaterMarkEngine : LifecycleOwner {
         addedListener.onStart()
         //初始化画笔
         textPaint.color = textColor
+        textPaint.typeface = Typeface.DEFAULT_BOLD
         textPaint.isDither = true // 获取清晰的图像采样
         textPaint.isFilterBitmap = true
         textPaint.textSize = textSize
@@ -92,23 +131,46 @@ class WaterMarkEngine : LifecycleOwner {
             val bitmapHeight = copyBitmap.height
 
             when (position) {
-                WaterMarkPosition.LEFT_TOP -> {}
+                WaterMarkPosition.LEFT_TOP -> {
+                    canvas.drawText(marker, textPadding, textPadding, textPaint)
+                }
+
                 WaterMarkPosition.RIGHT_TOP -> {
                     canvas.drawText(
+                        marker, bitmapWidth - textRect.width() - textPadding, textPadding, textPaint
+                    )
+                }
+
+                WaterMarkPosition.LEFT_BOTTOM -> {
+                    canvas.drawText(marker, textPadding, bitmapHeight - textPadding, textPaint)
+                }
+
+                WaterMarkPosition.RIGHT_BOTTOM -> {
+                    canvas.drawText(
                         marker,
-                        0f,
-                        0f,
+                        bitmapWidth - textRect.width() - textPadding, bitmapHeight - textPadding,
                         textPaint
                     )
                 }
 
-                WaterMarkPosition.LEFT_BOTTOM -> {}
-                WaterMarkPosition.RIGHT_BOTTOM -> {}
-                WaterMarkPosition.CENTER -> {}
+                WaterMarkPosition.CENTER -> {
+                    canvas.drawText(
+                        marker,
+                        (bitmapWidth - textRect.width()) / 2f, bitmapHeight / 2f,
+                        textPaint
+                    )
+                }
             }
 
+            //编码照片是耗时操作，需要在子线程或者协程里面
+            val file = File(fileName)
+            val fileOutputStream = FileOutputStream(file)
+            copyBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
+            fileOutputStream.flush()
+            fileOutputStream.close()
+
             withContext(Dispatchers.Main) {
-                addedListener.onMarkAdded(copyBitmap)
+                addedListener.onMarkAdded(file)
             }
         }
     }
@@ -120,6 +182,6 @@ class WaterMarkEngine : LifecycleOwner {
     interface OnWaterMarkAddedListener {
         fun onStart()
 
-        fun onMarkAdded(bitmap: Bitmap)
+        fun onMarkAdded(file: File)
     }
 }
