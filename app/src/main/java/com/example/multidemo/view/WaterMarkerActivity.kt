@@ -1,19 +1,21 @@
 package com.example.multidemo.view
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.text.TextPaint
 import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.multidemo.R
-import com.example.multidemo.callback.ICompressListener
 import com.example.multidemo.callback.IWaterMarkAddListener
 import com.example.multidemo.databinding.ActivityWaterMarkerBinding
-import com.example.multidemo.util.FileUtils
+import com.example.multidemo.enums.WaterMarkPosition
+import com.example.multidemo.extensions.addWaterMark
 import com.example.multidemo.util.GlideLoadEngine
-import com.example.multidemo.util.ImageHelper
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
@@ -22,9 +24,9 @@ import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.formatFileSize
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.extensions.sp2px
 import com.pengxh.kt.lite.utils.LoadingDialogHub
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
-import java.io.File
 
 class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>(), Handler.Callback {
 
@@ -74,27 +76,6 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>(), Ha
                 })
         }
 
-        binding.takePictureButton.setOnClickListener {
-            PictureSelector.create(this)
-                .openCamera(SelectMimeType.ofImage())
-                .forResult(object : OnResultCallbackListener<LocalMedia> {
-                    override fun onResult(result: ArrayList<LocalMedia>?) {
-                        if (result == null) {
-                            "拍照失败，请重试".show(context)
-                            return
-                        }
-                        val message = weakReferenceHandler.obtainMessage()
-                        message.obj = result[0]
-                        message.what = 2022061702
-                        weakReferenceHandler.handleMessage(message)
-                    }
-
-                    override fun onCancel() {
-
-                    }
-                })
-        }
-
         binding.addMarkerButton.setOnClickListener {
             if (mediaRealPath == null) {
                 "请先选择图片再添加水印".show(this)
@@ -102,29 +83,49 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>(), Ha
             }
             LoadingDialogHub.show(this, "水印添加中，请稍后...")
             val bitmap = BitmapFactory.decodeFile(mediaRealPath)
-            ImageHelper.drawTextToRightBottom(bitmap, object : IWaterMarkAddListener {
-                override fun onSuccess(file: File) {
-                    ImageHelper.compressImage(file.path, FileUtils.imageCompressPath,
-                        object : ICompressListener {
-                            override fun onSuccess(file: File) {
-                                LoadingDialogHub.dismiss()
-                                Glide.with(context)
-                                    .load(file)
-                                    .apply(RequestOptions().error(R.drawable.ic_load_error))
-                                    .into(binding.markerImageView)
-                                binding.markerImageSizeView.text =
-                                    "压缩后：" + file.length().formatFileSize()
-                                binding.markerImageView.setOnClickListener {
-                                    val urls = ArrayList<String>()
-                                    urls.add(file.path)
-                                    navigatePageTo<BigImageActivity>(0, urls)
-                                }
-                            }
 
-                            override fun onError(e: Throwable) {}
-                        })
+            val textPaint = TextPaint()
+            textPaint.color = Color.RED
+            textPaint.isDither = true
+            textPaint.isFilterBitmap = true
+            textPaint.textSize = 16f.sp2px(context).toFloat()
+
+            bitmap.addWaterMark(
+                textPaint, WaterMarkPosition.RIGHT_BOTTOM, object : IWaterMarkAddListener {
+                    override fun onSuccess(bitmap: Bitmap) {
+                        LoadingDialogHub.dismiss()
+                        Glide.with(context)
+                            .load(bitmap)
+                            .apply(RequestOptions().error(R.drawable.ic_load_error))
+                            .into(binding.markerImageView)
+                    }
                 }
-            })
+            )
+
+
+//            ImageHelper.drawTextToRightBottom(bitmap, object : IWaterMarkAddListener {
+//                override fun onSuccess(file: File) {
+//                    ImageHelper.compressImage(file.path, FileUtils.imageCompressPath,
+//                        object : ICompressListener {
+//                            override fun onSuccess(file: File) {
+//                                LoadingDialogHub.dismiss()
+//                                Glide.with(context)
+//                                    .load(file)
+//                                    .apply(RequestOptions().error(R.drawable.ic_load_error))
+//                                    .into(binding.markerImageView)
+//                                binding.markerImageSizeView.text =
+//                                    "压缩后：" + file.length().formatFileSize()
+//                                binding.markerImageView.setOnClickListener {
+//                                    val urls = ArrayList<String>()
+//                                    urls.add(file.path)
+//                                    navigatePageTo<BigImageActivity>(0, urls)
+//                                }
+//                            }
+//
+//                            override fun onError(e: Throwable) {}
+//                        })
+//                }
+//            })
         }
     }
 

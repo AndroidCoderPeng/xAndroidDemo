@@ -1,7 +1,7 @@
 package com.example.multidemo.callback
 
-import java.io.File
+import android.graphics.Bitmap
 
 interface IWaterMarkAddListener {
-    fun onSuccess(file: File)
+    fun onSuccess(bitmap: Bitmap)
 }

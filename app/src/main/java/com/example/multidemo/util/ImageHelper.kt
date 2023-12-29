@@ -1,6 +1,11 @@
 package com.example.multidemo.util
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.Typeface
 import android.text.TextPaint
 import android.text.TextUtils
 import com.example.multidemo.base.BaseApplication
@@ -12,7 +17,7 @@ import top.zibin.luban.Luban
 import top.zibin.luban.OnCompressListener
 import java.io.File
 import java.io.FileOutputStream
-import java.util.*
+import java.util.Locale
 
 object ImageHelper {
     /**
@@ -53,7 +58,7 @@ object ImageHelper {
         copyBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
         fos.flush()
         fos.close()
-        markAddListener.onSuccess(file)
+//        markAddListener.onSuccess(file)
     }
 
     /**
