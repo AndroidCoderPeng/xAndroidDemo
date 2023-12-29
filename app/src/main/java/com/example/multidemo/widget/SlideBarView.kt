@@ -9,8 +9,14 @@ import android.graphics.RectF
 import android.graphics.Typeface
 import android.text.TextPaint
 import android.util.AttributeSet
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
+import android.widget.PopupWindow
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.example.multidemo.R
 import com.example.multidemo.util.StringHelper
 import kotlin.math.abs
@@ -35,14 +41,18 @@ class SlideBarView constructor(context: Context, attrs: AttributeSet) : View(con
 
     private var touchIndex = -1
     private var letterHeight = 0
-    private var showBackground = true
+    private var showBackground = false
 
     private lateinit var tickPaint: Paint
-    private lateinit var ancherPaint: Paint
+    private lateinit var anchorPaint: Paint
     private lateinit var viewBgRectF: RectF
     private lateinit var backgroundPaint: Paint
     private lateinit var textPaint: TextPaint
     private lateinit var textRect: Rect
+
+    private lateinit var recyclerView: RecyclerView
+    private var popupWindow: PopupWindow
+    private var centerTextView: TextView
 
     init {
         val attr = context.obtainStyledAttributes(attrs, R.styleable.SlideBarView)
@@ -56,8 +66,21 @@ class SlideBarView constructor(context: Context, attrs: AttributeSet) : View(con
         initPaint()
         //触摸事件
         setOnTouchListener(this)
+
+        //初始化Popup
+        val layoutInflater = LayoutInflater.from(context)
+        val contentView = layoutInflater.inflate(R.layout.layout_popup, null)
+        popupWindow = PopupWindow(
+            contentView,
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, false
+        )
+        popupWindow.contentView = contentView
+        centerTextView = contentView.findViewById(R.id.letterView)
     }
 
+    private val showCenterTextRunnable = Runnable {
+        popupWindow.showAtLocation(recyclerView, Gravity.CENTER, 0, 0)
+    }
 
     private fun initPaint() {
         tickPaint = Paint()
@@ -66,9 +89,9 @@ class SlideBarView constructor(context: Context, attrs: AttributeSet) : View(con
         tickPaint.strokeWidth = 1f
         tickPaint.isAntiAlias = true
 
-        ancherPaint = Paint()
-        ancherPaint.color = Color.RED
-        ancherPaint.isAntiAlias = true
+        anchorPaint = Paint()
+        anchorPaint.color = Color.RED
+        anchorPaint.isAntiAlias = true
 
         //背景色画笔
         backgroundPaint = Paint()
@@ -84,11 +107,12 @@ class SlideBarView constructor(context: Context, attrs: AttributeSet) : View(con
         textRect = Rect()
     }
 
-    fun setSlideDataSet(dataSet: MutableList<String>) {
+    fun attachToRecyclerView(recyclerView: RecyclerView, dataSet: MutableList<String>) {
+        this.recyclerView = recyclerView
         this.dataSet = dataSet
     }
 
-    fun getFirstLetterIndex(letter: String): Int {
+    fun getLetterPosition(letter: String): Int {
         var index = -1
         for (i in dataSet.indices) {
             val firstLetter = StringHelper.obtainHanYuPinyin(dataSet[i])
@@ -198,7 +222,7 @@ class SlideBarView constructor(context: Context, attrs: AttributeSet) : View(con
             0f,
             (-centerY + (2 * i + 1) * 0.5 * letterHeight).toFloat(),
             5f,
-            ancherPaint
+            anchorPaint
         )
 
         canvas.drawLine(
@@ -219,7 +243,11 @@ class SlideBarView constructor(context: Context, attrs: AttributeSet) : View(con
                 if (index != touchIndex) {
                     touchIndex = index.coerceAtMost(letterArray.size - 1)
                     //点击设置中间字母
-                    onLetterIndexChangeListener?.onLetterIndexChange(letterArray[touchIndex])
+                    val letter = letterArray[touchIndex]
+                    centerTextView.text = letter
+                    onLetterIndexChangeListener?.onLetterIndexChange(letter)
+                    //显示Popup
+                    post(showCenterTextRunnable)
                     invalidate()
                 }
                 showBackground = true
@@ -229,6 +257,8 @@ class SlideBarView constructor(context: Context, attrs: AttributeSet) : View(con
                 showBackground = false
                 touchIndex = -1
                 invalidate()
+                //取消popup显示
+                popupWindow.dismiss()
             }
         }
         return true

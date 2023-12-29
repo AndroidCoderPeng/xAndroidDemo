@@ -1,14 +1,7 @@
 package com.example.multidemo.view
 
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.PopupWindow
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.multidemo.R
@@ -116,7 +109,6 @@ class SlideBarActivity : KotlinBaseActivity<ActivitySlideBinding>() {
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
         val cityBeans = sortCity()
-        binding.slideBarView.setSlideDataSet(cities.toMutableList())
         val cityAdapter = object : NormalRecyclerAdapter<CityModel>(
             R.layout.item_city_rv_l, cityBeans
         ) {
@@ -145,8 +137,8 @@ class SlideBarActivity : KotlinBaseActivity<ActivitySlideBinding>() {
                 }
             })
         )
+        binding.slideBarView.attachToRecyclerView(binding.cityRecyclerView, cities.toMutableList())
         binding.cityRecyclerView.adapter = cityAdapter
-        binding.cityRecyclerView.setOnScrollChangeListener { _, _, _, _, _ -> }
         cityAdapter.setOnItemClickedListener(object :
             NormalRecyclerAdapter.OnItemClickedListener<CityModel> {
             override fun onItemClicked(position: Int, t: CityModel) {
@@ -156,34 +148,13 @@ class SlideBarActivity : KotlinBaseActivity<ActivitySlideBinding>() {
     }
 
     override fun initEvent() {
-        val layoutInflater: LayoutInflater = LayoutInflater.from(this)
-        val rootView: View = layoutInflater.inflate(R.layout.activity_slide, null)
-        val contentView: View = layoutInflater.inflate(R.layout.layout_popup, null)
-        val popupWindow = PopupWindow(
-            contentView,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            false
-        )
-        popupWindow.contentView = contentView
-        val letterView = contentView.findViewById<TextView>(R.id.letterView)
-        val countDownTimer: CountDownTimer = object : CountDownTimer(1000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {}
-            override fun onFinish() {
-                popupWindow.dismiss()
-            }
-        }
         binding.slideBarView.setOnLetterIndexChangeListener(object :
             SlideBarView.OnLetterIndexChangeListener {
             override fun onLetterIndexChange(letter: String) {
-                letterView.text = letter
-                popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0)
-                countDownTimer.start()
-
                 //根据滑动显示的字母索引到城市名字第一个汉字
-                val letterIndex = binding.slideBarView.getFirstLetterIndex(letter)
-                if (letterIndex != -1) {
-                    binding.cityRecyclerView.smoothScrollToPosition(letterIndex)
+                val letterPosition = binding.slideBarView.getLetterPosition(letter)
+                if (letterPosition != -1) {
+                    binding.cityRecyclerView.smoothScrollToPosition(letterPosition)
                 }
             }
         })
