@@ -51,6 +51,11 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
         ThreadPoolExecutor.AbortPolicy()
     )
 
+    //分配人脸空间
+    private lateinit var faces: Array<FaceDetector.Face?>
+    private val maxFaceCount = 1
+    private lateinit var rectF: RectF
+
     override fun setupTopBarLayout() {
 
     }
@@ -143,11 +148,6 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
             AspectRatio.RATIO_4_3
         } else AspectRatio.RATIO_16_9
     }
-
-    //分配人脸空间
-    private lateinit var faces: Array<FaceDetector.Face?>
-    private val maxFaceCount = 1
-    private lateinit var rectF: RectF
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun observeCameraState(cameraInfo: CameraInfo) {
