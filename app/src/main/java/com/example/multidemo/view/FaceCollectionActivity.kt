@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.ImageFormat
 import android.graphics.PointF
-import android.graphics.Rect
+import android.graphics.RectF
 import android.media.FaceDetector
 import android.os.Build
 import android.os.Bundle
@@ -21,7 +21,8 @@ import com.example.multidemo.databinding.ActivityFaceCollectBinding
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.extensions.dp2px
+import com.pengxh.kt.lite.extensions.getScreenHeight
+import com.pengxh.kt.lite.extensions.getScreenWidth
 import com.pengxh.kt.lite.extensions.setScreenBrightness
 import com.pengxh.kt.lite.extensions.toBitmap
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
@@ -37,7 +38,6 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
     }
 
     private val kTag = "FaceCollectionActivity"
-    private val context = this@FaceCollectionActivity
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     private lateinit var imageCapture: ImageCapture
@@ -85,7 +85,7 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
 
     private fun bindPreview(cameraProvider: ProcessCameraProvider) {
         val screenAspectRatio = if (Build.VERSION.SDK_INT >= 30) {
-            val metrics: Rect = windowManager.currentWindowMetrics.bounds
+            val metrics = windowManager.currentWindowMetrics.bounds
             aspectRatio(metrics.width(), metrics.height())
         } else {
             val outMetrics = DisplayMetrics()
@@ -94,12 +94,12 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
         }
 
         // CameraSelector
-        val cameraSelector: CameraSelector = CameraSelector.Builder()
+        val cameraSelector = CameraSelector.Builder()
             .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
             .build()
 
         // Preview
-        val cameraPreViewBuilder: Preview = Preview.Builder()
+        val cameraPreViewBuilder = Preview.Builder()
             .setTargetAspectRatio(screenAspectRatio)
             .setTargetRotation(Surface.ROTATION_0)
             .build()
@@ -120,7 +120,7 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
         // Must unbind the use-cases before rebinding them
         cameraProvider.unbindAll()
         try {
-            val camera: Camera = cameraProvider.bindToLifecycle(
+            val camera = cameraProvider.bindToLifecycle(
                 this,
                 cameraSelector,
                 imageCapture,
@@ -147,11 +147,14 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
     //分配人脸空间
     private lateinit var faces: Array<FaceDetector.Face?>
     private val maxFaceCount = 1
-    private lateinit var eyeMidPointF: PointF
+    private lateinit var rectF: RectF
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun observeCameraState(cameraInfo: CameraInfo) {
-        cameraInfo.cameraState.observe(this) { cameraState: CameraState ->
+        val screenWidth = getScreenWidth()
+        val screenHeight = getScreenHeight()
+
+        cameraInfo.cameraState.observe(this) { cameraState ->
             //开始预览之后才人脸检测
             if (cameraState.type == CameraState.Type.OPEN) {
                 imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
@@ -171,32 +174,37 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
                             /**
                              * Android内置的人脸识别，需要将Bitmap对象转为RGB_565格式，否则无法识别
                              */
-                            val faceDetectBitmap = bitmap.copy(Bitmap.Config.RGB_565, true)
+                            val faceBitmap = bitmap.copy(Bitmap.Config.RGB_565, true)
                             val faceDetector = FaceDetector(
-                                faceDetectBitmap.width, faceDetectBitmap.height, maxFaceCount
+                                faceBitmap.width, faceBitmap.height, maxFaceCount
                             )
-                            val faceCount = faceDetector.findFaces(faceDetectBitmap, faces)
 
-                            /**
-                             * 检测到人脸之后采集人脸数据
-                             */
+                            val widthRatio = screenWidth / faceBitmap.width.toFloat()
+                            val heightRatio = screenHeight / faceBitmap.height.toFloat()
+//                            Log.d(kTag, "observeCameraState => [${widthRatio},${heightRatio}]")
+
+                            val faceCount = faceDetector.findFaces(faceBitmap, faces)
                             if (faceCount > 0) {
-                                //画框
                                 faces.forEach { face ->
                                     face?.apply {
-                                        //可信度，0~1
-                                        val confidence = confidence()
-                                        if (confidence > 0.5) {
-                                            eyeMidPointF = PointF()
-                                            // 设置双眼的中点
-                                            getMidPoint(eyeMidPointF)
-                                            // 获取人脸中心点和眼间距离参数
-                                            val eyesDistance =
-                                                eyesDistance().dp2px(context).toFloat()
-//                                            binding.faceDetectView.updateFacePosition(
-//                                                eyeMidPointF, eyesDistance
-//                                            )
-                                        }
+                                        val midPointF = PointF()
+                                        // 获取人脸中心点
+                                        getMidPoint(midPointF)
+                                        //预览的像素不一定是手机的最大像素，所以需要将人脸的坐标按比例缩放
+                                        val x = midPointF.x * widthRatio
+                                        val y = midPointF.y * heightRatio
+//                                        Log.d(kTag, "observeCameraState => [${x},${y}]")
+
+                                        // 获取眼间距离参数
+                                        val eyesDistance = eyesDistance()
+                                        rectF = RectF()
+
+                                        rectF.left = x - eyesDistance * 2
+                                        rectF.top = y - eyesDistance
+                                        rectF.right = x + eyesDistance * 2
+                                        rectF.bottom = y + eyesDistance
+
+                                        binding.faceDetectView.updateFacePosition(rectF, x, y)
                                     }
                                 }
                                 weakReferenceHandler.sendEmptyMessage(2023041402)

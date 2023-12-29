@@ -17,7 +17,8 @@ import android.view.View
 class FaceDetectView constructor(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val kTag = "FaceDetectView"
-    private val borderPaint by lazy { Paint() }
+    private var borderPaint = Paint()
+    private var midPointPaint = Paint()
 
     init {
         borderPaint.isAntiAlias = true
@@ -25,17 +26,27 @@ class FaceDetectView constructor(context: Context, attrs: AttributeSet) : View(c
         borderPaint.style = Paint.Style.STROKE
         borderPaint.strokeWidth = 5f //设置线宽
         borderPaint.isAntiAlias = true
+
+        midPointPaint.isAntiAlias = true
+        midPointPaint.color = Color.RED
+        midPointPaint.isAntiAlias = true
     }
 
     private var eyeRectF = RectF()
+    private var midPointX = 0f
+    private var midPointY = 0f
 
-    fun updateFacePosition(eyeRectF: RectF) {
+    fun updateFacePosition(eyeRectF: RectF, x: Float, y: Float) {
         this.eyeRectF = eyeRectF
+        this.midPointX = x
+        this.midPointY = y
         invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.drawRect(eyeRectF, borderPaint)
+
+        canvas.drawCircle(midPointX, midPointY, 15f, midPointPaint)
     }
 }
