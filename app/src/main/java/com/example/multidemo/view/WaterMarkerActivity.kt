@@ -31,6 +31,7 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
     private val context = this@WaterMarkerActivity
     private var mediaRealPath: String? = null
     private val compressImageDir by lazy { createCompressImageDir() }
+    private val markerEngine by lazy { WaterMarkEngine() }
 
     override fun setupTopBarLayout() {}
 
@@ -90,7 +91,7 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
             }
 
             val bitmap = BitmapFactory.decodeFile(mediaRealPath)
-            WaterMarkEngine().setContext(context)
+            markerEngine.setContext(context)
                 .setOriginalBitmap(bitmap)
                 .setTextMaker(this.localClassName)
                 .setTextColor(Color.RED)
@@ -111,11 +112,6 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
                         binding.markerImageSizeView.text =
                             "压缩后：${file.length().formatFileSize()}"
                         LoadingDialogHub.dismiss()
-//                        binding.markerImageView.setOnClickListener {
-//                            val urls = ArrayList<String>()
-//                            urls.add(file.absolutePath)
-//                            navigatePageTo<BigImageActivity>(0, urls)
-//                        }
                     }
                 }).start()
         }

@@ -2,9 +2,9 @@ package com.example.multidemo.view
 
 import android.os.Bundle
 import com.example.multidemo.databinding.ActivityNewsDetailsBinding
-import com.example.multidemo.extensions.formatTextFromHtml
+import com.example.multidemo.util.HtmlRenderEngine
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.extensions.getScreenWidth
+import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.utils.Constant
 
 /**
@@ -13,6 +13,8 @@ import com.pengxh.kt.lite.utils.Constant
  * @date: 2020/3/5 20:18
  */
 class NewsDetailsActivity : KotlinBaseActivity<ActivityNewsDetailsBinding>() {
+
+    private val renderEngine by lazy { HtmlRenderEngine() }
 
     override fun setupTopBarLayout() {}
 
@@ -31,7 +33,16 @@ class NewsDetailsActivity : KotlinBaseActivity<ActivityNewsDetailsBinding>() {
         binding.newsSrc.text = params[1]
         binding.newsTime.text = params[2]
 
-        params[3].formatTextFromHtml(this, binding.newsContent, getScreenWidth())
+        renderEngine.setContext(this)
+            .setHtmlContent(params[3])
+            .setTargetView(binding.newsContent)
+            .setOnGetImageSourceListener(object : HtmlRenderEngine.OnGetImageSourceListener {
+                override fun imageSource(url: String) {
+                    val urls = ArrayList<String>()
+                    urls.add(url)
+                    navigatePageTo<BigImageActivity>(0, urls)
+                }
+            }).load()
     }
 
     override fun initEvent() {}
