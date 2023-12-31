@@ -6,8 +6,8 @@ import android.os.Bundle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.multidemo.R
+import com.example.multidemo.annotations.WaterMarkPosition
 import com.example.multidemo.databinding.ActivityWaterMarkerBinding
-import com.example.multidemo.enums.WaterMarkPosition
 import com.example.multidemo.util.GlideLoadEngine
 import com.example.multidemo.util.WaterMarkEngine
 import com.luck.picture.lib.basic.PictureSelector
@@ -98,7 +98,7 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
                 .setMarkerPosition(WaterMarkPosition.RIGHT_BOTTOM)
                 .setTextPadding(50f.dp2px(context).toFloat())
                 .setMarkedSavePath("${compressImageDir}/${System.currentTimeMillis()}.png")
-                .setOnWaterMarkAddedListener(object : WaterMarkEngine.OnWaterMarkAddedListener {
+                .setOnWaterMarkerAddedListener(object : WaterMarkEngine.OnWaterMarkerAddedListener {
                     override fun onStart() {
                         LoadingDialogHub.show(this@WaterMarkerActivity, "水印添加中，请稍后...")
                     }

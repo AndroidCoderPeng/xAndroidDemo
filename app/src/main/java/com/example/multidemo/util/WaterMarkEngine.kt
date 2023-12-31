@@ -11,7 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.lifecycleScope
-import com.example.multidemo.enums.WaterMarkPosition
+import com.example.multidemo.annotations.WaterMarkPosition
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,8 +33,8 @@ class WaterMarkEngine : LifecycleOwner {
     private var textColor = Color.WHITE
     private var textSize = 16f
     private var textPadding = 10f
-    private lateinit var addedListener: OnWaterMarkAddedListener
-    private lateinit var position: WaterMarkPosition
+    private lateinit var addedListener: OnWaterMarkerAddedListener
+    private var position = WaterMarkPosition.RIGHT_BOTTOM
     private lateinit var fileName: String
 
     /**
@@ -80,7 +80,7 @@ class WaterMarkEngine : LifecycleOwner {
     /**
      * 设置水印文字位置
      * */
-    fun setMarkerPosition(position: WaterMarkPosition): WaterMarkEngine {
+    fun setMarkerPosition(@WaterMarkPosition position: Int): WaterMarkEngine {
         this.position = position
         return this
     }
@@ -104,7 +104,7 @@ class WaterMarkEngine : LifecycleOwner {
     /**
      * 设置水印图片回调监听
      * */
-    fun setOnWaterMarkAddedListener(addedListener: OnWaterMarkAddedListener): WaterMarkEngine {
+    fun setOnWaterMarkerAddedListener(addedListener: OnWaterMarkerAddedListener): WaterMarkEngine {
         this.addedListener = addedListener
         return this
     }
@@ -165,7 +165,11 @@ class WaterMarkEngine : LifecycleOwner {
             //编码照片是耗时操作，需要在子线程或者协程里面
             val file = File(fileName)
             val fileOutputStream = FileOutputStream(file)
-            copyBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
+            /**
+             * 第一个参数如果是Bitmap.CompressFormat.PNG,那不管第二个值如何变化，图片大小都不会变化，不支持png图片的压缩
+             * 第二个参数是压缩比重，图片存储在磁盘上的大小会根据这个值变化。值越小存储在磁盘的图片文件越小
+             * */
+            copyBitmap.compress(Bitmap.CompressFormat.JPEG, 75, fileOutputStream)
             fileOutputStream.flush()
             fileOutputStream.close()
 
@@ -179,7 +183,7 @@ class WaterMarkEngine : LifecycleOwner {
         return registry
     }
 
-    interface OnWaterMarkAddedListener {
+    interface OnWaterMarkerAddedListener {
         fun onStart()
 
         fun onMarkAdded(file: File)

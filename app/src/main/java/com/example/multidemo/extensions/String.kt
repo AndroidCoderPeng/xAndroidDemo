@@ -19,7 +19,7 @@ import com.google.gson.reflect.TypeToken
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import org.json.JSONObject
 import org.xml.sax.XMLReader
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.ExecutionException
 import java.util.regex.Pattern
 
@@ -78,32 +78,30 @@ fun String.formatTextFromHtml(activity: Activity?, textView: TextView?, width: I
                     return null
                 }
             }
-            val charSequence: CharSequence = Html.fromHtml(this, imageGetter,
-                object : Html.TagHandler {
-                    override fun handleTag(
-                        opening: Boolean, tag: String?, output: Editable?, xmlReader: XMLReader?
-                    ) {
-                        //获取传入html文本里面包含的所有Tag，然后取出img开头的
-                        if (tag?.lowercase(Locale.getDefault()) == "img") {
-                            val len = output?.length
-                            // 获取图片地址
-                            val images = output!!.getSpans(len!! - 1, len, ImageSpan::class.java)
-                            val imgURL = images[0].source ?: return
-                            // 使图片可点击并监听点击事件
-                            output.setSpan(
-                                object : ClickableSpan() {
-                                    override fun onClick(widget: View) {
-                                        //查看大图
-                                        val urls = ArrayList<String>()
-                                        urls.add(imgURL)
-                                        activity.navigatePageTo<BigImageActivity>(0, urls)
-                                    }
-                                }, len - 1, len, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                            )
-                        }
+            val charSequence = Html.fromHtml(this, imageGetter, object : Html.TagHandler {
+                override fun handleTag(
+                    opening: Boolean, tag: String?, output: Editable?, xmlReader: XMLReader?
+                ) {
+                    //获取传入html文本里面包含的所有Tag，然后取出img开头的
+                    if (tag?.lowercase(Locale.getDefault()) == "img") {
+                        val len = output?.length
+                        // 获取图片地址
+                        val images = output!!.getSpans(len!! - 1, len, ImageSpan::class.java)
+                        val imgURL = images[0].source ?: return
+                        // 使图片可点击并监听点击事件
+                        output.setSpan(
+                            object : ClickableSpan() {
+                                override fun onClick(widget: View) {
+                                    //查看大图
+                                    val urls = ArrayList<String>()
+                                    urls.add(imgURL)
+                                    activity.navigatePageTo<BigImageActivity>(0, urls)
+                                }
+                            }, len - 1, len, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
                     }
                 }
-            )
+            })
             activity.runOnUiThread(Runnable { textView.text = charSequence })
         }.start()
     }

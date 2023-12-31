@@ -107,8 +107,6 @@ dependencies {
     implementation 'com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer:v8.4.0-release-jitpack'
     //视频压缩
     implementation 'com.zolad:videoslimmer:1.0.0'
-    //图片压缩
-    implementation 'top.zibin:Luban:1.1.8'
     //高德地图
     implementation 'com.amap.api:3dmap:latest.integration'
     //高德地图搜索
