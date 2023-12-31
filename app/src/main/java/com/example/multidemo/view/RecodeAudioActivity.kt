@@ -83,6 +83,6 @@ class RecodeAudioActivity : KotlinBaseActivity<ActivityAudioBinding>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.audioPlayView.release()
+        binding.audioPlayView.stop()
     }
 }

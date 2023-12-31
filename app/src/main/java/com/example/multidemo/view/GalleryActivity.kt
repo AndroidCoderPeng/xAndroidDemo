@@ -6,12 +6,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityGalleryBinding
-import com.example.multidemo.extensions.switchBackground
-import com.example.multidemo.extensions.toBlurBitmap
-import com.example.multidemo.util.GalleryScaleHelper
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.switchBackground
+import com.pengxh.kt.lite.extensions.toBlurBitmap
+import com.pengxh.kt.lite.utils.GalleryScaleHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

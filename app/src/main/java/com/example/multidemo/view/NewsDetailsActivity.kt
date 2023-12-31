@@ -2,10 +2,10 @@ package com.example.multidemo.view
 
 import android.os.Bundle
 import com.example.multidemo.databinding.ActivityNewsDetailsBinding
-import com.example.multidemo.util.HtmlRenderEngine
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.utils.Constant
+import com.pengxh.kt.lite.utils.HtmlRenderEngine
 
 /**
  * @author: Pengxh

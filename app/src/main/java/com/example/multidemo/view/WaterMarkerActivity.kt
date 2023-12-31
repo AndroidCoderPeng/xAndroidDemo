@@ -6,14 +6,13 @@ import android.os.Bundle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.multidemo.R
-import com.example.multidemo.annotations.WaterMarkPosition
 import com.example.multidemo.databinding.ActivityWaterMarkerBinding
 import com.example.multidemo.util.GlideLoadEngine
-import com.example.multidemo.util.WaterMarkEngine
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
+import com.pengxh.kt.lite.annotations.WaterMarkPosition
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.createCompressImageDir
 import com.pengxh.kt.lite.extensions.dp2px
@@ -22,6 +21,7 @@ import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.sp2px
 import com.pengxh.kt.lite.utils.LoadingDialogHub
+import com.pengxh.kt.lite.utils.WaterMarkEngine
 import java.io.File
 
 
