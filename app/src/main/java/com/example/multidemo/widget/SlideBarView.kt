@@ -82,6 +82,10 @@ class SlideBarView constructor(context: Context, attrs: AttributeSet) : View(con
         popupWindow.showAtLocation(recyclerView, Gravity.CENTER, 0, 0)
     }
 
+    private val dismissCenterTextRunnable = Runnable {
+        popupWindow.dismiss()
+    }
+
     private fun initPaint() {
         tickPaint = Paint()
         tickPaint.color = Color.DKGRAY
@@ -256,9 +260,9 @@ class SlideBarView constructor(context: Context, attrs: AttributeSet) : View(con
             MotionEvent.ACTION_UP -> {
                 showBackground = false
                 touchIndex = -1
-                invalidate()
                 //取消popup显示
-                popupWindow.dismiss()
+                postDelayed(dismissCenterTextRunnable, 500)
+                invalidate()
             }
         }
         return true

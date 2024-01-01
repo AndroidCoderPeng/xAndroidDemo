@@ -5,16 +5,16 @@ import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.multidemo.R
-import com.example.multidemo.callback.DecorationCallback
 import com.example.multidemo.databinding.ActivitySlideBinding
 import com.example.multidemo.model.CityModel
+import com.example.multidemo.util.RecyclerStickDecoration
 import com.example.multidemo.util.StringHelper
-import com.example.multidemo.util.VerticalItemDecoration
 import com.example.multidemo.widget.SlideBarView
 import com.google.gson.Gson
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.show
 import java.text.Collator
 import java.util.Collections
@@ -23,6 +23,8 @@ import java.util.Locale
 class SlideBarActivity : KotlinBaseActivity<ActivitySlideBinding>() {
 
     private val kTag = "SlideBarActivity"
+    private val context = this@SlideBarActivity
+    private val stickDecoration by lazy { RecyclerStickDecoration() }
     private val cities = listOf(
         "安徽",
         "北京",
@@ -120,29 +122,29 @@ class SlideBarActivity : KotlinBaseActivity<ActivitySlideBinding>() {
             override fun smoothScrollToPosition(
                 recyclerView: RecyclerView, state: RecyclerView.State, position: Int
             ) {
-                val scroller = VerticalItemDecoration.TopSmoothScroller(recyclerView.context)
+                val scroller = stickDecoration.SmoothGroupTopScroller(recyclerView.context)
                 scroller.targetPosition = position
                 startSmoothScroll(scroller)
             }
         }
         binding.cityRecyclerView.layoutManager = layoutManager
-        binding.cityRecyclerView.addItemDecoration(
-            VerticalItemDecoration(this, object : DecorationCallback {
-                override fun getGroupTag(position: Int): Long {
+        stickDecoration.setContext(context).setTopGap(25f.dp2px(context)).setViewGroupListener(
+            object : RecyclerStickDecoration.ViewGroupListener {
+                override fun groupTag(position: Int): Long {
                     return cityBeans[position].tag[0].code.toLong()
                 }
 
-                override fun getGroupFirstLetter(position: Int): String {
+                override fun groupFirstLetter(position: Int): String {
                     return cityBeans[position].tag
                 }
-            })
-        )
+            }).build()
+        binding.cityRecyclerView.addItemDecoration(stickDecoration)
         binding.slideBarView.attachToRecyclerView(binding.cityRecyclerView, cities.toMutableList())
         binding.cityRecyclerView.adapter = cityAdapter
         cityAdapter.setOnItemClickedListener(object :
             NormalRecyclerAdapter.OnItemClickedListener<CityModel> {
             override fun onItemClicked(position: Int, t: CityModel) {
-                t.city.show(this@SlideBarActivity)
+                t.city.show(context)
             }
         })
     }
