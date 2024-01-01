@@ -128,7 +128,7 @@ class SlideBarActivity : KotlinBaseActivity<ActivitySlideBinding>() {
             }
         }
         binding.cityRecyclerView.layoutManager = layoutManager
-        stickDecoration.setContext(context).setTopGap(25f.dp2px(context)).setViewGroupListener(
+        stickDecoration.setContext(context).setTopGap(30f.dp2px(context)).setViewGroupListener(
             object : RecyclerStickDecoration.ViewGroupListener {
                 override fun groupTag(position: Int): Long {
                     return cityBeans[position].tag[0].code.toLong()
