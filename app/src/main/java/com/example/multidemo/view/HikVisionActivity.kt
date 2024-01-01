@@ -47,35 +47,32 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
         }
 
         binding.openCameraButton.setOnClickListener {
-            val deviceItem = SDKGuider.g_sdkGuider.m_comDMGuider.DeviceItem()
-            deviceItem.m_szDevName = ""
-            deviceItem.m_struNetInfo = SDKGuider.g_sdkGuider.m_comDMGuider.DevNetInfo(
+            val deviceItem = SDKGuider.sdkGuider.devManageGuider.DeviceItem()
+            deviceItem.szDevName = ""
+            deviceItem.devNetInfo = SDKGuider.sdkGuider.devManageGuider.DevNetInfo(
                 DemoConstant.HK_NET_IP,
                 DemoConstant.HK_NET_PORT,
                 DemoConstant.HK_NET_USERNAME,
                 DemoConstant.HK_NET_PASSWORD
             )
-            if (deviceItem.m_szDevName.isEmpty()) {
-                deviceItem.m_szDevName = deviceItem.m_struNetInfo.m_szIp
+            if (deviceItem.szDevName.isEmpty()) {
+                deviceItem.szDevName = deviceItem.devNetInfo.szIp
             }
-
-            val loginV40Jna = SDKGuider.g_sdkGuider.m_comDMGuider.login_v40_jna(
-                deviceItem.m_szDevName, deviceItem.m_struNetInfo
+            val loginV40Jna = SDKGuider.sdkGuider.devManageGuider.login_v40_jna(
+                deviceItem.szDevName, deviceItem.devNetInfo
             )
             if (loginV40Jna) {
                 //配置设备通道
                 try {
-                    val deviceInfo = SDKGuider.g_sdkGuider.m_comDMGuider.devList[0]
-                    returnUserID = deviceInfo.m_lUserID
+                    val deviceInfo = SDKGuider.sdkGuider.devManageGuider.devList[0]
+                    returnUserID = deviceInfo.szUserId
 
-                    aChannelNum = deviceInfo.m_struDeviceInfoV40_jna.struDeviceV30.byChanNum.toInt()
-                    startAChannel =
-                        deviceInfo.m_struDeviceInfoV40_jna.struDeviceV30.byStartChan.toInt()
+                    aChannelNum = deviceInfo.deviceInfoV40_jna.struDeviceV30.byChanNum.toInt()
+                    startAChannel = deviceInfo.deviceInfoV40_jna.struDeviceV30.byStartChan.toInt()
 
-                    dChannelNum = deviceInfo.m_struDeviceInfoV40_jna.struDeviceV30.byIPChanNum +
-                            deviceInfo.m_struDeviceInfoV40_jna.struDeviceV30.byHighDChanNum * 256
-                    startDChannel =
-                        deviceInfo.m_struDeviceInfoV40_jna.struDeviceV30.byStartChan.toInt()
+                    dChannelNum = deviceInfo.deviceInfoV40_jna.struDeviceV30.byIPChanNum +
+                            deviceInfo.deviceInfoV40_jna.struDeviceV30.byHighDChanNum * 256
+                    startDChannel = deviceInfo.deviceInfoV40_jna.struDeviceV30.byStartChan.toInt()
 
                     var iAnalogStartChan = startAChannel
                     var iDigitalStartChan = startDChannel
@@ -100,21 +97,18 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
 
                     //开始预览
                     if (previewHandle != -1) {
-                        SDKGuider.g_sdkGuider.m_comPreviewGuider.RealPlay_Stop_jni(previewHandle)
+                        SDKGuider.sdkGuider.devPreviewGuider.RealPlay_Stop_jni(previewHandle)
                     }
                     val strutPlayInfo = NET_DVR_PREVIEWINFO()
                     strutPlayInfo.lChannel = selectChannel
                     strutPlayInfo.dwStreamType = 1
                     strutPlayInfo.bBlocked = 1
                     strutPlayInfo.hHwnd = binding.videoSurfaceView.holder
-                    previewHandle = SDKGuider.g_sdkGuider.m_comPreviewGuider.RealPlay_V40_jni(
+                    previewHandle = SDKGuider.sdkGuider.devPreviewGuider.RealPlay_V40_jni(
                         returnUserID, strutPlayInfo, null
                     )
                     if (previewHandle < 0) {
-                        Log.d(
-                            kTag,
-                            "configDevice: NET_DVR_RealPlay_V40 fail, Err:${MessageCodeHub.getErrorCode()}"
-                        )
+                        Log.d(kTag, "initEvent: Err:${MessageCodeHub.getErrorCode()}")
                         return@setOnClickListener
                     }
                     "预览开启成功".show(this)
@@ -126,7 +120,7 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
         }
 
         binding.closeCameraButton.setOnClickListener {
-            if (!SDKGuider.g_sdkGuider.m_comPreviewGuider.RealPlay_Stop_jni(previewHandle)) {
+            if (!SDKGuider.sdkGuider.devPreviewGuider.RealPlay_Stop_jni(previewHandle)) {
                 return@setOnClickListener
             }
             "预览关闭成功".show(this)
@@ -169,7 +163,7 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
         }
         val surface = holder.surface
         if (surface.isValid) {
-            if (-1 == SDKGuider.g_sdkGuider.m_comPreviewGuider.RealPlaySurfaceChanged_jni(
+            if (-1 == SDKGuider.sdkGuider.devPreviewGuider.RealPlaySurfaceChanged_jni(
                     previewHandle, 0, holder
                 )
             ) {
@@ -187,7 +181,7 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
             return
         }
         if (holder.surface.isValid) {
-            if (-1 == SDKGuider.g_sdkGuider.m_comPreviewGuider.RealPlaySurfaceChanged_jni(
+            if (-1 == SDKGuider.sdkGuider.devPreviewGuider.RealPlaySurfaceChanged_jni(
                     previewHandle, 0, null
                 )
             ) {
