@@ -20,7 +20,7 @@ import com.amap.api.services.geocoder.GeocodeSearch
 import com.amap.api.services.geocoder.RegeocodeQuery
 import com.amap.api.services.geocoder.RegeocodeResult
 import com.example.multidemo.R
-import com.example.multidemo.extensions.breakLine
+import com.pengxh.kt.lite.extensions.breakLine
 
 class CenterMarkerView(private val context: Context, private var aMap: AMap) {
     private lateinit var centerMarker: Marker
