@@ -19,6 +19,7 @@ class WelcomeActivity : AppCompatActivity(), PermissionCallbacks {
     companion object {
         private const val PERMISSIONS_CODE = 999
         private val USER_PERMISSIONS = arrayOf(
+            Manifest.permission.READ_MEDIA_VIDEO,
             Manifest.permission.READ_MEDIA_IMAGES,
             Manifest.permission.MANAGE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
