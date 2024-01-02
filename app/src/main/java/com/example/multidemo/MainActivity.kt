@@ -5,6 +5,7 @@ import android.view.KeyEvent
 import com.example.multidemo.databinding.ActivityMainBinding
 import com.example.multidemo.view.BluetoothActivity
 import com.example.multidemo.view.CompassActivity
+import com.example.multidemo.view.CompressVideoActivity
 import com.example.multidemo.view.DragMapActivity
 import com.example.multidemo.view.FaceCollectionActivity
 import com.example.multidemo.view.GalleryActivity
@@ -17,7 +18,6 @@ import com.example.multidemo.view.SlideBarActivity
 import com.example.multidemo.view.SlideNavigationActivity
 import com.example.multidemo.view.SteeringWheelActivity
 import com.example.multidemo.view.TimeLineActivity
-import com.example.multidemo.view.VideoCompressActivity
 import com.example.multidemo.view.WaterMarkerActivity
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
@@ -73,7 +73,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                     3 -> navigatePageTo<DragMapActivity>()
                     4 -> navigatePageTo<RecodeAudioActivity>()
                     5 -> navigatePageTo<WaterMarkerActivity>()
-                    6 -> navigatePageTo<VideoCompressActivity>()
+                    6 -> navigatePageTo<CompressVideoActivity>()
                     7 -> navigatePageTo<BluetoothActivity>()
                     8 -> navigatePageTo<GridViewActivity>()
                     9 -> navigatePageTo<FaceCollectionActivity>()

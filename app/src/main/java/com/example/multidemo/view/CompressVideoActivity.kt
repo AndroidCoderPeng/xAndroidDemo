@@ -4,11 +4,11 @@ import android.app.ProgressDialog
 import android.content.res.Configuration
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
+import android.os.Environment
 import android.text.TextUtils
 import android.util.Log
 import com.example.multidemo.R
-import com.example.multidemo.databinding.ActivityVideoCompressBinding
-import com.example.multidemo.util.FileUtils
+import com.example.multidemo.databinding.ActivityCompressVideoBinding
 import com.example.multidemo.util.GlideLoadEngine
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
@@ -22,8 +22,13 @@ import com.shuyu.gsyvideoplayer.listener.GSYSampleCallBack
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 import com.zolad.videoslimmer.VideoSlimmer
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-class VideoCompressActivity : KotlinBaseActivity<ActivityVideoCompressBinding>() {
+class CompressVideoActivity : KotlinBaseActivity<ActivityCompressVideoBinding>() {
 
     private val kTag = "VideoCompressActivity"
     private val retriever by lazy { MediaMetadataRetriever() }
@@ -37,14 +42,28 @@ class VideoCompressActivity : KotlinBaseActivity<ActivityVideoCompressBinding>()
     private lateinit var progressDialog: ProgressDialog
     private var orientationUtils: OrientationUtils? = null
 
+    private fun getCompressedVideoPath(): String {
+        val videoDir = File(getExternalFilesDir(Environment.DIRECTORY_MOVIES), "")
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(Date())
+        val videoFile = File("${videoDir}${File.separator}VID_${timeStamp}.mp4")
+        if (!videoFile.exists()) {
+            try {
+                videoFile.createNewFile()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        return videoFile.path
+    }
+
     override fun setupTopBarLayout() {}
 
     override fun observeRequestState() {
 
     }
 
-    override fun initViewBinding(): ActivityVideoCompressBinding {
-        return ActivityVideoCompressBinding.inflate(layoutInflater)
+    override fun initViewBinding(): ActivityCompressVideoBinding {
+        return ActivityCompressVideoBinding.inflate(layoutInflater)
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
@@ -87,7 +106,7 @@ class VideoCompressActivity : KotlinBaseActivity<ActivityVideoCompressBinding>()
         }
         binding.compressVideoButton.setOnClickListener {
             if (!TextUtils.isEmpty(mediaOriginalPath)) {
-                val outputVideoFile = FileUtils.videoFilePath
+                val outputVideoFile = getCompressedVideoPath()
                 val width: Int
                 val height: Int
                 if (defaultRotation == "90") {
@@ -113,7 +132,7 @@ class VideoCompressActivity : KotlinBaseActivity<ActivityVideoCompressBinding>()
                             if (result) {
                                 configVideo("", outputVideoFile, binding.compressedVideoView)
                             } else {
-                                "压缩失败".show(this@VideoCompressActivity)
+                                "压缩失败".show(this@CompressVideoActivity)
                             }
                             progressDialog.dismiss()
                         }
