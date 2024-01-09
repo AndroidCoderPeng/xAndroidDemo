@@ -5,12 +5,12 @@ import com.example.multidemo.base.BaseApplication
 import com.example.multidemo.model.NewsListModel
 import com.example.multidemo.util.retrofit.RetrofitServiceManager
 import com.google.gson.Gson
+import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
+import com.pengxh.kt.lite.base.BaseViewModel
 import com.pengxh.kt.lite.extensions.launch
 import com.pengxh.kt.lite.extensions.show
-import com.pengxh.kt.lite.vm.BaseViewModel
-import com.pengxh.kt.lite.vm.LoadState
-import org.json.JSONObject
+import com.pengxh.kt.lite.utils.LoadState
 
 class NewsViewModel : BaseViewModel() {
 
@@ -20,8 +20,10 @@ class NewsViewModel : BaseViewModel() {
     fun getNewsByPage(channel: String, offset: Int) = launch({
         loadState.value = LoadState.Loading
         val response = RetrofitServiceManager.getNewsByPage(channel, offset)
-        val responseCode = JSONObject(response).getString("code")
-        if (responseCode == "10000") {
+        val element = JsonParser.parseString(response)
+        val jsonObject = element.asJsonObject
+        val responseCode = jsonObject.get("status").asInt
+        if (responseCode == 0) {
             loadState.value = LoadState.Success
             resultModel.value = gson.fromJson<NewsListModel>(
                 response, object : TypeToken<NewsListModel>() {}.type

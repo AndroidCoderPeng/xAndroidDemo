@@ -14,8 +14,6 @@ import com.pengxh.kt.lite.utils.HtmlRenderEngine
  */
 class NewsDetailsActivity : KotlinBaseActivity<ActivityNewsDetailsBinding>() {
 
-    private val renderEngine by lazy { HtmlRenderEngine() }
-
     override fun setupTopBarLayout() {}
 
     override fun observeRequestState() {
@@ -33,7 +31,8 @@ class NewsDetailsActivity : KotlinBaseActivity<ActivityNewsDetailsBinding>() {
         binding.newsSrc.text = params[1]
         binding.newsTime.text = params[2]
 
-        renderEngine.setContext(this)
+        HtmlRenderEngine.Builder()
+            .setContext(this)
             .setHtmlContent(params[3])
             .setTargetView(binding.newsContent)
             .setOnGetImageSourceListener(object : HtmlRenderEngine.OnGetImageSourceListener {
@@ -42,7 +41,7 @@ class NewsDetailsActivity : KotlinBaseActivity<ActivityNewsDetailsBinding>() {
                     urls.add(url)
                     navigatePageTo<BigImageActivity>(0, urls)
                 }
-            }).load()
+            }).build().load()
     }
 
     override fun initEvent() {}

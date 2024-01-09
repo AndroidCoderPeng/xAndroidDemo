@@ -6,7 +6,7 @@ import com.pengxh.kt.lite.utils.RetrofitFactory
 object RetrofitServiceManager {
 
     private val api by lazy {
-        val httpConfig = "https://way.jd.com"
+        val httpConfig = "https://api.jisuapi.com"
         RetrofitFactory.createRetrofit<RetrofitService>(httpConfig)
     }
 
@@ -16,6 +16,6 @@ object RetrofitServiceManager {
     }
 
     suspend fun getNewsByPage(channel: String, start: Int): String {
-        return api.getNewsByPage(DemoConstant.APP_KEY, channel, 10, start)
+        return api.getNewsByPage(channel, start, 10, DemoConstant.APP_KEY)
     }
 }

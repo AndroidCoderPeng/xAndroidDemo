@@ -30,7 +30,7 @@ class GridViewActivity : KotlinBaseActivity<ActivityGridviewBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        editableImageAdapter = EditableImageAdapter(this, 9, 1f)
+        editableImageAdapter = EditableImageAdapter(this, 9, 1)
         binding.nineRecyclerView.adapter = editableImageAdapter
         editableImageAdapter.setOnItemClickListener(object :
             EditableImageAdapter.OnItemClickListener {

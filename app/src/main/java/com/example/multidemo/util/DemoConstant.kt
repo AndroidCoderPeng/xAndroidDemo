@@ -1,7 +1,7 @@
 package com.example.multidemo.util
 
 object DemoConstant {
-    const val APP_KEY = "e957ed7ad90436a57e604127d9d8fa32"
+    const val APP_KEY = "32736cbe845d7a70"
     val ASK_DEV_CODE_COMMAND = byteArrayOf(0x01, 0x0D, 0x0A) // 查询设备编号命令
     val OPEN_TRANSFER_COMMAND = byteArrayOf(0x02, 0x0D, 0x0A) // 开启数据发送命令
     const val SERVICE_UUID = "0003cdd0-0000-1000-8000-00805f9b0131" //连接设备的UUID

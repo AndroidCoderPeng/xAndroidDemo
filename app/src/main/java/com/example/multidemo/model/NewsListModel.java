@@ -8,35 +8,16 @@ import java.util.List;
  * @date: 2020/2/21 19:27
  */
 public class NewsListModel {
-
-    /**
-     * code : 10000
-     * charge : false
-     * msg : 查询成功
-     * result : {"status":0,"msg":"ok","result":{"channel":"头条","num":10,"list":[{"title":"联播+丨加快建设科技强国 总书记有最新部署","time":"2021-05-28 22:15:00","src":"央视","category":"news","pic":"https://n.sinaimg.cn/default/crawl/575/w550h825/20210529/5040-kquziii3294876.jpg","content":"","url":"https://news.sina.cn/gn/2021-05-29/detail-ikmxzfmm5381873.d.html?vt=4&pos=108","weburl":"https://news.sina.com.cn/c/2021-05-29/doc-ikmxzfmm5381873.shtml"}]}}
-     * requestId : beddb7c259b24c5eaf387160e780f72f
-     */
-
-    private String code;
-    private boolean charge;
+    private Integer status;
     private String msg;
-    private ResultBeanX result;
-    private String requestId;
+    private ResultModel result;
 
-    public String getCode() {
-        return code;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public boolean isCharge() {
-        return charge;
-    }
-
-    public void setCharge(boolean charge) {
-        this.charge = charge;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public String getMsg() {
@@ -47,176 +28,115 @@ public class NewsListModel {
         this.msg = msg;
     }
 
-    public ResultBeanX getResult() {
+    public ResultModel getResult() {
         return result;
     }
 
-    public void setResult(ResultBeanX result) {
+    public void setResult(ResultModel result) {
         this.result = result;
     }
 
-    public String getRequestId() {
-        return requestId;
-    }
+    public static class ResultModel {
+        private String channel;
+        private Integer num;
+        private List<ListModel> list;
 
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
-    }
-
-    public static class ResultBeanX {
-        /**
-         * status : 0
-         * msg : ok
-         * result : {"channel":"头条","num":10,"list":[{"title":"联播+丨加快建设科技强国 总书记有最新部署","time":"2021-05-28 22:15:00","src":"央视","category":"news","pic":"https://n.sinaimg.cn/default/crawl/575/w550h825/20210529/5040-kquziii3294876.jpg","content":"","url":"https://news.sina.cn/gn/2021-05-29/detail-ikmxzfmm5381873.d.html?vt=4&pos=108","weburl":"https://news.sina.com.cn/c/2021-05-29/doc-ikmxzfmm5381873.shtml"}]}
-         */
-
-        private int status;
-        private String msg;
-        private ResultBean result;
-
-        public int getStatus() {
-            return status;
+        public String getChannel() {
+            return channel;
         }
 
-        public void setStatus(int status) {
-            this.status = status;
+        public void setChannel(String channel) {
+            this.channel = channel;
         }
 
-        public String getMsg() {
-            return msg;
+        public Integer getNum() {
+            return num;
         }
 
-        public void setMsg(String msg) {
-            this.msg = msg;
+        public void setNum(Integer num) {
+            this.num = num;
         }
 
-        public ResultBean getResult() {
-            return result;
+        public List<ListModel> getList() {
+            return list;
         }
 
-        public void setResult(ResultBean result) {
-            this.result = result;
+        public void setList(List<ListModel> list) {
+            this.list = list;
         }
 
-        public static class ResultBean {
-            /**
-             * channel : 头条
-             * num : 10
-             * list : [{"title":"联播+丨加快建设科技强国 总书记有最新部署","time":"2021-05-28 22:15:00","src":"央视","category":"news","pic":"https://n.sinaimg.cn/default/crawl/575/w550h825/20210529/5040-kquziii3294876.jpg","content":"","url":"https://news.sina.cn/gn/2021-05-29/detail-ikmxzfmm5381873.d.html?vt=4&pos=108","weburl":"https://news.sina.com.cn/c/2021-05-29/doc-ikmxzfmm5381873.shtml"}]
-             */
+        public static class ListModel {
+            private String title;
+            private String time;
+            private String src;
+            private String category;
+            private String pic;
+            private String url;
+            private String weburl;
+            private String content;
 
-            private String channel;
-            private int num;
-            private List<ListBean> list;
-
-            public String getChannel() {
-                return channel;
+            public String getTitle() {
+                return title;
             }
 
-            public void setChannel(String channel) {
-                this.channel = channel;
+            public void setTitle(String title) {
+                this.title = title;
             }
 
-            public int getNum() {
-                return num;
+            public String getTime() {
+                return time;
             }
 
-            public void setNum(int num) {
-                this.num = num;
+            public void setTime(String time) {
+                this.time = time;
             }
 
-            public List<ListBean> getList() {
-                return list;
+            public String getSrc() {
+                return src;
             }
 
-            public void setList(List<ListBean> list) {
-                this.list = list;
+            public void setSrc(String src) {
+                this.src = src;
             }
 
-            public static class ListBean {
-                /**
-                 * title : 联播+丨加快建设科技强国 总书记有最新部署
-                 * time : 2021-05-28 22:15:00
-                 * src : 央视
-                 * category : news
-                 * pic : https://n.sinaimg.cn/default/crawl/575/w550h825/20210529/5040-kquziii3294876.jpg
-                 * content :
-                 * url : https://news.sina.cn/gn/2021-05-29/detail-ikmxzfmm5381873.d.html?vt=4&pos=108
-                 * weburl : https://news.sina.com.cn/c/2021-05-29/doc-ikmxzfmm5381873.shtml
-                 */
+            public String getCategory() {
+                return category;
+            }
 
-                private String title;
-                private String time;
-                private String src;
-                private String category;
-                private String pic;
-                private String content;
-                private String url;
-                private String weburl;
+            public void setCategory(String category) {
+                this.category = category;
+            }
 
-                public String getTitle() {
-                    return title;
-                }
+            public String getPic() {
+                return pic;
+            }
 
-                public void setTitle(String title) {
-                    this.title = title;
-                }
+            public void setPic(String pic) {
+                this.pic = pic;
+            }
 
-                public String getTime() {
-                    return time;
-                }
+            public String getUrl() {
+                return url;
+            }
 
-                public void setTime(String time) {
-                    this.time = time;
-                }
+            public void setUrl(String url) {
+                this.url = url;
+            }
 
-                public String getSrc() {
-                    return src;
-                }
+            public String getWeburl() {
+                return weburl;
+            }
 
-                public void setSrc(String src) {
-                    this.src = src;
-                }
+            public void setWeburl(String weburl) {
+                this.weburl = weburl;
+            }
 
-                public String getCategory() {
-                    return category;
-                }
+            public String getContent() {
+                return content;
+            }
 
-                public void setCategory(String category) {
-                    this.category = category;
-                }
-
-                public String getPic() {
-                    return pic;
-                }
-
-                public void setPic(String pic) {
-                    this.pic = pic;
-                }
-
-                public String getContent() {
-                    return content;
-                }
-
-                public void setContent(String content) {
-                    this.content = content;
-                }
-
-                public String getUrl() {
-                    return url;
-                }
-
-                public void setUrl(String url) {
-                    this.url = url;
-                }
-
-                public String getWeburl() {
-                    return weburl;
-                }
-
-                public void setWeburl(String weburl) {
-                    this.weburl = weburl;
-                }
+            public void setContent(String content) {
+                this.content = content;
             }
         }
     }

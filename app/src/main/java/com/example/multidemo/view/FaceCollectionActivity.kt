@@ -19,7 +19,6 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.example.multidemo.databinding.ActivityFaceCollectBinding
 import com.google.common.util.concurrent.ListenableFuture
-import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.getScreenHeight
 import com.pengxh.kt.lite.extensions.getScreenWidth
@@ -47,7 +46,6 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
         16, 16,
         0L, TimeUnit.MILLISECONDS,
         LinkedBlockingQueue(1024),
-        ThreadFactoryBuilder().setNameFormat("faceDetector-pool-%d").build(),
         ThreadPoolExecutor.AbortPolicy()
     )
 

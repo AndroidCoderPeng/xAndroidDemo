@@ -1,7 +1,6 @@
 package com.example.multidemo.view
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,10 +11,12 @@ import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityBigImageBinding
+import com.gyf.immersionbar.ImmersionBar
 import com.luck.picture.lib.photoview.PhotoView
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.convertColor
+import com.pengxh.kt.lite.extensions.getStatusBarHeight
 import com.pengxh.kt.lite.utils.Constant
-import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
 
 class BigImageActivity : KotlinBaseActivity<ActivityBigImageBinding>() {
 
@@ -24,20 +25,17 @@ class BigImageActivity : KotlinBaseActivity<ActivityBigImageBinding>() {
     }
 
     override fun setupTopBarLayout() {
-        ImmerseStatusBarUtil.setColor(this, Color.BLACK)
-        binding.leftBackView.setOnClickListener { finish() }
+        ImmersionBar.with(this)
+            .statusBarDarkFont(false)
+            .statusBarColorInt(R.color.black.convertColor(this))
+            .init()
+        binding.rootView.setPadding(0, getStatusBarHeight(), 0, 0)
+        binding.rootView.requestLayout()
+
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-
-    }
-
-    override fun observeRequestState() {
-
-    }
-
-    override fun initEvent() {
-        val index: Int = intent.getIntExtra(Constant.BIG_IMAGE_INTENT_INDEX_KEY, 0)
+        val index = intent.getIntExtra(Constant.BIG_IMAGE_INTENT_INDEX_KEY, 0)
         val urls = intent.getStringArrayListExtra(Constant.BIG_IMAGE_INTENT_DATA_KEY)
         if (urls == null || urls.size == 0) {
             return
@@ -60,6 +58,15 @@ class BigImageActivity : KotlinBaseActivity<ActivityBigImageBinding>() {
 
             override fun onPageScrollStateChanged(state: Int) {}
         })
+    }
+
+    override fun observeRequestState() {
+
+    }
+
+    override fun initEvent() {
+        binding.leftBackView.setOnClickListener { finish() }
+
     }
 
     inner class BigImageAdapter(

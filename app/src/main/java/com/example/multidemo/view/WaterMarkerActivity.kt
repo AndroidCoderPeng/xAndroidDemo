@@ -21,7 +21,7 @@ import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.sp2px
 import com.pengxh.kt.lite.utils.LoadingDialogHub
-import com.pengxh.kt.lite.utils.WaterMarkEngine
+import com.pengxh.kt.lite.utils.WaterMarkerEngine
 import java.io.File
 
 
@@ -31,7 +31,6 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
     private val context = this@WaterMarkerActivity
     private var mediaRealPath: String? = null
     private val compressImageDir by lazy { createCompressImageDir() }
-    private val markerEngine by lazy { WaterMarkEngine() }
 
     override fun setupTopBarLayout() {}
 
@@ -91,15 +90,16 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
             }
 
             val bitmap = BitmapFactory.decodeFile(mediaRealPath)
-            markerEngine.setContext(context)
+            WaterMarkerEngine.Builder()
                 .setOriginalBitmap(bitmap)
                 .setTextMaker(this.localClassName)
                 .setTextColor(Color.RED)
-                .setTextSize(30f.sp2px(context).toFloat())
+                .setTextSize(30f.sp2px(context))
                 .setMarkerPosition(WaterMarkPosition.RIGHT_BOTTOM)
-                .setTextPadding(50f.dp2px(context).toFloat())
+                .setTextMargin(50f.dp2px(context))
                 .setMarkedSavePath("${compressImageDir}/${System.currentTimeMillis()}.png")
-                .setOnWaterMarkerAddedListener(object : WaterMarkEngine.OnWaterMarkerAddedListener {
+                .setOnWaterMarkerAddedListener(object :
+                    WaterMarkerEngine.OnWaterMarkerAddedListener {
                     override fun onStart() {
                         LoadingDialogHub.show(this@WaterMarkerActivity, "水印添加中，请稍后...")
                     }
@@ -113,7 +113,7 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
                             "压缩后：${file.length().formatFileSize()}"
                         LoadingDialogHub.dismiss()
                     }
-                }).start()
+                }).build().start()
         }
     }
 }

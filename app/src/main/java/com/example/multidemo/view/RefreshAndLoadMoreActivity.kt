@@ -17,9 +17,9 @@ import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.utils.LoadState
 import com.pengxh.kt.lite.utils.LoadingDialogHub
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
-import com.pengxh.kt.lite.vm.LoadState
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView
 
 /**
@@ -31,8 +31,8 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity<ActivityRefreshBinding>() 
 
     private lateinit var weakReferenceHandler: WeakReferenceHandler
     private lateinit var newsViewModel: NewsViewModel
-    private lateinit var newsAdapter: NormalRecyclerAdapter<NewsListModel.ResultBeanX.ResultBean.ListBean>
-    private var dataBeans: MutableList<NewsListModel.ResultBeanX.ResultBean.ListBean> = ArrayList()
+    private lateinit var newsAdapter: NormalRecyclerAdapter<NewsListModel.ResultModel.ListModel>
+    private var dataBeans: MutableList<NewsListModel.ResultModel.ListModel> = ArrayList()
     private var isRefresh = false
     private var isLoadMore = false
     private var offset = 1
@@ -47,8 +47,8 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity<ActivityRefreshBinding>() 
         weakReferenceHandler = WeakReferenceHandler(callback)
         newsViewModel = ViewModelProvider(this)[NewsViewModel::class.java]
         newsViewModel.resultModel.observe(this) {
-            if (it.code == "10000") {
-                val dataRows = it.result.result.list
+            if (it.status == 0) {
+                val dataRows = it.result.list
                 when {
                     isRefresh -> {
                         newsAdapter.setRefreshData(dataRows)
@@ -111,12 +111,12 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity<ActivityRefreshBinding>() 
     private val callback = Handler.Callback { msg: Message ->
         if (msg.what == 2023031301) {
             newsAdapter = object :
-                NormalRecyclerAdapter<NewsListModel.ResultBeanX.ResultBean.ListBean>(
+                NormalRecyclerAdapter<NewsListModel.ResultModel.ListModel>(
                     R.layout.item_news_rv_l, dataBeans
                 ) {
                 override fun convertView(
                     viewHolder: ViewHolder, position: Int,
-                    item: NewsListModel.ResultBeanX.ResultBean.ListBean
+                    item: NewsListModel.ResultModel.ListModel
                 ) {
                     val img: String = item.pic
                     if (img == "" || img.endsWith(".gif")) {
@@ -136,9 +136,9 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity<ActivityRefreshBinding>() 
             )
             binding.newsRecyclerView.adapter = newsAdapter
             newsAdapter.setOnItemClickedListener(object :
-                NormalRecyclerAdapter.OnItemClickedListener<NewsListModel.ResultBeanX.ResultBean.ListBean> {
+                NormalRecyclerAdapter.OnItemClickedListener<NewsListModel.ResultModel.ListModel> {
                 override fun onItemClicked(
-                    position: Int, t: NewsListModel.ResultBeanX.ResultBean.ListBean
+                    position: Int, t: NewsListModel.ResultModel.ListModel
                 ) {
                     navigatePageTo<NewsDetailsActivity>(addAll(t.title, t.src, t.time, t.content))
                 }
