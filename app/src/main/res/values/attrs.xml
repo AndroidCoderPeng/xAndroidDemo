@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="SlideBarView">
-        <attr name="slide_width" format="dimension" />
-        <attr name="slide_textSize" format="dimension" />
-        <attr name="slide_textColor" format="color" />
-    </declare-styleable>
-
     <declare-styleable name="RadarScanView">
         <!-- 雷达图半径 -->
         <attr name="radar_radius" format="dimension" />

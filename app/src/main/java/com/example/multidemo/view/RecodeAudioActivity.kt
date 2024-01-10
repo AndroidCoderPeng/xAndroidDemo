@@ -44,7 +44,7 @@ class RecodeAudioActivity : KotlinBaseActivity<ActivityAudioBinding>() {
                                 binding.recodeAudioButton.animate()
                                     .scaleX(0.75f).scaleY(0.75f)
                                     .setDuration(100).start()
-                                window.showAtLocation(binding.rootLayout, Gravity.CENTER, 0, 0)
+                                window.showAtLocation(binding.rootView, Gravity.CENTER, 0, 0)
                                 //开始录音
                                 audioRecorder.apply {
                                     initRecorder(createAudioFile())
@@ -77,7 +77,7 @@ class RecodeAudioActivity : KotlinBaseActivity<ActivityAudioBinding>() {
                         true
                     }
                 }
-            })
+            }).build().create()
     }
 
     override fun initEvent() {}
