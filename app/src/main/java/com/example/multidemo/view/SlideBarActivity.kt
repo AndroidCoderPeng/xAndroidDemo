@@ -7,12 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivitySlideBinding
 import com.example.multidemo.model.CityModel
-import com.example.multidemo.util.RecyclerStickDecoration
 import com.example.multidemo.util.StringHelper
 import com.google.gson.Gson
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.divider.RecyclerStickDecoration
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.widget.SlideBarView

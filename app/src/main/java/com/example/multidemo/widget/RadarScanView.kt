@@ -5,12 +5,18 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.PointF
+import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.SweepGradient
+import android.graphics.Typeface
+import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import com.example.multidemo.R
 import com.pengxh.kt.lite.extensions.dp2px
+import com.pengxh.kt.lite.extensions.sp2px
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -31,6 +37,13 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
     //最外层圆半径
     private var radius: Int
 
+    //内圆文字路径半径
+    private var innerRadius: Int
+
+    //控件边长
+    private val viewSideLength: Int
+    private val rect: Rect
+
     //需要渲染的数据点集合
     private val points = ArrayList<PointF>()
 
@@ -43,9 +56,12 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
     //雷达扫描角度步长
     private var degrees = 0f
 
+    private lateinit var tickPaint: Paint
     private lateinit var borderPaint: Paint
     private lateinit var shaderPaint: Paint
     private lateinit var dataPaint: Paint
+    private lateinit var innerPaint: TextPaint
+    private lateinit var innerTextPath: Path
 
     //雷达扫描线后面的渐变梯度
     private lateinit var sweepGradient: SweepGradient
@@ -55,11 +71,18 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
 
     init {
         val type = context.obtainStyledAttributes(attrs, R.styleable.RadarScanView)
-        borderColor = type.getColor(R.styleable.RadarScanView_radar_borderColor, Color.GRAY)
+        borderColor = type.getColor(R.styleable.RadarScanView_radar_borderColor, Color.BLUE)
         border = type.getDimensionPixelOffset(R.styleable.RadarScanView_radar_border, 1)
         circleCount = type.getInt(R.styleable.RadarScanView_radar_circleCount, 4)
-        radius = type.getDimensionPixelOffset(R.styleable.RadarScanView_radar_radius, 150)
+        radius = type.getDimensionPixelOffset(R.styleable.RadarScanView_radar_radius, 300)
         type.recycle()
+
+        innerRadius = radius - 10.dp2px(context)
+
+        //需要给外围刻度留位置
+        viewSideLength = radius + 30.dp2px(context)
+        //辅助框
+        rect = Rect(-viewSideLength, -viewSideLength, viewSideLength, viewSideLength)
 
         initPaint()
 
@@ -83,12 +106,31 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
     }
 
     private fun initPaint() {
+        tickPaint = Paint()
+        tickPaint.color = Color.RED
+        tickPaint.style = Paint.Style.STROKE
+        tickPaint.strokeWidth = 2f.dp2px(context)
+        tickPaint.isAntiAlias = true
+
         borderPaint = Paint()
         borderPaint.color = borderColor
         borderPaint.style = Paint.Style.STROKE
         borderPaint.strokeWidth = border.toFloat()
         borderPaint.strokeCap = Paint.Cap.ROUND //圆头
         borderPaint.isAntiAlias = true
+
+        innerPaint = TextPaint()
+        innerPaint.isAntiAlias = true
+        innerPaint.textAlign = Paint.Align.CENTER
+        innerPaint.textSize = 14f.sp2px(context)
+        innerTextPath = Path()
+        val innerRectF = RectF(
+            -innerRadius.toFloat(),
+            -innerRadius.toFloat(),
+            innerRadius.toFloat(),
+            innerRadius.toFloat()
+        )
+        innerTextPath.addArc(innerRectF, -90f, 360f)
 
         //扫描线画笔
         shaderPaint = Paint()
@@ -114,16 +156,40 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
         centerY = (h shr 1).toFloat()
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val widthSpecMode = MeasureSpec.getMode(widthMeasureSpec)
+        val widthSpecSize = MeasureSpec.getSize(widthMeasureSpec)
+        val heightSpecMode = MeasureSpec.getMode(heightMeasureSpec)
+        val heightSpecSize = MeasureSpec.getSize(heightMeasureSpec)
+        // 获取宽
+        val mWidth: Int = if (widthSpecMode == MeasureSpec.EXACTLY) {
+            // match_parent/精确值
+            widthSpecSize
+        } else {
+            // wrap_content，外边界宽
+            (viewSideLength * 2)
+        }
+        // 获取高
+        val mHeight: Int = if (heightSpecMode == MeasureSpec.EXACTLY) {
+            // match_parent/精确值
+            heightSpecSize
+        } else {
+            // wrap_content，外边界高
+            (viewSideLength * 2)
+        }
+        // 设置该view的宽高
+        setMeasuredDimension(mWidth, mHeight)
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         /**
          * 画布移到中心位置，方便绘制一系列图形
          */
         canvas.translate(centerX, centerY)
-        /**
-         * 上下翻转画布，因为手机等设备Y轴和生活中的坐标轴Y轴是反的
-         * */
-        canvas.scale(1f, -1f)
+
+//        drawGuides(canvas)
 
         //每道同心圆的半径差
         var tempR = radius
@@ -137,14 +203,77 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
         canvas.drawLine(0f, -radius.toFloat(), 0f, radius.toFloat(), borderPaint)
         canvas.drawLine(-radius.toFloat(), 0f, radius.toFloat(), 0f, borderPaint)
 
+        //画方位
+        for (angle in 0 until 360 step 90) {
+            //角度需要转为弧度
+            val radians = (angle - 180) * (Math.PI / 180)
+
+            val hOffset = innerRadius * radians
+
+            var direction = ""
+            when (angle) {
+                0 -> {
+                    direction = "北"
+                    innerPaint.color = Color.RED
+                    innerPaint.typeface = Typeface.DEFAULT_BOLD
+                }
+
+                90 -> {
+                    direction = "东"
+                    innerPaint.color = Color.BLACK
+                    innerPaint.typeface = Typeface.DEFAULT
+                }
+
+                180 -> {
+                    direction = "南"
+                    innerPaint.color = Color.BLACK
+                    innerPaint.typeface = Typeface.DEFAULT
+                }
+
+                270 -> {
+                    direction = "西"
+                    innerPaint.color = Color.BLACK
+                    innerPaint.typeface = Typeface.DEFAULT
+                }
+            }
+
+            val fontMetrics = innerPaint.fontMetrics
+            val top = fontMetrics.top //基线到字体上边框的距离,即上图中的top
+            val bottom = fontMetrics.bottom //基线到字体下边框的距离,即上图中的bottom
+            val fontHeight = top + bottom
+            canvas.drawTextOnPath(
+                direction,
+                innerTextPath,
+                hOffset.toFloat(),
+                -fontHeight / 2,
+                innerPaint
+            )
+        }
+
         //画数据点
         points.forEach {
             canvas.drawCircle(it.x, it.y, 10f, dataPaint)
         }
 
+        /**
+         * 上下翻转画布，否则矩阵旋转是逆时针，因为手机等设备Y轴和生活中的坐标轴Y轴是反的
+         * */
+        canvas.scale(1f, -1f)
+
         //关联矩阵
         canvas.concat(matrix)
         canvas.drawCircle(0f, 0f, radius.toFloat(), shaderPaint)
+    }
+
+    /**
+     * 辅助线
+     * */
+    private fun drawGuides(canvas: Canvas) {
+        //最外层方框，即自定义View的边界
+        canvas.drawRect(rect, tickPaint)
+
+        //内层表盘方向文字基准线
+        canvas.drawPath(innerTextPath, tickPaint)
     }
 
     /**
@@ -156,7 +285,7 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
             val result = recursionAngle(it.angle)
             //转为弧度
             val dataAngle = (result * Math.PI / 180).toFloat()
-            val dataDistance = recursionDistance(it.distance.dp2px(context).toFloat())
+            val dataDistance = recursionDistance(it.distance.dp2px(context))
 
             //计算实际圆心坐标
             val x = dataDistance * cos(dataAngle)

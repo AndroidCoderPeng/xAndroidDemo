@@ -10,7 +10,55 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/mainRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
         app:spanCount="4" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@mipmap/bg_search_label"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="320dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="强度（dB）:"
+                android:textColor="@color/white" />
+
+            <ProgressBar
+                android:id="@+id/energyPgBar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/dp_3"
+                android:max="5124"
+                android:progressDrawable="@drawable/bg_progress_bar" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_20" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="距离（cm）:"
+                android:textColor="@color/white" />
+
+            <ProgressBar
+                android:id="@+id/distancePgBar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/dp_3"
+                android:progressDrawable="@drawable/bg_progress_bar" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

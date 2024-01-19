@@ -2,6 +2,7 @@ package com.example.multidemo
 
 import android.os.Bundle
 import android.view.KeyEvent
+import androidx.lifecycle.lifecycleScope
 import com.example.multidemo.databinding.ActivityMainBinding
 import com.example.multidemo.view.BluetoothActivity
 import com.example.multidemo.view.CompassActivity
@@ -24,14 +25,24 @@ import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.utils.socket.tcp.ConnectState
+import com.pengxh.kt.lite.utils.socket.tcp.OnTcpMessageCallback
+import com.pengxh.kt.lite.utils.socket.tcp.TcpClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Random
 import java.util.Timer
+import java.util.TimerTask
 
-class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
+class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), OnTcpMessageCallback {
 
     private val kTag = "MainActivity"
-
+    private val tcpClient by lazy { TcpClient(this) }
     private var clickTime: Long = 0
-    private val timer by lazy { Timer() }
+    private var timer: Timer? = null
+    private var timerTask: TimerTask? = null
     private val itemNames = listOf(
         "侧边导航栏", "上拉加载下拉刷新", "联系人侧边滑动控件", "拖拽地图选点",
         "音频录制与播放", "图片添加水印并压缩", "视频压缩", "蓝牙相关",
@@ -52,7 +63,26 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-//        SocketManager.get.connectServer(DemoConstant.HOST, DemoConstant.TCP_PORT)
+        timer = Timer()
+//        tcpClient.connectServer(DemoConstant.HOST, DemoConstant.TCP_PORT)
+
+        val random = Random()
+        lifecycleScope.launch(Dispatchers.IO) {
+            for (i in 0..1000) {
+                withContext(Dispatchers.Main) {
+                    binding.energyPgBar.progress = random.nextInt(binding.energyPgBar.max)
+                }
+                delay(100)
+            }
+        }
+    }
+
+    override fun onConnectStateChanged(state: ConnectState) {
+
+    }
+
+    override fun onReceivedTcpMessage(data: ByteArray?) {
+
     }
 
     override fun initEvent() {
@@ -87,11 +117,12 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                             0x00,
                             0x96.toByte()
                         )
-//                        timer.schedule(object : TimerTask() {
-//                            override fun run() {
-//                                SocketManager.get.sendData(sendBytes)
-//                            }
-//                        }, 0, 1000)
+                        timerTask = object : TimerTask() {
+                            override fun run() {
+//                                tcpClient.sendMessage(sendBytes)
+                            }
+                        }
+                        timer?.schedule(timerTask, 0, 1000)
                     }
 
                     11 -> navigatePageTo<SteeringWheelActivity>()
@@ -115,5 +146,10 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                 super.onKeyDown(keyCode, event)
             }
         } else super.onKeyDown(keyCode, event)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timer?.cancel()
     }
 }
