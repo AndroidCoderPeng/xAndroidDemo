@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.view.View
+import android.widget.ImageView
 import androidx.lifecycle.ViewModelProvider
 import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityRefreshBinding
@@ -20,7 +21,6 @@ import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.LoadState
 import com.pengxh.kt.lite.utils.LoadingDialogHub
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
-import com.qmuiteam.qmui.widget.QMUIRadiusImageView
 
 /**
  * @author: Pengxh
@@ -120,7 +120,7 @@ class RefreshAndLoadMoreActivity : KotlinBaseActivity<ActivityRefreshBinding>() 
                 ) {
                     val img: String = item.pic
                     if (img == "" || img.endsWith(".gif")) {
-                        val imageView = viewHolder.getView<QMUIRadiusImageView>(R.id.newsPicture)
+                        val imageView = viewHolder.getView<ImageView>(R.id.newsPicture)
                         imageView.visibility = View.GONE
                     } else {
                         viewHolder.setImageResource(R.id.newsPicture, img)

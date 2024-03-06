@@ -36,7 +36,7 @@
             android:paddingVertical="10dp" />
     </ScrollView>
 
-    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+    <Button
         android:id="@+id/disconnectButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,14 +44,10 @@
         android:paddingHorizontal="10dp"
         android:paddingVertical="7dp"
         android:text="断开蓝牙"
-        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@id/searchButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:qmui_backgroundColor="@color/mainColor"
-        app:qmui_borderColor="@color/mainColor"
-        app:qmui_radius="5dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+    <Button
         android:id="@+id/searchButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,10 +55,6 @@
         android:paddingHorizontal="10dp"
         android:paddingVertical="7dp"
         android:text="开始搜索"
-        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:qmui_backgroundColor="@color/mainColor"
-        app:qmui_borderColor="@color/mainColor"
-        app:qmui_radius="5dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -96,9 +96,6 @@ dependencies {
     //查看大图
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     implementation group: 'com.belerweb', name: 'pinyin4j', version: '2.5.0'
-    //腾讯Android UI框架
-    implementation 'com.qmuiteam:qmui:2.0.0-alpha10'
-    implementation 'com.qmuiteam:arch:0.3.1'
     //沉浸式状态栏。基础依赖包，必须要依赖
     implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
     //图片选择框架

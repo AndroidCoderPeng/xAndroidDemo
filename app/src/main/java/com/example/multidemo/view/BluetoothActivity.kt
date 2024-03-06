@@ -10,10 +10,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
-import android.view.View
+import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityBluetoothBinding
 import com.example.multidemo.util.DemoConstant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.toASCII
 import com.pengxh.kt.lite.utils.BroadcastManager
@@ -24,7 +25,7 @@ import com.pengxh.kt.lite.utils.ble.BLEManager
 import com.pengxh.kt.lite.utils.ble.BluetoothDevice
 import com.pengxh.kt.lite.utils.ble.OnBleConnectListener
 import com.pengxh.kt.lite.utils.ble.OnDeviceDiscoveredListener
-import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet
+import com.pengxh.kt.lite.widget.dialog.BottomActionSheet
 import java.util.*
 
 @SuppressLint("all")
@@ -71,16 +72,22 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handle
 
             Constant.DISCOVERY_OUT_TIME -> {
                 LoadingDialogHub.dismiss()
-                val sheetBuilder = QMUIBottomSheet.BottomListSheetBuilder(this)
+
+                val array = ArrayList<String>()
                 for (it in bluetoothDevices) {
-                    sheetBuilder.addItem(it.device.name)
+                    array.add(it.device.name)
                 }
-                sheetBuilder.setGravityCenter(true).setAddCancelBtn(true)
-                    .setOnSheetItemClickListener { dialog: QMUIBottomSheet, _: View?, position: Int, _: String? ->
-                        dialog.dismiss()
-                        //连接点击的设备
-                        startConnectDevice(bluetoothDevices[position].device)
-                    }.build().show()
+
+                BottomActionSheet.Builder()
+                    .setContext(this)
+                    .setActionItemTitle(array)
+                    .setItemTextColor(R.color.mainColor.convertColor(this))
+                    .setOnActionSheetListener(object : BottomActionSheet.OnActionSheetListener {
+                        override fun onActionItemClick(position: Int) {
+                            //连接点击的设备
+                            startConnectDevice(bluetoothDevices[position].device)
+                        }
+                    }).build().show()
             }
 
             Constant.CONNECT_SUCCESS -> {
@@ -162,13 +169,11 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handle
             binding.bluetoothStateView.text = "蓝牙状态: ON"
         } else {
             binding.bluetoothStateView.text = "蓝牙状态: OFF"
-            bleManager.openBluetooth(true)
+            bleManager.openBluetooth(false)
         }
     }
 
     override fun initEvent() {
-        binding.disconnectButton.setChangeAlphaWhenPress(true)
-        binding.searchButton.setChangeAlphaWhenPress(true)
         binding.disconnectButton.setOnClickListener {
             if (isConnected) {
                 //断开连接

@@ -1,8 +1,6 @@
 <resources>
-
-    <style name="AppTheme" parent="QMUI.Compat.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorAccent">@color/mainColor</item>
     </style>
 
     <style name="PopupAnimation">

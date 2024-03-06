@@ -72,9 +72,8 @@
         <activity android:name=".view.RadarScanActivity" />
         <activity android:name=".view.CompassActivity" />
         <activity android:name=".view.GalleryActivity" />
-        <activity
-            android:name=".view.HikVisionActivity"
-            android:screenOrientation="landscape" />
+        <activity android:name=".view.MLKitActivity" />
+        <activity android:name=".view.HikVisionActivity" />
         <activity
             android:name=".view.FaceCollectionActivity"
             android:screenOrientation="portrait"
