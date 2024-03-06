@@ -68,7 +68,9 @@ dependencies {
     //基础依赖库
     implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.0.5.4'
     implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    def androidx_version = '1.6.1'
+    implementation "androidx.appcompat:appcompat:${androidx_version}"
+    implementation "com.google.android.material:material:${androidx_version}"
     implementation 'androidx.cardview:cardview:1.0.0'
     //Google官方授权库
     implementation 'pub.devrel:easypermissions:3.0.0'
