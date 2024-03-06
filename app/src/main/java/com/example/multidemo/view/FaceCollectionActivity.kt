@@ -1,11 +1,6 @@
 package com.example.multidemo.view
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.ImageFormat
-import android.graphics.PointF
-import android.graphics.RectF
-import android.media.FaceDetector
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -19,17 +14,19 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.example.multidemo.databinding.ActivityFaceCollectBinding
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.extensions.getScreenHeight
-import com.pengxh.kt.lite.extensions.getScreenWidth
 import com.pengxh.kt.lite.extensions.setScreenBrightness
-import com.pengxh.kt.lite.extensions.toBitmap
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.concurrent.*
 import kotlin.math.abs
 
 
-class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() {
+class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>(), Handler.Callback {
 
     companion object {
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
@@ -37,22 +34,18 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
     }
 
     private val kTag = "FaceCollectionActivity"
-    private lateinit var cameraExecutor: ExecutorService
-    private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
-    private lateinit var imageCapture: ImageCapture
-    private lateinit var imageAnalysis: ImageAnalysis
-    private lateinit var weakReferenceHandler: WeakReferenceHandler
+    private val timeFormat by lazy { SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA) }
     private val executor = ThreadPoolExecutor(
         16, 16,
         0L, TimeUnit.MILLISECONDS,
         LinkedBlockingQueue(1024),
         ThreadPoolExecutor.AbortPolicy()
     )
-
-    //分配人脸空间
-    private lateinit var faces: Array<FaceDetector.Face?>
-    private val maxFaceCount = 1
-    private lateinit var rectF: RectF
+    private lateinit var cameraExecutor: ExecutorService
+    private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
+    private lateinit var imageCapture: ImageCapture
+    private lateinit var imageAnalysis: ImageAnalysis
+    private lateinit var weakReferenceHandler: WeakReferenceHandler
 
     override fun setupTopBarLayout() {
 
@@ -67,7 +60,7 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        weakReferenceHandler = WeakReferenceHandler(callback)
+        weakReferenceHandler = WeakReferenceHandler(this)
         //调节屏幕亮度最大
         window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL)
         // Initialize our background executor
@@ -149,66 +142,27 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun observeCameraState(cameraInfo: CameraInfo) {
-        val screenWidth = getScreenWidth()
-        val screenHeight = getScreenHeight()
+        //配置人脸检测器
+        val faceDetectorOptions = FaceDetectorOptions.Builder()
+            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+            .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+            .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+            .build()
+        val detector = FaceDetection.getClient(faceDetectorOptions)
 
         cameraInfo.cameraState.observe(this) { cameraState ->
             //开始预览之后才人脸检测
             if (cameraState.type == CameraState.Type.OPEN) {
                 imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
-                    /**
-                     * CameraX 可通过 setOutputImageFormat(int) 支持 YUV_420_888 和 RGBA_8888。默认格式为 YUV_420_888
-                     *
-                     * NV12是iOS中有的模式，它的存储顺序是先存Y分量，再YV进行交替存储。
-                     * NV21是Android中有的模式，它的存储顺序是先存Y分量，再VU交替存储。
-                     * NV12和NV21格式都属于YUV420SP类型
-                     */
-                    if (imageProxy.format == ImageFormat.YUV_420_888) {
-                        executor.execute {
-                            val image = imageProxy.image
-                            val bitmap = image?.toBitmap(ImageFormat.YUV_420_888) ?: return@execute
-
-                            faces = arrayOfNulls(maxFaceCount)
-                            /**
-                             * Android内置的人脸识别，需要将Bitmap对象转为RGB_565格式，否则无法识别
-                             */
-                            val faceBitmap = bitmap.copy(Bitmap.Config.RGB_565, true)
-                            val faceDetector = FaceDetector(
-                                faceBitmap.width, faceBitmap.height, maxFaceCount
-                            )
-
-                            val widthRatio = screenWidth / faceBitmap.width.toFloat()
-                            val heightRatio = screenHeight / faceBitmap.height.toFloat()
-//                            Log.d(kTag, "observeCameraState => [${widthRatio},${heightRatio}]")
-
-                            val faceCount = faceDetector.findFaces(faceBitmap, faces)
-                            if (faceCount > 0) {
-                                faces.forEach { face ->
-                                    face?.apply {
-                                        val midPointF = PointF()
-                                        // 获取人脸中心点
-                                        getMidPoint(midPointF)
-                                        //预览的像素不一定是手机的最大像素，所以需要将人脸的坐标按比例缩放
-                                        val x = midPointF.x * widthRatio
-                                        val y = midPointF.y * heightRatio
-//                                        Log.d(kTag, "observeCameraState => [${x},${y}]")
-
-                                        // 获取眼间距离参数
-                                        val eyesDistance = eyesDistance()
-                                        rectF = RectF()
-
-                                        rectF.left = x - eyesDistance * 2
-                                        rectF.top = y - eyesDistance
-                                        rectF.right = x + eyesDistance * 2
-                                        rectF.bottom = y + eyesDistance
-
-                                        binding.faceDetectView.updateFacePosition(rectF, x, y)
-                                    }
-                                }
-                                weakReferenceHandler.sendEmptyMessage(2023041402)
-                            } else {
-                                weakReferenceHandler.sendEmptyMessage(2023041401)
-                            }
+                    executor.execute {
+                        val image = imageProxy.image ?: return@execute
+                        val inputImage = InputImage.fromMediaImage(
+                            image, imageProxy.imageInfo.rotationDegrees
+                        )
+                        detector.process(inputImage).addOnSuccessListener { faces ->
+                            binding.faceDetectView.updateFacePosition(faces)
+                            weakReferenceHandler.sendEmptyMessage(2023041401)
+                        }.addOnCompleteListener {
                             //检测完之后close就会继续生成下一帧图片，否则就会被阻塞不会继续生成下一帧
                             imageProxy.close()
                         }
@@ -218,19 +172,16 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
         }
     }
 
-    private val callback = Handler.Callback { msg: Message ->
+    override fun handleMessage(msg: Message): Boolean {
         if (msg.what == 2023041401) {
-            binding.faceDetectTipsView.text = "人脸识别中，请勿晃动手机"
-        } else if (msg.what == 2023041402) {
-            binding.faceDetectTipsView.text = "已检测到人脸，请勿晃动手机"
-//            val outputFileOptions: ImageCapture.OutputFileOptions =
-//                ImageCapture.OutputFileOptions.Builder(FileUtils.imageFile).build()
-//            imageCapture.takePicture(
-//                outputFileOptions,
-//                cameraExecutor,
+//            val imagePath = "/${createImageFileDir()}/${timeFormat.format(Date())}.png"
+//            val outputFileOptions = ImageCapture.OutputFileOptions
+//                .Builder(File(imagePath))
+//                .build()
+//            imageCapture.takePicture(outputFileOptions, cameraExecutor,
 //                object : ImageCapture.OnImageSavedCallback {
 //                    override fun onImageSaved(results: ImageCapture.OutputFileResults) {
-//                        Log.d(TAG, "onImageSaved: " + results.savedUri)
+//                        Log.d(kTag, "onImageSaved: " + results.savedUri)
 //                    }
 //
 //                    override fun onError(error: ImageCaptureException) {
@@ -238,7 +189,7 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
 //                    }
 //                })
         }
-        true
+        return true
     }
 
     override fun initEvent() {

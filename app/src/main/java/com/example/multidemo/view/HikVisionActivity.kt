@@ -17,9 +17,11 @@ import com.gyf.immersionbar.ImmersionBar
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.utils.socket.udp.OnUdpMessageCallback
 import com.pengxh.kt.lite.utils.socket.udp.UdpClient
 
-class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), SurfaceHolder.Callback {
+class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), SurfaceHolder.Callback,
+    OnUdpMessageCallback {
 
     private val kTag = "HikVisionActivity"
     private var previewHandle = -1
@@ -33,10 +35,10 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
 
     private val gson by lazy { Gson() }
     private val typeToken = object : TypeToken<ArrayList<Point>>() {}.type
-    private val udpClient by lazy { UdpClient(DemoConstant.HOST, DemoConstant.TCP_PORT) }
+    private val udpClient by lazy { UdpClient(this) }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-
+        udpClient.bind(DemoConstant.HOST, DemoConstant.TCP_PORT)
     }
 
     override fun initEvent() {
@@ -136,12 +138,16 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
             body.addProperty("code", "11,12")
 
             //发送数据
-            udpClient.send(body.toString())
+            udpClient.sendMessage(body.toString())
         }
 
         binding.httpSendButton.setOnClickListener {
             val region = binding.regionView.getConfirmedPoints()
         }
+    }
+
+    override fun onReceivedUdpMessage(data: ByteArray) {
+
     }
 
     override fun initViewBinding(): ActivityHikvisionBinding {

@@ -2,7 +2,6 @@ package com.example.multidemo
 
 import android.os.Bundle
 import android.view.KeyEvent
-import androidx.lifecycle.lifecycleScope
 import com.example.multidemo.databinding.ActivityMainBinding
 import com.example.multidemo.view.BluetoothActivity
 import com.example.multidemo.view.CompassActivity
@@ -28,11 +27,6 @@ import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.socket.tcp.ConnectState
 import com.pengxh.kt.lite.utils.socket.tcp.OnTcpMessageCallback
 import com.pengxh.kt.lite.utils.socket.tcp.TcpClient
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.Random
 import java.util.Timer
 import java.util.TimerTask
 
@@ -65,16 +59,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), OnTcpMessageCall
     override fun initOnCreate(savedInstanceState: Bundle?) {
         timer = Timer()
 //        tcpClient.connectServer(DemoConstant.HOST, DemoConstant.TCP_PORT)
-
-        val random = Random()
-        lifecycleScope.launch(Dispatchers.IO) {
-            for (i in 0..1000) {
-                withContext(Dispatchers.Main) {
-                    binding.energyPgBar.progress = random.nextInt(binding.energyPgBar.max)
-                }
-                delay(100)
-            }
-        }
     }
 
     override fun onConnectStateChanged(state: ConnectState) {
