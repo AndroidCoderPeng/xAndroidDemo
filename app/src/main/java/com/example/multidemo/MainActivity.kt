@@ -11,6 +11,7 @@ import com.example.multidemo.view.FaceCollectionActivity
 import com.example.multidemo.view.GalleryActivity
 import com.example.multidemo.view.GridViewActivity
 import com.example.multidemo.view.HikVisionActivity
+import com.example.multidemo.view.MLKitActivity
 import com.example.multidemo.view.RadarScanActivity
 import com.example.multidemo.view.RecodeAudioActivity
 import com.example.multidemo.view.RefreshAndLoadMoreActivity
@@ -41,7 +42,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), OnTcpMessageCall
         "侧边导航栏", "上拉加载下拉刷新", "联系人侧边滑动控件", "拖拽地图选点",
         "音频录制与播放", "图片添加水印并压缩", "视频压缩", "蓝牙相关",
         "可删减九宫格", "人脸检测", "TCP客户端", "方向控制盘", "时间轴",
-        "海康摄像头", "雷达扫描效果", "指南针", "3D画廊"
+        "海康摄像头", "雷达扫描效果", "指南针", "3D画廊", "Google ML Kit"
     )
 
     override fun setupTopBarLayout() {
@@ -115,6 +116,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), OnTcpMessageCall
                     14 -> navigatePageTo<RadarScanActivity>()
                     15 -> navigatePageTo<CompassActivity>()
                     16 -> navigatePageTo<GalleryActivity>()
+                    17 -> navigatePageTo<MLKitActivity>()
                 }
             }
         })
