@@ -18,9 +18,12 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.createImageFileDir
 import com.pengxh.kt.lite.extensions.setScreenBrightness
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
+import java.io.File
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import java.util.concurrent.*
 import kotlin.math.abs
@@ -159,13 +162,14 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>(),
                         val inputImage = InputImage.fromMediaImage(
                             image, imageProxy.imageInfo.rotationDegrees
                         )
-                        detector.process(inputImage).addOnSuccessListener { faces ->
-                            binding.faceDetectView.updateFacePosition(faces)
-                            weakReferenceHandler.sendEmptyMessage(2023041401)
-                        }.addOnCompleteListener {
-                            //检测完之后close就会继续生成下一帧图片，否则就会被阻塞不会继续生成下一帧
-                            imageProxy.close()
-                        }
+                        detector.process(inputImage)
+                            .addOnSuccessListener { faces ->
+                                binding.faceDetectView.updateFacePosition(faces)
+                                weakReferenceHandler.sendEmptyMessage(2023041401)
+                            }.addOnCompleteListener {
+                                //检测完之后close就会继续生成下一帧图片，否则就会被阻塞不会继续生成下一帧
+                                imageProxy.close()
+                            }
                     }
                 }
             }
@@ -174,10 +178,10 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>(),
 
     override fun handleMessage(msg: Message): Boolean {
         if (msg.what == 2023041401) {
-//            val imagePath = "/${createImageFileDir()}/${timeFormat.format(Date())}.png"
-//            val outputFileOptions = ImageCapture.OutputFileOptions
-//                .Builder(File(imagePath))
-//                .build()
+            val imagePath = "/${createImageFileDir()}/${timeFormat.format(Date())}.png"
+            val outputFileOptions = ImageCapture.OutputFileOptions
+                .Builder(File(imagePath))
+                .build()
 //            imageCapture.takePicture(outputFileOptions, cameraExecutor,
 //                object : ImageCapture.OnImageSavedCallback {
 //                    override fun onImageSaved(results: ImageCapture.OutputFileResults) {
