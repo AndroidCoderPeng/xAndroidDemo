@@ -10,12 +10,16 @@ import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.pengxh.kt.lite.adapter.EditableImageAdapter
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.divider.RecyclerViewItemOffsets
+import com.pengxh.kt.lite.extensions.dp2px
+import com.pengxh.kt.lite.extensions.getScreenWidth
 import com.pengxh.kt.lite.extensions.navigatePageTo
 
 class GridViewActivity : KotlinBaseActivity<ActivityGridviewBinding>() {
 
-    private lateinit var editableImageAdapter: EditableImageAdapter
+    private lateinit var imageAdapter: EditableImageAdapter
     private val recyclerViewImages = ArrayList<String>()
+    private val marginOffset by lazy { 2.dp2px(this) }
 
     override fun setupTopBarLayout() {
 
@@ -30,9 +34,12 @@ class GridViewActivity : KotlinBaseActivity<ActivityGridviewBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        editableImageAdapter = EditableImageAdapter(this, 9, 1)
-        binding.nineRecyclerView.adapter = editableImageAdapter
-        editableImageAdapter.setOnItemClickListener(object :
+        imageAdapter = EditableImageAdapter(this, getScreenWidth(), 9, 3)
+        binding.recyclerView.addItemDecoration(
+            RecyclerViewItemOffsets(marginOffset, marginOffset, marginOffset, marginOffset)
+        )
+        binding.recyclerView.adapter = imageAdapter
+        imageAdapter.setOnItemClickListener(object :
             EditableImageAdapter.OnItemClickListener {
             override fun onAddImageClick() {
                 selectPicture()
@@ -43,7 +50,7 @@ class GridViewActivity : KotlinBaseActivity<ActivityGridviewBinding>() {
             }
 
             override fun onItemLongClick(view: View?, position: Int) {
-                editableImageAdapter.deleteImage(position)
+//                imageAdapter.deleteImage(position)
             }
         })
     }
@@ -62,7 +69,7 @@ class GridViewActivity : KotlinBaseActivity<ActivityGridviewBinding>() {
                     for (media in result) {
                         recyclerViewImages.add(media.realPath)
                     }
-                    editableImageAdapter.setupImage(recyclerViewImages)
+                    imageAdapter.notifyImageItemRangeInserted(recyclerViewImages)
                 }
 
                 override fun onCancel() {}

@@ -66,7 +66,7 @@ static def getBuildDate() {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //基础依赖库
-    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.0.5.4'
+    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.0.9'
     implementation 'androidx.core:core-ktx:1.9.0'
     def androidx_version = '1.6.1'
     implementation "androidx.appcompat:appcompat:${androidx_version}"

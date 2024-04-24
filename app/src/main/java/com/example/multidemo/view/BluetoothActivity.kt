@@ -1,7 +1,7 @@
 package com.example.multidemo.view
 
-import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -21,18 +21,16 @@ import com.pengxh.kt.lite.utils.BroadcastManager
 import com.pengxh.kt.lite.utils.Constant
 import com.pengxh.kt.lite.utils.LoadingDialogHub
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
-import com.pengxh.kt.lite.utils.ble.BLEManager
-import com.pengxh.kt.lite.utils.ble.BluetoothDevice
-import com.pengxh.kt.lite.utils.ble.OnBleConnectListener
+import com.pengxh.kt.lite.utils.ble.BleDeviceManager
+import com.pengxh.kt.lite.utils.ble.OnDeviceConnectListener
 import com.pengxh.kt.lite.utils.ble.OnDeviceDiscoveredListener
 import com.pengxh.kt.lite.widget.dialog.BottomActionSheet
-import java.util.*
+import java.util.Objects
 
-@SuppressLint("all")
 class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handler.Callback {
 
     private val kTag = "BluetoothActivity"
-    private val bleManager by lazy { BLEManager(this) }
+    private val bleManager by lazy { BleDeviceManager(this) }
     private val broadcastManager by lazy { BroadcastManager(this) }
     private val weakReferenceHandler by lazy { WeakReferenceHandler(this) }
     private val bluetoothDevices = ArrayList<BluetoothDevice>()
@@ -59,7 +57,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handle
                     //0表示未添加到list的新设备，1表示已经扫描并添加到list的设备
                     var judge = 0
                     for (it in bluetoothDevices) {
-                        if (it.device.address.equals(device.device.address)) {
+                        if (it.address.equals(device.address)) {
                             judge = 1
                             break
                         }
@@ -75,7 +73,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handle
 
                 val array = ArrayList<String>()
                 for (it in bluetoothDevices) {
-                    array.add(it.device.name)
+                    array.add(it.name)
                 }
 
                 BottomActionSheet.Builder()
@@ -85,7 +83,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handle
                     .setOnActionSheetListener(object : BottomActionSheet.OnActionSheetListener {
                         override fun onActionItemClick(position: Int) {
                             //连接点击的设备
-                            startConnectDevice(bluetoothDevices[position].device)
+                            startConnectDevice(bluetoothDevices[position])
                         }
                     }).build().show()
             }
@@ -169,7 +167,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handle
             binding.bluetoothStateView.text = "蓝牙状态: ON"
         } else {
             binding.bluetoothStateView.text = "蓝牙状态: OFF"
-            bleManager.openBluetooth(false)
+            bleManager.openBluetooth()
         }
     }
 
@@ -196,7 +194,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handle
                     weakReferenceHandler.sendMessage(message)
                 }
 
-                override fun onDiscoveryTimeout() {
+                override fun onDeviceDiscoveryEnd() {
                     val message: Message = weakReferenceHandler.obtainMessage()
                     message.what = Constant.DISCOVERY_OUT_TIME
                     weakReferenceHandler.sendMessage(message)
@@ -213,20 +211,19 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handle
                 device,
                 DemoConstant.SERVICE_UUID,
                 DemoConstant.READ_CHARACTERISTIC_UUID,
-                DemoConstant.WRITE_CHARACTERISTIC_UUID,
                 10000,
                 onBleConnectListener
             )
         }
     }
 
-    private val onBleConnectListener: OnBleConnectListener = object : OnBleConnectListener {
+    private val onBleConnectListener = object : OnDeviceConnectListener {
         override fun onConnecting(bluetoothGatt: BluetoothGatt?) {}
+
         override fun onConnectSuccess(bluetoothGatt: BluetoothGatt?, status: Int) {}
+
         override fun onConnectFailure(
-            bluetoothGatt: BluetoothGatt?,
-            exception: String?,
-            status: Int
+            bluetoothGatt: BluetoothGatt?, exception: String, status: Int
         ) {
             val message: Message = weakReferenceHandler.obtainMessage()
             message.what = Constant.CONNECT_FAILURE
@@ -234,6 +231,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handle
         }
 
         override fun onDisConnecting(bluetoothGatt: BluetoothGatt?) {}
+
         override fun onDisConnectSuccess(bluetoothGatt: BluetoothGatt?, status: Int) {
             val message: Message = weakReferenceHandler.obtainMessage()
             message.what = Constant.DISCONNECT_SUCCESS
@@ -241,13 +239,13 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handle
             weakReferenceHandler.sendMessage(message)
         }
 
-        override fun onServiceDiscoverySucceed(bluetoothGatt: BluetoothGatt?, status: Int) {
+        override fun onServiceDiscoverySuccess(bluetoothGatt: BluetoothGatt?, status: Int) {
             val message: Message = weakReferenceHandler.obtainMessage()
             message.what = Constant.CONNECT_SUCCESS
             weakReferenceHandler.sendMessage(message)
         }
 
-        override fun onServiceDiscoveryFailed(bluetoothGatt: BluetoothGatt?, msg: String?) {
+        override fun onServiceDiscoveryFailed(bluetoothGatt: BluetoothGatt?, msg: String) {
             val message: Message = weakReferenceHandler.obtainMessage()
             message.what = Constant.CONNECT_FAILURE
             weakReferenceHandler.sendMessage(message)
@@ -260,7 +258,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handle
             weakReferenceHandler.sendMessage(message)
         }
 
-        override fun onReceiveError(errorMsg: String?) {
+        override fun onReceiveError(errorMsg: String) {
             val message: Message = weakReferenceHandler.obtainMessage()
             message.what = Constant.RECEIVE_FAILURE
             weakReferenceHandler.sendMessage(message)
@@ -273,12 +271,10 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handle
             weakReferenceHandler.sendMessage(message)
         }
 
-        override fun onWriteFailure(
-            bluetoothGatt: BluetoothGatt?, msg: ByteArray?, errorMsg: String?
-        ) {
+        override fun onWriteFailed(bluetoothGatt: BluetoothGatt?, errorMsg: String) {
             val message: Message = weakReferenceHandler.obtainMessage()
             message.what = Constant.SEND_FAILURE
-            message.obj = msg
+            message.obj = errorMsg
             weakReferenceHandler.sendMessage(message)
         }
 
