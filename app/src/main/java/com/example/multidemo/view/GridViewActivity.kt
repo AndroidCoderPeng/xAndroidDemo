@@ -1,7 +1,10 @@
 package com.example.multidemo.view
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import com.example.multidemo.databinding.ActivityGridviewBinding
 import com.example.multidemo.util.GlideLoadEngine
 import com.luck.picture.lib.basic.PictureSelector
@@ -11,15 +14,26 @@ import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.pengxh.kt.lite.adapter.EditableImageAdapter
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.divider.RecyclerViewItemOffsets
+import com.pengxh.kt.lite.extensions.createCompressImageDir
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.getScreenWidth
 import com.pengxh.kt.lite.extensions.navigatePageTo
+import com.pengxh.kt.lite.utils.WeakReferenceHandler
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import top.zibin.luban.Luban
+import top.zibin.luban.OnCompressListener
+import java.io.File
 
-class GridViewActivity : KotlinBaseActivity<ActivityGridviewBinding>() {
+class GridViewActivity : KotlinBaseActivity<ActivityGridviewBinding>(), Handler.Callback {
 
-    private lateinit var imageAdapter: EditableImageAdapter
+    private val context = this
     private val recyclerViewImages = ArrayList<String>()
-    private val marginOffset by lazy { 2.dp2px(this) }
+    private val selectedImages = ArrayList<LocalMedia>()
+    private val marginOffset by lazy { 1.dp2px(this) }
+    private val weakReferenceHandler by lazy { WeakReferenceHandler(this) }
+    private lateinit var imageAdapter: EditableImageAdapter
 
     override fun setupTopBarLayout() {
 
@@ -34,13 +48,12 @@ class GridViewActivity : KotlinBaseActivity<ActivityGridviewBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        imageAdapter = EditableImageAdapter(this, getScreenWidth(), 9, 3)
+        imageAdapter = EditableImageAdapter(this, recyclerViewImages, getScreenWidth(), 9, 3)
         binding.recyclerView.addItemDecoration(
             RecyclerViewItemOffsets(marginOffset, marginOffset, marginOffset, marginOffset)
         )
         binding.recyclerView.adapter = imageAdapter
-        imageAdapter.setOnItemClickListener(object :
-            EditableImageAdapter.OnItemClickListener {
+        imageAdapter.setOnItemClickListener(object : EditableImageAdapter.OnItemClickListener {
             override fun onAddImageClick() {
                 selectPicture()
             }
@@ -50,26 +63,65 @@ class GridViewActivity : KotlinBaseActivity<ActivityGridviewBinding>() {
             }
 
             override fun onItemLongClick(view: View?, position: Int) {
-//                imageAdapter.deleteImage(position)
+                selectedImages.removeAt(position)
+                recyclerViewImages.removeAt(position)
+                imageAdapter.notifyDataSetChanged()
             }
         })
     }
 
+    override fun handleMessage(msg: Message): Boolean {
+        if (msg.what == 2024042301) {
+            val file = msg.obj as File
+
+            recyclerViewImages.add(file.absolutePath)
+            imageAdapter.notifyDataSetChanged()
+        }
+        return true
+    }
+
     private fun selectPicture() {
-        PictureSelector.create(this)
-            .openGallery(SelectMimeType.ofImage())
-            .isGif(false)
-            .isMaxSelectEnabledMask(true)
-            .setFilterMinFileSize(100)
-            .setMaxSelectNum(9)
-            .isDisplayCamera(false)
-            .setImageEngine(GlideLoadEngine.get)
+        PictureSelector.create(this).openGallery(SelectMimeType.ofImage()).isGif(false)
+            .isMaxSelectEnabledMask(true).setFilterMinFileSize(100).setMaxSelectNum(9)
+            .isDisplayCamera(false).setImageEngine(GlideLoadEngine.get)
+            .setSelectedData(selectedImages)
             .forResult(object : OnResultCallbackListener<LocalMedia> {
                 override fun onResult(result: ArrayList<LocalMedia>) {
-                    for (media in result) {
-                        recyclerViewImages.add(media.realPath)
+                    //因为设置了selectedImages，每次选择数据都会发生变化，所以需要清空之前的缓存
+                    selectedImages.clear()
+                    recyclerViewImages.clear()
+
+                    //数据链处理已选的图片
+                    lifecycleScope.launch {
+                        flow {
+                            result.forEach {
+                                emit(it)
+                                delay(1000)
+                            }
+                        }.collect {
+                            selectedImages.add(it)
+                            //模拟压缩图片并上传
+                            Luban.with(context).load(it.realPath).ignoreBy(100)
+                                .setTargetDir(context.createCompressImageDir().toString())
+                                .setCompressListener(object : OnCompressListener {
+                                    override fun onStart() {
+
+                                    }
+
+                                    override fun onSuccess(file: File) {
+                                        //模拟上传图片
+                                        val message = weakReferenceHandler.obtainMessage()
+                                        message.what = 2024042301
+                                        message.obj = file
+                                        weakReferenceHandler.sendMessageDelayed(message, 500)
+                                    }
+
+                                    override fun onError(e: Throwable) {
+                                        e.printStackTrace()
+                                    }
+                                }).launch()
+                        }
                     }
-                    imageAdapter.notifyImageItemRangeInserted(recyclerViewImages)
                 }
 
                 override fun onCancel() {}
@@ -77,23 +129,6 @@ class GridViewActivity : KotlinBaseActivity<ActivityGridviewBinding>() {
     }
 
     override fun initEvent() {
-        binding.button.setOnClickListener {
-            binding.imagePathView.text = reformatURL(recyclerViewImages)
-        }
-    }
 
-    private fun reformatURL(urls: List<String>): String {
-        if (urls.isEmpty()) {
-            return ""
-        }
-        val builder = StringBuilder()
-        for (i in urls.indices) {
-            if (i != urls.size - 1) {
-                builder.append(urls[i]).append(",")
-            } else {
-                builder.append(urls[i])
-            }
-        }
-        return builder.toString()
     }
 }

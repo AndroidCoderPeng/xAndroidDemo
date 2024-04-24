@@ -66,7 +66,7 @@ static def getBuildDate() {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //基础依赖库
-    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.0.9'
+    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.0.10'
     implementation 'androidx.core:core-ktx:1.9.0'
     def androidx_version = '1.6.1'
     implementation "androidx.appcompat:appcompat:${androidx_version}"
@@ -122,4 +122,6 @@ dependencies {
     implementation "androidx.camera:camera-view:$camerax_version"
     //Google mlkit 人脸检测
     implementation 'com.google.mlkit:face-detection:16.1.6'
+    //图片压缩
+    implementation 'top.zibin:Luban:1.1.8'
 }
