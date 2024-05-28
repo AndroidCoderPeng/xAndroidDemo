@@ -6,7 +6,7 @@
     android:padding="10dp">
 
     <TextView
-        android:id="@+id/bluetoothStateView"
+        android:id="@+id/stateView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
@@ -21,7 +21,7 @@
         android:paddingVertical="10dp"
         android:text="设备编号"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bluetoothStateView" />
+        app:layout_constraintTop_toBottomOf="@id/stateView" />
 
     <ScrollView
         android:layout_width="match_parent"

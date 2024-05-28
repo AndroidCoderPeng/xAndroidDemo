@@ -1,141 +1,55 @@
 package com.example.multidemo.view
 
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
+import android.bluetooth.BluetoothGattService
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import com.clj.fastble.BleManager
+import com.clj.fastble.callback.BleGattCallback
+import com.clj.fastble.callback.BleNotifyCallback
+import com.clj.fastble.callback.BleScanCallback
+import com.clj.fastble.data.BleDevice
+import com.clj.fastble.exception.BleException
 import com.example.multidemo.R
+import com.example.multidemo.base.BaseApplication
 import com.example.multidemo.databinding.ActivityBluetoothBinding
 import com.example.multidemo.util.DemoConstant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.show
-import com.pengxh.kt.lite.extensions.toASCII
 import com.pengxh.kt.lite.utils.BroadcastManager
 import com.pengxh.kt.lite.utils.Constant
 import com.pengxh.kt.lite.utils.LoadingDialogHub
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
-import com.pengxh.kt.lite.utils.ble.BleDeviceManager
-import com.pengxh.kt.lite.utils.ble.OnDeviceConnectListener
-import com.pengxh.kt.lite.utils.ble.OnDeviceDiscoveredListener
 import com.pengxh.kt.lite.widget.dialog.BottomActionSheet
-import java.util.Objects
+import java.util.UUID
 
 class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handler.Callback {
 
     private val kTag = "BluetoothActivity"
-    private val bleManager by lazy { BleDeviceManager(this) }
+    private val context = this
     private val broadcastManager by lazy { BroadcastManager(this) }
     private val weakReferenceHandler by lazy { WeakReferenceHandler(this) }
-    private val bluetoothDevices = ArrayList<BluetoothDevice>()
-    private val builder by lazy { StringBuilder() }
-    private var isConnected = false
+    private val bluetoothDevices = ArrayList<BleDevice>()
+    private var connectedDevice: BleDevice? = null
 
     override fun handleMessage(msg: Message): Boolean {
         when (msg.what) {
             Constant.BLUETOOTH_ON -> {
                 "蓝牙已开启".show(this)
-                binding.bluetoothStateView.text = "蓝牙状态: ON"
+                binding.stateView.text = "蓝牙状态: ON"
             }
 
             Constant.BLUETOOTH_OFF -> {
                 "蓝牙已关闭".show(this)
-                binding.bluetoothStateView.text = "蓝牙状态: ON"
-            }
-
-            Constant.DISCOVERY_DEVICE -> {
-                val device = msg.obj as BluetoothDevice
-                if (bluetoothDevices.size == 0) {
-                    bluetoothDevices.add(device)
-                } else {
-                    //0表示未添加到list的新设备，1表示已经扫描并添加到list的设备
-                    var judge = 0
-                    for (it in bluetoothDevices) {
-                        if (it.address.equals(device.address)) {
-                            judge = 1
-                            break
-                        }
-                    }
-                    if (judge == 0) {
-                        bluetoothDevices.add(device)
-                    }
-                }
-            }
-
-            Constant.DISCOVERY_OUT_TIME -> {
-                LoadingDialogHub.dismiss()
-
-                val array = ArrayList<String>()
-                for (it in bluetoothDevices) {
-                    array.add(it.name)
-                }
-
-                BottomActionSheet.Builder()
-                    .setContext(this)
-                    .setActionItemTitle(array)
-                    .setItemTextColor(R.color.mainColor.convertColor(this))
-                    .setOnActionSheetListener(object : BottomActionSheet.OnActionSheetListener {
-                        override fun onActionItemClick(position: Int) {
-                            //连接点击的设备
-                            startConnectDevice(bluetoothDevices[position])
-                        }
-                    }).build().show()
-            }
-
-            Constant.CONNECT_SUCCESS -> {
-                LoadingDialogHub.dismiss()
-                isConnected = true
-                bleManager.sendCommand(DemoConstant.ASK_DEV_CODE_COMMAND)
-            }
-
-            Constant.CONNECT_FAILURE -> {
-                isConnected = false
-                Log.d(kTag, "handleMessage: curConnectState" + false)
-            }
-
-            Constant.DISCONNECT_SUCCESS -> isConnected = false
-            Constant.SEND_SUCCESS -> {
-                val sendSuccess = msg.obj as ByteArray
-                Log.d(kTag, "发送成功->sendSuccessBuffer: " + sendSuccess.contentToString())
-            }
-
-            Constant.SEND_FAILURE -> {
-                val sendFail = msg.obj as ByteArray
-                Log.d(kTag, "发送失败->sendFailBuffer: " + sendFail.contentToString())
-            }
-
-            Constant.RECEIVE_SUCCESS -> {
-                val receiveByteArray = msg.obj as ByteArray
-                //根据返回值标头判断是设备编号还是数据值
-                val firstByte = receiveByteArray[0]
-                if (firstByte == 0xAA.toByte()) {
-                    //解析测量数据
-                    if (receiveByteArray.size == 14) {
-                        builder.append("设备返回值: ")
-                            .append(receiveByteArray.contentToString())
-                            .append("\r\n")
-                        binding.deviceValueView.text = builder.toString()
-                    } else {
-                        Log.d(kTag, "设备返回值长度异常，无法解析")
-                    }
-                } else if (firstByte == 51.toByte() && receiveByteArray.size >= 14) {
-                    //51, 51, 50, 48, 50, 49, 48, 49, 48, 48, 48, 51, 13, 10, -86, 0, 0, 0, 0, 0
-                    binding.deviceCodeView.text = "设备编号: ${receiveByteArray.toASCII()}"
-                    bleManager.sendCommand(DemoConstant.OPEN_TRANSFER_COMMAND)
-                } else {
-                    Log.d(kTag, "未知返回值，无法解析")
-                }
-            }
-
-            Constant.RECEIVE_FAILURE -> {
-                val receiveString = msg.obj as String
-                Log.d(kTag, "接收失败->receiveString: $receiveString")
+                binding.stateView.text = "蓝牙状态: ON"
             }
         }
         return true
@@ -152,137 +66,167 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>(), Handle
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
+        BleManager.getInstance().init(BaseApplication.get())
+        BleManager.getInstance()
+            .enableLog(true)
+            .setReConnectCount(1, 5000)
+            .setSplitWriteNum(20)
+            .setConnectOverTime(10 * 1000L)
+            .setOperateTimeout(5000)
+
         broadcastManager.addAction(object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                if (BluetoothAdapter.ACTION_STATE_CHANGED == Objects.requireNonNull<String>(intent.action)) {
-                    when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)) {
-                        BluetoothAdapter.STATE_ON -> weakReferenceHandler.sendEmptyMessage(Constant.BLUETOOTH_ON)
-                        BluetoothAdapter.STATE_OFF -> weakReferenceHandler.sendEmptyMessage(Constant.BLUETOOTH_OFF)
+                intent.action?.apply {
+                    if (BluetoothAdapter.ACTION_STATE_CHANGED == this) {
+                        when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)) {
+                            BluetoothAdapter.STATE_ON -> weakReferenceHandler.sendEmptyMessage(
+                                Constant.BLUETOOTH_ON
+                            )
+
+                            BluetoothAdapter.STATE_OFF -> weakReferenceHandler.sendEmptyMessage(
+                                Constant.BLUETOOTH_OFF
+                            )
+                        }
                     }
                 }
             }
         }, Constant.BLUETOOTH_STATE_CHANGED)
 
-        if (bleManager.isBluetoothEnabled()) {
-            binding.bluetoothStateView.text = "蓝牙状态: ON"
+        if (!BleManager.getInstance().isBlueEnable) {
+            binding.stateView.text = "蓝牙状态: ON"
         } else {
-            binding.bluetoothStateView.text = "蓝牙状态: OFF"
-            bleManager.openBluetooth()
+            binding.stateView.text = "蓝牙状态: OFF"
         }
     }
 
     override fun initEvent() {
         binding.disconnectButton.setOnClickListener {
-            if (isConnected) {
-                //断开连接
-                bleManager.disConnectDevice()
-                "设备已断开连接".show(this)
-            } else {
-                "设备未连接，无需断开".show(this)
-            }
+            BleManager.getInstance().disconnect(connectedDevice)
         }
+
         binding.searchButton.setOnClickListener { //搜索蓝牙
-            if (bleManager.isDiscovering()) { //当前正在搜索设备...
-                bleManager.stopDiscoverDevice()
+            if (!BleManager.getInstance().isBlueEnable) {
+                BleManager.getInstance().enableBluetooth()
             }
-            LoadingDialogHub.show(this, "设备搜索中...")
-            bleManager.startScanDevice(object : OnDeviceDiscoveredListener {
-                override fun onDeviceFound(device: BluetoothDevice) {
-                    val message: Message = weakReferenceHandler.obtainMessage()
-                    message.what = Constant.DISCOVERY_DEVICE
-                    message.obj = device
-                    weakReferenceHandler.sendMessage(message)
-                }
 
-                override fun onDeviceDiscoveryEnd() {
-                    val message: Message = weakReferenceHandler.obtainMessage()
-                    message.what = Constant.DISCOVERY_OUT_TIME
-                    weakReferenceHandler.sendMessage(message)
-                }
-            }, 15 * 1000)
+            if (BleManager.getInstance().isConnected(connectedDevice)) {
+                BleManager.getInstance().disconnect(connectedDevice)
+            } else {
+                BleManager.getInstance().scan(object : BleScanCallback() {
+                    override fun onScanStarted(success: Boolean) {
+                        LoadingDialogHub.show(this@BluetoothActivity, "设备搜索中...")
+                    }
+
+                    override fun onScanning(bleDevice: BleDevice) {
+
+                    }
+
+                    override fun onScanFinished(scanResultList: List<BleDevice>) {
+                        LoadingDialogHub.dismiss()
+
+                        scanResultList.forEach {
+                            if (!it.name.isNullOrBlank()) {
+                                bluetoothDevices.add(it)
+                            }
+                        }
+                        showScanResult()
+                    }
+                })
+            }
         }
     }
 
-    private fun startConnectDevice(device: android.bluetooth.BluetoothDevice) {
+    private fun showScanResult() {
+        val array = ArrayList<String>()
+        for (it in bluetoothDevices) {
+            array.add(it.name)
+        }
+
+        BottomActionSheet.Builder()
+            .setContext(this)
+            .setActionItemTitle(array)
+            .setItemTextColor(R.color.mainColor.convertColor(this))
+            .setOnActionSheetListener(object : BottomActionSheet.OnActionSheetListener {
+                override fun onActionItemClick(position: Int) {
+                    //连接点击的设备
+                    startConnectDevice(bluetoothDevices[position])
+                }
+            }).build().show()
+    }
+
+    private fun startConnectDevice(device: BleDevice) {
         // 当前蓝牙设备
-        if (!isConnected) {
-            LoadingDialogHub.show(this, "正在连接...")
-            bleManager.connectBleDevice(
-                device,
-                DemoConstant.SERVICE_UUID,
-                DemoConstant.READ_CHARACTERISTIC_UUID,
-                10000,
-                onBleConnectListener
-            )
+        if (!BleManager.getInstance().isConnected(connectedDevice)) {
+            BleManager.getInstance().connect(device, object : BleGattCallback() {
+                override fun onStartConnect() {
+                    LoadingDialogHub.show(this@BluetoothActivity, "正在连接...")
+                }
+
+                override fun onConnectFail(bleDevice: BleDevice, exception: BleException) {
+                    LoadingDialogHub.dismiss()
+                    "连接失败，请重试".show(context)
+                }
+
+                override fun onConnectSuccess(
+                    bleDevice: BleDevice, gatt: BluetoothGatt, status: Int
+                ) {
+                    Log.d(kTag, "onConnectSuccess: ${bleDevice.name} 连接成功")
+                    connectedDevice = bleDevice
+                    notifyDeviceService(bleDevice, gatt)
+                }
+
+                override fun onDisConnected(
+                    isActiveDisConnected: Boolean, bleDevice: BleDevice,
+                    gatt: BluetoothGatt, status: Int
+                ) {
+                    Log.d(kTag, "onDisConnected => $status")
+                    connectedDevice = null
+                    binding.stateView.text = "未连接"
+                    binding.stateView.setTextColor(Color.RED)
+                }
+            })
+        } else {
+            BleManager.getInstance().disconnect(connectedDevice)
         }
     }
 
-    private val onBleConnectListener = object : OnDeviceConnectListener {
-        override fun onConnecting(bluetoothGatt: BluetoothGatt?) {}
+    private fun notifyDeviceService(bleDevice: BleDevice, gatt: BluetoothGatt) {
+        val serviceList: List<BluetoothGattService> = gatt.services
+        for (service in serviceList) {
+            if (service.uuid == UUID.fromString(DemoConstant.SERVICE_UUID)) {
+                val characteristicList = service.characteristics
+                for (characteristic in characteristicList) {
+                    val uuidCharacteristic = characteristic.uuid
+                    BleManager.getInstance().notify(
+                        bleDevice, service.uuid.toString(), uuidCharacteristic.toString(),
+                        object : BleNotifyCallback() {
+                            override fun onNotifySuccess() {
+                                LoadingDialogHub.dismiss()
+                                "连接成功".show(context)
+                                binding.stateView.text = "已连接"
+                                binding.stateView.setTextColor(Color.GREEN)
+                            }
 
-        override fun onConnectSuccess(bluetoothGatt: BluetoothGatt?, status: Int) {}
+                            override fun onNotifyFailure(exception: BleException) {
+                                LoadingDialogHub.dismiss()
+                                "蓝牙通讯协议不支持".show(context)
+                                connectedDevice = null
+                            }
 
-        override fun onConnectFailure(
-            bluetoothGatt: BluetoothGatt?, exception: String, status: Int
-        ) {
-            val message: Message = weakReferenceHandler.obtainMessage()
-            message.what = Constant.CONNECT_FAILURE
-            weakReferenceHandler.sendMessage(message)
+                            override fun onCharacteristicChanged(data: ByteArray) {
+                                // 打开通知后，设备发过来的数据
+                                Log.d(kTag, data.contentToString())
+                            }
+                        })
+                }
+            }
         }
-
-        override fun onDisConnecting(bluetoothGatt: BluetoothGatt?) {}
-
-        override fun onDisConnectSuccess(bluetoothGatt: BluetoothGatt?, status: Int) {
-            val message: Message = weakReferenceHandler.obtainMessage()
-            message.what = Constant.DISCONNECT_SUCCESS
-            message.obj = status
-            weakReferenceHandler.sendMessage(message)
-        }
-
-        override fun onServiceDiscoverySuccess(bluetoothGatt: BluetoothGatt?, status: Int) {
-            val message: Message = weakReferenceHandler.obtainMessage()
-            message.what = Constant.CONNECT_SUCCESS
-            weakReferenceHandler.sendMessage(message)
-        }
-
-        override fun onServiceDiscoveryFailed(bluetoothGatt: BluetoothGatt?, msg: String) {
-            val message: Message = weakReferenceHandler.obtainMessage()
-            message.what = Constant.CONNECT_FAILURE
-            weakReferenceHandler.sendMessage(message)
-        }
-
-        override fun onReceiveMessage(bluetoothGatt: BluetoothGatt?, value: ByteArray) {
-            val message: Message = weakReferenceHandler.obtainMessage()
-            message.what = Constant.RECEIVE_SUCCESS
-            message.obj = value
-            weakReferenceHandler.sendMessage(message)
-        }
-
-        override fun onReceiveError(errorMsg: String) {
-            val message: Message = weakReferenceHandler.obtainMessage()
-            message.what = Constant.RECEIVE_FAILURE
-            weakReferenceHandler.sendMessage(message)
-        }
-
-        override fun onWriteSuccess(bluetoothGatt: BluetoothGatt?, msg: ByteArray?) {
-            val message: Message = weakReferenceHandler.obtainMessage()
-            message.what = Constant.SEND_SUCCESS
-            message.obj = msg
-            weakReferenceHandler.sendMessage(message)
-        }
-
-        override fun onWriteFailed(bluetoothGatt: BluetoothGatt?, errorMsg: String) {
-            val message: Message = weakReferenceHandler.obtainMessage()
-            message.what = Constant.SEND_FAILURE
-            message.obj = errorMsg
-            weakReferenceHandler.sendMessage(message)
-        }
-
-        override fun onReadRssi(bluetoothGatt: BluetoothGatt?, rssi: Int, status: Int) {}
     }
 
     override fun onDestroy() {
         super.onDestroy()
         broadcastManager.destroy(Constant.BLUETOOTH_STATE_CHANGED)
+        BleManager.getInstance().disconnect(connectedDevice)
+        BleManager.getInstance().destroy()
     }
 }

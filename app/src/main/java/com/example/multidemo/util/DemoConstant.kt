@@ -5,8 +5,6 @@ object DemoConstant {
     val ASK_DEV_CODE_COMMAND = byteArrayOf(0x01, 0x0D, 0x0A) // 查询设备编号命令
     val OPEN_TRANSFER_COMMAND = byteArrayOf(0x02, 0x0D, 0x0A) // 开启数据发送命令
     const val SERVICE_UUID = "0003cdd0-0000-1000-8000-00805f9b0131" //连接设备的UUID
-    const val WRITE_CHARACTERISTIC_UUID = "0003cdd2-0000-1000-8000-00805f9b0131" //写数据特征值UUID
-    const val READ_CHARACTERISTIC_UUID = "0003cdd1-0000-1000-8000-00805f9b0131" //读数据特征值UUID
     val images = listOf(
         "https://images.pexels.com/photos/1036808/pexels-photo-1036808.jpeg",
         "https://images.pexels.com/photos/796602/pexels-photo-796602.jpeg",
