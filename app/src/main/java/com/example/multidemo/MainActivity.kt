@@ -1,8 +1,12 @@
 package com.example.multidemo
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import com.example.multidemo.databinding.ActivityMainBinding
+import com.example.multidemo.service.LocalForegroundService
+import com.example.multidemo.service.RemoteForegroundService
 import com.example.multidemo.view.BluetoothActivity
 import com.example.multidemo.view.CompassActivity
 import com.example.multidemo.view.CompressVideoActivity
@@ -25,6 +29,7 @@ import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.extensions.timestampToCompleteDate
 import com.pengxh.kt.lite.utils.socket.tcp.ConnectState
 import com.pengxh.kt.lite.utils.socket.tcp.OnTcpMessageCallback
 import com.pengxh.kt.lite.utils.socket.tcp.TcpClient
@@ -60,6 +65,14 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), OnTcpMessageCall
     override fun initOnCreate(savedInstanceState: Bundle?) {
         timer = Timer()
 //        tcpClient.connectServer(DemoConstant.HOST, DemoConstant.TCP_PORT)
+
+        startService(Intent(this, LocalForegroundService::class.java))
+        startService(Intent(this, RemoteForegroundService::class.java))
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                Log.d(kTag, "run: ${System.currentTimeMillis().timestampToCompleteDate()}")
+            }
+        }, 0, 1000)
     }
 
     override fun onConnectStateChanged(state: ConnectState) {

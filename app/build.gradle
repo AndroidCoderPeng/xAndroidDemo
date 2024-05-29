@@ -56,6 +56,10 @@ android {
             outputFileName = "X_" + getBuildDate() + "_" + defaultConfig.versionName + ".apk"
         }
     }
+
+    buildFeatures {
+        aidl true
+    }
 }
 
 static def getBuildDate() {

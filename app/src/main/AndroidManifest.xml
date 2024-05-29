@@ -35,6 +35,8 @@
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:name=".base.BaseApplication"
         android:allowBackup="true"
@@ -104,6 +106,17 @@
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="56fa2f20eef95e6107f998a5b59f0e10" />
+
+        <service
+            android:name=".service.LocalForegroundService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <service
+            android:name=".service.RemoteForegroundService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":remote" />
     </application>
 
     <!--Android 11+ use camera-->
