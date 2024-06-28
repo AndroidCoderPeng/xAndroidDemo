@@ -24,9 +24,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!-- Android 11 ～ Android 12 -->
-    <uses-permission
-        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <!-- Android 13+ -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
@@ -76,6 +74,7 @@
         <activity android:name=".view.GalleryActivity" />
         <activity android:name=".view.MLKitActivity" />
         <activity android:name=".view.HikVisionActivity" />
+        <activity android:name=".view.SaveInAlbumActivity" />
         <activity
             android:name=".view.FaceCollectionActivity"
             android:screenOrientation="portrait"
