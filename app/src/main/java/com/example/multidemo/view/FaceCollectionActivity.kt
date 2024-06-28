@@ -1,14 +1,9 @@
 package com.example.multidemo.view
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.ImageFormat
 import android.graphics.Paint
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Surface
@@ -24,6 +19,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.example.multidemo.databinding.ActivityFaceCollectBinding
+import com.example.multidemo.extensions.toBitmap
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
@@ -33,10 +29,7 @@ import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.createImageFileDir
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.setScreenBrightness
-import com.pengxh.kt.lite.extensions.toBitmap
-import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import java.io.File
-import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -49,7 +42,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
 
-class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>(), Handler.Callback {
+class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() {
 
     companion object {
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
@@ -70,7 +63,6 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>(),
     private lateinit var imageCapture: ImageCapture
     private lateinit var imageAnalysis: ImageAnalysis
     private lateinit var faceDetector: FaceDetector
-    private lateinit var weakReferenceHandler: WeakReferenceHandler
 
     override fun setupTopBarLayout() {
 
@@ -85,7 +77,6 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>(),
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        weakReferenceHandler = WeakReferenceHandler(this)
         //调节屏幕亮度最大
         window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL)
 
@@ -188,49 +179,23 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>(),
     @androidx.camera.core.ExperimentalGetImage
     private val faceImageAnalyzer = object : ImageAnalysis.Analyzer {
         override fun analyze(imageProxy: ImageProxy) {
-            if (imageProxy.format == ImageFormat.YUV_420_888) {
-                executor.execute {
-                    val image = imageProxy.image
-                    val bitmap = image?.toBitmap(ImageFormat.YUV_420_888) ?: return@execute
-                    val inputImage = InputImage.fromMediaImage(
-                        image, imageProxy.imageInfo.rotationDegrees
-                    )
+            executor.execute {
+                val bitmap = imageProxy.toBitmap() ?: return@execute
 
-                    faceDetector.process(inputImage).addOnSuccessListener { faces ->
-                        //TODO 实时预览框位置不准
-                        binding.faceDetectView.updateFacePosition(faces)
+                val inputImage = InputImage.fromBitmap(bitmap, 0)
 
-                        val copyBitmap = bitmap.copy(bitmap.config, true)
-                        faces.forEach { face ->
-                            val rect = face.boundingBox
-                            val canvas = Canvas(copyBitmap)
-                            canvas.drawRect(rect, borderPaint)
-                        }
-                        //保存到本地
-                        val message = weakReferenceHandler.obtainMessage()
-                        message.what = 2023041401
-                        message.obj = copyBitmap
-                        weakReferenceHandler.sendMessage(message)
-                    }.addOnCompleteListener {
-                        //检测完之后close就会继续生成下一帧图片，否则就会被阻塞不会继续生成下一帧
-                        imageProxy.close()
-                    }
+                faceDetector.process(inputImage).addOnSuccessListener { faces ->
+                    binding.faceDetectView.updateFacePosition(faces)
+
+                    //保存到本地
+//                    val imagePath = "/${createImageFileDir()}/${timeFormat.format(Date())}.png"
+//                    bitmap.saveImage(imagePath)
+                }.addOnCompleteListener {
+                    //检测完之后close就会继续生成下一帧图片，否则就会被阻塞不会继续生成下一帧
+                    imageProxy.close()
                 }
             }
         }
-    }
-
-    override fun handleMessage(msg: Message): Boolean {
-        if (msg.what == 2023041401) {
-            val bitmap = msg.obj as Bitmap
-
-            val imagePath = "/${createImageFileDir()}/${timeFormat.format(Date())}.png"
-            val fos = FileOutputStream(File(imagePath))
-//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-//            fos.flush()
-//            fos.close()
-        }
-        return true
     }
 
     private fun takePhoto() {
@@ -241,7 +206,14 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>(),
         imageCapture.takePicture(outputFileOptions, cameraExecutor,
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(results: ImageCapture.OutputFileResults) {
-                    Log.d(kTag, "onImageSaved: " + results.savedUri)
+                    results.savedUri?.apply {
+                        Log.d(kTag, "onImageSaved: $path")
+                        if (path.isNullOrBlank()) {
+                            Log.d(kTag, "onImageSaved: path is null")
+                            return@apply
+                        }
+//                        analyticalSelectResult(path!!)
+                    }
                 }
 
                 override fun onError(error: ImageCaptureException) {
