@@ -57,7 +57,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), OnTcpMessageCall
         "音频录制与播放", "图片添加水印并压缩", "视频压缩", "蓝牙相关",
         "可删减九宫格", "人脸检测", "TCP客户端", "方向控制盘", "时间轴",
         "海康摄像头", "雷达扫描效果", "指南针", "3D画廊", "Google ML Kit",
-        "拍照保存到相册", "MediaProject截图"
+        "拍照保存到相册", "自动截图"
     )
     private var clickTime: Long = 0
     private var timer: Timer? = null
@@ -79,6 +79,10 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), OnTcpMessageCall
     override fun initOnCreate(savedInstanceState: Bundle?) {
         timer = Timer()
 //        tcpClient.connectServer(DemoConstant.HOST, DemoConstant.TCP_PORT)
+
+//        if (!SkipConfirmService.isServiceRunning) {
+//            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+//        }
     }
 
     override fun onConnectStateChanged(state: ConnectState) {
