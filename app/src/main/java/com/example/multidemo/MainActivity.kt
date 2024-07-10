@@ -1,8 +1,17 @@
 package com.example.multidemo
 
+import android.app.Activity
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.media.projection.MediaProjectionManager
 import android.os.Bundle
+import android.os.IBinder
 import android.view.KeyEvent
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.multidemo.databinding.ActivityMainBinding
+import com.example.multidemo.service.ScreenShortRecordService
 import com.example.multidemo.view.BluetoothActivity
 import com.example.multidemo.view.CompassActivity
 import com.example.multidemo.view.CompressVideoActivity
@@ -24,28 +33,36 @@ import com.example.multidemo.view.WaterMarkerActivity
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.createImageFileDir
+import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.socket.tcp.ConnectState
 import com.pengxh.kt.lite.utils.socket.tcp.OnTcpMessageCallback
 import com.pengxh.kt.lite.utils.socket.tcp.TcpClient
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
+
 
 class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), OnTcpMessageCallback {
 
     private val kTag = "MainActivity"
     private val tcpClient by lazy { TcpClient(this) }
-    private var clickTime: Long = 0
-    private var timer: Timer? = null
-    private var timerTask: TimerTask? = null
+    private val timeFormat by lazy { SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA) }
     private val itemNames = listOf(
         "侧边导航栏", "上拉加载下拉刷新", "联系人侧边滑动控件", "拖拽地图选点",
         "音频录制与播放", "图片添加水印并压缩", "视频压缩", "蓝牙相关",
         "可删减九宫格", "人脸检测", "TCP客户端", "方向控制盘", "时间轴",
         "海康摄像头", "雷达扫描效果", "指南针", "3D画廊", "Google ML Kit",
-        "拍照保存到相册"
+        "拍照保存到相册", "MediaProject截图"
     )
+    private var clickTime: Long = 0
+    private var timer: Timer? = null
+    private var timerTask: TimerTask? = null
+    private var screenShortService: ScreenShortRecordService? = null
 
     override fun setupTopBarLayout() {
 
@@ -73,8 +90,9 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), OnTcpMessageCall
     }
 
     override fun initEvent() {
-        val adapter = object :
-            NormalRecyclerAdapter<String>(R.layout.item_main_rv_g, itemNames.toMutableList()) {
+        val adapter = object : NormalRecyclerAdapter<String>(
+            R.layout.item_main_rv_g, itemNames.toMutableList()
+        ) {
             override fun convertView(viewHolder: ViewHolder, position: Int, item: String) {
                 viewHolder.setText(R.id.itemTitleView, item)
             }
@@ -120,9 +138,50 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(), OnTcpMessageCall
                     16 -> navigatePageTo<GalleryActivity>()
                     17 -> navigatePageTo<MLKitActivity>()
                     18 -> navigatePageTo<SaveInAlbumActivity>()
+                    19 -> {
+                        val mpm = getSystemService<MediaProjectionManager>()
+                        val captureIntent = mpm?.createScreenCaptureIntent()
+                        captureIntentLauncher.launch(captureIntent)
+                    }
                 }
             }
         })
+    }
+
+    private val captureIntentLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imagePath = "${createImageFileDir()}/${timeFormat.format(Date())}.png"
+            result.data?.let {
+                screenShortService?.startCaptureScreen(imagePath, it)
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Intent(this, ScreenShortRecordService::class.java).also { intent ->
+            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, iBinder: IBinder?) {
+            if (iBinder is ScreenShortRecordService.ServiceBinder) {
+                //截屏
+                screenShortService = iBinder.getScreenShortRecordService()
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            "录屏服务已断开".show(this@MainActivity)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(serviceConnection)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
