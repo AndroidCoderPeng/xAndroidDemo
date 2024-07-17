@@ -106,19 +106,6 @@
             android:exported="true"
             android:foregroundServiceType="mediaProjection" />
 
-        <service
-            android:name=".service.SkipConfirmService"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
-            </intent-filter>
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/auto_sign_in_service_config" />
-        </service>
-
         <!--高德定位-->
         <service android:name="com.amap.api.location.APSService" />
 
