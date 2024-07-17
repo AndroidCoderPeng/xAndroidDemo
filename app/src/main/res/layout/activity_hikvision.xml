@@ -52,16 +52,10 @@
                 android:text="关闭摄像头" />
 
             <Button
-                android:id="@+id/httpSendButton"
+                android:id="@+id/sendButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Http方式发送" />
-
-            <Button
-                android:id="@+id/socketSendButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Socket方式发送" />
+                android:text="发送区域数据" />
         </LinearLayout>
     </FrameLayout>
 </LinearLayout>

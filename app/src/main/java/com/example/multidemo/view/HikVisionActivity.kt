@@ -17,11 +17,8 @@ import com.gyf.immersionbar.ImmersionBar
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
-import com.pengxh.kt.lite.utils.socket.udp.OnUdpMessageCallback
-import com.pengxh.kt.lite.utils.socket.udp.UdpClient
 
-class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), SurfaceHolder.Callback,
-    OnUdpMessageCallback {
+class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), SurfaceHolder.Callback {
 
     private val kTag = "HikVisionActivity"
     private var previewHandle = -1
@@ -35,10 +32,9 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
 
     private val gson by lazy { Gson() }
     private val typeToken = object : TypeToken<ArrayList<Point>>() {}.type
-    private val udpClient by lazy { UdpClient(this) }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        udpClient.bind(DemoConstant.HOST, DemoConstant.TCP_PORT)
+
     }
 
     override fun initEvent() {
@@ -130,7 +126,7 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
             isPreviewSuccess = false
         }
 
-        binding.socketSendButton.setOnClickListener {
+        binding.sendButton.setOnClickListener {
             val region = binding.regionView.getConfirmedRegion()
             val body = JsonObject()
             body.add("position", gson.toJsonTree(region, typeToken).asJsonArray)
@@ -138,16 +134,7 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
             body.addProperty("code", "11,12")
 
             //发送数据
-            udpClient.sendMessage(body.toString())
         }
-
-        binding.httpSendButton.setOnClickListener {
-            val region = binding.regionView.getConfirmedPoints()
-        }
-    }
-
-    override fun onReceivedUdpMessage(data: ByteArray) {
-
     }
 
     override fun initViewBinding(): ActivityHikvisionBinding {
@@ -194,10 +181,5 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
                 Log.d(kTag, "surfaceCreated: ${MessageCodeHub.getErrorCode()}")
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        udpClient.release()
     }
 }
