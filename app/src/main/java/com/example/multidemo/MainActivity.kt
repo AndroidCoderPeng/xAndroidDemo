@@ -117,11 +117,12 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                 converter.coord(wgs84)
                 val convert = converter.convert()
 
-                aMap.addMarker(MarkerOptions().position(convert))
-
                 val cameraPosition = CameraPosition(convert, 18f, 0f, 0f)
                 val cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition)
                 aMap.moveCamera(cameraUpdate)
+
+                aMap.clear()
+                aMap.addMarker(MarkerOptions().position(convert))
             }
 
             override fun onProviderEnabled(provider: String) {
