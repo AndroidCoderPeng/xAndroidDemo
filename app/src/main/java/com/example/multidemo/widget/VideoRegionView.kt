@@ -12,7 +12,7 @@ import com.example.multidemo.model.Point
 import com.pengxh.kt.lite.extensions.getScreenHeight
 import com.pengxh.kt.lite.extensions.getScreenWidth
 
-class RegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx, attrs) {
+class VideoRegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx, attrs) {
 
     private val routePath: Path = Path()
     private val rectPath: Path = Path()
@@ -89,17 +89,6 @@ class RegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx, attr
                 val height = ctx.getScreenHeight()
 
                 /**
-                 * 区域
-                 * */
-                if (region.isNotEmpty()) {
-                    region.clear()
-                }
-                region.add(Point(leftTop.x / width, leftTop.y / height))
-                region.add(Point(rightTop.x / width, rightTop.y / height))
-                region.add(Point(leftBottom.x / width, leftBottom.y / height))
-                region.add(Point(rightBottom.x / width, rightBottom.y / height))
-
-                /**
                  * 点集合
                  * */
                 if (points.isNotEmpty()) {
@@ -121,14 +110,6 @@ class RegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx, attr
         routes.clear()
         invalidate()
     }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    private var region = ArrayList<Point>()
-
-    fun getConfirmedRegion(): ArrayList<Point> = region
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private var points = ArrayList<FloatArray>()
 

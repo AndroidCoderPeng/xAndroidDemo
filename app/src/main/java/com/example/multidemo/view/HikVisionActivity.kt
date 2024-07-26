@@ -11,7 +11,6 @@ import com.example.multidemo.util.DemoConstant
 import com.example.multidemo.util.hk.MessageCodeHub
 import com.example.multidemo.util.hk.SDKGuider
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import com.gyf.immersionbar.ImmersionBar
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO
@@ -127,12 +126,7 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
         }
 
         binding.sendButton.setOnClickListener {
-            val region = binding.regionView.getConfirmedRegion()
-            val body = JsonObject()
-            body.add("position", gson.toJsonTree(region, typeToken).asJsonArray)
-            body.addProperty("color", "#FF0000")
-            body.addProperty("code", "11,12")
-
+            val region = binding.regionView.getConfirmedPoints()
             //发送数据
         }
     }
