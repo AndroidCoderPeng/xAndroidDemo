@@ -8,11 +8,13 @@ import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import com.clj.fastble.BleManager
 import com.clj.fastble.callback.BleGattCallback
+import com.clj.fastble.callback.BleMtuChangedCallback
 import com.clj.fastble.callback.BleNotifyCallback
 import com.clj.fastble.callback.BleScanCallback
 import com.clj.fastble.callback.BleWriteCallback
 import com.clj.fastble.data.BleDevice
 import com.clj.fastble.exception.BleException
+import com.clj.fastble.scan.BleScanRuleConfig
 import com.example.multidemo.R
 import com.example.multidemo.base.BaseApplication
 import com.example.multidemo.databinding.ActivityBluetoothBinding
@@ -34,7 +36,6 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
     private val context = this
     private val bleManager by lazy { BleManager.getInstance() }
     private val stringBuffer by lazy { StringBuffer() }
-    private val bluetoothDevices = ArrayList<BleDevice>()
     private var connectedDevice: BleDevice? = null
     private lateinit var writeUuid: String
     private lateinit var notifyUuid: String
@@ -50,7 +51,9 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        bleManager.enableLog(true).setSplitWriteNum(16).init(BaseApplication.get())
+        bleManager.init(BaseApplication.get())
+        val scanConfig = BleScanRuleConfig.Builder().setScanTimeOut(3000).build()
+        bleManager.enableLog(true).initScanRule(scanConfig)
     }
 
     override fun initEvent() {
@@ -73,6 +76,8 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
             if (bleManager.isConnected(connectedDevice)) {
                 bleManager.disconnect(connectedDevice)
             }
+
+            val bluetoothDevices = ArrayList<BleDevice>()
             bleManager.scan(object : BleScanCallback() {
                 override fun onScanStarted(success: Boolean) {
                     LoadingDialogHub.show(this@BluetoothActivity, "设备搜索中...")
@@ -90,7 +95,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
                             bluetoothDevices.add(it)
                         }
                     }
-                    showScanResult()
+                    showScanResult(bluetoothDevices)
                 }
             })
         }
@@ -113,9 +118,9 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
             })
     }
 
-    private fun showScanResult() {
+    private fun showScanResult(devices: ArrayList<BleDevice>) {
         val array = ArrayList<String>()
-        for (it in bluetoothDevices) {
+        for (it in devices) {
             array.add(it.name)
         }
 
@@ -126,7 +131,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
             .setOnActionSheetListener(object : BottomActionSheet.OnActionSheetListener {
                 override fun onActionItemClick(position: Int) {
                     //连接点击的设备
-                    startConnectDevice(bluetoothDevices[position])
+                    startConnectDevice(devices[position])
                 }
             }).build().show()
     }
@@ -140,11 +145,24 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
 
             override fun onConnectFail(bleDevice: BleDevice, exception: BleException) {
                 LoadingDialogHub.dismiss()
+                //失败了就重连
+                startConnectDevice(bleDevice)
             }
 
             override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
                 connectedDevice = bleDevice
-                notifyDeviceService(bleDevice, gatt)
+                //修改蓝牙每包数据长度
+                bleManager.setMtu(bleDevice, 32, object : BleMtuChangedCallback() {
+                    override fun onMtuChanged(mtu: Int) {
+                        Log.d(kTag, "onMtuChanged: $mtu")
+                        notifyDeviceService(bleDevice, gatt)
+                    }
+
+                    override fun onSetMTUFailure(exception: BleException?) {
+                        Log.d(kTag, "onSetMTUFailure: ${exception?.description}")
+                        notifyDeviceService(bleDevice, gatt)
+                    }
+                })
             }
 
             override fun onDisConnected(
