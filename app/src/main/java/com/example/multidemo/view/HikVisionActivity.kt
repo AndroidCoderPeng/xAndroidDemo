@@ -6,16 +6,15 @@ import android.util.Log
 import android.view.SurfaceHolder
 import com.example.multidemo.databinding.ActivityHikvisionBinding
 import com.example.multidemo.extensions.getChannel
-import com.example.multidemo.model.Point
 import com.example.multidemo.util.DemoConstant
 import com.example.multidemo.util.hk.MessageCodeHub
 import com.example.multidemo.util.hk.SDKGuider
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.google.gson.JsonObject
 import com.gyf.immersionbar.ImmersionBar
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.extensions.toJson
 
 class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), SurfaceHolder.Callback {
 
@@ -29,19 +28,12 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
     private var startDChannel = 0
     private var isPreviewSuccess = false
 
-    private val gson by lazy { Gson() }
-    private val typeToken = object : TypeToken<ArrayList<Point>>() {}.type
-
     override fun initOnCreate(savedInstanceState: Bundle?) {
 
     }
 
     override fun initEvent() {
         binding.leftBackView.setOnClickListener { finish() }
-
-        binding.clearView.setOnClickListener {
-            binding.regionView.clearRoutePath()
-        }
 
         binding.openCameraButton.setOnClickListener {
             val deviceItem = SDKGuider.sdkGuider.devManageGuider.DeviceItem()
@@ -128,6 +120,9 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
         binding.sendButton.setOnClickListener {
             val region = binding.regionView.getConfirmedPoints()
             //发送数据
+            val param = JsonObject()
+            param.addProperty("position", region.toJson())
+            Log.d(kTag, param.toJson())
         }
     }
 

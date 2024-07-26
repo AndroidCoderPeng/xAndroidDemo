@@ -19,43 +19,39 @@
             android:layout_height="match_parent" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:gravity="end"
-            android:orientation="vertical"
-            android:padding="@dimen/dp_10">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/leftBackView"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingHorizontal="10dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="返回" />
 
             <Button
-                android:id="@+id/clearView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="重画" />
-
-            <Button
                 android:id="@+id/openCameraButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="打开摄像头" />
+                android:layout_marginHorizontal="@dimen/dp_5"
+                android:layout_weight="1"
+                android:text="打开" />
 
             <Button
                 android:id="@+id/closeCameraButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="关闭摄像头" />
+                android:layout_weight="1"
+                android:text="关闭" />
 
             <Button
                 android:id="@+id/sendButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="发送区域数据" />
+                android:layout_marginStart="@dimen/dp_5"
+                android:text="发送区域坐标" />
         </LinearLayout>
     </FrameLayout>
 </LinearLayout>
