@@ -22,10 +22,10 @@ class VideoRegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx,
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val vertexPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val vertices = listOf(
-        PointF(500f, 500f),  // 顶点1
-        PointF(1000f, 500f),  // 顶点2
-        PointF(1000f, 1000f),  // 顶点3
-        PointF(500f, 1000f)   // 顶点4
+        PointF(300f, 300f),  // 顶点1
+        PointF(600f, 300f),  // 顶点2
+        PointF(600f, 600f),  // 顶点3
+        PointF(300f, 600f)   // 顶点4
     )
 
     init {
@@ -108,7 +108,7 @@ class VideoRegionView(private val ctx: Context, attrs: AttributeSet) : View(ctx,
         } else null
     }
 
-    fun getConfirmedPoints(): ArrayList<FloatArray> {
+    fun getConfirmedRegion(): ArrayList<FloatArray> {
         /**
          * 计算出点的相对位置返回给一体机计算
          * */

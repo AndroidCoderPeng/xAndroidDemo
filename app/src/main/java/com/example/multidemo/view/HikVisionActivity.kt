@@ -118,7 +118,7 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
         }
 
         binding.sendButton.setOnClickListener {
-            val region = binding.regionView.getConfirmedPoints()
+            val region = binding.regionView.getConfirmedRegion()
             //发送数据
             val param = JsonObject()
             param.addProperty("position", region.toJson())
