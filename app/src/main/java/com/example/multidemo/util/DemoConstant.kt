@@ -44,4 +44,6 @@ object DemoConstant {
     const val HK_NET_PORT = "8000"
     const val HK_NET_USERNAME = "admin"
     const val HK_NET_PASSWORD = "1234qwer"
+
+    const val MAX_DISTANCE = 5.5f //表盘最大显示距离
 }
