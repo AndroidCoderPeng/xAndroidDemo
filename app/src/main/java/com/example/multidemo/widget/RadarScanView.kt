@@ -1,5 +1,6 @@
 package com.example.multidemo.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -67,6 +68,7 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
 
     private lateinit var tickPaint: Paint
     private lateinit var backPaint: Paint
+    private lateinit var needlePaint: Paint
     private lateinit var borderPaint: Paint
     private lateinit var shaderPaint: Paint
     private lateinit var dataPaint: Paint
@@ -80,11 +82,17 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
     //背景栅格图
     private lateinit var bitmap: Bitmap
 
+    //针
+    private lateinit var needleBitmap: Bitmap
+
     //雷达旋转矩阵
     private lateinit var matrix: Matrix
 
     //背景区域范围
     private var bgRect: Rect
+
+    //针区域范围
+    private var needleRect: Rect
 
     //刻度长度
     private val tickLength = 15f.dp2px(context)
@@ -107,6 +115,9 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
         rect = Rect(-viewSideLength, -viewSideLength, viewSideLength, viewSideLength)
 
         bgRect = Rect(-radius, -radius, radius, radius)
+
+        val needleRectRadius = (radius * 0.75).toInt()
+        needleRect = Rect(-needleRectRadius, -needleRectRadius, needleRectRadius, needleRectRadius)
 
         initPaint()
 
@@ -139,6 +150,11 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
         backPaint = Paint()
         backPaint.isAntiAlias = true
         bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.bg_radar)
+
+        needlePaint = Paint()
+        needlePaint.isAntiAlias = true
+        //针
+        needleBitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.needle)
 
         borderPaint = Paint()
         borderPaint.color = borderColor
@@ -216,6 +232,7 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
         setMeasuredDimension(mWidth, mHeight)
     }
 
+    @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         /**
@@ -329,6 +346,16 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
                 )
             }
         }
+
+        val needleMatrix = Matrix()
+        needleMatrix.postRotate(degreeValue.toFloat())
+        val bmp = Bitmap.createBitmap(
+            needleBitmap,
+            0, 0,
+            needleBitmap.width, needleBitmap.height,
+            needleMatrix, true
+        )
+        canvas.drawBitmap(bmp, null, needleRect, needlePaint)
 
         //画数据点
         points?.forEach {
