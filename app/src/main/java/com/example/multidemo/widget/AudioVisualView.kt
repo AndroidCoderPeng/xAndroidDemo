@@ -5,4 +5,9 @@ import android.util.AttributeSet
 import android.view.View
 
 class AudioVisualView constructor(context: Context, attrs: AttributeSet) : View(context, attrs) {
+
+
+    fun updateVisualizer(bytes: ByteArray?) {
+
+    }
 }

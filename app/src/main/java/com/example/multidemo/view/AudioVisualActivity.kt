@@ -4,7 +4,6 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.media.audiofx.Visualizer
 import android.os.Bundle
-import android.util.Log
 import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityAudioVisualBinding
 import com.example.multidemo.extensions.initImmersionBar
@@ -34,8 +33,8 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
             try {
                 val fileDescriptor = FileInputStream(binding.audioFilePathView.text.toString()).fd
                 mediaPlayer?.setDataSource(fileDescriptor)
-                mediaPlayer?.prepare() // 准备媒体文件
-                mediaPlayer?.start() // 开始播放
+                mediaPlayer?.prepare()
+                mediaPlayer?.start()
 
                 //初始化可视化容器
                 visualizer = Visualizer(mediaPlayer!!.audioSessionId)
@@ -54,15 +53,13 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
         override fun onWaveFormDataCapture(
             visualizer: Visualizer?, bytes: ByteArray?, samplingRate: Int
         ) {
-            // 在这里处理波形数据
-            // bytes 数组包含了当前的波形数据
-            Log.d(kTag, "onWaveFormDataCapture: ${bytes.contentToString()}")
+            // 时域波形数据
+            binding.audioVisualView.updateVisualizer(bytes)
         }
 
         override fun onFftDataCapture(visualizer: Visualizer?, fft: ByteArray?, samplingRate: Int) {
-            // 注意：不是所有的 Visualizer 实现都会提供 FFT 数据
-            // 如果你的 Visualizer 提供了 FFT 数据，你可以在这里处理它
-            Log.d(kTag, "onFftDataCapture: ${fft.contentToString()}")
+            // 频域波形数据
+            binding.audioVisualView.updateVisualizer(fft)
         }
     }
 
@@ -72,14 +69,12 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
             val mp3Uri = data.data
             mp3Uri?.apply {
                 val absolutePath = this.realFilePath(this@AudioVisualActivity)
-                Log.d(kTag, "onActivityResult: $absolutePath")
                 binding.audioFilePathView.setText(absolutePath)
             }
         }
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        //获取本机音频数据
 
     }
 
