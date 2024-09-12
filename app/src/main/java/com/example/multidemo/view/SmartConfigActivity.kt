@@ -46,18 +46,24 @@ class SmartConfigActivity : KotlinBaseActivity<ActivitySmartConfigBinding>() {
                 binding.deviceCountView.text
             }
 
-            val message =
-                "apSsid: ${binding.ssidView.text}, apBssid: ${binding.bssidView.text}, apPassword: ${binding.passwordView.text}, inetAddress: ${binding.localeIpView.text}"
-            Log.d(kTag, message)
+            val apSsid = binding.ssidView.text.toString().toByteArray()
+            val apBssid = binding.bssidView.text.toString().toByteArray()
+            val apPassword = binding.passwordView.text.toString().toByteArray()
+            val inetAddress = binding.localeIpView.text.toString().toByteArray()
 
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     val socket = DatagramSocket()
                     //广播地址
                     val broadcastAddress = InetAddress.getByName("255.255.255.255")
-                    val bytes = message.toByteArray()
-                    val dataPacket = DatagramPacket(bytes, bytes.size, broadcastAddress, 7001)
-                    socket.send(dataPacket)
+
+                    //组合数据帧
+                    val bytes: Array<ByteArray> = arrayOf(apSsid, apBssid, apPassword, inetAddress)
+                    bytes.forEach {
+                        Log.d(kTag, it.contentToString())
+                        val dataPacket = DatagramPacket(it, it.size, broadcastAddress, 7001)
+                        socket.send(dataPacket)
+                    }
                     socket.close()
                 } catch (e: IOException) {
                     e.printStackTrace()
