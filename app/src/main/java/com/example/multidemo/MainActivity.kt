@@ -5,24 +5,13 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.location.Location
-import android.location.LocationListener
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.KeyEvent
 import androidx.activity.result.contract.ActivityResultContracts
-import com.amap.api.maps.AMap
-import com.amap.api.maps.AMapOptions
-import com.amap.api.maps.CameraUpdateFactory
-import com.amap.api.maps.CoordinateConverter
-import com.amap.api.maps.model.CameraPosition
-import com.amap.api.maps.model.LatLng
-import com.amap.api.maps.model.MarkerOptions
 import com.example.multidemo.databinding.ActivityMainBinding
 import com.example.multidemo.service.ScreenShortRecordService
-import com.example.multidemo.util.LocationHelper
 import com.example.multidemo.view.BluetoothActivity
 import com.example.multidemo.view.CompassActivity
 import com.example.multidemo.view.CompressVideoActivity
@@ -38,6 +27,7 @@ import com.example.multidemo.view.RefreshAndLoadMoreActivity
 import com.example.multidemo.view.SaveInAlbumActivity
 import com.example.multidemo.view.SlideBarActivity
 import com.example.multidemo.view.SlideNavigationActivity
+import com.example.multidemo.view.SmartConfigActivity
 import com.example.multidemo.view.SteeringWheelActivity
 import com.example.multidemo.view.TimeLineActivity
 import com.example.multidemo.view.WaterMarkerActivity
@@ -58,7 +48,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     private val kTag = "MainActivity"
     private val timeFormat by lazy { SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA) }
     private val mpm by lazy { getSystemService<MediaProjectionManager>() }
-    private val converter by lazy { CoordinateConverter(this) }
     private val itemNames = listOf(
         "侧边导航栏",
         "上拉加载下拉刷新",
@@ -78,11 +67,11 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
         "3D画廊",
         "Google ML Kit",
         "拍照保存到相册",
-        "截屏"
+        "截屏",
+        "Smart Config"
     )
     private var clickTime: Long = 0
     private var screenShortService: ScreenShortRecordService? = null
-    private lateinit var aMap: AMap
 
     override fun setupTopBarLayout() {
 
@@ -97,44 +86,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        binding.mapView.onCreate(savedInstanceState)
-        aMap = binding.mapView.map
-        aMap.mapType = AMap.MAP_TYPE_NORMAL
-        val uiSettings = aMap.uiSettings
-        uiSettings.isCompassEnabled = true
-        uiSettings.zoomPosition = AMapOptions.ZOOM_POSITION_RIGHT_CENTER
-        uiSettings.isTiltGesturesEnabled = false//不许地图随手势倾斜角度
-        uiSettings.isRotateGesturesEnabled = false//不允许地图随手势改变方位
 
-        LocationHelper.getCurrentLocation(this, object : LocationListener {
-            override fun onLocationChanged(location: Location) {
-                val latitude = location.latitude
-                val longitude = location.longitude
-                binding.locationView.text = "lat: $latitude, lng: $longitude"
-
-                val wgs84 = LatLng(latitude, longitude)
-                converter.from(CoordinateConverter.CoordType.GPS)
-                converter.coord(wgs84)
-                val convert = converter.convert()
-
-                val cameraPosition = CameraPosition(convert, 18f, 0f, 0f)
-                val cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition)
-                aMap.moveCamera(cameraUpdate)
-
-                aMap.clear()
-                aMap.addMarker(MarkerOptions().position(convert))
-            }
-
-            override fun onProviderEnabled(provider: String) {
-                super.onProviderEnabled(provider)
-                Log.d(kTag, "onProviderEnabled: ")
-            }
-
-            override fun onProviderDisabled(provider: String) {
-                super.onProviderDisabled(provider)
-                Log.d(kTag, "onProviderDisabled: ")
-            }
-        })
     }
 
     override fun initEvent() {
@@ -172,6 +124,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                         val captureIntent = mpm?.createScreenCaptureIntent()
                         captureIntentLauncher.launch(captureIntent)
                     }
+                    19 -> navigatePageTo<SmartConfigActivity>()
                 }
             }
         })
@@ -223,26 +176,5 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                 super.onKeyDown(keyCode, event)
             }
         } else super.onKeyDown(keyCode, event)
-    }
-
-    /***以下是地图生命周期管理************************************************************************/
-    override fun onResume() {
-        super.onResume()
-        binding.mapView.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        binding.mapView.onPause()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        binding.mapView.onSaveInstanceState(outState)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        binding.mapView.onDestroy()
     }
 }
