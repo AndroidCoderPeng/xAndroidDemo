@@ -12,6 +12,7 @@ import android.view.KeyEvent
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.multidemo.databinding.ActivityMainBinding
 import com.example.multidemo.service.ScreenShortRecordService
+import com.example.multidemo.view.AudioVisualActivity
 import com.example.multidemo.view.BluetoothActivity
 import com.example.multidemo.view.CompassActivity
 import com.example.multidemo.view.CompressVideoActivity
@@ -68,7 +69,8 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
         "Google ML Kit",
         "拍照保存到相册",
         "截屏",
-        "Smart Config"
+        "Smart Config",
+        "音频可视化"
     )
     private var clickTime: Long = 0
     private var screenShortService: ScreenShortRecordService? = null
@@ -124,7 +126,9 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                         val captureIntent = mpm?.createScreenCaptureIntent()
                         captureIntentLauncher.launch(captureIntent)
                     }
+
                     19 -> navigatePageTo<SmartConfigActivity>()
+                    20 -> navigatePageTo<AudioVisualActivity>()
                 }
             }
         })

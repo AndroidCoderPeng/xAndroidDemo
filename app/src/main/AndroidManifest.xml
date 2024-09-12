@@ -77,6 +77,9 @@
         <activity android:name=".view.SaveInAlbumActivity" />
         <activity android:name=".view.SmartConfigActivity" />
         <activity
+            android:name=".view.AudioVisualActivity"
+            android:screenOrientation="landscape" />
+        <activity
             android:name=".view.FaceCollectionActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
