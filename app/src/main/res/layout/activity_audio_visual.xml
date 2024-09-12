@@ -19,7 +19,8 @@
             android:background="@null"
             android:hint="请选择音频文件"
             android:paddingHorizontal="@dimen/dp_3"
-            android:paddingVertical="@dimen/dp_7"
+            android:paddingVertical="@dimen/dp_5"
+            android:singleLine="true"
             android:textColorHint="@color/lib_hint_color" />
 
         <Button
