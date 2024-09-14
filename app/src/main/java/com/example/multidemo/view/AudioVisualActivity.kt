@@ -27,6 +27,17 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
             startActivityForResult(intent, 10001)
         }
 
+        binding.stopAudioButton.setOnClickListener {
+            if (visualizer != null) {
+                visualizer?.release()
+                visualizer = null
+            }
+            if (mediaPlayer != null) {
+                mediaPlayer?.release()
+                mediaPlayer = null
+            }
+        }
+
         binding.playAudioButton.setOnClickListener {
             //播放音频文件
             mediaPlayer = MediaPlayer()
@@ -40,8 +51,9 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
                 visualizer = Visualizer(mediaPlayer!!.audioSessionId)
                 visualizer?.captureSize = Visualizer.getCaptureSizeRange()[1]
                 visualizer?.setDataCaptureListener(
-                    captureListener, Visualizer.getMaxCaptureRate() / 2, true, true
+                    captureListener, Visualizer.getMaxCaptureRate() * 3 / 4, true, true
                 )
+                visualizer?.scalingMode = Visualizer.SCALING_MODE_NORMALIZED
                 visualizer?.enabled = true
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -53,13 +65,17 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
         override fun onWaveFormDataCapture(
             visualizer: Visualizer?, bytes: ByteArray?, samplingRate: Int
         ) {
-            // 时域波形数据
-            binding.audioVisualView.updateVisualizer(bytes)
+            // 时域波形数据。声音的波形图
+            bytes?.apply {
+                binding.audioVisualView.updateVisualizer(this)
+            }
         }
 
         override fun onFftDataCapture(visualizer: Visualizer?, fft: ByteArray?, samplingRate: Int) {
-            // 频域波形数据
-            binding.audioVisualView.updateVisualizer(fft)
+            // 频域波形数据。FFT数据，展示不同频率的振幅
+            fft?.apply {
+                binding.fftVisualView.updateVisualizerByFFT(this)
+            }
         }
     }
 
