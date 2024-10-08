@@ -3,12 +3,12 @@
     android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="@dimen/dp_5">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_5"
         android:orientation="horizontal">
 
         <com.pengxh.kt.lite.widget.DeleteEditText
@@ -34,7 +34,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/dp_5"
+        android:layout_margin="@dimen/dp_5"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -64,11 +64,12 @@
     <com.example.multidemo.widget.AudioVisualView
         android:id="@+id/audioVisualView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_5" />
 
     <com.example.multidemo.widget.AudioVisualView
         android:id="@+id/fftVisualView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/dp_5" />
+        android:layout_margin="@dimen/dp_5" />
 </LinearLayout>

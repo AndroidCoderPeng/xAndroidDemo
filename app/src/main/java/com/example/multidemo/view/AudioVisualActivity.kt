@@ -67,14 +67,14 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
         ) {
             // 时域波形数据。声音的波形图
             bytes?.apply {
-                binding.audioVisualView.updateVisualizer(this)
+                binding.audioVisualView.updateAudioWaveform(this)
             }
         }
 
         override fun onFftDataCapture(visualizer: Visualizer?, fft: ByteArray?, samplingRate: Int) {
             // 频域波形数据。FFT数据，展示不同频率的振幅
             fft?.apply {
-                binding.fftVisualView.updateVisualizerByFFT(this)
+                binding.fftVisualView.updateAudioAmplitude(this)
             }
         }
     }

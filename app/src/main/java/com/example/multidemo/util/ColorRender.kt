@@ -2,11 +2,11 @@ package com.example.multidemo.util
 
 import android.graphics.Color
 
-object ColorHub {
+object ColorRender {
     /**
-     * 获取所有的渐变颜色 (HSV 颜色)
+     * 获取渐变颜色 (HSV 颜色)
      * */
-    fun getAllHsvColors(): IntArray {
+    fun getHsvColor(): IntArray {
         val color = IntArray(256 * 6)
         for (i in 0..255) {
             color[i] = Color.argb(255, 255, i, 0)
