@@ -3,6 +3,7 @@ package com.example.multidemo.view
 import android.content.Intent
 import android.media.MediaPlayer
 import android.media.audiofx.Visualizer
+import android.os.Build
 import android.os.Bundle
 import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityAudioVisualBinding
@@ -39,11 +40,25 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
         }
 
         binding.playAudioButton.setOnClickListener {
+            val filePath = binding.audioFilePathView.text.toString()
             //播放音频文件
             mediaPlayer = MediaPlayer()
             try {
-                val fileDescriptor = FileInputStream(binding.audioFilePathView.text.toString()).fd
-                mediaPlayer?.setDataSource(fileDescriptor)
+                if (filePath.isBlank()) {
+                    val assetFileDescriptor = assets.openFd("光良 - 童话.mp3")
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        mediaPlayer?.setDataSource(assetFileDescriptor)
+                    } else {
+                        mediaPlayer?.setDataSource(
+                            assetFileDescriptor.fileDescriptor,
+                            assetFileDescriptor.startOffset,
+                            assetFileDescriptor.length
+                        )
+                    }
+                } else {
+                    val fileDescriptor = FileInputStream(filePath).fd
+                    mediaPlayer?.setDataSource(fileDescriptor)
+                }
                 mediaPlayer?.prepare()
                 mediaPlayer?.start()
 
