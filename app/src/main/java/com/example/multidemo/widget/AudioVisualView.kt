@@ -1,6 +1,5 @@
 package com.example.multidemo.widget
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -18,16 +17,11 @@ import com.pengxh.kt.lite.extensions.getScreenHeight
 class AudioVisualView constructor(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val kTag = "AudioVisualView"
-    private var fftArray = ByteArray(1024)
+    private var fftArray = ByteArray(128)
     private val wavePaint = Paint()
     private val spectrumPaint = Paint()
     private var wavePath = Path()
     private var hsvColor: IntArray
-
-    /**
-     * 频谱数量
-     * */
-    private val spectrumCount = 128
     private var pointArray = ArrayList<Point>()
 
     init {
@@ -75,7 +69,7 @@ class AudioVisualView constructor(context: Context, attrs: AttributeSet) : View(
             pointArray.clear()
         }
         waveArray.forEachIndexed { index, byte ->
-            val point = Point(8 * (index + 1), byte.toInt())
+            val point = Point(index + 1, byte.toInt())
             pointArray.add(point)
         }
         postInvalidate()
@@ -85,27 +79,32 @@ class AudioVisualView constructor(context: Context, attrs: AttributeSet) : View(
      * 更新音频振幅-快速傅里叶数据
      * */
     fun updateAudioAmplitude(fft: ByteArray) {
+        val tempArray = ByteArray(1024)
         fft.forEachIndexed { index, it ->
             val byte = if (it < 0) {
                 (-it).toByte()
             } else {
                 it
             }
-            this.fftArray[index] = byte
+            tempArray[index] = byte
+        }
+
+        //fft数据取样，减少绘制的数据，更直观
+        for (i in fftArray.indices) {
+            fftArray[i] = tempArray[i * (fft.size / fftArray.size)]
         }
         postInvalidate()
     }
 
-    @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         //背景黑色
         canvas.drawColor(Color.BLACK)
 
-        //绘制音频波形曲线
+        //绘制音频波形曲线（音频信号在时域中的直接表示）
         drawAudioWave(canvas)
 
-        //绘制快速傅里叶变换之后的数据
+        //绘制快速傅里叶变换之后的数据（音频信号在频域中的直接表示）
         drawFFTSpectrum(canvas)
     }
 
@@ -142,9 +141,9 @@ class AudioVisualView constructor(context: Context, attrs: AttributeSet) : View(
 
     private fun drawFFTSpectrum(canvas: Canvas) {
         //频谱图每根矩形的宽度
-        val rectWidth = width.toFloat() / spectrumCount
+        val rectWidth = width.toFloat() / fftArray.size
         val rectHeight = height.toFloat()
-        val scale = rectHeight / spectrumCount
+        val scale = rectHeight / fftArray.size
 
         //每次刷新界面都用不同的颜色
         colorIndex++
@@ -156,7 +155,7 @@ class AudioVisualView constructor(context: Context, attrs: AttributeSet) : View(
         )
         spectrumPaint.shader = linearGradient
 
-        for (i in 0 until spectrumCount) {
+        for (i in fftArray.indices) {
             val top = rectHeight - (rectMinHeight + fftArray[i] * scale)
             canvas.drawRect(
                 rectWidth * i,
