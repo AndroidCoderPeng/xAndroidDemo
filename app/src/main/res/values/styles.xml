@@ -1,4 +1,5 @@
 <resources>
+
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
     </style>
@@ -18,5 +19,10 @@
         <!--退出-->
         <item name="android:activityCloseEnterAnimation">@anim/activity_in</item>
         <item name="android:activityCloseExitAnimation">@anim/activity_out</item>
+    </style>
+
+    <style name="RoundedStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/dp_3</item>
     </style>
 </resources>

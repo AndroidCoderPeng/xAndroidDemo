@@ -73,7 +73,6 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
             override fun convertView(viewHolder: ViewHolder, position: Int, item: Satellite) {
                 var image = R.drawable.ic_unknown
                 when (item.type) {
-                    0 -> image = R.drawable.ic_unknown
                     1 -> image = R.drawable.ic_usa
                     3 -> image = R.drawable.ic_russia
                     4 -> image = R.drawable.ic_japen
@@ -118,8 +117,6 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
             val description =
                 "经度：${location.longitude}\n纬度：${location.latitude}\n精度：${location.accuracy}m"
             binding.locationView.text = description
-        } ?: run {
-            Log.d(kTag, "Location is null")
         }
     }
 
