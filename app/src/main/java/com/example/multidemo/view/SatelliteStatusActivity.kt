@@ -90,21 +90,22 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
                  * */
                 val signalDrawable = if (item.signal < 20) {
                     R.drawable.bg_progress_bar_low
-                } else if (item.signal >= 20 && item.signal < 30) {
+                } else if (item.signal in 20..29) {
                     R.drawable.bg_progress_bar_middle_low
-                } else if (item.signal >= 30 && item.signal < 40) {
+                } else if (item.signal in 30..39) {
                     R.drawable.bg_progress_bar_middle_high
                 } else {
                     R.drawable.bg_progress_bar_high
                 }
                 val signalProgressView = viewHolder.getView<ProgressBar>(R.id.signalProgressView)
                 signalProgressView.progressDrawable = signalDrawable.convertDrawable(context)
+                signalProgressView.progress = item.signal
 
                 viewHolder.setImageResource(R.id.nationalityView, image)
                     .setText(R.id.svidView, item.svid.split("_")[1])
                     .setText(R.id.signalValueView, "${item.signal}")
-                    .setText(R.id.azimuthView, "${item.azimuth}")
-                    .setText(R.id.elevationView, "${item.elevation}")
+                    .setText(R.id.azimuthView, "${item.azimuth}°")
+                    .setText(R.id.elevationView, "${item.elevation}°")
             }
         }
         binding.recyclerView.adapter = satelliteAdapter
@@ -131,9 +132,9 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
                 val constellationType = status.getConstellationType(i)
                 val satellite = Satellite().apply {
                     svid = "${satelliteTypeMap[constellationType]}_${status.getSvid(i)}"
-                    signal = status.getCn0DbHz(i) //获取卫星的信号
-                    elevation = status.getElevationDegrees(i) // 获取卫星的仰角
-                    azimuth = status.getAzimuthDegrees(i) // 获取卫星的方位角
+                    signal = status.getCn0DbHz(i).toInt() //获取卫星的信号
+                    elevation = status.getElevationDegrees(i).toInt()// 获取卫星的仰角
+                    azimuth = status.getAzimuthDegrees(i).toInt()// 获取卫星的方位角
                     type = constellationType // 获取卫星的类型
                     typeName = satelliteTypeChineseMap[constellationType] // 获取卫星的类型
                 }

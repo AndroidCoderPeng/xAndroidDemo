@@ -4,9 +4,9 @@ public class Satellite {
     private String svid; // 卫星svid
     private int type; // 卫星导航系统的类型
     private String typeName; // 卫星导航系统的类型
-    private float signal; // 卫星的信噪比（信号）
-    private float elevation; // 卫星的仰角
-    private float azimuth; // 卫星的方位角
+    private int signal; // 卫星的信噪比（信号）
+    private int elevation; // 卫星的仰角
+    private int azimuth; // 卫星的方位角
 
     public String getSvid() {
         return svid;
@@ -32,27 +32,27 @@ public class Satellite {
         this.typeName = typeName;
     }
 
-    public float getSignal() {
+    public int getSignal() {
         return signal;
     }
 
-    public void setSignal(float signal) {
+    public void setSignal(int signal) {
         this.signal = signal;
     }
 
-    public float getElevation() {
+    public int getElevation() {
         return elevation;
     }
 
-    public void setElevation(float elevation) {
+    public void setElevation(int elevation) {
         this.elevation = elevation;
     }
 
-    public float getAzimuth() {
+    public int getAzimuth() {
         return azimuth;
     }
 
-    public void setAzimuth(float azimuth) {
+    public void setAzimuth(int azimuth) {
         this.azimuth = azimuth;
     }
 }
