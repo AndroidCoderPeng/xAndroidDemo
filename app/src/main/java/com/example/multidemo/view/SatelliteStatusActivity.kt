@@ -8,6 +8,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.ProgressBar
 import androidx.core.app.ActivityCompat
 import com.example.multidemo.R
 import com.example.multidemo.adapter.SatelliteRecyclerAdapter
@@ -15,6 +16,7 @@ import com.example.multidemo.databinding.ActivitySatelliteStatusBinding
 import com.example.multidemo.model.Satellite
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.convertDrawable
 import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.toJson
@@ -69,16 +71,34 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
             R.layout.item_satellite_rv_l, satelliteCollection
         ) {
             override fun convertView(viewHolder: ViewHolder, position: Int, item: Satellite) {
-                val image = when (item.type) {
-                    0 -> R.drawable.ic_unknown
-                    1 -> R.drawable.ic_usa
-                    3 -> R.drawable.ic_russia
-                    4 -> R.drawable.ic_japen
-                    5 -> R.drawable.ic_china
-                    6 -> R.drawable.ic_eu
-                    7 -> R.drawable.ic_india
-                    else -> R.drawable.ic_unknown
+                var image = R.drawable.ic_unknown
+                when (item.type) {
+                    0 -> image = R.drawable.ic_unknown
+                    1 -> image = R.drawable.ic_usa
+                    3 -> image = R.drawable.ic_russia
+                    4 -> image = R.drawable.ic_japen
+                    5 -> image = R.drawable.ic_china
+                    6 -> image = R.drawable.ic_eu
+                    7 -> image = R.drawable.ic_india
                 }
+
+                /**
+                 * 较弱信号：通常低于 20 dB-Hz。
+                 * 中等信号：大约在 20-30 dB-Hz 之间。
+                 * 较强信号：通常高于 30 dB-Hz。
+                 * 非常强的信号：可以达到 40-50 dB-Hz 或更高。
+                 * */
+                val signalDrawable = if (item.signal < 20) {
+                    R.drawable.bg_progress_bar_low
+                } else if (item.signal >= 20 && item.signal < 30) {
+                    R.drawable.bg_progress_bar_middle_low
+                } else if (item.signal >= 30 && item.signal < 40) {
+                    R.drawable.bg_progress_bar_middle_high
+                } else {
+                    R.drawable.bg_progress_bar_high
+                }
+                val signalProgressView = viewHolder.getView<ProgressBar>(R.id.signalProgressView)
+                signalProgressView.progressDrawable = signalDrawable.convertDrawable(context)
 
                 viewHolder.setImageResource(R.id.nationalityView, image)
                     .setText(R.id.svidView, item.svid.split("_")[1])
@@ -94,8 +114,10 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
 
     private fun showLocation(location: Location?) {
         location?.apply {
-            binding.locationView.text =
+            val description =
                 "经度：${location.longitude}，纬度：${location.latitude}，精度：${location.accuracy}m"
+            Log.d(kTag, description)
+            binding.locationView.text = description
         } ?: run {
             Log.d(kTag, "Location is null")
         }
