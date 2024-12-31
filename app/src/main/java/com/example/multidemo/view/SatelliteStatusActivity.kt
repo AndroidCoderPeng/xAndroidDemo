@@ -116,8 +116,7 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
     private fun showLocation(location: Location?) {
         location?.apply {
             val description =
-                "经度：${location.longitude}，纬度：${location.latitude}，精度：${location.accuracy}m"
-            Log.d(kTag, description)
+                "经度：${location.longitude}\n纬度：${location.latitude}\n精度：${location.accuracy}m"
             binding.locationView.text = description
         } ?: run {
             Log.d(kTag, "Location is null")
@@ -138,7 +137,9 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
                     type = constellationType // 获取卫星的类型
                     typeName = satelliteTypeChineseMap[constellationType] // 获取卫星的类型
                 }
-                satelliteCollection.add(satellite)
+                if (satellite.signal != 0) {
+                    satelliteCollection.add(satellite)
+                }
             }
             Log.d(kTag, satelliteCollection.toJson())
             satelliteAdapter.notifyDataSetChanged()
