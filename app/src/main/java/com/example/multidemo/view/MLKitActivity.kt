@@ -21,7 +21,7 @@ import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.show
-import com.pengxh.kt.lite.utils.LoadingDialogHub
+import com.pengxh.kt.lite.utils.LoadingDialog
 
 class MLKitActivity : KotlinBaseActivity<ActivityMlKitBinding>() {
 
@@ -46,7 +46,7 @@ class MLKitActivity : KotlinBaseActivity<ActivityMlKitBinding>() {
         }
 
         binding.recognizeButton.setOnClickListener {
-            LoadingDialogHub.show(this, "人脸检测中...")
+            LoadingDialog.show(this, "人脸检测中...")
             mediaRealPath?.apply {
                 val bitmap = BitmapFactory.decodeFile(mediaRealPath)
                 val inputImage = InputImage.fromBitmap(bitmap, 0)
@@ -60,7 +60,7 @@ class MLKitActivity : KotlinBaseActivity<ActivityMlKitBinding>() {
                         }
                         binding.imageView.setImageBitmap(copyBitmap)
                     }.addOnCompleteListener {
-                        LoadingDialogHub.dismiss()
+                        LoadingDialog.dismiss()
                         "识别完成".show(context)
                     }
             }

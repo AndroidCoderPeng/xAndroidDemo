@@ -20,11 +20,12 @@ import kotlinx.coroutines.withContext
 class GalleryActivity : KotlinBaseActivity<ActivityGalleryBinding>() {
 
     private val kTag = "GalleryActivity"
+    private val context = this
     private val imageArray = mutableListOf(
-        "https://img.zcool.cn/community/010d5c5b9d17c9a8012099c8781b7e.jpg@1280w_1l_2o_100sh.jpg",
-        "https://tse4-mm.cn.bing.net/th/id/OIP-C.6szqS1IlGtWsaiHQUtUOVwHaQC?rs=1&pid=ImgDetMain",
-        "https://img.zcool.cn/community/01a15855439bdf0000019ae9299cce.jpg@1280w_1l_2o_100sh.jpg",
-        "https://pic1.zhimg.com/v2-0cc45f5fda6e8ff79350ec1303835629_r.jpg"
+        "https://haowallpaper.com/link/common/file/getCroppingImg/23e97527ceeabd3cd6b37a66b07aa969",
+        "https://haowallpaper.com/link/common/file/getCroppingImg/15758393286299968",
+        "https://haowallpaper.com/link/common/file/getCroppingImg/15053501456354624",
+        "https://haowallpaper.com/link/common/file/getCroppingImg/15098779251936576"
     )
     private val scaleHelper by lazy { GalleryScaleHelper() }
     private var blurRunnable: Runnable? = null
@@ -40,10 +41,7 @@ class GalleryActivity : KotlinBaseActivity<ActivityGalleryBinding>() {
             override fun convertView(viewHolder: ViewHolder, position: Int, item: String) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     val drawable = withContext(Dispatchers.IO) {
-                        Glide.with(this@GalleryActivity)
-                            .load(item)
-                            .submit()
-                            .get()
+                        Glide.with(context).load(item).submit().get()
                     }
                     viewHolder.setImageResource(R.id.imageView, drawable)
                 }
@@ -70,14 +68,9 @@ class GalleryActivity : KotlinBaseActivity<ActivityGalleryBinding>() {
         blurRunnable = Runnable {
             lifecycleScope.launch(Dispatchers.Main) {
                 val drawable = withContext(Dispatchers.IO) {
-                    Glide.with(this@GalleryActivity)
-                        .load(imageArray[index])
-                        .submit()
-                        .get()
+                    Glide.with(context).load(imageArray[index]).submit().get()
                 }
-                binding.blurImageView.switchBackground(
-                    drawable.toBlurBitmap(this@GalleryActivity, 20f)
-                )
+                binding.blurImageView.switchBackground(drawable.toBlurBitmap(context, 20f))
             }
         }
         binding.blurImageView.postDelayed(blurRunnable, 500)

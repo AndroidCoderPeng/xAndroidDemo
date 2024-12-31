@@ -24,11 +24,9 @@ import com.example.multidemo.view.HikVisionActivity
 import com.example.multidemo.view.MLKitActivity
 import com.example.multidemo.view.RadarScanActivity
 import com.example.multidemo.view.RecodeAudioActivity
-import com.example.multidemo.view.RefreshAndLoadMoreActivity
+import com.example.multidemo.view.SatelliteStatusActivity
 import com.example.multidemo.view.SaveInAlbumActivity
-import com.example.multidemo.view.SlideBarActivity
 import com.example.multidemo.view.SlideNavigationActivity
-import com.example.multidemo.view.SmartConfigActivity
 import com.example.multidemo.view.SteeringWheelActivity
 import com.example.multidemo.view.TimeLineActivity
 import com.example.multidemo.view.WaterMarkerActivity
@@ -51,8 +49,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     private val mpm by lazy { getSystemService<MediaProjectionManager>() }
     private val itemNames = listOf(
         "侧边导航栏",
-        "上拉加载下拉刷新",
-        "联系人侧边滑动控件",
         "拖拽地图选点",
         "音频录制与播放",
         "图片添加水印并压缩",
@@ -69,7 +65,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
         "Google ML Kit",
         "拍照保存到相册",
         "截屏",
-        "Smart Config",
+        "导航卫星信息",
         "音频可视化"
     )
     private var clickTime: Long = 0
@@ -105,30 +101,28 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
             override fun onItemClicked(position: Int, t: String) {
                 when (position) {
                     0 -> navigatePageTo<SlideNavigationActivity>()
-                    1 -> navigatePageTo<RefreshAndLoadMoreActivity>()
-                    2 -> navigatePageTo<SlideBarActivity>()
-                    3 -> navigatePageTo<DragMapActivity>()
-                    4 -> navigatePageTo<RecodeAudioActivity>()
-                    5 -> navigatePageTo<WaterMarkerActivity>()
-                    6 -> navigatePageTo<CompressVideoActivity>()
-                    7 -> navigatePageTo<BluetoothActivity>()
-                    8 -> navigatePageTo<GridViewActivity>()
-                    9 -> navigatePageTo<FaceCollectionActivity>()
-                    10 -> navigatePageTo<SteeringWheelActivity>()
-                    11 -> navigatePageTo<TimeLineActivity>()
-                    12 -> navigatePageTo<HikVisionActivity>()
-                    13 -> navigatePageTo<RadarScanActivity>()
-                    14 -> navigatePageTo<CompassActivity>()
-                    15 -> navigatePageTo<GalleryActivity>()
-                    16 -> navigatePageTo<MLKitActivity>()
-                    17 -> navigatePageTo<SaveInAlbumActivity>()
-                    18 -> {
+                    1 -> navigatePageTo<DragMapActivity>()
+                    2 -> navigatePageTo<RecodeAudioActivity>()
+                    3 -> navigatePageTo<WaterMarkerActivity>()
+                    4 -> navigatePageTo<CompressVideoActivity>()
+                    5 -> navigatePageTo<BluetoothActivity>()
+                    6 -> navigatePageTo<GridViewActivity>()
+                    7 -> navigatePageTo<FaceCollectionActivity>()
+                    8 -> navigatePageTo<SteeringWheelActivity>()
+                    9 -> navigatePageTo<TimeLineActivity>()
+                    10 -> navigatePageTo<HikVisionActivity>()
+                    11 -> navigatePageTo<RadarScanActivity>()
+                    12 -> navigatePageTo<CompassActivity>()
+                    13 -> navigatePageTo<GalleryActivity>()
+                    14 -> navigatePageTo<MLKitActivity>()
+                    15 -> navigatePageTo<SaveInAlbumActivity>()
+                    16 -> {
                         val captureIntent = mpm?.createScreenCaptureIntent()
                         captureIntentLauncher.launch(captureIntent)
                     }
 
-                    19 -> navigatePageTo<SmartConfigActivity>()
-                    20 -> navigatePageTo<AudioVisualActivity>()
+                    17 -> navigatePageTo<SatelliteStatusActivity>()
+                    18 -> navigatePageTo<AudioVisualActivity>()
                 }
             }
         })

@@ -12,8 +12,5 @@
         android:layout_weight="1"
         android:background="#F7F7F7"
         android:gravity="center"
-        app:ctrl_backgroundColor="@color/white"
-        app:ctrl_borderColor="#64BFEB"
-        app:ctrl_borderStroke="@dimen/dp_5"
         app:ctrl_diameter="@dimen/dp_200" />
 </LinearLayout>

@@ -59,9 +59,6 @@
         <activity
             android:name=".view.SlideNavigationActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".view.RefreshAndLoadMoreActivity" />
-        <activity android:name=".view.NewsDetailsActivity" />
-        <activity android:name=".view.SlideBarActivity" />
         <activity android:name=".view.RecodeAudioActivity" />
         <activity android:name=".view.DragMapActivity" />
         <activity android:name=".view.WaterMarkerActivity" />
@@ -75,7 +72,7 @@
         <activity android:name=".view.MLKitActivity" />
         <activity android:name=".view.HikVisionActivity" />
         <activity android:name=".view.SaveInAlbumActivity" />
-        <activity android:name=".view.SmartConfigActivity" />
+        <activity android:name=".view.SatelliteStatusActivity" />
         <activity android:name=".view.AudioVisualActivity" />
         <activity
             android:name=".view.FaceCollectionActivity"

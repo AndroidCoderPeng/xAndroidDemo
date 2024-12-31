@@ -22,7 +22,7 @@ import com.example.multidemo.util.DemoConstant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.show
-import com.pengxh.kt.lite.utils.LoadingDialogHub
+import com.pengxh.kt.lite.utils.LoadingDialog
 import com.pengxh.kt.lite.widget.dialog.BottomActionSheet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -80,7 +80,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
             val bluetoothDevices = ArrayList<BleDevice>()
             bleManager.scan(object : BleScanCallback() {
                 override fun onScanStarted(success: Boolean) {
-                    LoadingDialogHub.show(this@BluetoothActivity, "设备搜索中...")
+                    LoadingDialog.show(this@BluetoothActivity, "设备搜索中...")
                 }
 
                 override fun onScanning(bleDevice: BleDevice) {
@@ -88,7 +88,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
                 }
 
                 override fun onScanFinished(scanResultList: List<BleDevice>) {
-                    LoadingDialogHub.dismiss()
+                    LoadingDialog.dismiss()
 
                     scanResultList.forEach {
                         if (!it.name.isNullOrBlank()) {
@@ -140,11 +140,11 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
         // 当前蓝牙设备
         bleManager.connect(device, object : BleGattCallback() {
             override fun onStartConnect() {
-                LoadingDialogHub.show(this@BluetoothActivity, "设备连接中...")
+                LoadingDialog.show(this@BluetoothActivity, "设备连接中...")
             }
 
             override fun onConnectFail(bleDevice: BleDevice, exception: BleException) {
-                LoadingDialogHub.dismiss()
+                LoadingDialog.dismiss()
                 //失败了就重连
                 startConnectDevice(bleDevice)
             }
@@ -169,7 +169,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
                 isActiveDisConnected: Boolean, bleDevice: BleDevice,
                 gatt: BluetoothGatt, status: Int
             ) {
-                LoadingDialogHub.dismiss()
+                LoadingDialog.dismiss()
                 connectedDevice = null
                 binding.stateView.text = "蓝牙状态：未连接"
                 binding.stateView.setTextColor(Color.RED)
@@ -181,7 +181,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
         val gattService = gatt.getService(UUID.fromString(DemoConstant.UUIDS[2]))
         if (gattService == null) {
             Log.d(kTag, "notifyDeviceService: gattService is null")
-            LoadingDialogHub.dismiss()
+            LoadingDialog.dismiss()
             "连接失败，设备不支持低功耗蓝牙".show(this)
             return
         }
@@ -210,7 +210,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
         bleManager.notify(bleDevice, DemoConstant.UUIDS[2], notifyUuid,
             object : BleNotifyCallback() {
                 override fun onNotifySuccess() {
-                    LoadingDialogHub.dismiss()
+                    LoadingDialog.dismiss()
                     "连接成功".show(context)
                     binding.stateView.text = "蓝牙状态：已连接"
                     binding.stateView.setTextColor(Color.GREEN)

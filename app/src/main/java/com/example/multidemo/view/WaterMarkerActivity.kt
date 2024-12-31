@@ -20,7 +20,7 @@ import com.pengxh.kt.lite.extensions.formatFileSize
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.sp2px
-import com.pengxh.kt.lite.utils.LoadingDialogHub
+import com.pengxh.kt.lite.utils.LoadingDialog
 import com.pengxh.kt.lite.utils.WaterMarkerEngine
 import java.io.File
 
@@ -101,7 +101,7 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
                 .setOnWaterMarkerAddedListener(object :
                     WaterMarkerEngine.OnWaterMarkerAddedListener {
                     override fun onStart() {
-                        LoadingDialogHub.show(this@WaterMarkerActivity, "水印添加中，请稍后...")
+                        LoadingDialog.show(this@WaterMarkerActivity, "水印添加中，请稍后...")
                     }
 
                     override fun onMarkAdded(file: File) {
@@ -111,7 +111,7 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
                             .into(binding.markerImageView)
                         binding.markerImageSizeView.text =
                             "压缩后：${file.length().formatFileSize()}"
-                        LoadingDialogHub.dismiss()
+                        LoadingDialog.dismiss()
                     }
                 }).build().start()
         }
