@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/lib_text_color"
     android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -18,5 +19,6 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/dp_10"
         android:text="卫星数量太少，无法定位"
+        android:textColor="@color/white"
         android:textSize="@dimen/sp_16" />
 </LinearLayout>

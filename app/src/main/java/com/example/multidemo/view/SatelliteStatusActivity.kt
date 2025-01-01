@@ -2,6 +2,7 @@ package com.example.multidemo.view
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.GnssStatus
 import android.location.Location
 import android.location.LocationListener
@@ -16,6 +17,7 @@ import com.example.multidemo.databinding.ActivitySatelliteStatusBinding
 import com.example.multidemo.model.Satellite
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
 import com.pengxh.kt.lite.extensions.convertDrawable
 import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.show
@@ -81,20 +83,16 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
                     7 -> image = R.drawable.ic_india
                 }
 
-                /**
-                 * 较弱信号：通常低于 20 dB-Hz。
-                 * 中等信号：大约在 20-30 dB-Hz 之间。
-                 * 较强信号：通常高于 30 dB-Hz。
-                 * 非常强的信号：可以达到 40-50 dB-Hz 或更高。
-                 * */
-                val signalDrawable = if (item.signal < 20) {
-                    R.drawable.bg_progress_bar_low
-                } else if (item.signal in 20..29) {
-                    R.drawable.bg_progress_bar_middle_low
-                } else if (item.signal in 30..39) {
-                    R.drawable.bg_progress_bar_middle_high
+                val signalDrawable = if (item.isHasAlmanac) {
+                    if (item.signal <= 19) {
+                        R.drawable.bg_progress_bar_middle_low
+                    } else if (item.signal in 20..29) {
+                        R.drawable.bg_progress_bar_middle_high
+                    } else {
+                        R.drawable.bg_progress_bar_high
+                    }
                 } else {
-                    R.drawable.bg_progress_bar_high
+                    R.drawable.bg_progress_bar_low
                 }
                 val signalProgressView = viewHolder.getView<ProgressBar>(R.id.signalProgressView)
                 signalProgressView.progressDrawable = signalDrawable.convertDrawable(context)
@@ -108,6 +106,7 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
             }
         }
         binding.recyclerView.adapter = satelliteAdapter
+        binding.recyclerView.addItemDecoration(RecyclerViewItemDivider(1, Color.WHITE))
     }
 
     private val locationListener = LocationListener { location -> showLocation(location) }
@@ -133,6 +132,8 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
                     azimuth = status.getAzimuthDegrees(i).toInt()// 获取卫星的方位角
                     type = constellationType // 获取卫星的类型
                     typeName = satelliteTypeChineseMap[constellationType] // 获取卫星的类型
+                    //TODO 待定
+                    isHasAlmanac = status.hasAlmanacData(i)
                 }
                 if (satellite.signal != 0) {
                     satelliteCollection.add(satellite)

@@ -2,15 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/dp_35"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="@dimen/dp_10">
+    android:paddingHorizontal="@dimen/dp_5">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="@dimen/dp_80"
         android:layout_height="wrap_content"
-        android:layout_weight="1.25"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -23,51 +22,80 @@
 
         <TextView
             android:id="@+id/svidView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_10"
-            android:text="1"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="100"
+            android:textColor="@color/white"
             android:textSize="@dimen/sp_16" />
     </LinearLayout>
 
-
-    <ProgressBar
-        android:id="@+id/signalProgressView"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/dp_10"
-        android:layout_weight="2"
-        android:background="@drawable/bg_progress_bar_low"
-        android:max="50" />
+    <View
+        android:layout_width="@dimen/borderThickness"
+        android:layout_height="match_parent"
+        android:background="@color/white" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1.5"
-        android:gravity="center"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
+
+        <ProgressBar
+            android:id="@+id/signalProgressView"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_progress_bar_low"
+            android:max="63" />
 
         <TextView
             android:id="@+id/signalValueView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"
+            android:layout_marginStart="@dimen/dp_10"
+            android:text="50"
+            android:textColor="@color/white"
             android:textSize="@dimen/sp_16" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="@dimen/borderThickness"
+        android:layout_height="match_parent"
+        android:background="@color/white" />
+
+    <LinearLayout
+        android:layout_width="@dimen/dp_90"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/azimuthView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/dp_10"
-            android:text="0"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="300°"
+            android:textColor="@color/white"
             android:textSize="@dimen/sp_16" />
+
+        <View
+            android:layout_width="@dimen/borderThickness"
+            android:layout_height="match_parent"
+            android:background="@color/white" />
 
         <TextView
             android:id="@+id/elevationView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="0"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="90°"
+            android:textColor="@color/white"
             android:textSize="@dimen/sp_16" />
     </LinearLayout>
 </LinearLayout>
