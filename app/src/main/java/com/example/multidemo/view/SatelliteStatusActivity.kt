@@ -38,15 +38,6 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
         6 to "GALILEO",
         7 to "IRNSS",
     )
-    private val satelliteTypeChineseMap = mapOf(
-        0 to "未知导航系统（UNKNOWN）",
-        1 to "全球定位系统（GPS）",
-        3 to "格洛纳斯系统（GLONASS）",
-        4 to "准天顶卫星系统（QZSS）",
-        5 to "北斗卫星导航系统（BDS）",
-        6 to "伽利略卫星导航系统（GALILEO）",
-        7 to "印度区域导航卫星系统（IRNSS）",
-    )
     private val satelliteCollection = ArrayList<Satellite>()
     private lateinit var satelliteAdapter: SatelliteRecyclerAdapter<Satellite>
 
@@ -131,7 +122,6 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
                     elevation = status.getElevationDegrees(i).toInt()// 获取卫星的仰角
                     azimuth = status.getAzimuthDegrees(i).toInt()// 获取卫星的方位角
                     type = constellationType // 获取卫星的类型
-                    typeName = satelliteTypeChineseMap[constellationType] // 获取卫星的类型
                     //TODO 待定
                     isHasAlmanac = status.hasAlmanacData(i)
                 }
