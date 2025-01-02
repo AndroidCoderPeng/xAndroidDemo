@@ -27,8 +27,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="100"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sp_16" />
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <View
@@ -49,7 +48,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/bg_progress_bar_low" />
+            android:max="63" />
 
         <TextView
             android:id="@+id/signalValueView"
@@ -57,8 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_10"
             android:text="50"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sp_16" />
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <View
@@ -91,8 +89,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="300°"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sp_16" />
+            android:textColor="@color/white" />
 
         <View
             android:layout_width="@dimen/borderThickness"
@@ -106,7 +103,6 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="90°"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sp_16" />
+            android:textColor="@color/white" />
     </LinearLayout>
 </LinearLayout>

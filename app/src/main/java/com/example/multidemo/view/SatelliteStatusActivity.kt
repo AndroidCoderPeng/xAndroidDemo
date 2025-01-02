@@ -9,17 +9,15 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
-import android.widget.ProgressBar
 import androidx.core.app.ActivityCompat
 import com.example.multidemo.R
 import com.example.multidemo.adapter.SatelliteRecyclerAdapter
 import com.example.multidemo.databinding.ActivitySatelliteStatusBinding
 import com.example.multidemo.extensions.initImmersionBar
+import com.example.multidemo.extensions.toDegree
 import com.example.multidemo.model.Satellite
-import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
-import com.pengxh.kt.lite.extensions.convertDrawable
 import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.toJson
@@ -29,7 +27,6 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
     LocationListener {
 
     private val kTag = "SatelliteActivity"
-    private val context = this
     private val locationManager by lazy { getSystemService<LocationManager>()!! }
     private val satelliteTypeMap = mapOf(
         0 to "UNKNOWN",
@@ -41,7 +38,7 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
         7 to "IRNSS",
     )
     private val satelliteCollection = ArrayList<Satellite>()
-    private lateinit var satelliteAdapter: SatelliteRecyclerAdapter<Satellite>
+    private lateinit var satelliteAdapter: SatelliteRecyclerAdapter
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
         if (ActivityCompat.checkSelfPermission(
@@ -61,54 +58,16 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
             LocationManager.GPS_PROVIDER, 3000, 0f, this
         )
         locationManager.registerGnssStatusCallback(gnssStatusListener, null)
-        satelliteAdapter = object : SatelliteRecyclerAdapter<Satellite>(
-            R.layout.item_satellite_rv_l, satelliteCollection
-        ) {
-            override fun convertView(viewHolder: ViewHolder, position: Int, item: Satellite) {
-                var image = R.drawable.ic_unknown
-                when (item.type) {
-                    1 -> image = R.drawable.ic_usa
-                    3 -> image = R.drawable.ic_russia
-                    4 -> image = R.drawable.ic_japen
-                    5 -> image = R.drawable.ic_china
-                    6 -> image = R.drawable.ic_eu
-                    7 -> image = R.drawable.ic_india
-                }
-
-                //如果返回true，则表示该卫星正在被用于定位计算；如果返回false，则表示该卫星未被用于定位计算
-                val signalDrawable = if (item.isUsedInFix) {
-                    viewHolder.setImageResource(R.id.satelliteStateView, R.drawable.ic_in_use)
-                    if (item.signal <= 19) {
-                        R.drawable.bg_progress_bar_middle_low
-                    } else if (item.signal in 20..29) {
-                        R.drawable.bg_progress_bar_middle_high
-                    } else {
-                        R.drawable.bg_progress_bar_high
-                    }
-                } else {
-                    viewHolder.setImageResource(R.id.satelliteStateView, R.drawable.ic_un_use)
-                    R.drawable.bg_progress_bar_low
-                }
-                val signalProgressView = viewHolder.getView<ProgressBar>(R.id.signalProgressView)
-                signalProgressView.progressDrawable = signalDrawable.convertDrawable(context)
-                signalProgressView.max = 63
-                signalProgressView.progress = item.signal
-
-                viewHolder.setImageResource(R.id.nationalityView, image)
-                    .setText(R.id.svidView, item.svid.split("_")[1])
-                    .setText(R.id.signalValueView, "${item.signal}")
-                    .setText(R.id.azimuthView, "${item.azimuth}°")
-                    .setText(R.id.elevationView, "${item.elevation}°")
-            }
-        }
+        satelliteAdapter = SatelliteRecyclerAdapter(this, satelliteCollection)
         binding.recyclerView.adapter = satelliteAdapter
         binding.recyclerView.addItemDecoration(RecyclerViewItemDivider(1, Color.WHITE))
     }
 
     override fun onLocationChanged(location: Location) {
-        val description =
-            "经度：${location.longitude}\n纬度：${location.latitude}\n精度：${location.accuracy}m"
-        binding.locationView.text = description
+        //转为度分秒
+        val lng = location.longitude.toDegree()
+        val lat = location.latitude.toDegree()
+        binding.locationView.text = "经度：${lng} 纬度：${lat}\n精度：${location.accuracy}m"
     }
 
     private val gnssStatusListener = object : GnssStatus.Callback() {

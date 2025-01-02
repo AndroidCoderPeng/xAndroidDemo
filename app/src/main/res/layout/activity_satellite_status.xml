@@ -113,6 +113,5 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/dp_10"
         android:text="卫星数量太少，无法定位"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sp_16" />
+        android:textColor="@color/white" />
 </LinearLayout>
