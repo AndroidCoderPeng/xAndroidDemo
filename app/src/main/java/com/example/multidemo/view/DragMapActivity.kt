@@ -9,7 +9,9 @@ import com.amap.api.maps.UiSettings
 import com.amap.api.maps.model.CameraPosition
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.MyLocationStyle
+import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityDragMapBinding
+import com.example.multidemo.extensions.initImmersionBar
 import com.example.multidemo.widget.CenterMarkerView
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 
@@ -102,6 +104,6 @@ class DragMapActivity : KotlinBaseActivity<ActivityDragMapBinding>(), AMap.OnMap
     }
 
     override fun setupTopBarLayout() {
-
+        binding.rootView.initImmersionBar(this, true, R.color.white)
     }
 }

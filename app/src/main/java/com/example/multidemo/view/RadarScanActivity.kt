@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import com.example.multidemo.databinding.ActivityRadarScanBinding
 import com.example.multidemo.widget.RadarScanView
+import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.toJson
@@ -52,7 +53,7 @@ class RadarScanActivity : KotlinBaseActivity<ActivityRadarScanBinding>(),
     }
 
     override fun setupTopBarLayout() {
-
+        ImmersionBar.with(this).init()
     }
 
     override fun onResume() {

@@ -7,7 +7,9 @@ import android.view.MotionEvent
 import android.widget.ImageView
 import android.widget.PopupWindow
 import android.widget.TextView
+import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityAudioBinding
+import com.example.multidemo.extensions.initImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.createAudioFile
 import com.pengxh.kt.lite.extensions.millsToTime
@@ -21,7 +23,9 @@ class RecodeAudioActivity : KotlinBaseActivity<ActivityAudioBinding>() {
     private val kTag = "RecodeAudioActivity"
     private val audioRecorder by lazy { AudioRecorder(this) }
 
-    override fun setupTopBarLayout() {}
+    override fun setupTopBarLayout() {
+        binding.rootView.initImmersionBar(this, true, R.color.white)
+    }
 
     override fun initViewBinding(): ActivityAudioBinding {
         return ActivityAudioBinding.inflate(layoutInflater)

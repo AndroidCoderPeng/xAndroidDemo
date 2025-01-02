@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityGalleryBinding
+import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
@@ -85,6 +86,6 @@ class GalleryActivity : KotlinBaseActivity<ActivityGalleryBinding>() {
     }
 
     override fun setupTopBarLayout() {
-
+        ImmersionBar.with(this).init()
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityTimeLineBinding
+import com.example.multidemo.extensions.initImmersionBar
 import com.example.multidemo.model.TimeLineDataModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -76,6 +77,6 @@ class TimeLineActivity : KotlinBaseActivity<ActivityTimeLineBinding>() {
     }
 
     override fun setupTopBarLayout() {
-
+        binding.rootView.initImmersionBar(this, true, R.color.white)
     }
 }

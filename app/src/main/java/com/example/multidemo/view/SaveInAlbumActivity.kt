@@ -20,6 +20,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivitySaveInAlbumBinding
+import com.example.multidemo.extensions.initImmersionBar
 import com.google.common.util.concurrent.ListenableFuture
 import com.pengxh.kt.lite.adapter.EditableImageAdapter
 import com.pengxh.kt.lite.base.KotlinBaseActivity
@@ -215,6 +216,6 @@ class SaveInAlbumActivity : KotlinBaseActivity<ActivitySaveInAlbumBinding>() {
     }
 
     override fun setupTopBarLayout() {
-
+        binding.rootView.initImmersionBar(this, true, R.color.white)
     }
 }

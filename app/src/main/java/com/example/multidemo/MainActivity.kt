@@ -1,16 +1,20 @@
 package com.example.multidemo
 
+import android.Manifest
 import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.media.projection.MediaProjectionManager
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.view.KeyEvent
 import androidx.activity.result.contract.ActivityResultContracts
+import com.amap.api.maps.MapsInitializer
 import com.example.multidemo.databinding.ActivityMainBinding
+import com.example.multidemo.extensions.initImmersionBar
 import com.example.multidemo.service.ScreenShortRecordService
 import com.example.multidemo.view.AudioVisualActivity
 import com.example.multidemo.view.BluetoothActivity
@@ -27,7 +31,6 @@ import com.example.multidemo.view.RecodeAudioActivity
 import com.example.multidemo.view.SatelliteStatusActivity
 import com.example.multidemo.view.SaveInAlbumActivity
 import com.example.multidemo.view.SlideNavigationActivity
-import com.example.multidemo.view.SteeringWheelActivity
 import com.example.multidemo.view.TimeLineActivity
 import com.example.multidemo.view.WaterMarkerActivity
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
@@ -37,14 +40,71 @@ import com.pengxh.kt.lite.extensions.createImageFileDir
 import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
+import pub.devrel.easypermissions.EasyPermissions
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 
-class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
+class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
+    EasyPermissions.PermissionCallbacks {
 
     private val kTag = "MainActivity"
+    private val permissionsCode = 999
+    private val userPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        arrayOf(
+            Manifest.permission.READ_MEDIA_VIDEO,
+            Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA,
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        arrayOf(
+            Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA,
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        arrayOf(
+            Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA,
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    } else {
+        arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA,
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    }
     private val timeFormat by lazy { SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA) }
     private val mpm by lazy { getSystemService<MediaProjectionManager>() }
     private val itemNames = listOf(
@@ -56,7 +116,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
         "蓝牙相关",
         "可删减九宫格",
         "人脸检测",
-        "方向控制盘",
         "时间轴",
         "海康摄像头",
         "雷达扫描效果",
@@ -72,7 +131,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     private var screenShortService: ScreenShortRecordService? = null
 
     override fun setupTopBarLayout() {
-
+        binding.rootView.initImmersionBar(this, true, R.color.white)
     }
 
     override fun observeRequestState() {
@@ -84,7 +143,9 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-
+        if (!EasyPermissions.hasPermissions(this, *userPermissions)) {
+            EasyPermissions.requestPermissions(this, "", permissionsCode, *userPermissions)
+        }
     }
 
     override fun initEvent() {
@@ -108,21 +169,20 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                     5 -> navigatePageTo<BluetoothActivity>()
                     6 -> navigatePageTo<GridViewActivity>()
                     7 -> navigatePageTo<FaceCollectionActivity>()
-                    8 -> navigatePageTo<SteeringWheelActivity>()
-                    9 -> navigatePageTo<TimeLineActivity>()
-                    10 -> navigatePageTo<HikVisionActivity>()
-                    11 -> navigatePageTo<RadarScanActivity>()
-                    12 -> navigatePageTo<CompassActivity>()
-                    13 -> navigatePageTo<GalleryActivity>()
-                    14 -> navigatePageTo<MLKitActivity>()
-                    15 -> navigatePageTo<SaveInAlbumActivity>()
-                    16 -> {
+                    8 -> navigatePageTo<TimeLineActivity>()
+                    9 -> navigatePageTo<HikVisionActivity>()
+                    10 -> navigatePageTo<RadarScanActivity>()
+                    11 -> navigatePageTo<CompassActivity>()
+                    12 -> navigatePageTo<GalleryActivity>()
+                    13 -> navigatePageTo<MLKitActivity>()
+                    14 -> navigatePageTo<SaveInAlbumActivity>()
+                    15 -> {
                         val captureIntent = mpm?.createScreenCaptureIntent()
                         captureIntentLauncher.launch(captureIntent)
                     }
 
-                    17 -> navigatePageTo<SatelliteStatusActivity>()
-                    18 -> navigatePageTo<AudioVisualActivity>()
+                    16 -> navigatePageTo<SatelliteStatusActivity>()
+                    17 -> navigatePageTo<AudioVisualActivity>()
                 }
             }
         })
@@ -174,5 +234,20 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                 super.onKeyDown(keyCode, event)
             }
         } else super.onKeyDown(keyCode, event)
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
+        //先把导航隐私政策声明，后面导航会用到
+        MapsInitializer.updatePrivacyShow(this, true, true)
+        MapsInitializer.updatePrivacyAgree(this, true)
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {}
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        //将请求结果传递EasyPermission库处理
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 }

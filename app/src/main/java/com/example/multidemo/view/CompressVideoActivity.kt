@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityCompressVideoBinding
+import com.example.multidemo.extensions.initImmersionBar
 import com.example.multidemo.util.GlideLoadEngine
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
@@ -56,7 +57,9 @@ class CompressVideoActivity : KotlinBaseActivity<ActivityCompressVideoBinding>()
         return videoFile.path
     }
 
-    override fun setupTopBarLayout() {}
+    override fun setupTopBarLayout() {
+        binding.rootView.initImmersionBar(this, false, R.color.black)
+    }
 
     override fun observeRequestState() {
 

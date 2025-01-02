@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityMlKitBinding
+import com.example.multidemo.extensions.initImmersionBar
 import com.example.multidemo.util.GlideLoadEngine
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
@@ -120,6 +121,6 @@ class MLKitActivity : KotlinBaseActivity<ActivityMlKitBinding>() {
     }
 
     override fun setupTopBarLayout() {
-
+        binding.rootView.initImmersionBar(this, true, R.color.white)
     }
 }

@@ -8,7 +8,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityCompassBinding
+import com.example.multidemo.extensions.initImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
@@ -38,7 +40,7 @@ class CompassActivity : KotlinBaseActivity<ActivityCompassBinding>(), SensorEven
     }
 
     override fun setupTopBarLayout() {
-
+        binding.rootView.initImmersionBar(this, false, R.color.black)
     }
 
     override fun initEvent() {

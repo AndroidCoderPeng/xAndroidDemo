@@ -18,6 +18,7 @@ import com.clj.fastble.scan.BleScanRuleConfig
 import com.example.multidemo.R
 import com.example.multidemo.base.BaseApplication
 import com.example.multidemo.databinding.ActivityBluetoothBinding
+import com.example.multidemo.extensions.initImmersionBar
 import com.example.multidemo.util.DemoConstant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
@@ -40,7 +41,9 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
     private lateinit var writeUuid: String
     private lateinit var notifyUuid: String
 
-    override fun setupTopBarLayout() {}
+    override fun setupTopBarLayout() {
+        binding.rootView.initImmersionBar(this, true, R.color.white)
+    }
 
     override fun observeRequestState() {
 

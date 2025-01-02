@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat
 import com.example.multidemo.R
 import com.example.multidemo.adapter.SatelliteRecyclerAdapter
 import com.example.multidemo.databinding.ActivitySatelliteStatusBinding
+import com.example.multidemo.extensions.initImmersionBar
 import com.example.multidemo.model.Satellite
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
@@ -143,7 +144,7 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
     }
 
     override fun setupTopBarLayout() {
-
+        binding.rootView.initImmersionBar(this, false, R.color.lib_text_color)
     }
 
     override fun initEvent() {

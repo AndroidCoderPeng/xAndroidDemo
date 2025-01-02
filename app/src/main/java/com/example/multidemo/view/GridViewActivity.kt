@@ -5,7 +5,9 @@ import android.os.Handler
 import android.os.Message
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityGridviewBinding
+import com.example.multidemo.extensions.initImmersionBar
 import com.example.multidemo.util.GlideLoadEngine
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
@@ -36,7 +38,7 @@ class GridViewActivity : KotlinBaseActivity<ActivityGridviewBinding>(), Handler.
     private lateinit var imageAdapter: EditableImageAdapter
 
     override fun setupTopBarLayout() {
-
+        binding.rootView.initImmersionBar(this, true, R.color.white)
     }
 
     override fun initViewBinding(): ActivityGridviewBinding {

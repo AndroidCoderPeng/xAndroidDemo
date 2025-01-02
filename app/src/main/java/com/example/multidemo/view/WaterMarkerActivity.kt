@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.multidemo.R
 import com.example.multidemo.databinding.ActivityWaterMarkerBinding
+import com.example.multidemo.extensions.initImmersionBar
 import com.example.multidemo.util.GlideLoadEngine
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
@@ -32,7 +33,9 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
     private var mediaRealPath: String? = null
     private val compressImageDir by lazy { createCompressImageDir() }
 
-    override fun setupTopBarLayout() {}
+    override fun setupTopBarLayout() {
+        binding.rootView.initImmersionBar(this, true, R.color.white)
+    }
 
     override fun observeRequestState() {
 

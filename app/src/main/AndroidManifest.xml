@@ -46,7 +46,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".base.WelcomeActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -55,7 +55,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity" />
         <activity
             android:name=".view.SlideNavigationActivity"
             android:screenOrientation="landscape" />
@@ -64,7 +63,6 @@
         <activity android:name=".view.WaterMarkerActivity" />
         <activity android:name=".view.BluetoothActivity" />
         <activity android:name=".view.GridViewActivity" />
-        <activity android:name=".view.SteeringWheelActivity" />
         <activity android:name=".view.TimeLineActivity" />
         <activity android:name=".view.RadarScanActivity" />
         <activity android:name=".view.CompassActivity" />
