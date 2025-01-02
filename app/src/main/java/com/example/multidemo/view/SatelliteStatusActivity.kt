@@ -74,6 +74,7 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
                     7 -> image = R.drawable.ic_india
                 }
 
+                //有效的星历数据是计算位置的必要条件。
                 val signalDrawable = if (item.isHasAlmanac) {
                     if (item.signal <= 19) {
                         R.drawable.bg_progress_bar_middle_low
@@ -122,7 +123,6 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
                     elevation = status.getElevationDegrees(i).toInt()// 获取卫星的仰角
                     azimuth = status.getAzimuthDegrees(i).toInt()// 获取卫星的方位角
                     type = constellationType // 获取卫星的类型
-                    //TODO 待定
                     isHasAlmanac = status.hasAlmanacData(i)
                 }
                 if (satellite.signal != 0) {
