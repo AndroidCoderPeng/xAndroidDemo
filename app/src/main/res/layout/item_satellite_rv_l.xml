@@ -49,8 +49,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/bg_progress_bar_low"
-            android:max="63" />
+            android:background="@drawable/bg_progress_bar_low" />
 
         <TextView
             android:id="@+id/signalValueView"
@@ -68,10 +67,22 @@
         android:background="@color/white" />
 
     <LinearLayout
-        android:layout_width="@dimen/dp_90"
+        android:layout_width="@dimen/dp_110"
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/satelliteStateView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_un_use" />
+
+        <View
+            android:layout_width="@dimen/borderThickness"
+            android:layout_height="match_parent"
+            android:background="@color/white" />
 
         <TextView
             android:id="@+id/azimuthView"

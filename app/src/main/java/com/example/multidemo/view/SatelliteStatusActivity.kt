@@ -25,7 +25,8 @@ import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.toJson
 
 
-class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBinding>() {
+class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBinding>(),
+    LocationListener {
 
     private val kTag = "SatelliteActivity"
     private val context = this
@@ -57,9 +58,8 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
             return
         }
         locationManager.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER, 2000, 0f, locationListener
+            LocationManager.GPS_PROVIDER, 3000, 0f, this
         )
-        showLocation(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER))
         locationManager.registerGnssStatusCallback(gnssStatusListener, null)
         satelliteAdapter = object : SatelliteRecyclerAdapter<Satellite>(
             R.layout.item_satellite_rv_l, satelliteCollection
@@ -75,8 +75,9 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
                     7 -> image = R.drawable.ic_india
                 }
 
-                //有效的星历数据是计算位置的必要条件。
-                val signalDrawable = if (item.isHasAlmanac) {
+                //如果返回true，则表示该卫星正在被用于定位计算；如果返回false，则表示该卫星未被用于定位计算
+                val signalDrawable = if (item.isUsedInFix) {
+                    viewHolder.setImageResource(R.id.satelliteStateView, R.drawable.ic_in_use)
                     if (item.signal <= 19) {
                         R.drawable.bg_progress_bar_middle_low
                     } else if (item.signal in 20..29) {
@@ -85,10 +86,12 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
                         R.drawable.bg_progress_bar_high
                     }
                 } else {
+                    viewHolder.setImageResource(R.id.satelliteStateView, R.drawable.ic_un_use)
                     R.drawable.bg_progress_bar_low
                 }
                 val signalProgressView = viewHolder.getView<ProgressBar>(R.id.signalProgressView)
                 signalProgressView.progressDrawable = signalDrawable.convertDrawable(context)
+                signalProgressView.max = 63
                 signalProgressView.progress = item.signal
 
                 viewHolder.setImageResource(R.id.nationalityView, image)
@@ -102,14 +105,10 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
         binding.recyclerView.addItemDecoration(RecyclerViewItemDivider(1, Color.WHITE))
     }
 
-    private val locationListener = LocationListener { location -> showLocation(location) }
-
-    private fun showLocation(location: Location?) {
-        location?.apply {
-            val description =
-                "经度：${location.longitude}\n纬度：${location.latitude}\n精度：${location.accuracy}m"
-            binding.locationView.text = description
-        }
+    override fun onLocationChanged(location: Location) {
+        val description =
+            "经度：${location.longitude}\n纬度：${location.latitude}\n精度：${location.accuracy}m"
+        binding.locationView.text = description
     }
 
     private val gnssStatusListener = object : GnssStatus.Callback() {
@@ -124,7 +123,7 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
                     elevation = status.getElevationDegrees(i).toInt()// 获取卫星的仰角
                     azimuth = status.getAzimuthDegrees(i).toInt()// 获取卫星的方位角
                     type = constellationType // 获取卫星的类型
-                    isHasAlmanac = status.hasAlmanacData(i)
+                    isUsedInFix = status.usedInFix(i)
                 }
                 if (satellite.signal != 0) {
                     satelliteCollection.add(satellite)
@@ -154,6 +153,6 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
     override fun onDestroy() {
         super.onDestroy()
         locationManager.unregisterGnssStatusCallback(gnssStatusListener)
-        locationManager.removeUpdates(locationListener)
+        locationManager.removeUpdates(this)
     }
 }

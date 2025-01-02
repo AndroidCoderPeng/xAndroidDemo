@@ -6,7 +6,7 @@ public class Satellite {
     private int signal; // 卫星的信噪比（信号）
     private int elevation; // 卫星的仰角
     private int azimuth; // 卫星的方位角
-    private boolean hasAlmanac; // 是否有卫星的星历数据
+    private boolean usedInFix; // 是否有卫星的星历数据
 
     public String getSvid() {
         return svid;
@@ -48,11 +48,11 @@ public class Satellite {
         this.azimuth = azimuth;
     }
 
-    public boolean isHasAlmanac() {
-        return hasAlmanac;
+    public boolean isUsedInFix() {
+        return usedInFix;
     }
 
-    public void setHasAlmanac(boolean hasAlmanac) {
-        this.hasAlmanac = hasAlmanac;
+    public void setUsedInFix(boolean usedInFix) {
+        this.usedInFix = usedInFix;
     }
 }
