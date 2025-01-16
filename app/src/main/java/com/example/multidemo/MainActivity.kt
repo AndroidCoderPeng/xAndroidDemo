@@ -30,6 +30,7 @@ import com.example.multidemo.view.RadarScanActivity
 import com.example.multidemo.view.RecodeAudioActivity
 import com.example.multidemo.view.SatelliteStatusActivity
 import com.example.multidemo.view.SaveInAlbumActivity
+import com.example.multidemo.view.SerialPortActivity
 import com.example.multidemo.view.SlideNavigationActivity
 import com.example.multidemo.view.TimeLineActivity
 import com.example.multidemo.view.WaterMarkerActivity
@@ -125,7 +126,8 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "拍照保存到相册",
         "截屏",
         "导航卫星信息",
-        "音频可视化"
+        "音频可视化",
+        "串口"
     )
     private var clickTime: Long = 0
     private var screenShortService: ScreenShortRecordService? = null
@@ -183,6 +185,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
 
                     16 -> navigatePageTo<SatelliteStatusActivity>()
                     17 -> navigatePageTo<AudioVisualActivity>()
+                    18 -> navigatePageTo<SerialPortActivity>()
                 }
             }
         })

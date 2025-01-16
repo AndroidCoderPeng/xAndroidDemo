@@ -112,6 +112,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/dp_10"
-        android:text="卫星数量太少，无法定位"
+        android:text="锁定卫星太少，无法获取定位"
         android:textColor="@color/white" />
 </LinearLayout>
