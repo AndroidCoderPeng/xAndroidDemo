@@ -72,7 +72,6 @@
         <activity android:name=".view.SaveInAlbumActivity" />
         <activity android:name=".view.SatelliteStatusActivity" />
         <activity android:name=".view.AudioVisualActivity" />
-        <activity android:name=".view.SerialPortActivity" />
         <activity
             android:name=".view.FaceCollectionActivity"
             android:screenOrientation="portrait"
