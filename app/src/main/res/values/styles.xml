@@ -23,6 +23,6 @@
 
     <style name="RoundedStyle">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">@dimen/dp_3</item>
+        <item name="cornerSize">@dimen/dp_1</item>
     </style>
 </resources>

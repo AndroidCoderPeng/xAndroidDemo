@@ -60,7 +60,7 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
         locationManager.registerGnssStatusCallback(gnssStatusListener, null)
         satelliteAdapter = SatelliteRecyclerAdapter(this, satelliteCollection)
         binding.recyclerView.adapter = satelliteAdapter
-        binding.recyclerView.addItemDecoration(RecyclerViewItemDivider(1, Color.WHITE))
+        binding.recyclerView.addItemDecoration(RecyclerViewItemDivider(0f, 0f, Color.WHITE))
     }
 
     override fun onLocationChanged(location: Location) {
