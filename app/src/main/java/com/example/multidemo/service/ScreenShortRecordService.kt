@@ -7,16 +7,15 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.PixelFormat
 import android.hardware.display.DisplayManager
 import android.media.ImageReader
 import android.media.projection.MediaProjectionManager
 import android.os.Binder
-import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.core.graphics.createBitmap
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
@@ -37,9 +36,8 @@ class ScreenShortRecordService : Service(), LifecycleOwner {
 
     private val registry = LifecycleRegistry(this)
 
-    override fun getLifecycle(): Lifecycle {
-        return registry
-    }
+    override val lifecycle: Lifecycle
+        get() = registry
 
     inner class ServiceBinder : Binder() {
         fun getScreenShortRecordService(): ScreenShortRecordService {
@@ -85,9 +83,7 @@ class ScreenShortRecordService : Service(), LifecycleOwner {
                 val pixelStride = planes[0].pixelStride
                 val rowStride = planes[0].rowStride
                 val rowPadding = rowStride - pixelStride * width
-                val bitmap = Bitmap.createBitmap(
-                    width + rowPadding / pixelStride, height, Bitmap.Config.ARGB_8888
-                )
+                val bitmap = createBitmap(width + rowPadding / pixelStride, height)
                 bitmap.copyPixelsFromBuffer(buffer)
                 image.close()
                 mpj?.stop()
@@ -99,20 +95,15 @@ class ScreenShortRecordService : Service(), LifecycleOwner {
 
     private fun createForegroundNotification() {
         val notificationManager = getSystemService<NotificationManager>()
-        val builder: Notification.Builder
         val name = resources.getString(R.string.app_name)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //创建渠道
-            val id = "${kTag}Channel"
-            val channel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH)
-            channel.setShowBadge(true)
-            channel.enableVibration(false)
-            channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC //设置锁屏可见
-            notificationManager?.createNotificationChannel(channel)
-            builder = Notification.Builder(this, id)
-        } else {
-            builder = Notification.Builder(this)
-        }
+        //创建渠道
+        val id = "${kTag}Channel"
+        val channel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH)
+        channel.setShowBadge(true)
+        channel.enableVibration(false)
+        channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC //设置锁屏可见
+        notificationManager?.createNotificationChannel(channel)
+        val builder = Notification.Builder(this, id)
         val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.launcher_logo)
         builder.setContentTitle(name)
             .setContentText("${name}屏幕截取中")

@@ -3,6 +3,7 @@
     <color name="mainColor">#0055FF</color>
     <color name="darkMainColor">#0033FF</color>
 
+    <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="gray">#808080</color>
     <color name="lightGray">#D3D3D3</color>

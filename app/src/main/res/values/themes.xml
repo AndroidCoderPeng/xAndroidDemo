@@ -1,4 +1,11 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+
+        <!-- 从 Android 15 开始，系统默认开启了 Edge-to-Edge 模式，这可能会导致 ImmersionBar 的一些功能失效 -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
+    </style>
 
     <style name="Theme.BigImageActivity" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowAnimationStyle">@style/ActivityInOutAnimation</item>

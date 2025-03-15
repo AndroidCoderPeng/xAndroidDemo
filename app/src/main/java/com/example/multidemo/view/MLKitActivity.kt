@@ -53,7 +53,7 @@ class MLKitActivity : KotlinBaseActivity<ActivityMlKitBinding>() {
                 val inputImage = InputImage.fromBitmap(bitmap, 0)
                 faceDetector.process(inputImage)
                     .addOnSuccessListener { faces ->
-                        val copyBitmap = bitmap.copy(bitmap.config, true)
+                        val copyBitmap = bitmap.copy(bitmap.config!!, true)
                         faces.forEach { face ->
                             val rect = face.boundingBox
                             val canvas = Canvas(copyBitmap)
