@@ -13,7 +13,7 @@ android {
         applicationId 'com.example.multidemo'
         minSdk 26
         targetSdk 35
-        versionCode 1
+        versionCode 100
         versionName '1.0.0'
         multiDexEnabled true
     }
@@ -64,7 +64,7 @@ static def getBuildDate() {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //基础依赖库
-    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.1.4'
+    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.1.5'
     implementation 'androidx.core:core-ktx:1.13.1'
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'

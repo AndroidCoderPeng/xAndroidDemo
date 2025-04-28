@@ -16,6 +16,7 @@ import com.amap.api.maps.MapsInitializer
 import com.example.multidemo.databinding.ActivityMainBinding
 import com.example.multidemo.extensions.initImmersionBar
 import com.example.multidemo.service.ScreenShortRecordService
+import com.example.multidemo.view.AddProductAnimationActivity
 import com.example.multidemo.view.AudioVisualActivity
 import com.example.multidemo.view.BluetoothActivity
 import com.example.multidemo.view.CompassActivity
@@ -125,7 +126,8 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "拍照保存到相册",
         "截屏",
         "导航卫星信息",
-        "音频可视化"
+        "音频可视化",
+        "商品加购购物车效果"
     )
     private var clickTime: Long = 0
     private var screenShortService: ScreenShortRecordService? = null
@@ -183,6 +185,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
 
                     16 -> navigatePageTo<SatelliteStatusActivity>()
                     17 -> navigatePageTo<AudioVisualActivity>()
+                    18 -> navigatePageTo<AddProductAnimationActivity>()
                 }
             }
         })
