@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
-import androidx.core.graphics.drawable.toDrawable
 import com.pengxh.kt.lite.extensions.dp2px
 
 /**
@@ -48,7 +47,7 @@ fun ImageView.showAnimation(
 
     // 动态创建动画视图
     val animatingView = ImageView(context).apply {
-        setImageDrawable(bitmap.toDrawable(resources))
+        setImageBitmap(bitmap)
         pivotX = width / 2f // 设置中心点为图片中心
         pivotY = height / 2f // 设置中心点为图片中心
         layoutParams = RelativeLayout.LayoutParams(
