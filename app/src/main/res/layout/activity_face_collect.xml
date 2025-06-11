@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.example.multidemo.widget.FaceDetectView
+    <com.example.android.widget.FaceDetectView
         android:id="@+id/faceDetectView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

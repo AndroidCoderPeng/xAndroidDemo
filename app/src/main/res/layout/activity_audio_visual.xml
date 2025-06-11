@@ -61,13 +61,13 @@
             android:text="暂停" />
     </LinearLayout>
 
-    <com.example.multidemo.widget.AudioVisualView
+    <com.example.android.widget.AudioVisualView
         android:id="@+id/audioVisualView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dp_5" />
 
-    <com.example.multidemo.widget.AudioVisualView
+    <com.example.android.widget.AudioVisualView
         android:id="@+id/fftVisualView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

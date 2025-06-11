@@ -14,9 +14,9 @@ JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
 }
 
 JNIEXPORT jbyteArray JNICALL
-Java_com_example_multidemo_util_Yuv_rotate(JNIEnv *env, jobject thiz,
-                                           jbyteArray input, jint width, jint height,
-                                           jint rotation) {
+Java_com_example_android_util_Yuv_rotate(JNIEnv *env, jobject thiz,
+                                         jbyteArray input, jint width, jint height,
+                                         jint rotation) {
     __android_log_print(ANDROID_LOG_DEBUG, "yuv", "rotate");
     // 获取输入数据指针
     jbyte *data = env->GetByteArrayElements(input, nullptr);

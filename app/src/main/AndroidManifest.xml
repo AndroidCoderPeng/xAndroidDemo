@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.multidemo">
+    package="com.example.android">
 
     <!--普通权限，无需手动申请-->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -76,12 +76,8 @@
         <activity android:name=".view.AudioVisualActivity" />
         <activity android:name=".view.AddProductAnimationActivity" />
         <activity android:name=".view.YuvDataActivity" />
-        <activity
-            android:name=".view.FaceCollectionActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden" />
-        <activity
-            android:name=".view.CompressVideoActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity android:name=".view.FaceCollectionActivity" />
+        <activity android:name=".view.CompressVideoActivity" />
 
         <activity
             android:name=".view.BigImageActivity"
@@ -90,7 +86,7 @@
         <!-- 拍照压缩图片用 FileProvider -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.multidemo.fileProvider"
+            android:authorities="com.example.android.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@mipmap/bg_search_label">
 
-    <com.example.multidemo.widget.RadarScanView
+    <com.example.android.widget.RadarScanView
         android:id="@+id/radarScanView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
