@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.multidemo">
 
     <!--普通权限，无需手动申请-->
@@ -31,9 +30,12 @@
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.any" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
 
     <application
         android:name=".base.BaseApplication"
@@ -73,14 +75,13 @@
         <activity android:name=".view.SatelliteStatusActivity" />
         <activity android:name=".view.AudioVisualActivity" />
         <activity android:name=".view.AddProductAnimationActivity" />
+        <activity android:name=".view.YuvDataActivity" />
         <activity
             android:name=".view.FaceCollectionActivity"
-            android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
             android:name=".view.CompressVideoActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:screenOrientation="fullSensor" />
+            android:configChanges="orientation|screenSize|keyboardHidden" />
 
         <activity
             android:name=".view.BigImageActivity"

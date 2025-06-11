@@ -1,7 +1,6 @@
 package com.example.multidemo
 
 import android.Manifest
-import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -34,6 +33,7 @@ import com.example.multidemo.view.SaveInAlbumActivity
 import com.example.multidemo.view.SlideNavigationActivity
 import com.example.multidemo.view.TimeLineActivity
 import com.example.multidemo.view.WaterMarkerActivity
+import com.example.multidemo.view.YuvDataActivity
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
@@ -127,7 +127,8 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "截屏",
         "导航卫星信息",
         "音频可视化",
-        "商品加购购物车效果"
+        "商品加购购物车效果",
+        "YUV分析"
     )
     private var clickTime: Long = 0
     private var screenShortService: ScreenShortRecordService? = null
@@ -186,6 +187,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
                     16 -> navigatePageTo<SatelliteStatusActivity>()
                     17 -> navigatePageTo<AudioVisualActivity>()
                     18 -> navigatePageTo<AddProductAnimationActivity>()
+                    19 -> navigatePageTo<YuvDataActivity>()
                 }
             }
         })
@@ -194,7 +196,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
     private val captureIntentLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             val imagePath = "${createImageFileDir()}/${timeFormat.format(Date())}.png"
             result.data?.let {
                 screenShortService?.startCaptureScreen(imagePath, it)
