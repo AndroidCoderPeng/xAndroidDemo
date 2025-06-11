@@ -17,38 +17,33 @@ JNIEXPORT jbyteArray JNICALL
 Java_com_example_android_util_Yuv_rotate(JNIEnv *env, jobject thiz,
                                          jbyteArray input, jint width, jint height,
                                          jint rotation) {
-    __android_log_print(ANDROID_LOG_DEBUG, "yuv", "rotate");
-    // 获取输入数据指针
+    __android_log_print(ANDROID_LOG_DEBUG, "yuv", "rotate: width=%d, height=%d", width, height);
     jbyte *data = env->GetByteArrayElements(input, nullptr);
-    if (data == nullptr) {
-        return nullptr; // 内存错误
-    }
+    if (!data) return nullptr;
 
     int totalSize = width * height * 3 / 2;
     jbyteArray outputArray = env->NewByteArray(totalSize);
-    if (outputArray == nullptr) {
+    if (!outputArray) {
         env->ReleaseByteArrayElements(input, data, 0);
-        return nullptr; // 内存分配失败
+        return nullptr;
     }
 
     std::unique_ptr<jbyte[]> rotatedData(new jbyte[totalSize]);
+
+    // 默认复制
     memcpy(rotatedData.get(), data, totalSize);
 
-    // 如果不支持的角度，直接返回原图
     bool needRotate = (rotation == 90 || rotation == 180 || rotation == 270);
     if (needRotate) {
-        // 创建临时缓冲区
         std::unique_ptr<jbyte[]> tempBuffer(new jbyte[totalSize]);
 
-        // Y 平面大小
         int ySize = width * height;
-
-        // UV 平面宽度和高度
-        int uvWidth = width / 2;
+        int uvWidth = width;
         int uvHeight = height / 2;
 
         switch (rotation) {
             case 90: {
+                // Y Plane - Rotate 90 degrees clockwise
                 for (int y = 0; y < height; ++y) {
                     for (int x = 0; x < width; ++x) {
                         int srcPos = y * width + x;
@@ -59,19 +54,21 @@ Java_com_example_android_util_Yuv_rotate(JNIEnv *env, jobject thiz,
                     }
                 }
 
+                // UV Plane - Rotate 90 degrees clockwise
                 for (int y = 0; y < uvHeight; ++y) {
-                    for (int x = 0; x < uvWidth; ++x) {
-                        int srcPos = ySize + (y * uvWidth + x) * 2;
+                    for (int x = 0; x < uvWidth; x += 2) {
+                        int srcPos = ySize + y * uvWidth + x;
                         int dstX = uvHeight - y - 1;
-                        int dstY = x;
-                        int dstPos = dstY * uvHeight + dstX;
-                        tempBuffer[ySize + dstPos * 2 + 0] = data[srcPos + 1]; // V
-                        tempBuffer[ySize + dstPos * 2 + 1] = data[srcPos + 0]; // U
+                        int dstY = x / 2;
+                        int dstPos = ySize + dstY * uvHeight + dstX * 2;
+                        tempBuffer[dstPos + 0] = data[srcPos + 1]; // V
+                        tempBuffer[dstPos + 1] = data[srcPos + 0]; // U
                     }
                 }
                 break;
             }
             case 180: {
+                // Y Plane - Rotate 180 degrees
                 for (int y = 0; y < height; ++y) {
                     for (int x = 0; x < width; ++x) {
                         int srcPos = y * width + x;
@@ -80,17 +77,21 @@ Java_com_example_android_util_Yuv_rotate(JNIEnv *env, jobject thiz,
                     }
                 }
 
+                // UV Plane - Rotate 180 degrees
                 for (int y = 0; y < uvHeight; ++y) {
-                    for (int x = 0; x < uvWidth; ++x) {
-                        int srcPos = ySize + (y * uvWidth + x) * 2;
-                        int dstPos = (uvHeight - y - 1) * uvWidth + (uvWidth - x - 1);
-                        tempBuffer[ySize + dstPos * 2 + 0] = data[srcPos + 0]; // V
-                        tempBuffer[ySize + dstPos * 2 + 1] = data[srcPos + 1]; // U
+                    for (int x = 0; x < uvWidth; x += 2) {
+                        int srcPos = ySize + y * uvWidth + x;
+                        int dst_y = uvHeight - y - 1;
+                        int dst_x = uvWidth - x - 2;
+                        int dstPos = ySize + dst_y * uvWidth + dst_x;
+                        tempBuffer[dstPos + 0] = data[srcPos + 1]; // V
+                        tempBuffer[dstPos + 1] = data[srcPos + 0]; // U
                     }
                 }
                 break;
             }
             case 270: {
+                // Y Plane - Rotate 270 degrees clockwise (or 90 counter-clockwise)
                 for (int y = 0; y < height; ++y) {
                     for (int x = 0; x < width; ++x) {
                         int srcPos = y * width + x;
@@ -101,14 +102,15 @@ Java_com_example_android_util_Yuv_rotate(JNIEnv *env, jobject thiz,
                     }
                 }
 
+                // UV Plane - Rotate 270 degrees clockwise
                 for (int y = 0; y < uvHeight; ++y) {
-                    for (int x = 0; x < uvWidth; ++x) {
-                        int srcPos = ySize + (y * uvWidth + x) * 2;
-                        int dstX = x;
-                        int dstY = uvWidth - y - 1;
-                        int dstPos = dstY * uvHeight + dstX;
-                        tempBuffer[ySize + dstPos * 2 + 0] = data[srcPos + 1]; // V
-                        tempBuffer[ySize + dstPos * 2 + 1] = data[srcPos + 0]; // U
+                    for (int x = 0; x < uvWidth; x += 2) {
+                        int srcPos = ySize + y * uvWidth + x;
+                        int dstX = x / 2;
+                        int dstY = uvWidth - y - 2;
+                        int dstPos = ySize + dstY * height + dstX * 2;
+                        tempBuffer[dstPos + 0] = data[srcPos + 1]; // V
+                        tempBuffer[dstPos + 1] = data[srcPos + 0]; // U
                     }
                 }
                 break;
@@ -118,8 +120,6 @@ Java_com_example_android_util_Yuv_rotate(JNIEnv *env, jobject thiz,
         }
         memcpy(rotatedData.get(), tempBuffer.get(), totalSize);
     }
-
-    // 返回结果
     env->SetByteArrayRegion(outputArray, 0, totalSize, rotatedData.get());
     env->ReleaseByteArrayElements(input, data, 0);
     return outputArray;
