@@ -52,7 +52,9 @@ Java_com_example_multidemo_util_Yuv_rotate(JNIEnv *env, jobject thiz,
                 for (int y = 0; y < height; ++y) {
                     for (int x = 0; x < width; ++x) {
                         int srcPos = y * width + x;
-                        int dstPos = (width - x - 1) * height + y;
+                        int dstX = height - y - 1;
+                        int dstY = x;
+                        int dstPos = dstY * height + dstX;
                         tempBuffer[dstPos] = data[srcPos];
                     }
                 }
@@ -60,7 +62,9 @@ Java_com_example_multidemo_util_Yuv_rotate(JNIEnv *env, jobject thiz,
                 for (int y = 0; y < uvHeight; ++y) {
                     for (int x = 0; x < uvWidth; ++x) {
                         int srcPos = ySize + (y * uvWidth + x) * 2;
-                        int dstPos = (uvWidth - x - 1) * uvHeight + y;
+                        int dstX = uvHeight - y - 1;
+                        int dstY = x;
+                        int dstPos = dstY * uvHeight + dstX;
                         tempBuffer[ySize + dstPos * 2 + 0] = data[srcPos + 1]; // V
                         tempBuffer[ySize + dstPos * 2 + 1] = data[srcPos + 0]; // U
                     }
@@ -90,7 +94,9 @@ Java_com_example_multidemo_util_Yuv_rotate(JNIEnv *env, jobject thiz,
                 for (int y = 0; y < height; ++y) {
                     for (int x = 0; x < width; ++x) {
                         int srcPos = y * width + x;
-                        int dstPos = x * height + (height - y - 1);
+                        int dstX = y;
+                        int dstY = width - x - 1;
+                        int dstPos = dstY * height + dstX;
                         tempBuffer[dstPos] = data[srcPos];
                     }
                 }
@@ -98,7 +104,9 @@ Java_com_example_multidemo_util_Yuv_rotate(JNIEnv *env, jobject thiz,
                 for (int y = 0; y < uvHeight; ++y) {
                     for (int x = 0; x < uvWidth; ++x) {
                         int srcPos = ySize + (y * uvWidth + x) * 2;
-                        int dstPos = x * uvHeight + (uvHeight - y - 1);
+                        int dstX = x;
+                        int dstY = uvWidth - y - 1;
+                        int dstPos = dstY * uvHeight + dstX;
                         tempBuffer[ySize + dstPos * 2 + 0] = data[srcPos + 1]; // V
                         tempBuffer[ySize + dstPos * 2 + 1] = data[srcPos + 0]; // U
                     }
