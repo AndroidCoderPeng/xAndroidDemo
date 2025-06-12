@@ -27,10 +27,7 @@ import kotlin.math.abs
 class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.PreviewCallback {
 
     private val kTag = "YuvDataActivity"
-    private val cameraId = Camera.CameraInfo.CAMERA_FACING_BACK
-    private lateinit var camera: Camera
-    private lateinit var optimalSize: Camera.Size
-    private lateinit var nv21: ByteArray
+    private var cameraId = Camera.CameraInfo.CAMERA_FACING_BACK
 
     /**
      * 需要旋转的角度，比如，画面被顺时针旋转90度，那么nv21就需要逆时针旋转90度才能正常显示
@@ -38,6 +35,10 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
      * 因为相机默认是横屏，所以需要把nv21矩阵逆时针旋转90度才能正常显示
      * */
     private var degrees = 90
+    private lateinit var camera: Camera
+    private lateinit var surfaceHolder: SurfaceHolder
+    private lateinit var optimalSize: Camera.Size
+    private lateinit var nv21: ByteArray
 
     override fun initViewBinding(): ActivityYuvDataBinding {
         return ActivityYuvDataBinding.inflate(layoutInflater)
@@ -54,7 +55,8 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
         viewParams.height = videoHeight.toInt()
         viewParams.width = videoWidth.toInt()
         binding.surfaceView.layoutParams = viewParams
-        binding.surfaceView.holder.addCallback(surfaceCallback)
+        surfaceHolder = binding.surfaceView.holder
+        surfaceHolder.addCallback(surfaceCallback)
     }
 
     override fun observeRequestState() {
@@ -62,6 +64,16 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
     }
 
     override fun initEvent() {
+        binding.changeCameraButton.setOnClickListener {
+            releaseCamera()
+            cameraId = if (cameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                Camera.CameraInfo.CAMERA_FACING_FRONT
+            } else {
+                Camera.CameraInfo.CAMERA_FACING_BACK
+            }
+            openCamera()
+        }
+
         binding.spinner.setSelection(1)
         binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -130,33 +142,37 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
         }
     }
 
+    private fun openCamera() {
+        try {
+            camera = Camera.open(cameraId)
+            val optimalParameters = camera.getParameters()
+            optimalSize = optimalParameters?.supportedPreviewSizes?.findOptimalPreviewSize()!!
+            optimalParameters.setPreviewSize(optimalSize.width, optimalSize.height)
+            camera.apply {
+                parameters = optimalParameters
+                /**
+                 *
+                 * 这个设置只会影响 SurfaceView 的预览画面显示方向，但不会改变 onPreviewFrame 中返回的原始 YUV 数据的方向
+                 * */
+                val rotation = getCameraRotation()
+                setDisplayOrientation(rotation)
+                setPreviewDisplay(surfaceHolder)
+                startPreview()
+                if (parameters.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+                    autoFocus(object : Camera.AutoFocusCallback {
+                        override fun onAutoFocus(success: Boolean, camera: Camera?) {}
+                    })
+                }
+                setPreviewCallback(this@YuvDataActivity)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
     private val surfaceCallback = object : SurfaceHolder.Callback {
         override fun surfaceCreated(holder: SurfaceHolder) {
-            try {
-                camera = Camera.open(cameraId)
-                val optimalParameters = camera.getParameters()
-                optimalSize = optimalParameters?.supportedPreviewSizes?.findOptimalPreviewSize()!!
-                optimalParameters.setPreviewSize(optimalSize.width, optimalSize.height)
-                camera.apply {
-                    parameters = optimalParameters
-                    /**
-                     *
-                     * 这个设置只会影响 SurfaceView 的预览画面显示方向，但不会改变 onPreviewFrame 中返回的原始 YUV 数据的方向
-                     * */
-                    val rotation = getCameraRotation()
-                    setDisplayOrientation(rotation)
-                    setPreviewDisplay(holder)
-                    startPreview()
-                    if (parameters.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-                        autoFocus(object : Camera.AutoFocusCallback {
-                            override fun onAutoFocus(success: Boolean, camera: Camera?) {}
-                        })
-                    }
-                    setPreviewCallback(this@YuvDataActivity)
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+            openCamera()
         }
 
         override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
@@ -164,9 +180,8 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
         }
 
         override fun surfaceDestroyed(holder: SurfaceHolder) {
-            camera.run {
-                stopPreview()
-                release()
+            if (::camera.isInitialized) {
+                camera.stopPreview()
             }
         }
     }
@@ -177,8 +192,20 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
     }
 
     override fun onDestroy() {
-        camera.release()
+        releaseCamera()
         super.onDestroy()
+    }
+
+    private fun releaseCamera() {
+        try {
+            if (::camera.isInitialized) {
+                camera.setPreviewCallback(null)
+                camera.stopPreview()
+                camera.release()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun List<Camera.Size>.findOptimalPreviewSize(): Camera.Size {
