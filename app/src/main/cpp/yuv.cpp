@@ -9,9 +9,9 @@
 
 void rotate_nv21_90(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst, uint8_t *vu_dst,
                     int width, int height) {
-    for (int col = 0; col < width; ++col) {
-        int offset = (height - 1) * width + col;
-        for (int row = 0; row < height; ++row) {
+    for (int y = 0; y < width; ++y) {
+        int offset = (height - 1) * width + y;
+        for (int x = 0; x < height; ++x) {
             *y_dst++ = y_src[offset];
             offset -= width;
         }
@@ -20,11 +20,15 @@ void rotate_nv21_90(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst,
     int uv_width = width / 2;
     int uv_height = height / 2;
 
-    for (int y = uv_height - 1; y >= 0; --y) {
-        for (int x = uv_width - 1; x >= 0; --x) {
-            int src_offset = y * width + x * 2;
-            *vu_dst++ = vu_src[src_offset + 1]; // V
-            *vu_dst++ = vu_src[src_offset];     // U
+    int vu_size = (width * height) / 2;
+
+    int index = vu_size - 1;
+    for (int x = width - 1; x >= 1; x -= 2) {
+        int offset = 0;
+        for (int i = 0; i < height / 2; ++i) {
+            vu_dst[index--] = vu_src[offset + x];     // V
+            vu_dst[index--] = vu_src[offset + x - 1]; // U
+            offset += width;
         }
     }
 }
