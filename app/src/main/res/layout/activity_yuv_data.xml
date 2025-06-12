@@ -1,71 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rootView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <SurfaceView
-        android:id="@+id/surfaceView"
+    <Button
+        android:id="@+id/changeCameraButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="@dimen/dp_10" />
+        android:layout_gravity="end"
+        android:layout_marginHorizontal="@dimen/dp_10"
+        android:text="切换镜头" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/dp_10">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
+        <SurfaceView
+            android:id="@+id/surfaceView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="旋转角度"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14" />
+            android:layout_margin="@dimen/dp_10" />
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/spinner"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/dp_10"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_10">
+
+            <Button
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="旋转角度" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/spinner"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:entries="@array/rotations" />
+
+            <Button
+                android:id="@+id/yuvButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="灰度化" />
+
+            <Button
+                android:id="@+id/rgbButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_10"
+                android:text="原彩" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
             android:layout_weight="1"
-            android:entries="@array/rotations" />
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/dp_10">
 
-        <Button
-            android:id="@+id/yuvButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="灰度化" />
+            <ImageView
+                android:id="@+id/yuvImageView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/dp_5"
+                android:layout_weight="1" />
 
-        <Button
-            android:id="@+id/rgbButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_10"
-            android:text="原彩" />
+            <ImageView
+                android:id="@+id/rgbImageView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/dp_5"
+                android:layout_weight="1" />
+        </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1"
-        android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/dp_10">
-
-        <ImageView
-            android:id="@+id/yuvImageView"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="@dimen/dp_5"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:id="@+id/rgbImageView"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/dp_5"
-            android:layout_weight="1" />
-    </LinearLayout>
-</LinearLayout>
+</FrameLayout>
