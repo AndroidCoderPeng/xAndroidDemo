@@ -10,7 +10,7 @@
 void rotate_nv21_90(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst, uint8_t *vu_dst,
                     int width, int height) {
     // 把原始yuv（一维数组）转为临时矩阵，C++不支持动态二维数组
-    auto *y_temp = new uint8_t[width * height];
+    auto y_temp = std::make_unique<uint8_t[]>(width * height);
     for (int i = 0; i < height; ++i) {
         for (int j = 0; j < width; ++j) {
             y_temp[j * height + i] = y_src[i * width + j];
@@ -24,13 +24,9 @@ void rotate_nv21_90(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst,
         }
     }
 
-    // 释放临时内存
-    delete[] y_temp;
-
     int uv_width = width / 2;
     int uv_height = height / 2;
-
-    auto *uv_temp = new uint8_t[uv_width * uv_height * 2]; // 每个像素是 VU 对
+    auto uv_temp = std::make_unique<uint8_t[]>(uv_width * uv_height * 2); // 每个像素是 VU 对
     for (int i = 0; i < uv_height; ++i) {
         for (int j = 0; j < uv_width; ++j) {
             int src_index = (i * width + j * 2); // 源中的 VU 对起始位置
@@ -47,8 +43,6 @@ void rotate_nv21_90(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst,
             vu_dst[dst_index++] = uv_temp[(i * uv_height + j) * 2 + 1]; // U
         }
     }
-
-    delete[] uv_temp;
 }
 
 void rotate_nv21_180(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst, uint8_t *vu_dst,
@@ -71,26 +65,36 @@ void rotate_nv21_180(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst
 
 void rotate_nv21_270(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst, uint8_t *vu_dst,
                      int width, int height) {
-    // Rotate Y component (270 degrees CCW)
-    for (int col = width - 1; col >= 0; --col) {
-        int offset = 0;
-        for (int row = 0; row < height; ++row) {
-            *y_dst++ = y_src[offset + col];
-            offset += width;
+    auto y_temp = std::make_unique<uint8_t[]>(width * height);
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            y_temp[j * height + i] = y_src[i * width + j];
         }
     }
 
-    // Rotate VU component (270 degrees CCW)
+    // 矩阵转置
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            y_dst[i * height + j] = y_temp[(width - 1 - i) * height + j];
+        }
+    }
+
     int uv_width = width / 2;
     int uv_height = height / 2;
+    auto uv_temp = std::make_unique<uint8_t[]>(uv_width * uv_height * 2);
+    for (int i = 0; i < uv_height; ++i) {
+        for (int j = 0; j < uv_width; ++j) {
+            int src_index = (i * width + j * 2);
+            uv_temp[(j * uv_height + i) * 2] = vu_src[src_index];     // V
+            uv_temp[(j * uv_height + i) * 2 + 1] = vu_src[src_index + 1]; // U
+        }
+    }
 
-    for (int x = uv_width - 1; x >= 0; --x) {
-        int offset = 0;
-        for (int y = 0; y < uv_height; ++y) {
-            //旋转270°，可以直接用指针代替索引，写入方向和旋转90°相反，不用手动调整指针指向
-            *vu_dst++ = vu_src[offset + x * 2];     // U
-            *vu_dst++ = vu_src[offset + x * 2 + 1]; // V
-            offset += width;
+    int dst_index = 0;
+    for (int i = 0; i < uv_width; ++i) {
+        for (int j = 0; j < uv_height; ++j) {
+            vu_dst[dst_index++] = uv_temp[(uv_width - 1 - i) * uv_height * 2 + j * 2];     // V
+            vu_dst[dst_index++] = uv_temp[(uv_width - 1 - i) * uv_height * 2 + j * 2 + 1]; // U
         }
     }
 }
