@@ -44,54 +44,6 @@ Java_com_example_android_util_Yuv_rotate(JNIEnv *env, jobject thiz,
         int uv_plane_height = height / 2;
 
         switch (rotation) {
-//            case 90: {
-//                // Y Plane - Rotate 90 degrees clockwise
-//                for (int y = 0; y < height; ++y) {
-//                    for (int x = 0; x < width; ++x) {
-//                        int srcPos = y * width + x;
-//                        int dstX = height - y - 1;
-//                        int dstY = x;
-//                        int dstPos = dstY * height + dstX;
-//                        tempBuffer[dstPos] = data[srcPos];
-//                    }
-//                }
-//
-//                // UV Plane - Rotate 90 degrees clockwise
-//                for (int y = 0; y < uvHeight; ++y) {
-//                    for (int x = 0; x < uvWidth; x += 2) {
-//                        int srcPos = ySize + y * uvWidth + x;
-//                        int dstX = uvHeight - y - 1;
-//                        int dstY = x / 2;
-//                        int dstPos = ySize + dstY * uvHeight + dstX * 2;
-//                        tempBuffer[dstPos + 0] = data[srcPos + 1]; // V
-//                        tempBuffer[dstPos + 1] = data[srcPos + 0]; // U
-//                    }
-//                }
-//                break;
-//            }
-//            case 180: {
-//                // Y Plane - Rotate 180 degrees
-//                for (int y = 0; y < height; ++y) {
-//                    for (int x = 0; x < width; ++x) {
-//                        int srcPos = y * width + x;
-//                        int dstPos = (height - y - 1) * width + (width - x - 1);
-//                        tempBuffer[dstPos] = data[srcPos];
-//                    }
-//                }
-//
-//                // UV Plane - Rotate 180 degrees
-//                for (int y = 0; y < uvHeight; ++y) {
-//                    for (int x = 0; x < uvWidth; x += 2) {
-//                        int srcPos = ySize + y * uvWidth + x;
-//                        int dst_y = uvHeight - y - 1;
-//                        int dst_x = uvWidth - x - 2;
-//                        int dstPos = ySize + dst_y * uvWidth + dst_x;
-//                        tempBuffer[dstPos + 0] = data[srcPos + 1]; // V
-//                        tempBuffer[dstPos + 1] = data[srcPos + 0]; // U
-//                    }
-//                }
-//                break;
-//            }
             case 270: {
                 for (int y = 0; y < height; ++y) {
                     for (int x = 0; x < width; ++x) {

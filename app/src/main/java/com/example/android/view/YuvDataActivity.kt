@@ -1,9 +1,14 @@
 package com.example.android.view
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageFormat
+import android.graphics.Rect
+import android.graphics.YuvImage
 import android.hardware.Camera
 import android.os.Bundle
 import android.util.Log
+import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.ViewGroup
 import androidx.core.graphics.createBitmap
@@ -13,6 +18,7 @@ import com.example.android.extensions.initImmersionBar
 import com.example.android.util.Yuv
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.getScreenHeight
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.nio.ByteBuffer
 import kotlin.math.abs
@@ -50,17 +56,23 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
     override fun initEvent() {
         binding.yuvButton.setOnClickListener {
             val ySize = optimalSize.width * optimalSize.height
-            // 创建一个 ByteBuffer，只包含 Y 平面
             val bytes = Yuv.rotate(nv21, optimalSize.width, optimalSize.height, 270)
+            // 创建一个 ByteBuffer，只包含 Y 平面
             val yPlane = ByteBuffer.wrap(bytes, 0, ySize)
             val bitmap = createBitmap(optimalSize.width, optimalSize.height, Bitmap.Config.ALPHA_8)
-            // 把 Y 平面数据拷贝到 Bitmap 中
             bitmap.copyPixelsFromBuffer(yPlane)
             binding.yuvImageView.setImageBitmap(bitmap)
         }
 
         binding.rgbButton.setOnClickListener {
-
+            val yuvImage = YuvImage(
+                nv21, ImageFormat.NV21, optimalSize.width, optimalSize.height, null
+            )
+            val out = ByteArrayOutputStream()
+            yuvImage.compressToJpeg(Rect(0, 0, optimalSize.width, optimalSize.height), 100, out)
+            val imageBytes = out.toByteArray()
+            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            binding.rgbImageView.setImageBitmap(bitmap)
         }
     }
 
@@ -74,11 +86,11 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
                 camera.apply {
                     parameters = optimalParameters
                     /**
-                     * 设置预览方向：前置摄像头通常需要顺时针旋转90度
                      *
                      * 这个设置只会影响 SurfaceView 的预览画面显示方向，但不会改变 onPreviewFrame 中返回的原始 YUV 数据的方向
                      * */
-                    setDisplayOrientation(90)
+                    val rotation = getCameraRotation()
+                    setDisplayOrientation(rotation)
                     setPreviewDisplay(holder)
                     startPreview()
                     setPreviewCallback(this@YuvDataActivity)
@@ -133,5 +145,33 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
         }
 
         return optimalSize
+    }
+
+    /**
+     * Android 相机硬件的“自然方向”是横屏。即使你在竖屏下拍照或预览，相机输出的图像依然是横屏方向。
+     *
+     * 屏幕旋转 90°，相机输出数据旋转 270°
+     * */
+    fun getCameraRotation(): Int {
+        // 0, 1, 2, 3 → Surface.ROTATION_0/90/180/270
+        val rotation = windowManager.defaultDisplay.rotation
+        var degrees = 0
+        when (rotation) {
+            Surface.ROTATION_0 -> degrees = 0
+            Surface.ROTATION_90 -> degrees = 90
+            Surface.ROTATION_180 -> degrees = 270
+            Surface.ROTATION_270 -> degrees = 180
+        }
+
+        val info = Camera.CameraInfo()
+        Camera.getCameraInfo(cameraId, info)
+        var result = 0
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360
+            result = (360 - result) % 360 // 镜像翻转
+        } else {
+            result = (info.orientation - degrees + 360) % 360
+        }
+        return result
     }
 }
