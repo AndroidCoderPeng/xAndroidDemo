@@ -9,26 +9,46 @@
 
 void rotate_nv21_90(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst, uint8_t *vu_dst,
                     int width, int height) {
-    for (int col = 0; col < width; ++col) {
-        int offset = (height - 1) * width + col;
-        for (int row = 0; row < height; ++row) {
-            *y_dst++ = y_src[offset];
-            offset -= width;
+    // 把原始yuv（一维数组）转为临时矩阵，C++不支持动态二维数组
+    auto *y_temp = new uint8_t[width * height];
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            y_temp[j * height + i] = y_src[i * width + j];
         }
     }
 
-    int vu_size = (width * height) / 2;
-
-    int index = vu_size - 1;
-    for (int x = width - 1; x >= 1; x -= 2) {
-        int offset = 0;
-        for (int i = 0; i < height / 2; ++i) {
-            //不用指针，直接用索引，因为旋转90°时候数据从后向前写入，需要每次停止指针指向末尾
-            vu_dst[index--] = vu_src[offset + x];     // V
-            vu_dst[index--] = vu_src[offset + x - 1]; // U
-            offset += width;
+    // 矩阵转置
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            y_dst[i * height + j] = y_temp[i * height + (height - 1 - j)];
         }
     }
+
+    // 释放临时内存
+    delete[] y_temp;
+
+    int uv_width = width / 2;
+    int uv_height = height / 2;
+
+    auto *uv_temp = new uint8_t[uv_width * uv_height * 2]; // 每个像素是 VU 对
+    for (int i = 0; i < uv_height; ++i) {
+        for (int j = 0; j < uv_width; ++j) {
+            int src_index = (i * width + j * 2); // 源中的 VU 对起始位置
+            uv_temp[(j * uv_height + i) * 2] = vu_src[src_index];     // V
+            uv_temp[(j * uv_height + i) * 2 + 1] = vu_src[src_index + 1]; // U
+        }
+    }
+
+    // 矩阵转置
+    int dst_index = 0;
+    for (int i = 0; i < uv_width; ++i) {
+        for (int j = uv_height - 1; j >= 0; --j) {
+            vu_dst[dst_index++] = uv_temp[(i * uv_height + j) * 2];     // V
+            vu_dst[dst_index++] = uv_temp[(i * uv_height + j) * 2 + 1]; // U
+        }
+    }
+
+    delete[] uv_temp;
 }
 
 void rotate_nv21_180(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst, uint8_t *vu_dst,
