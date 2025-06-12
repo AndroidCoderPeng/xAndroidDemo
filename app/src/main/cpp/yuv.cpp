@@ -9,16 +9,13 @@
 
 void rotate_nv21_90(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst, uint8_t *vu_dst,
                     int width, int height) {
-    for (int y = 0; y < width; ++y) {
-        int offset = (height - 1) * width + y;
-        for (int x = 0; x < height; ++x) {
+    for (int col = 0; col < width; ++col) {
+        int offset = (height - 1) * width + col;
+        for (int row = 0; row < height; ++row) {
             *y_dst++ = y_src[offset];
             offset -= width;
         }
     }
-
-    int uv_width = width / 2;
-    int uv_height = height / 2;
 
     int vu_size = (width * height) / 2;
 
@@ -26,6 +23,7 @@ void rotate_nv21_90(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst,
     for (int x = width - 1; x >= 1; x -= 2) {
         int offset = 0;
         for (int i = 0; i < height / 2; ++i) {
+            //不用指针，直接用索引，因为旋转90°时候数据从后向前写入，需要每次停止指针指向末尾
             vu_dst[index--] = vu_src[offset + x];     // V
             vu_dst[index--] = vu_src[offset + x - 1]; // U
             offset += width;
@@ -54,10 +52,10 @@ void rotate_nv21_180(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst
 void rotate_nv21_270(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst, uint8_t *vu_dst,
                      int width, int height) {
     // Rotate Y component (270 degrees CCW)
-    for (int x = width - 1; x >= 0; --x) {
+    for (int col = width - 1; col >= 0; --col) {
         int offset = 0;
-        for (int y = 0; y < height; ++y) {
-            *y_dst++ = y_src[offset + x];
+        for (int row = 0; row < height; ++row) {
+            *y_dst++ = y_src[offset + col];
             offset += width;
         }
     }
@@ -69,6 +67,7 @@ void rotate_nv21_270(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst
     for (int x = uv_width - 1; x >= 0; --x) {
         int offset = 0;
         for (int y = 0; y < uv_height; ++y) {
+            //旋转270°，可以直接用指针代替索引，写入方向和旋转90°相反，不用手动调整指针指向
             *vu_dst++ = vu_src[offset + x * 2];     // U
             *vu_dst++ = vu_src[offset + x * 2 + 1]; // V
             offset += width;
