@@ -56,7 +56,7 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
     override fun initEvent() {
         binding.yuvButton.setOnClickListener {
             val ySize = optimalSize.width * optimalSize.height
-            val bytes = Yuv.rotate(nv21, optimalSize.width, optimalSize.height, 270)
+            val bytes = Yuv.rotate(nv21, optimalSize.width, optimalSize.height, 90)
             // 创建一个 ByteBuffer，只包含 Y 平面
             val yPlane = ByteBuffer.wrap(bytes, 0, ySize)
             val bitmap = createBitmap(optimalSize.width, optimalSize.height, Bitmap.Config.ALPHA_8)
