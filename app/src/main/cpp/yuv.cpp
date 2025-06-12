@@ -9,17 +9,67 @@
 
 void rotate_nv21_90(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst, uint8_t *vu_dst,
                     int width, int height) {
+    for (int col = 0; col < width; ++col) {
+        int offset = (height - 1) * width + col;
+        for (int row = 0; row < height; ++row) {
+            *y_dst++ = y_src[offset];
+            offset -= width;
+        }
+    }
 
+    int uv_width = width / 2;
+    int uv_height = height / 2;
+
+    for (int y = uv_height - 1; y >= 0; --y) {
+        for (int x = uv_width - 1; x >= 0; --x) {
+            int src_offset = y * width + x * 2;
+            *vu_dst++ = vu_src[src_offset + 1]; // V
+            *vu_dst++ = vu_src[src_offset];     // U
+        }
+    }
 }
 
 void rotate_nv21_180(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst, uint8_t *vu_dst,
                      int width, int height) {
+    int y_size = width * height;
+    int vu_size = (width * height) / 2;
 
+    // Rotate Y component (reverse all pixels)
+    for (int i = 0; i < y_size; ++i) {
+        y_dst[i] = y_src[y_size - 1 - i];
+    }
+
+    // Rotate VU component (reverse all U/V pairs)
+    for (int i = 0; i < vu_size; i += 2) {
+        int src_index = vu_size - i - 2;
+        vu_dst[i] = vu_src[src_index];
+        vu_dst[i + 1] = vu_src[src_index + 1];
+    }
 }
 
 void rotate_nv21_270(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst, uint8_t *vu_dst,
                      int width, int height) {
+    // Rotate Y component (270 degrees CCW)
+    for (int x = width - 1; x >= 0; --x) {
+        int offset = 0;
+        for (int y = 0; y < height; ++y) {
+            *y_dst++ = y_src[offset + x];
+            offset += width;
+        }
+    }
 
+    // Rotate VU component (270 degrees CCW)
+    int uv_width = width / 2;
+    int uv_height = height / 2;
+
+    for (int x = uv_width - 1; x >= 0; --x) {
+        int offset = 0;
+        for (int y = 0; y < uv_height; ++y) {
+            *vu_dst++ = vu_src[offset + x * 2];     // U
+            *vu_dst++ = vu_src[offset + x * 2 + 1]; // V
+            offset += width;
+        }
+    }
 }
 
 extern "C" {

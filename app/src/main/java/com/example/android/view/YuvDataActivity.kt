@@ -15,6 +15,7 @@ import androidx.core.graphics.createBitmap
 import com.example.android.R
 import com.example.android.databinding.ActivityYuvDataBinding
 import com.example.android.extensions.initImmersionBar
+import com.example.android.util.Yuv
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.getScreenHeight
 import java.io.ByteArrayOutputStream
@@ -34,7 +35,9 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
      *
      * 因为相机默认是横屏，所以需要把nv21矩阵逆时针旋转90度才能正常显示
      * */
-    private val degrees = 270
+    private val degrees = 90
+//    private val degrees = 180
+//    private val degrees = 270
 
     override fun initViewBinding(): ActivityYuvDataBinding {
         return ActivityYuvDataBinding.inflate(layoutInflater)
@@ -58,96 +61,11 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
 
     }
 
-    private fun ByteArray.rotate_to_90(width: Int, height: Int): ByteArray {
-        val ySize = width * height
-        val bufferSize = ySize * 3 / 2
-        val result = ByteArray(bufferSize)
-
-        // Rotate the Y luma
-        var index = 0
-        val startPos = (height - 1) * width
-        for (col in 0 until width) {
-            var offset = startPos
-            (0 until height).forEach {
-                result[index++] = this[offset + col]
-                offset -= width
-            }
-        }
-
-        // Rotate the U and V color components
-        index = bufferSize - 1
-        for (x in width - 1 downTo 1 step 2) {
-            var offset = ySize
-            (0 until height / 2).forEach {
-                result[index] = this[offset + x]
-                index--
-                result[index] = this[offset + (x - 1)]
-                index--
-                offset += width
-            }
-        }
-
-        return result
-    }
-
-    private fun ByteArray.rotate_to_180(width: Int, height: Int): ByteArray {
-        val ySize = width * height
-        val bufferSize = ySize * 3 / 2
-        val result = ByteArray(bufferSize)
-
-        // Rotate the Y luma
-        var index = 0
-        for (i in ySize - 1 downTo 0) {
-            result[index++] = this[i]
-        }
-
-        // Rotate the U and V color components
-        for (i in bufferSize - 1 downTo ySize step 2) {
-            result[index++] = this[i - 1]
-            result[index++] = this[i]
-        }
-
-        return result
-    }
-
-    private fun ByteArray.rotate_to_270(width: Int, height: Int): ByteArray {
-        val ySize = width * height
-        val bufferSize = ySize * 3 / 2
-        val result = ByteArray(bufferSize)
-
-        // Rotate the Y luma
-        var index = 0
-        for (x in width - 1 downTo 0) {
-            var offset = 0
-            (0 until height).forEach {
-                result[index] = this[offset + x]
-                index++
-                offset += width
-            }
-        }
-
-        // Rotate the U and V color components
-        index = ySize
-        for (x in width - 1 downTo 1 step 2) {
-            var offset = ySize
-            (0 until height / 2).forEach {
-                result[index] = this[offset + (x - 1)]
-                index++
-                result[index] = this[offset + x]
-                index++
-                offset += width
-            }
-        }
-        return result
-    }
-
     override fun initEvent() {
         binding.yuvButton.setOnClickListener {
             val width = optimalSize.width
             val height = optimalSize.height
-//            val bytes = Yuv.rotate(nv21, width, height, degrees)
-            val bytes = nv21.rotate_to_90(width, height)
-//            val bytes = nv21.rotate_to_270(width, height)
+            val bytes = Yuv.rotate(nv21, width, height, degrees)
 
             val rotatedWidth: Int
             val rotatedHeight: Int
@@ -177,9 +95,22 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
         binding.rgbButton.setOnClickListener {
             val width = optimalSize.width
             val height = optimalSize.height
-            val yuvImage = YuvImage(nv21, ImageFormat.NV21, width, height, null)
+            val bytes = Yuv.rotate(nv21, width, height, degrees)
+
+            val rotatedWidth: Int
+            val rotatedHeight: Int
+            // 90和270旋转后宽高互换
+            if (degrees == 90 || degrees == 270) {
+                rotatedWidth = height
+                rotatedHeight = width
+            } else {
+                rotatedWidth = width
+                rotatedHeight = height
+            }
+
+            val yuvImage = YuvImage(bytes, ImageFormat.NV21, rotatedWidth, rotatedHeight, null)
             val out = ByteArrayOutputStream()
-            yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
+            yuvImage.compressToJpeg(Rect(0, 0, rotatedWidth, rotatedHeight), 100, out)
             val imageBytes = out.toByteArray()
             val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
             binding.rgbImageView.setImageBitmap(bitmap)
