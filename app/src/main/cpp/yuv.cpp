@@ -36,6 +36,9 @@ void rotate_nv21_180(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst
     }
 }
 
+/**
+ * 等效逆时针旋转90°，宽高需要互换
+ * */
 void rotate_nv21_270(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst, uint8_t *vu_dst,
                      int width, int height) {
     for (int x = 0; x < width; ++x) {
@@ -58,10 +61,9 @@ JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     return JNI_VERSION_1_4;
 }
 
-JNIEXPORT jobject JNICALL
+JNIEXPORT jbyteArray JNICALL
 Java_com_example_android_util_Yuv_rotate(JNIEnv *env, jobject thiz,
-                                         jbyteArray input, jint width, jint height,
-                                         jint rotation) {
+                                         jbyteArray input, jint width, jint height, jint rotation) {
     __android_log_print(ANDROID_LOG_DEBUG, "yuv", "rotate: width=%d, height=%d", width, height);
     jbyte *data = env->GetByteArrayElements(input, nullptr);
     if (!data) return nullptr;

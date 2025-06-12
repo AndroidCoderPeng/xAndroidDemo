@@ -56,19 +56,23 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
         binding.yuvButton.setOnClickListener {
             val width = optimalSize.width
             val height = optimalSize.height
-            val bytes = Yuv.rotate(nv21, width, height, 90)
-//            val bytes = nv21
-            val bitmap = createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            val bytes = Yuv.rotate(nv21, width, height, 270)
+
+            // 旋转后宽高互换
+            val rotatedWidth = height
+            val rotatedHeight = width
+
+            val bitmap = createBitmap(rotatedWidth, rotatedHeight, Bitmap.Config.ARGB_8888)
 
             // 提取 Y 平面并复制到 IntArray 中（转换为灰度）
-            val ySize = width * height
+            val ySize = rotatedWidth * rotatedHeight
             val pixels = IntArray(ySize)
             for (i in 0 until ySize) {
                 val y = bytes[i].toInt() and 0xFF
                 pixels[i] = 0xFF000000.toInt() or (y shl 16) or (y shl 8) or y
             }
 
-            bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
+            bitmap.setPixels(pixels, 0, rotatedWidth, 0, 0, rotatedWidth, rotatedHeight)
             binding.yuvImageView.setImageBitmap(bitmap)
         }
 
