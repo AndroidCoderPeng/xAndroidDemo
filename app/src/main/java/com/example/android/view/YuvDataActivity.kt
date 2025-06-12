@@ -1,10 +1,7 @@
 package com.example.android.view
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageFormat
-import android.graphics.Rect
-import android.graphics.YuvImage
+import android.graphics.Color
 import android.hardware.Camera
 import android.os.Bundle
 import android.util.Log
@@ -12,15 +9,14 @@ import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.ViewGroup
 import androidx.core.graphics.createBitmap
+import androidx.core.graphics.set
 import com.example.android.R
 import com.example.android.databinding.ActivityYuvDataBinding
 import com.example.android.extensions.initImmersionBar
 import com.example.android.util.Yuv
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.getScreenHeight
-import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.nio.ByteBuffer
 import kotlin.math.abs
 
 class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.PreviewCallback {
@@ -55,23 +51,74 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
 
     override fun initEvent() {
         binding.yuvButton.setOnClickListener {
-            val ySize = optimalSize.width * optimalSize.height
-            val bytes = Yuv.rotate(nv21, optimalSize.width, optimalSize.height, 90)
-            // 创建一个 ByteBuffer，只包含 Y 平面
-            val yPlane = ByteBuffer.wrap(bytes, 0, ySize)
-            val bitmap = createBitmap(optimalSize.width, optimalSize.height, Bitmap.Config.ALPHA_8)
-            bitmap.copyPixelsFromBuffer(yPlane)
+            val yuvImage = Yuv.rotate(nv21, optimalSize.width, optimalSize.height, 90)
+            val width = yuvImage.width
+            val height = yuvImage.height
+            val ySize = width * height
+
+            // 创建 ARGB 位图
+            val bitmap = createBitmap(width, height, Bitmap.Config.ARGB_8888)
+
+            // 提取 Y 平面并复制到 IntArray 中（转换为灰度）
+            val pixels = IntArray(width * height)
+            val yData = yuvImage.data
+            for (i in 0 until ySize) {
+                val y = yData[i].toInt() and 0xFF
+                pixels[i] = 0xFF000000.toInt() or (y shl 16) or (y shl 8) or y
+            }
+
+            bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
             binding.yuvImageView.setImageBitmap(bitmap)
         }
 
         binding.rgbButton.setOnClickListener {
-            val yuvImage = YuvImage(
-                nv21, ImageFormat.NV21, optimalSize.width, optimalSize.height, null
-            )
-            val out = ByteArrayOutputStream()
-            yuvImage.compressToJpeg(Rect(0, 0, optimalSize.width, optimalSize.height), 100, out)
-            val imageBytes = out.toByteArray()
-            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+//            val yuvImage = YuvImage(
+//                nv21, ImageFormat.NV21, optimalSize.width, optimalSize.height, null
+//            )
+//            val out = ByteArrayOutputStream()
+//            yuvImage.compressToJpeg(Rect(0, 0, optimalSize.width, optimalSize.height), 100, out)
+//            val imageBytes = out.toByteArray()
+//            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+//            binding.rgbImageView.setImageBitmap(bitmap)
+
+            val yuvImage = Yuv.rotate(nv21, optimalSize.width, optimalSize.height, 90)
+            val width = yuvImage.width
+            val height = yuvImage.height
+            val ySize = width * height
+
+            // 创建 ARGB 位图
+            val bitmap = createBitmap(width, height, Bitmap.Config.ARGB_8888)
+
+            // 提取 YUV 数据
+            val yData = yuvImage.data
+            val uvDataStart = ySize
+            val uvPixelStride = 2 // U/V 在数据中交错存储，每两个像素共享一组 U/V 值
+            val uvRowStride = width
+
+            // 将 YUV 转换为 RGB 并设置到 Bitmap 中
+            for (j in 0 until height) {
+                for (i in 0 until width) {
+                    // Y 的值位于 [0..255]
+                    val y = (yData[j * width + i].toInt() and 0xFF) - 16
+                    // U/V 的值位于 [0..255]，但实际范围是 [-128..127]
+                    val v =
+                        (yData[uvDataStart + (j / 2) * uvRowStride + (i / 2) * uvPixelStride + 1].toInt() and 0xFF) - 128
+                    val u =
+                        (yData[uvDataStart + (j / 2) * uvRowStride + (i / 2) * uvPixelStride].toInt() and 0xFF) - 128
+
+                    // YUV to RGB conversion formula
+                    var r = (1.164f * y + 1.596f * v).toInt()
+                    var g = (1.164f * y - 0.813f * v - 0.391f * u).toInt()
+                    var b = (1.164f * y + 2.018f * u).toInt()
+
+                    // 确保颜色值在有效范围内
+                    r = r.coerceIn(0, 255)
+                    g = g.coerceIn(0, 255)
+                    b = b.coerceIn(0, 255)
+
+                    bitmap[i, j] = Color.argb(255, r, g, b)
+                }
+            }
             binding.rgbImageView.setImageBitmap(bitmap)
         }
     }

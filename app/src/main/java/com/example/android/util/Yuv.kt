@@ -13,5 +13,5 @@ object Yuv {
      * @param rotation 旋转角度（0, 90, 180, 270）
      * @return 旋转后的 NV21 数据
      */
-    external fun rotate(input: ByteArray, width: Int, height: Int, rotation: Int): ByteArray
+    external fun rotate(input: ByteArray, width: Int, height: Int, rotation: Int): YuvImage
 }

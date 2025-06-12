@@ -58,7 +58,7 @@ JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     return JNI_VERSION_1_4;
 }
 
-JNIEXPORT jbyteArray JNICALL
+JNIEXPORT jobject JNICALL
 Java_com_example_android_util_Yuv_rotate(JNIEnv *env, jobject thiz,
                                          jbyteArray input, jint width, jint height,
                                          jint rotation) {
@@ -95,8 +95,21 @@ Java_com_example_android_util_Yuv_rotate(JNIEnv *env, jobject thiz,
             memcpy(out_data, data, total_size); // 不旋转直接复制
             break;
     }
-    jbyteArray result = env->NewByteArray(total_size);
-    env->SetByteArrayRegion(result, 0, total_size, out_data);
+    jbyteArray rotated_nv21 = env->NewByteArray(total_size);
+    env->SetByteArrayRegion(rotated_nv21, 0, total_size, out_data);
+
+    // 根据旋转角度计算新宽高
+    int newWidth = width;
+    int newHeight = height;
+//    if (rotation == 90 || rotation == 270) {
+//        newWidth = height;
+//        newHeight = width;
+//    }
+
+    // 构造 RotatedImage 对象
+    jclass cls = env->FindClass("com/example/android/util/YuvImage");
+    jmethodID constructor = env->GetMethodID(cls, "<init>", "([BII)V");
+    jobject result = env->NewObject(cls, constructor, rotated_nv21, newWidth, newHeight);
 
     delete[] out_data;
     env->ReleaseByteArrayElements(input, data, 0);
