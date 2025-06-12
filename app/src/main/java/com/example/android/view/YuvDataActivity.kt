@@ -15,7 +15,6 @@ import androidx.core.graphics.createBitmap
 import com.example.android.R
 import com.example.android.databinding.ActivityYuvDataBinding
 import com.example.android.extensions.initImmersionBar
-import com.example.android.util.Yuv
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.getScreenHeight
 import java.io.ByteArrayOutputStream
@@ -25,7 +24,7 @@ import kotlin.math.abs
 class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.PreviewCallback {
 
     private val kTag = "YuvDataActivity"
-    private val cameraId: Int = Camera.CameraInfo.CAMERA_FACING_FRONT
+    private val cameraId: Int = Camera.CameraInfo.CAMERA_FACING_BACK
     private lateinit var camera: Camera
     private lateinit var optimalSize: Camera.Size
     private lateinit var nv21: ByteArray
@@ -62,93 +61,92 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
     private fun ByteArray.rotate_to_90(width: Int, height: Int): ByteArray {
         val ySize = width * height
         val bufferSize = ySize * 3 / 2
-        val nv21Rotated = ByteArray(bufferSize)
-        var i = 0
+        val result = ByteArray(bufferSize)
 
         // Rotate the Y luma
+        var index = 0
         val startPos = (height - 1) * width
-        for (x in 0 until width) {
+        for (col in 0 until width) {
             var offset = startPos
-            for (y in height - 1 downTo 0) {
-                nv21Rotated[i] = this[offset + x]
-                i++
+            (0 until height).forEach {
+                result[index++] = this[offset + col]
                 offset -= width
             }
         }
 
         // Rotate the U and V color components
-        i = bufferSize - 1
+        index = bufferSize - 1
         for (x in width - 1 downTo 1 step 2) {
             var offset = ySize
-            for (y in 0 until height / 2) {
-                nv21Rotated[i] = this[offset + x]
-                i--
-                nv21Rotated[i] = this[offset + (x - 1)]
-                i--
+            (0 until height / 2).forEach {
+                result[index] = this[offset + x]
+                index--
+                result[index] = this[offset + (x - 1)]
+                index--
                 offset += width
             }
         }
 
-        return nv21Rotated
+        return result
     }
 
     private fun ByteArray.rotate_to_180(width: Int, height: Int): ByteArray {
         val ySize = width * height
         val bufferSize = ySize * 3 / 2
-        val nv21Rotated = ByteArray(bufferSize)
-        var count = 0
+        val result = ByteArray(bufferSize)
 
         // Rotate the Y luma
+        var index = 0
         for (i in ySize - 1 downTo 0) {
-            nv21Rotated[count++] = this[i]
+            result[index++] = this[i]
         }
 
         // Rotate the U and V color components
         for (i in bufferSize - 1 downTo ySize step 2) {
-            nv21Rotated[count++] = this[i - 1]
-            nv21Rotated[count++] = this[i]
+            result[index++] = this[i - 1]
+            result[index++] = this[i]
         }
 
-        return nv21Rotated
+        return result
     }
 
     private fun ByteArray.rotate_to_270(width: Int, height: Int): ByteArray {
         val ySize = width * height
         val bufferSize = ySize * 3 / 2
-        val nv21Rotated = ByteArray(bufferSize)
-        var i = 0
+        val result = ByteArray(bufferSize)
 
         // Rotate the Y luma
+        var index = 0
         for (x in width - 1 downTo 0) {
             var offset = 0
-            for (y in 0 until height) {
-                nv21Rotated[i] = this[offset + x]
-                i++
+            (0 until height).forEach {
+                result[index] = this[offset + x]
+                index++
                 offset += width
             }
         }
 
         // Rotate the U and V color components
-        i = ySize
+        index = ySize
         for (x in width - 1 downTo 1 step 2) {
             var offset = ySize
-            for (y in 0 until height / 2) {
-                nv21Rotated[i] = this[offset + (x - 1)]
-                i++
-                nv21Rotated[i] = this[offset + x]
-                i++
+            (0 until height / 2).forEach {
+                result[index] = this[offset + (x - 1)]
+                index++
+                result[index] = this[offset + x]
+                index++
                 offset += width
             }
         }
-        return nv21Rotated
+        return result
     }
 
     override fun initEvent() {
         binding.yuvButton.setOnClickListener {
             val width = optimalSize.width
             val height = optimalSize.height
-            val bytes = Yuv.rotate(nv21, width, height, degrees)
-//            val bytes = nv21.rotate_to_90(width, height)
+//            val bytes = Yuv.rotate(nv21, width, height, degrees)
+            val bytes = nv21.rotate_to_90(width, height)
 //            val bytes = nv21.rotate_to_270(width, height)
 
             val rotatedWidth: Int
@@ -205,6 +203,11 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
                     setDisplayOrientation(rotation)
                     setPreviewDisplay(holder)
                     startPreview()
+                    if (parameters.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+                        autoFocus(object : Camera.AutoFocusCallback {
+                            override fun onAutoFocus(success: Boolean, camera: Camera?) {}
+                        })
+                    }
                     setPreviewCallback(this@YuvDataActivity)
                 }
             } catch (e: IOException) {
