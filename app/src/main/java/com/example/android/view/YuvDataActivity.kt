@@ -25,7 +25,7 @@ import kotlin.math.abs
 class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.PreviewCallback {
 
     private val kTag = "YuvDataActivity"
-    private val cameraId: Int = Camera.CameraInfo.CAMERA_FACING_BACK
+    private val cameraId = Camera.CameraInfo.CAMERA_FACING_BACK
     private lateinit var camera: Camera
     private lateinit var optimalSize: Camera.Size
     private lateinit var nv21: ByteArray
@@ -195,8 +195,6 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
 
     /**
      * Android 相机硬件的“自然方向”是横屏。即使你在竖屏下拍照或预览，相机输出的图像依然是横屏方向。
-     *
-     * 屏幕旋转 90°，相机输出数据旋转 270°
      * */
     fun getCameraRotation(): Int {
         // 0, 1, 2, 3 → Surface.ROTATION_0/90/180/270
