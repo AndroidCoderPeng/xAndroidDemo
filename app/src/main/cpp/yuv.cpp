@@ -41,16 +41,28 @@ void rotate_nv21_180(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst
  * */
 void rotate_nv21_270(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst, uint8_t *vu_dst,
                      int width, int height) {
+    int new_width = height;
+    int new_height = width;
+
+    __android_log_print(ANDROID_LOG_DEBUG, "yuv", "rotate_nv21_270: width=%d, height=%d", width, height);
+    __android_log_print(ANDROID_LOG_DEBUG, "yuv", "rotate_nv21_270: new_width=%d, new_height=%d", new_width, new_height);
+
     for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
-            y_dst[y * width + x] = y_src[(height - x - 1) * width + y];
+            int src_index = y * width + x; // 原始Y分量的索引
+            int dst_index = x * new_height + (new_height - y - 1); // 旋转后的Y分量的索引
+            y_dst[dst_index] = y_src[src_index];
         }
     }
 
-    for (int x = 0; x < width / 2; ++x) {
-        for (int y = 0; y < height / 2; ++y) {
-            vu_dst[y * width + x * 2] = vu_src[((height / 2 - x - 1) * width / 2 + y) * 2 + 1]; // V
-            vu_dst[y * width + x * 2 + 1] = vu_src[((height / 2 - x - 1) * width / 2 + y) * 2]; // U
+    int uv_width = width / 2;
+    int uv_height = height / 2;
+    for (int x = 0; x < uv_width; ++x) {
+        for (int y = 0; y < uv_height; ++y) {
+            int src_index = (y * uv_width + x) * 2; // 原始UV分量的索引
+            int dst_index = (x * new_height + (new_height - y - 1)) * 2; // 旋转后的UV分量的索引
+            vu_dst[dst_index] = vu_src[src_index]; // V
+            vu_dst[dst_index + 1] = vu_src[src_index + 1]; // U
         }
     }
 }

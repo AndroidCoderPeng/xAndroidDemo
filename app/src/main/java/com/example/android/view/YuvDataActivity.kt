@@ -30,6 +30,13 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
     private lateinit var optimalSize: Camera.Size
     private lateinit var nv21: ByteArray
 
+    /**
+     * 需要旋转的角度，比如，画面被顺时针旋转90度，那么nv21就需要逆时针旋转90度才能正常显示
+     *
+     * 因为相机默认是横屏，所以需要把nv21矩阵逆时针旋转90度才能正常显示
+     * */
+    private val degrees = 270
+
     override fun initViewBinding(): ActivityYuvDataBinding {
         return ActivityYuvDataBinding.inflate(layoutInflater)
     }
@@ -52,15 +59,108 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
 
     }
 
+    private fun ByteArray.rotate_to_90(width: Int, height: Int): ByteArray {
+        val ySize = width * height
+        val bufferSize = ySize * 3 / 2
+        val nv21Rotated = ByteArray(bufferSize)
+        var i = 0
+
+        // Rotate the Y luma
+        val startPos = (height - 1) * width
+        for (x in 0 until width) {
+            var offset = startPos
+            for (y in height - 1 downTo 0) {
+                nv21Rotated[i] = this[offset + x]
+                i++
+                offset -= width
+            }
+        }
+
+        // Rotate the U and V color components
+        i = bufferSize - 1
+        for (x in width - 1 downTo 1 step 2) {
+            var offset = ySize
+            for (y in 0 until height / 2) {
+                nv21Rotated[i] = this[offset + x]
+                i--
+                nv21Rotated[i] = this[offset + (x - 1)]
+                i--
+                offset += width
+            }
+        }
+
+        return nv21Rotated
+    }
+
+    private fun ByteArray.rotate_to_180(width: Int, height: Int): ByteArray {
+        val ySize = width * height
+        val bufferSize = ySize * 3 / 2
+        val nv21Rotated = ByteArray(bufferSize)
+        var count = 0
+
+        // Rotate the Y luma
+        for (i in ySize - 1 downTo 0) {
+            nv21Rotated[count++] = this[i]
+        }
+
+        // Rotate the U and V color components
+        for (i in bufferSize - 1 downTo ySize step 2) {
+            nv21Rotated[count++] = this[i - 1]
+            nv21Rotated[count++] = this[i]
+        }
+
+        return nv21Rotated
+    }
+
+    private fun ByteArray.rotate_to_270(width: Int, height: Int): ByteArray {
+        val ySize = width * height
+        val bufferSize = ySize * 3 / 2
+        val nv21Rotated = ByteArray(bufferSize)
+        var i = 0
+
+        // Rotate the Y luma
+        for (x in width - 1 downTo 0) {
+            var offset = 0
+            for (y in 0 until height) {
+                nv21Rotated[i] = this[offset + x]
+                i++
+                offset += width
+            }
+        }
+
+        // Rotate the U and V color components
+        i = ySize
+        for (x in width - 1 downTo 1 step 2) {
+            var offset = ySize
+            for (y in 0 until height / 2) {
+                nv21Rotated[i] = this[offset + (x - 1)]
+                i++
+                nv21Rotated[i] = this[offset + x]
+                i++
+                offset += width
+            }
+        }
+        return nv21Rotated
+    }
+
     override fun initEvent() {
         binding.yuvButton.setOnClickListener {
             val width = optimalSize.width
             val height = optimalSize.height
-            val bytes = Yuv.rotate(nv21, width, height, 270)
+            val bytes = Yuv.rotate(nv21, width, height, degrees)
+//            val bytes = nv21.rotate_to_90(width, height)
+//            val bytes = nv21.rotate_to_270(width, height)
 
-            // 旋转后宽高互换
-            val rotatedWidth = height
-            val rotatedHeight = width
+            val rotatedWidth: Int
+            val rotatedHeight: Int
+            // 90和270旋转后宽高互换
+            if (degrees == 90 || degrees == 270) {
+                rotatedWidth = height
+                rotatedHeight = width
+            } else {
+                rotatedWidth = width
+                rotatedHeight = height
+            }
 
             val bitmap = createBitmap(rotatedWidth, rotatedHeight, Bitmap.Config.ARGB_8888)
 
