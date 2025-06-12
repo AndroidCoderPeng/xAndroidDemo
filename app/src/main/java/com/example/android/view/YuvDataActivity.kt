@@ -10,7 +10,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Surface
 import android.view.SurfaceHolder
+import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.core.graphics.createBitmap
 import com.example.android.R
 import com.example.android.databinding.ActivityYuvDataBinding
@@ -35,9 +37,7 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
      *
      * 因为相机默认是横屏，所以需要把nv21矩阵逆时针旋转90度才能正常显示
      * */
-    private val degrees = 90
-//    private val degrees = 180
-//    private val degrees = 270
+    private var degrees = 90
 
     override fun initViewBinding(): ActivityYuvDataBinding {
         return ActivityYuvDataBinding.inflate(layoutInflater)
@@ -62,6 +62,19 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
     }
 
     override fun initEvent() {
+        binding.spinner.setSelection(1)
+        binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?, view: View?, position: Int, id: Long
+            ) {
+                degrees = parent?.getItemAtPosition(position).toString().toInt()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+
         binding.yuvButton.setOnClickListener {
             val width = optimalSize.width
             val height = optimalSize.height

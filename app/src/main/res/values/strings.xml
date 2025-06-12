@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">MultiDemo</string>
+
+    <string-array name="rotations">
+        <item>0</item>
+        <item>90</item>
+        <item>180</item>
+        <item>270</item>
+    </string-array>
 </resources>
