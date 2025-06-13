@@ -228,7 +228,7 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
+        super.onDestroy()
     }
 }
