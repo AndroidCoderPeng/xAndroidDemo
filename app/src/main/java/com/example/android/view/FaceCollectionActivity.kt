@@ -1,7 +1,5 @@
 package com.example.android.view
 
-import android.graphics.Color
-import android.graphics.Paint
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -26,7 +24,6 @@ import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.createImageFileDir
-import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.setScreenBrightness
 import java.io.File
 import java.text.SimpleDateFormat
@@ -47,14 +44,6 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
     }
 
     private val kTag = "FaceCollectionActivity"
-    private val borderPaint by lazy {
-        Paint().apply {
-            color = Color.GREEN
-            style = Paint.Style.STROKE
-            strokeWidth = 3f.dp2px(this@FaceCollectionActivity)
-            isAntiAlias = true
-        }
-    }
     private val faceDetectorOptions by lazy {
         FaceDetectorOptions.Builder().apply {
             setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)

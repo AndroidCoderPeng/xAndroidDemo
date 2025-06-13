@@ -20,17 +20,17 @@ import com.pengxh.kt.lite.extensions.getScreenWidth
 class FaceDetectView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val kTag = "FaceDetectView"
-    private val borderPaint by lazy { Paint() }
+    private val borderPaint by lazy {
+        Paint().apply {
+            color = Color.GREEN
+            style = Paint.Style.STROKE
+            strokeWidth = 2f.dp2px(context)
+            isAntiAlias = true
+        }
+    }
     private val rect by lazy { Rect() }
     private val screenWidth by lazy { context.getScreenWidth() }
     private var faces: MutableList<Face> = ArrayList()
-
-    init {
-        borderPaint.color = Color.GREEN
-        borderPaint.style = Paint.Style.STROKE
-        borderPaint.strokeWidth = 2f.dp2px(context) //设置线宽
-        borderPaint.isAntiAlias = true
-    }
 
     fun updateFacePosition(faces: MutableList<Face>) {
         this.faces = faces
