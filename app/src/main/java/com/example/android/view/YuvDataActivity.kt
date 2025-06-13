@@ -223,13 +223,12 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
             }
         }
 
-        Log.d(kTag, "最佳尺寸：[${optimalSize?.width}, ${optimalSize?.height}]")
-
         // 如果没有找到符合比例的，就选最大分辨率
         if (optimalSize == null) {
             optimalSize = maxByOrNull { it.width * it.height }!!
         }
 
+        Log.d(kTag, "最佳尺寸：[${optimalSize.width}, ${optimalSize.height}]")
         return optimalSize
     }
 

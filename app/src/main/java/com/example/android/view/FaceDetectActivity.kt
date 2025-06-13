@@ -1,6 +1,8 @@
 package com.example.android.view
 
 import android.Manifest
+import android.R.attr.rotation
+import android.graphics.ImageFormat
 import android.graphics.Rect
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCaptureSession
@@ -8,8 +10,10 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CaptureRequest
+import android.hardware.camera2.TotalCaptureResult
 import android.hardware.camera2.params.OutputConfiguration
 import android.hardware.camera2.params.SessionConfiguration
+import android.media.ImageReader
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -18,20 +22,18 @@ import android.util.Log
 import android.util.Size
 import android.view.Surface
 import android.view.SurfaceHolder
+import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.annotation.RequiresPermission
 import com.example.android.databinding.ActivityFaceDetectBinding
+import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.getScreenHeight
-import com.pengxh.kt.lite.extensions.getScreenWidth
 import com.pengxh.kt.lite.extensions.setScreenBrightness
 import java.util.concurrent.Executors
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
 class FaceDetectActivity : KotlinBaseActivity<ActivityFaceDetectBinding>() {
@@ -46,19 +48,12 @@ class FaceDetectActivity : KotlinBaseActivity<ActivityFaceDetectBinding>() {
         }.build()
     }
     private val faceDetector by lazy { FaceDetection.getClient(faceDetectorOptions) }
-    private val executor by lazy {
-        ThreadPoolExecutor(
-            16, 16,
-            0L, TimeUnit.MILLISECONDS,
-            LinkedBlockingQueue(1024),
-            ThreadPoolExecutor.AbortPolicy()
-        )
-    }
     private val cameraExecutor by lazy { Executors.newSingleThreadExecutor() }
     private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
     private lateinit var surfaceHolder: SurfaceHolder
     private lateinit var cameraDevice: CameraDevice
     private lateinit var requestBuilder: CaptureRequest.Builder
+    private lateinit var optimalSize: Size
 
     override fun setupTopBarLayout() {
         ImmersionBar.with(this).init()
@@ -74,40 +69,44 @@ class FaceDetectActivity : KotlinBaseActivity<ActivityFaceDetectBinding>() {
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
         window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL)
-
+        val viewParams = binding.surfaceView.layoutParams as ViewGroup.LayoutParams
+        val videoHeight = getScreenHeight()
+        val videoWidth = videoHeight * (9f / 16)
+        viewParams.height = videoHeight.toInt()
+        viewParams.width = videoWidth.toInt()
         surfaceHolder = binding.surfaceView.holder
-        surfaceHolder.addCallback(surfaceCallback)
-    }
+        surfaceHolder.addCallback(object : SurfaceHolder.Callback {
+            @RequiresPermission(Manifest.permission.CAMERA)
+            override fun surfaceCreated(holder: SurfaceHolder) {
+                try {
+                    val cameraId = cameraManager.cameraIdList.firstOrNull { id ->
+                        val characteristics = cameraManager.getCameraCharacteristics(id)
+                        val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
+                        facing == CameraCharacteristics.LENS_FACING_FRONT
+                    }
 
-    private val surfaceCallback = object : SurfaceHolder.Callback {
-        @RequiresPermission(Manifest.permission.CAMERA)
-        override fun surfaceCreated(holder: SurfaceHolder) {
-            try {
-                val cameraId = cameraManager.cameraIdList.firstOrNull { id ->
-                    val characteristics = cameraManager.getCameraCharacteristics(id)
-                    val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
-                    facing == CameraCharacteristics.LENS_FACING_FRONT
+                    if (cameraId != null) {
+                        cameraManager.openCamera(cameraId, cameraCallback, null)
+                    } else {
+                        Log.d(kTag, "surfaceCreated: 前置摄像头不可用")
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
+            }
 
-                if (cameraId != null) {
-                    cameraManager.openCamera(cameraId, cameraCallback, null)
-                } else {
-                    Log.d(kTag, "surfaceCreated: 前置摄像头不可用")
+            override fun surfaceChanged(
+                holder: SurfaceHolder, format: Int, width: Int, height: Int
+            ) {
+
+            }
+
+            override fun surfaceDestroyed(holder: SurfaceHolder) {
+                if (::cameraDevice.isInitialized) {
+                    cameraDevice.close()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
-        }
-
-        override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-
-        }
-
-        override fun surfaceDestroyed(holder: SurfaceHolder) {
-            if (::cameraDevice.isInitialized) {
-                cameraDevice.close()
-            }
-        }
+        })
     }
 
     private val cameraCallback = object : CameraDevice.StateCallback() {
@@ -133,8 +132,7 @@ class FaceDetectActivity : KotlinBaseActivity<ActivityFaceDetectBinding>() {
             val characteristics = cameraManager.getCameraCharacteristics(camera.id)
             val map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
             val supportedSizes = map?.getOutputSizes(SurfaceHolder::class.java)
-            val optimalSize = supportedSizes?.findOptimalPreviewSize()!!
-            Log.d(kTag, "startPreview: [${optimalSize.width}, ${optimalSize.height}]")
+            optimalSize = supportedSizes?.findOptimalPreviewSize()!!
             val cropRegion = Rect(0, 0, optimalSize.width, optimalSize.height)
             requestBuilder.set(CaptureRequest.SCALER_CROP_REGION, cropRegion)
 
@@ -161,19 +159,28 @@ class FaceDetectActivity : KotlinBaseActivity<ActivityFaceDetectBinding>() {
         }
     }
 
-    //TODO 待修改
     private fun Array<Size>.findOptimalPreviewSize(): Size {
-        val screenAspectRatio = getScreenHeight().toFloat() / getScreenWidth().toFloat()
+        val targetRatio = 16f / 9f
+        val tolerance = 0.001f
         var optimalSize: Size? = null
-        for (size in this) {
-            val aspectRatio = size.height.toFloat() / size.width.toFloat()
-            Log.d(kTag, "[${size.width}, ${size.height}, ${aspectRatio}]")
-            if (abs(aspectRatio - screenAspectRatio) < 0.1f) {
-                optimalSize = size
-                break
+        forEach { size ->
+            val ratio = size.width.toFloat() / size.height.toFloat()
+            Log.d(kTag, "[${size.width}, ${size.height}], $ratio")
+
+            if (abs(ratio - targetRatio) <= tolerance) {
+                if (optimalSize == null || size.width > optimalSize.width) {
+                    optimalSize = size
+                }
             }
         }
-        return optimalSize ?: this[0]
+
+        // 如果没有找到符合比例的，就选最大分辨率
+        if (optimalSize == null) {
+            optimalSize = maxByOrNull { it.width * it.height }!!
+        }
+
+        Log.d(kTag, "最佳尺寸：[${optimalSize.width}, ${optimalSize.height}]")
+        return optimalSize
     }
 
     private fun getCompensationRotation(displayRotation: Int, sensorOrientation: Int): Int {
@@ -190,7 +197,7 @@ class FaceDetectActivity : KotlinBaseActivity<ActivityFaceDetectBinding>() {
     private val sessionCallback = object : CameraCaptureSession.StateCallback() {
         override fun onConfigured(session: CameraCaptureSession) {
             try {
-                session.setRepeatingRequest(requestBuilder.build(), null, mainHandler)
+                session.setRepeatingRequest(requestBuilder.build(), captureCallback, mainHandler)
             } catch (e: CameraAccessException) {
                 e.printStackTrace()
             }
@@ -201,13 +208,31 @@ class FaceDetectActivity : KotlinBaseActivity<ActivityFaceDetectBinding>() {
         }
     }
 
+    private val captureCallback = object : CameraCaptureSession.CaptureCallback() {
+        override fun onCaptureCompleted(
+            session: CameraCaptureSession, request: CaptureRequest, result: TotalCaptureResult
+        ) {
+            val imageReader = ImageReader.newInstance(
+                optimalSize.width, optimalSize.height, ImageFormat.YUV_420_888, 2
+            ).apply {
+                setOnImageAvailableListener(object : ImageReader.OnImageAvailableListener {
+                    override fun onImageAvailable(reader: ImageReader) {
+                        val image = reader.acquireLatestImage()
+                        val imageProxy = InputImage.fromMediaImage(image, rotation)
+                        faceDetector.process(imageProxy).addOnSuccessListener { faces ->
+                            binding.faceDetectView.updateFacePosition(faces)
+                        }.addOnCompleteListener {
+                            image.close()
+                        }
+                    }
+                }, mainHandler)
+            }
+            requestBuilder.addTarget(imageReader.surface)
+        }
+    }
+
     override fun initEvent() {
-//        val inputImage = InputImage.fromBitmap(bitmap, 0)
-//        faceDetector.process(inputImage).addOnSuccessListener { faces ->
-//            binding.faceDetectView.updateFacePosition(faces)
-//        }.addOnCompleteListener {
-//            imageProxy.close()
-//        }
+
     }
 
     override fun onDestroy() {
