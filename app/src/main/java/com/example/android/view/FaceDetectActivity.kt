@@ -23,7 +23,6 @@ import android.util.Size
 import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.annotation.RequiresPermission
 import com.example.android.databinding.ActivityFaceDetectBinding
 import com.google.mlkit.vision.common.InputImage
@@ -32,7 +31,6 @@ import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.getScreenHeight
-import com.pengxh.kt.lite.extensions.setScreenBrightness
 import java.util.concurrent.Executors
 import kotlin.math.abs
 
@@ -54,6 +52,7 @@ class FaceDetectActivity : KotlinBaseActivity<ActivityFaceDetectBinding>() {
     private lateinit var cameraDevice: CameraDevice
     private lateinit var requestBuilder: CaptureRequest.Builder
     private lateinit var optimalSize: Size
+    private var compensationRotation = 0
 
     override fun setupTopBarLayout() {
         ImmersionBar.with(this).init()
@@ -68,7 +67,6 @@ class FaceDetectActivity : KotlinBaseActivity<ActivityFaceDetectBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL)
         val viewParams = binding.surfaceView.layoutParams as ViewGroup.LayoutParams
         val videoHeight = getScreenHeight()
         val videoWidth = videoHeight * (9f / 16)
@@ -138,7 +136,7 @@ class FaceDetectActivity : KotlinBaseActivity<ActivityFaceDetectBinding>() {
 
             val displayRotation = windowManager.defaultDisplay.rotation
             val sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION)!!
-            val rotation = getCompensationRotation(displayRotation, sensorOrientation)
+            compensationRotation = getCompensationRotation(displayRotation, sensorOrientation)
             requestBuilder.set(CaptureRequest.JPEG_ORIENTATION, rotation)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -218,7 +216,7 @@ class FaceDetectActivity : KotlinBaseActivity<ActivityFaceDetectBinding>() {
                 setOnImageAvailableListener(object : ImageReader.OnImageAvailableListener {
                     override fun onImageAvailable(reader: ImageReader) {
                         val image = reader.acquireLatestImage()
-                        val imageProxy = InputImage.fromMediaImage(image, rotation)
+                        val imageProxy = InputImage.fromMediaImage(image, compensationRotation)
                         faceDetector.process(imageProxy).addOnSuccessListener { faces ->
                             binding.faceDetectView.updateFacePosition(faces)
                         }.addOnCompleteListener {
@@ -236,7 +234,6 @@ class FaceDetectActivity : KotlinBaseActivity<ActivityFaceDetectBinding>() {
     }
 
     override fun onDestroy() {
-        window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
         cameraDevice.close()
         super.onDestroy()
     }
