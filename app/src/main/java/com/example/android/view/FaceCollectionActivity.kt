@@ -20,10 +20,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.example.android.databinding.ActivityFaceCollectBinding
 import com.example.android.extensions.toBitmap
-import com.google.common.util.concurrent.ListenableFuture
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
-import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
@@ -35,7 +33,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.ExecutionException
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
@@ -50,19 +47,36 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
     }
 
     private val kTag = "FaceCollectionActivity"
-    private val borderPaint by lazy { Paint() }
+    private val borderPaint by lazy {
+        Paint().apply {
+            color = Color.GREEN
+            style = Paint.Style.STROKE
+            strokeWidth = 3f.dp2px(this@FaceCollectionActivity)
+            isAntiAlias = true
+        }
+    }
+    private val faceDetectorOptions by lazy {
+        FaceDetectorOptions.Builder().apply {
+            setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+            setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+            setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+        }.build()
+    }
+    private val faceDetector by lazy { FaceDetection.getClient(faceDetectorOptions) }
     private val timeFormat by lazy { SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA) }
-    private val executor = ThreadPoolExecutor(
-        16, 16,
-        0L, TimeUnit.MILLISECONDS,
-        LinkedBlockingQueue(1024),
-        ThreadPoolExecutor.AbortPolicy()
-    )
-    private lateinit var cameraExecutor: ExecutorService
-    private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
+    private val executor by lazy {
+        ThreadPoolExecutor(
+            16, 16,
+            0L, TimeUnit.MILLISECONDS,
+            LinkedBlockingQueue(1024),
+            ThreadPoolExecutor.AbortPolicy()
+        )
+    }
+    private val cameraExecutor by lazy { Executors.newSingleThreadExecutor() }
+    private val cameraProviderFuture by lazy { ProcessCameraProvider.getInstance(this) }
     private lateinit var imageCapture: ImageCapture
     private lateinit var imageAnalysis: ImageAnalysis
-    private lateinit var faceDetector: FaceDetector
+
 
     override fun setupTopBarLayout() {
         ImmersionBar.with(this).init()
@@ -77,27 +91,8 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        //调节屏幕亮度最大
         window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL)
 
-        //配置人脸检测器
-        val faceDetectorOptions = FaceDetectorOptions.Builder()
-            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
-            .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
-            .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
-            .build()
-        faceDetector = FaceDetection.getClient(faceDetectorOptions)
-
-        //初始化人脸检测框画笔
-        borderPaint.color = Color.GREEN
-        borderPaint.style = Paint.Style.STROKE
-        borderPaint.strokeWidth = 3f.dp2px(this) //设置线宽
-        borderPaint.isAntiAlias = true
-
-        // Initialize our background executor
-        cameraExecutor = Executors.newSingleThreadExecutor()
-        cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-        // 检查 CameraProvider 可用性
         cameraProviderFuture.addListener({
             try {
                 bindPreview(cameraProviderFuture.get())
@@ -204,7 +199,8 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
         val outputFileOptions = ImageCapture.OutputFileOptions
             .Builder(File(imagePath))
             .build()
-        imageCapture.takePicture(outputFileOptions, cameraExecutor,
+        imageCapture.takePicture(
+            outputFileOptions, cameraExecutor,
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(results: ImageCapture.OutputFileResults) {
                     results.savedUri?.apply {
