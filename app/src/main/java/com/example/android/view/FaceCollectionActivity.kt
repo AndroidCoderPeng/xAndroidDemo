@@ -1,49 +1,38 @@
 package com.example.android.view
 
+import android.Manifest
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraCaptureSession
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraDevice
+import android.hardware.camera2.CameraManager
+import android.hardware.camera2.CaptureRequest
+import android.hardware.camera2.params.OutputConfiguration
+import android.hardware.camera2.params.SessionConfiguration
 import android.os.Build
 import android.os.Bundle
-import android.util.DisplayMetrics
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Surface
+import android.view.SurfaceHolder
 import android.view.WindowManager
-import androidx.camera.core.AspectRatio
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.CameraState
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.content.ContextCompat
+import androidx.annotation.RequiresPermission
 import com.example.android.databinding.ActivityFaceCollectBinding
-import com.example.android.extensions.toBitmap
-import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.extensions.createImageFileDir
 import com.pengxh.kt.lite.extensions.setScreenBrightness
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
-import kotlin.math.abs
 
 class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() {
 
-    companion object {
-        private const val RATIO_4_3_VALUE = 4.0 / 3.0
-        private const val RATIO_16_9_VALUE = 16.0 / 9.0
-    }
-
     private val kTag = "FaceCollectionActivity"
+    private val cameraManager by lazy { getSystemService(CAMERA_SERVICE) as CameraManager }
     private val faceDetectorOptions by lazy {
         FaceDetectorOptions.Builder().apply {
             setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
@@ -52,7 +41,6 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
         }.build()
     }
     private val faceDetector by lazy { FaceDetection.getClient(faceDetectorOptions) }
-    private val timeFormat by lazy { SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA) }
     private val executor by lazy {
         ThreadPoolExecutor(
             16, 16,
@@ -62,10 +50,10 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
         )
     }
     private val cameraExecutor by lazy { Executors.newSingleThreadExecutor() }
-    private val cameraProviderFuture by lazy { ProcessCameraProvider.getInstance(this) }
-    private lateinit var imageCapture: ImageCapture
-    private lateinit var imageAnalysis: ImageAnalysis
-
+    private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
+    private lateinit var surfaceHolder: SurfaceHolder
+    private lateinit var cameraDevice: CameraDevice
+    private lateinit var requestBuilder: CaptureRequest.Builder
 
     override fun setupTopBarLayout() {
         ImmersionBar.with(this).init()
@@ -82,138 +70,125 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
     override fun initOnCreate(savedInstanceState: Bundle?) {
         window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL)
 
-        cameraProviderFuture.addListener({
+        surfaceHolder = binding.surfaceView.holder
+        surfaceHolder.addCallback(surfaceCallback)
+    }
+
+    private val surfaceCallback = object : SurfaceHolder.Callback {
+        @RequiresPermission(Manifest.permission.CAMERA)
+        override fun surfaceCreated(holder: SurfaceHolder) {
             try {
-                bindPreview(cameraProviderFuture.get())
-            } catch (e: ExecutionException) {
-                e.printStackTrace()
-            } catch (e: InterruptedException) {
+                val cameraId = cameraManager.cameraIdList.firstOrNull { id ->
+                    val characteristics = cameraManager.getCameraCharacteristics(id)
+                    val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
+                    facing == CameraCharacteristics.LENS_FACING_FRONT
+                }
+
+                if (cameraId != null) {
+                    cameraManager.openCamera(cameraId, cameraCallback, null)
+                } else {
+                    Log.d(kTag, "surfaceCreated: 前置摄像头不可用")
+                }
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }, ContextCompat.getMainExecutor(this))
-    }
-
-    private fun bindPreview(cameraProvider: ProcessCameraProvider) {
-        val screenAspectRatio = if (Build.VERSION.SDK_INT >= 30) {
-            val metrics = windowManager.currentWindowMetrics.bounds
-            aspectRatio(metrics.width(), metrics.height())
-        } else {
-            val outMetrics = DisplayMetrics()
-            windowManager.defaultDisplay.getMetrics(outMetrics)
-            aspectRatio(outMetrics.widthPixels, outMetrics.heightPixels)
         }
 
-        // CameraSelector
-        val cameraSelector = CameraSelector.Builder()
-            .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
-            .build()
+        override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
 
-        // Preview
-        val cameraPreViewBuilder = Preview.Builder()
-            .setTargetAspectRatio(screenAspectRatio)
-            .setTargetRotation(Surface.ROTATION_0)
-            .build()
+        }
 
-        // ImageCapture
-        imageCapture = ImageCapture.Builder()
-            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-            .setTargetAspectRatio(screenAspectRatio)
-            .setTargetRotation(Surface.ROTATION_0)
-            .build()
+        override fun surfaceDestroyed(holder: SurfaceHolder) {
+            if (::cameraDevice.isInitialized) {
+                cameraDevice.close()
+            }
+        }
+    }
 
-        // ImageAnalysis
-        imageAnalysis = ImageAnalysis.Builder()
-            .setTargetAspectRatio(screenAspectRatio)
-            .setTargetRotation(Surface.ROTATION_0)
-            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-            .build()
+    private val cameraCallback = object : CameraDevice.StateCallback() {
+        override fun onOpened(camera: CameraDevice) {
+            cameraDevice = camera
+            startPreview(camera, surfaceHolder)
+        }
 
-        // Must unbind the use-cases before rebinding them
-        cameraProvider.unbindAll()
+        override fun onDisconnected(camera: CameraDevice) {
+            camera.close()
+        }
+
+        override fun onError(camera: CameraDevice, error: Int) {
+            camera.close()
+        }
+    }
+
+    private fun startPreview(camera: CameraDevice, surfaceHolder: SurfaceHolder) {
         try {
-            val camera = cameraProvider.bindToLifecycle(
-                this,
-                cameraSelector,
-                imageCapture,
-                imageAnalysis,
-                cameraPreViewBuilder
-            )
+            val characteristics = cameraManager.getCameraCharacteristics(camera.id)
+            val map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+            val previewSize = map?.getOutputSizes(SurfaceHolder::class.java)[0]
 
-            // Attach the viewfinder's surface provider to preview use case
-            cameraPreViewBuilder.setSurfaceProvider(binding.cameraPreView.surfaceProvider)
-            @androidx.camera.core.ExperimentalGetImage
-            camera.cameraInfo.cameraState.observe(this) {
-                //开始预览之后才人脸检测
-                if (it.type == CameraState.Type.OPEN) {
-                    imageAnalysis.setAnalyzer(cameraExecutor, faceImageAnalyzer)
-                }
+            requestBuilder = camera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
+            requestBuilder.addTarget(surfaceHolder.surface)
+
+            val displayRotation = windowManager.defaultDisplay.rotation
+            val sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION)!!
+            val rotation = getCompensationRotation(displayRotation, sensorOrientation)
+            requestBuilder.set(CaptureRequest.JPEG_ORIENTATION, rotation)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val outputConfigs = listOf(OutputConfiguration(surfaceHolder.surface))
+                val sessionConfiguration = SessionConfiguration(
+                    SessionConfiguration.SESSION_REGULAR,
+                    outputConfigs,
+                    cameraExecutor,
+                    sessionCallback
+                )
+                camera.createCaptureSession(sessionConfiguration)
+            } else {
+                val outputs = listOf(surfaceHolder.surface)
+                camera.createCaptureSession(outputs, sessionCallback, mainHandler)
             }
-        } catch (e: Exception) {
-            Log.e(kTag, "Use case binding failed", e)
+        } catch (e: CameraAccessException) {
+            e.printStackTrace()
         }
     }
 
-    private fun aspectRatio(width: Int, height: Int): Int {
-        val ratio = width.coerceAtLeast(height).toDouble() / width.coerceAtMost(height)
-        return if (abs(ratio - RATIO_4_3_VALUE) <= abs(ratio - RATIO_16_9_VALUE)
-        ) {
-            AspectRatio.RATIO_4_3
-        } else AspectRatio.RATIO_16_9
+    private fun getCompensationRotation(displayRotation: Int, sensorOrientation: Int): Int {
+        var degrees = 0
+        when (displayRotation) {
+            Surface.ROTATION_0 -> degrees = 0
+            Surface.ROTATION_90 -> degrees = 90
+            Surface.ROTATION_180 -> degrees = 180
+            Surface.ROTATION_270 -> degrees = 270
+        }
+        return (sensorOrientation - degrees + 360) % 360
     }
 
-    @androidx.camera.core.ExperimentalGetImage
-    private val faceImageAnalyzer = object : ImageAnalysis.Analyzer {
-        override fun analyze(imageProxy: ImageProxy) {
-            executor.execute {
-                val bitmap = imageProxy.toBitmap() ?: return@execute
-
-                val inputImage = InputImage.fromBitmap(bitmap, 0)
-
-                faceDetector.process(inputImage).addOnSuccessListener { faces ->
-                    binding.faceDetectView.updateFacePosition(faces)
-
-                    //保存到本地
-//                    val imagePath = "/${createImageFileDir()}/${timeFormat.format(Date())}.png"
-//                    bitmap.saveImage(imagePath)
-                }.addOnCompleteListener {
-                    //检测完之后close就会继续生成下一帧图片，否则就会被阻塞不会继续生成下一帧
-                    imageProxy.close()
-                }
+    private val sessionCallback = object : CameraCaptureSession.StateCallback() {
+        override fun onConfigured(session: CameraCaptureSession) {
+            try {
+                session.setRepeatingRequest(requestBuilder.build(), null, mainHandler)
+            } catch (e: CameraAccessException) {
+                e.printStackTrace()
             }
         }
-    }
 
-    private fun takePhoto() {
-        val imagePath = "/${createImageFileDir()}/${timeFormat.format(Date())}.png"
-        val outputFileOptions = ImageCapture.OutputFileOptions
-            .Builder(File(imagePath))
-            .build()
-        imageCapture.takePicture(
-            outputFileOptions, cameraExecutor,
-            object : ImageCapture.OnImageSavedCallback {
-                override fun onImageSaved(results: ImageCapture.OutputFileResults) {
-                    results.savedUri?.apply {
-                        Log.d(kTag, "onImageSaved: $path")
-                        if (path.isNullOrBlank()) {
-                            Log.d(kTag, "onImageSaved: path is null")
-                            return@apply
-                        }
-//                        analyticalSelectResult(path!!)
-                    }
-                }
-
-                override fun onError(error: ImageCaptureException) {
-                    error.printStackTrace()
-                }
-            })
+        override fun onConfigureFailed(session: CameraCaptureSession) {
+            Log.e(kTag, "Camera capture session configure failed")
+        }
     }
 
     override fun initEvent() {
-
+//        val inputImage = InputImage.fromBitmap(bitmap, 0)
+//        faceDetector.process(inputImage).addOnSuccessListener { faces ->
+//            binding.faceDetectView.updateFacePosition(faces)
+//        }.addOnCompleteListener {
+//            imageProxy.close()
+//        }
     }
 
     override fun onDestroy() {
         window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
+        cameraDevice.close()
         super.onDestroy()
     }
 }
