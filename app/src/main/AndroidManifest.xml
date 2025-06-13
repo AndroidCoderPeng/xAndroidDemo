@@ -76,7 +76,7 @@
         <activity android:name=".view.AudioVisualActivity" />
         <activity android:name=".view.AddProductAnimationActivity" />
         <activity android:name=".view.YuvDataActivity" />
-        <activity android:name=".view.FaceCollectionActivity" />
+        <activity android:name=".view.FaceDetectActivity" />
         <activity android:name=".view.CompressVideoActivity" />
 
         <activity

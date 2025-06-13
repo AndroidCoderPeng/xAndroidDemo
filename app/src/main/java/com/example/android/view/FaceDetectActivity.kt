@@ -1,6 +1,7 @@
 package com.example.android.view
 
 import android.Manifest
+import android.graphics.Rect
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCaptureSession
 import android.hardware.camera2.CameraCharacteristics
@@ -14,24 +15,28 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.util.Size
 import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.WindowManager
 import androidx.annotation.RequiresPermission
-import com.example.android.databinding.ActivityFaceCollectBinding
+import com.example.android.databinding.ActivityFaceDetectBinding
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.getScreenHeight
+import com.pengxh.kt.lite.extensions.getScreenWidth
 import com.pengxh.kt.lite.extensions.setScreenBrightness
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
-class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() {
+class FaceDetectActivity : KotlinBaseActivity<ActivityFaceDetectBinding>() {
 
-    private val kTag = "FaceCollectionActivity"
+    private val kTag = "FaceDetectActivity"
     private val cameraManager by lazy { getSystemService(CAMERA_SERVICE) as CameraManager }
     private val faceDetectorOptions by lazy {
         FaceDetectorOptions.Builder().apply {
@@ -63,8 +68,8 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
 
     }
 
-    override fun initViewBinding(): ActivityFaceCollectBinding {
-        return ActivityFaceCollectBinding.inflate(layoutInflater)
+    override fun initViewBinding(): ActivityFaceDetectBinding {
+        return ActivityFaceDetectBinding.inflate(layoutInflater)
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
@@ -122,12 +127,16 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
 
     private fun startPreview(camera: CameraDevice, surfaceHolder: SurfaceHolder) {
         try {
-            val characteristics = cameraManager.getCameraCharacteristics(camera.id)
-            val map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-            val previewSize = map?.getOutputSizes(SurfaceHolder::class.java)[0]
-
             requestBuilder = camera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
             requestBuilder.addTarget(surfaceHolder.surface)
+
+            val characteristics = cameraManager.getCameraCharacteristics(camera.id)
+            val map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+            val supportedSizes = map?.getOutputSizes(SurfaceHolder::class.java)
+            val optimalSize = supportedSizes?.findOptimalPreviewSize()!!
+            Log.d(kTag, "startPreview: [${optimalSize.width}, ${optimalSize.height}]")
+            val cropRegion = Rect(0, 0, optimalSize.width, optimalSize.height)
+            requestBuilder.set(CaptureRequest.SCALER_CROP_REGION, cropRegion)
 
             val displayRotation = windowManager.defaultDisplay.rotation
             val sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION)!!
@@ -150,6 +159,21 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
         } catch (e: CameraAccessException) {
             e.printStackTrace()
         }
+    }
+
+    //TODO 待修改
+    private fun Array<Size>.findOptimalPreviewSize(): Size {
+        val screenAspectRatio = getScreenHeight().toFloat() / getScreenWidth().toFloat()
+        var optimalSize: Size? = null
+        for (size in this) {
+            val aspectRatio = size.height.toFloat() / size.width.toFloat()
+            Log.d(kTag, "[${size.width}, ${size.height}, ${aspectRatio}]")
+            if (abs(aspectRatio - screenAspectRatio) < 0.1f) {
+                optimalSize = size
+                break
+            }
+        }
+        return optimalSize ?: this[0]
     }
 
     private fun getCompensationRotation(displayRotation: Int, sensorOrientation: Int): Int {

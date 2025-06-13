@@ -21,7 +21,7 @@ import com.example.android.view.BluetoothActivity
 import com.example.android.view.CompassActivity
 import com.example.android.view.CompressVideoActivity
 import com.example.android.view.DragMapActivity
-import com.example.android.view.FaceCollectionActivity
+import com.example.android.view.FaceDetectActivity
 import com.example.android.view.GalleryActivity
 import com.example.android.view.GridViewActivity
 import com.example.android.view.HikVisionActivity
@@ -170,7 +170,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
                     4 -> navigatePageTo<CompressVideoActivity>()
                     5 -> navigatePageTo<BluetoothActivity>()
                     6 -> navigatePageTo<GridViewActivity>()
-                    7 -> navigatePageTo<FaceCollectionActivity>()
+                    7 -> navigatePageTo<FaceDetectActivity>()
                     8 -> navigatePageTo<TimeLineActivity>()
                     9 -> navigatePageTo<HikVisionActivity>()
                     10 -> navigatePageTo<RadarScanActivity>()
