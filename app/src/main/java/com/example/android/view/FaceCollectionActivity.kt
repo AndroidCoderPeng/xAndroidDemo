@@ -42,7 +42,6 @@ import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
-
 class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() {
 
     companion object {
@@ -158,6 +157,7 @@ class FaceCollectionActivity : KotlinBaseActivity<ActivityFaceCollectBinding>() 
 
             // Attach the viewfinder's surface provider to preview use case
             cameraPreViewBuilder.setSurfaceProvider(binding.cameraPreView.surfaceProvider)
+            @androidx.camera.core.ExperimentalGetImage
             camera.cameraInfo.cameraState.observe(this) {
                 //开始预览之后才人脸检测
                 if (it.type == CameraState.Type.OPEN) {

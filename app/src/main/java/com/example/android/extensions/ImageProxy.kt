@@ -13,13 +13,13 @@ import com.example.android.util.ImageProxyManager
 @ExperimentalGetImage
 fun ImageProxy.toBitmap(): Bitmap? {
     val frameMetadata = FrameMetadata.Builder()
-        .setWidth(width)
-        .setHeight(height)
-        .setRotation(imageInfo.rotationDegrees)
+        .setWidth(this.width)
+        .setHeight(this.height)
+        .setRotation(this.imageInfo.rotationDegrees)
         .build()
-    image?.apply {
+    this.image?.apply {
         val nv21Buffer = ImageProxyManager
-            .yuv420ThreePlanesToNV21(this.planes, width, height) ?: return@apply
+            .yuv420ThreePlanesToNV21(this.planes, this.width, this.height) ?: return@apply
         return ImageProxyManager.getBitmap(nv21Buffer, frameMetadata)
     }
     return null
