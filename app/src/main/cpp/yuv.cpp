@@ -50,7 +50,7 @@ void rotate_nv21_180(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst
     int y_size = width * height;
     int vu_size = (width * height) / 2;
 
-    // Rotate Y component (reverse all pixels)
+    // 数组翻转（比通过矩阵变换要快：矩阵得先垂直转置90，再水平转置90）
     for (int i = 0; i < y_size; ++i) {
         y_dst[i] = y_src[y_size - 1 - i];
     }
