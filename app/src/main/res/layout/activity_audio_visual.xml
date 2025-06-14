@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/dp_5"
+        android:layout_margin="@dimen/dp_5"
         android:orientation="horizontal">
 
         <com.pengxh.kt.lite.widget.DeleteEditText
@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@null"
-            android:hint="请选择音频文件"
+            android:hint="光良 - 童话.mp3"
             android:paddingHorizontal="@dimen/dp_3"
             android:paddingVertical="@dimen/dp_5"
             android:singleLine="true"

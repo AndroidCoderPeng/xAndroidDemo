@@ -14,7 +14,7 @@ import com.example.android.util.ColorRender
 import com.pengxh.kt.lite.extensions.getScreenHeight
 
 
-class AudioVisualView constructor(context: Context, attrs: AttributeSet) : View(context, attrs) {
+class AudioVisualView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val kTag = "AudioVisualView"
     private var fftArray = ByteArray(128)

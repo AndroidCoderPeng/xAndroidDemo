@@ -3,7 +3,6 @@ package com.example.android.view
 import android.content.Intent
 import android.media.MediaPlayer
 import android.media.audiofx.Visualizer
-import android.os.Build
 import android.os.Bundle
 import com.example.android.R
 import com.example.android.databinding.ActivityAudioVisualBinding
@@ -46,15 +45,7 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
             try {
                 if (filePath.isBlank()) {
                     val assetFileDescriptor = assets.openFd("光良 - 童话.mp3")
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        mediaPlayer?.setDataSource(assetFileDescriptor)
-                    } else {
-                        mediaPlayer?.setDataSource(
-                            assetFileDescriptor.fileDescriptor,
-                            assetFileDescriptor.startOffset,
-                            assetFileDescriptor.length
-                        )
-                    }
+                    mediaPlayer?.setDataSource(assetFileDescriptor)
                 } else {
                     val fileDescriptor = FileInputStream(filePath).fd
                     mediaPlayer?.setDataSource(fileDescriptor)
