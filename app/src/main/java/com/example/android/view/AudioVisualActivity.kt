@@ -12,11 +12,10 @@ import com.pengxh.kt.lite.extensions.realFilePath
 import java.io.FileInputStream
 import java.io.IOException
 
-
 class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
 
     private val kTag = "AudioVisualActivity"
-    private var mediaPlayer: MediaPlayer? = null
+    private val mediaPlayer by lazy { MediaPlayer() }
     private var visualizer: Visualizer? = null
 
     override fun initEvent() {
@@ -32,35 +31,33 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
                 visualizer?.release()
                 visualizer = null
             }
-            if (mediaPlayer != null) {
-                mediaPlayer?.release()
-                mediaPlayer = null
-            }
+            mediaPlayer.release()
         }
 
         binding.playAudioButton.setOnClickListener {
             val filePath = binding.audioFilePathView.text.toString()
-            //播放音频文件
-            mediaPlayer = MediaPlayer()
             try {
                 if (filePath.isBlank()) {
-                    val assetFileDescriptor = assets.openFd("光良 - 童话.mp3")
-                    mediaPlayer?.setDataSource(assetFileDescriptor)
+                    assets.openFd("光良 - 童话.mp3").apply {
+                        mediaPlayer.setDataSource(this)
+                    }
                 } else {
-                    val fileDescriptor = FileInputStream(filePath).fd
-                    mediaPlayer?.setDataSource(fileDescriptor)
+                    FileInputStream(filePath).fd.apply {
+                        mediaPlayer.setDataSource(this)
+                    }
                 }
-                mediaPlayer?.prepare()
-                mediaPlayer?.start()
+                mediaPlayer.prepare()
+                mediaPlayer.start()
 
                 //初始化可视化容器
-                visualizer = Visualizer(mediaPlayer!!.audioSessionId)
-                visualizer?.captureSize = Visualizer.getCaptureSizeRange()[1]
-                visualizer?.setDataCaptureListener(
-                    captureListener, Visualizer.getMaxCaptureRate() * 3 / 4, true, true
-                )
-                visualizer?.scalingMode = Visualizer.SCALING_MODE_NORMALIZED
-                visualizer?.enabled = true
+                visualizer = Visualizer(mediaPlayer.audioSessionId).apply {
+                    captureSize = Visualizer.getCaptureSizeRange()[1]
+                    scalingMode = Visualizer.SCALING_MODE_NORMALIZED
+                    enabled = true
+                    setDataCaptureListener(
+                        captureListener, Visualizer.getMaxCaptureRate() * 3 / 4, true, true
+                    )
+                }
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -69,27 +66,22 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
 
     private val captureListener = object : Visualizer.OnDataCaptureListener {
         override fun onWaveFormDataCapture(
-            visualizer: Visualizer?, bytes: ByteArray?, samplingRate: Int
+            visualizer: Visualizer, bytes: ByteArray, samplingRate: Int
         ) {
             // 时域波形数据。声音的波形图
-            bytes?.apply {
-                binding.audioVisualView.updateAudioWaveform(this)
-            }
+            binding.audioVisualView.updateAudioWaveform(bytes)
         }
 
-        override fun onFftDataCapture(visualizer: Visualizer?, fft: ByteArray?, samplingRate: Int) {
+        override fun onFftDataCapture(visualizer: Visualizer, fft: ByteArray, samplingRate: Int) {
             // 频域波形数据。FFT数据，展示不同频率的振幅
-            fft?.apply {
-                binding.fftVisualView.updateAudioAmplitude(this)
-            }
+            binding.fftVisualView.updateAudioAmplitude(fft)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 10001 && resultCode == RESULT_OK && data != null) {
-            val mp3Uri = data.data
-            mp3Uri?.apply {
+            data.data?.apply {
                 val absolutePath = this.realFilePath(this@AudioVisualActivity)
                 binding.audioFilePathView.setText(absolutePath)
             }
@@ -118,9 +110,6 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
             visualizer?.release()
             visualizer = null
         }
-        if (mediaPlayer != null) {
-            mediaPlayer?.release()
-            mediaPlayer = null
-        }
+        mediaPlayer.release()
     }
 }
