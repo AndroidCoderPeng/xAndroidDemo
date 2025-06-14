@@ -18,6 +18,16 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
     private val mediaPlayer by lazy { MediaPlayer() }
     private var visualizer: Visualizer? = null
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 10001 && resultCode == RESULT_OK && data != null) {
+            data.data?.apply {
+                val absolutePath = this.realFilePath(this@AudioVisualActivity)
+                binding.audioFilePathView.setText(absolutePath)
+            }
+        }
+    }
+
     override fun initEvent() {
         binding.selectAudioButton.setOnClickListener {
             //选择音频文件
@@ -75,16 +85,6 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
         override fun onFftDataCapture(visualizer: Visualizer, fft: ByteArray, samplingRate: Int) {
             // 频域波形数据。FFT数据，展示不同频率的振幅
             binding.fftVisualView.updateAudioAmplitude(fft)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 10001 && resultCode == RESULT_OK && data != null) {
-            data.data?.apply {
-                val absolutePath = this.realFilePath(this@AudioVisualActivity)
-                binding.audioFilePathView.setText(absolutePath)
-            }
         }
     }
 
