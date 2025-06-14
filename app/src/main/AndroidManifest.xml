@@ -94,13 +94,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <!-- 注册截屏需要用到的前台服务 -->
-        <service
-            android:name=".service.ScreenShortRecordService"
-            android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="mediaProjection" />
-
         <!--高德定位-->
         <service android:name="com.amap.api.location.APSService" />
 

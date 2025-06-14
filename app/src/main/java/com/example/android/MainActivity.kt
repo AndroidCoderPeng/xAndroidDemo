@@ -1,20 +1,12 @@
 package com.example.android
 
 import android.Manifest
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
-import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
-import android.os.IBinder
 import android.view.KeyEvent
-import androidx.activity.result.contract.ActivityResultContracts
 import com.amap.api.maps.MapsInitializer
 import com.example.android.databinding.ActivityMainBinding
 import com.example.android.extensions.initImmersionBar
-import com.example.android.service.ScreenShortRecordService
 import com.example.android.view.AddProductAnimationActivity
 import com.example.android.view.AudioVisualActivity
 import com.example.android.view.BluetoothActivity
@@ -37,14 +29,9 @@ import com.example.android.view.YuvDataActivity
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.extensions.createImageFileDir
-import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
 import pub.devrel.easypermissions.EasyPermissions
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
     EasyPermissions.PermissionCallbacks {
@@ -105,8 +92,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
     }
-    private val timeFormat by lazy { SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA) }
-    private val mpm by lazy { getSystemService<MediaProjectionManager>() }
     private val itemNames = listOf(
         "侧边导航栏",
         "拖拽地图选点",
@@ -123,14 +108,12 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "3D画廊",
         "Google ML Kit",
         "拍照保存到相册",
-        "截屏",
         "导航卫星信息",
         "音频可视化",
         "商品加购购物车效果",
-        "YUV分析"
+        "YUV420分析"
     )
     private var clickTime: Long = 0
-    private var screenShortService: ScreenShortRecordService? = null
 
     override fun setupTopBarLayout() {
         binding.rootView.initImmersionBar(this, true, R.color.white)
@@ -178,54 +161,13 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
                     12 -> navigatePageTo<GalleryActivity>()
                     13 -> navigatePageTo<MLKitActivity>()
                     14 -> navigatePageTo<SaveInAlbumActivity>()
-                    15 -> {
-                        val captureIntent = mpm?.createScreenCaptureIntent()
-                        captureIntentLauncher.launch(captureIntent)
-                    }
-
-                    16 -> navigatePageTo<SatelliteStatusActivity>()
-                    17 -> navigatePageTo<AudioVisualActivity>()
-                    18 -> navigatePageTo<AddProductAnimationActivity>()
-                    19 -> navigatePageTo<YuvDataActivity>()
+                    15 -> navigatePageTo<SatelliteStatusActivity>()
+                    16 -> navigatePageTo<AudioVisualActivity>()
+                    17 -> navigatePageTo<AddProductAnimationActivity>()
+                    18 -> navigatePageTo<YuvDataActivity>()
                 }
             }
         })
-    }
-
-    private val captureIntentLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val imagePath = "${createImageFileDir()}/${timeFormat.format(Date())}.png"
-            result.data?.let {
-                screenShortService?.startCaptureScreen(imagePath, it)
-            }
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Intent(this, ScreenShortRecordService::class.java).also { intent ->
-            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-        }
-    }
-
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, iBinder: IBinder?) {
-            if (iBinder is ScreenShortRecordService.ServiceBinder) {
-                //截屏
-                screenShortService = iBinder.getScreenShortRecordService()
-            }
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            "录屏服务已断开".show(this@MainActivity)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        unbindService(serviceConnection)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -247,6 +189,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {}
+
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults: IntArray
     ) {
