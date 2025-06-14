@@ -36,15 +36,12 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
             startActivityForResult(intent, 10001)
         }
 
-        binding.stopAudioButton.setOnClickListener {
-            if (visualizer != null) {
-                visualizer?.release()
-                visualizer = null
-            }
-            mediaPlayer.release()
-        }
+        binding.stopAudioButton.setOnClickListener { release() }
 
         binding.playAudioButton.setOnClickListener {
+            if (mediaPlayer.isPlaying) {
+                release()
+            }
             val filePath = binding.audioFilePathView.text.toString()
             try {
                 if (filePath.isBlank()) {
@@ -64,8 +61,8 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
                     captureSize = Visualizer.getCaptureSizeRange()[1]
                     scalingMode = Visualizer.SCALING_MODE_NORMALIZED
                     enabled = true
-                    setDataCaptureListener(
-                        captureListener, Visualizer.getMaxCaptureRate() * 3 / 4, true, true
+                    setDataCaptureListener( //半采样
+                        captureListener, Visualizer.getMaxCaptureRate() shr 1, true, true
                     )
                 }
             } catch (e: IOException) {
@@ -73,6 +70,11 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
             }
         }
     }
+
+    private var lastUpdateTime: Long = 0
+    private val updateInterval = 100L // 毫秒
+    private val filterFactor = 0.5f // 平滑系数
+    private var lastBytes: ByteArray? = null
 
     private val captureListener = object : Visualizer.OnDataCaptureListener {
         override fun onWaveFormDataCapture(
@@ -105,7 +107,11 @@ class AudioVisualActivity : KotlinBaseActivity<ActivityAudioVisualBinding>() {
     }
 
     override fun onDestroy() {
+        release()
         super.onDestroy()
+    }
+
+    private fun release() {
         if (visualizer != null) {
             visualizer?.release()
             visualizer = null
