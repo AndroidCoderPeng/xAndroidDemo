@@ -16,13 +16,13 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.example.android.databinding.ActivityFaceDetectBinding
-import com.example.android.extensions.toBitmap
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.createImageFileDir
+import com.pengxh.kt.lite.extensions.toBitmap
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date

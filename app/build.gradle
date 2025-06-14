@@ -86,11 +86,10 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
-    implementation 'com.belerweb:pinyin4j:2.5.0'
     implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
     implementation 'io.github.lucksiege:pictureselector:v3.11.1'
     //视频播放器
-    implementation 'com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer:v8.4.0-release-jitpack'
+    implementation 'com.github.CarGuo.GSYVideoPlayer:gsyvideoplayer:v10.2.0'
     //视频压缩
     implementation 'com.zolad:videoslimmer:1.0.0'
     implementation 'com.amap.api:3dmap:latest.integration'
