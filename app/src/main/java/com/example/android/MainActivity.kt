@@ -108,9 +108,9 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "3D画廊",
         "Google ML Kit",
         "拍照保存到相册",
-        "导航卫星信息",
+        "导航卫星数据",
         "音频可视化",
-        "商品加购购物车效果",
+        "商品添加购物车",
         "YUV420分析"
     )
     private var clickTime: Long = 0
