@@ -18,7 +18,7 @@ import kotlin.math.sin
 /**
  * 指南针自定义表盘
  * */
-class CompassDialView constructor(context: Context, attrs: AttributeSet) : View(context, attrs) {
+class CompassDialView(private val context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val kTag = "CompassDialView"
 

@@ -13,7 +13,6 @@ import com.example.android.view.BluetoothActivity
 import com.example.android.view.CompassActivity
 import com.example.android.view.CompressVideoActivity
 import com.example.android.view.DragMapActivity
-import com.example.android.view.FaceDetectActivity
 import com.example.android.view.GalleryActivity
 import com.example.android.view.GridViewActivity
 import com.example.android.view.HikVisionActivity
@@ -100,7 +99,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "视频压缩",
         "蓝牙相关",
         "可删减九宫格",
-        "人脸检测",
         "时间轴",
         "海康摄像头",
         "雷达扫描效果",
@@ -153,18 +151,17 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
                     4 -> navigatePageTo<CompressVideoActivity>()
                     5 -> navigatePageTo<BluetoothActivity>()
                     6 -> navigatePageTo<GridViewActivity>()
-                    7 -> navigatePageTo<FaceDetectActivity>()
-                    8 -> navigatePageTo<TimeLineActivity>()
-                    9 -> navigatePageTo<HikVisionActivity>()
-                    10 -> navigatePageTo<RadarScanActivity>()
-                    11 -> navigatePageTo<CompassActivity>()
-                    12 -> navigatePageTo<GalleryActivity>()
-                    13 -> navigatePageTo<MLKitActivity>()
-                    14 -> navigatePageTo<SaveInAlbumActivity>()
-                    15 -> navigatePageTo<SatelliteStatusActivity>()
-                    16 -> navigatePageTo<AudioVisualActivity>()
-                    17 -> navigatePageTo<AddProductAnimationActivity>()
-                    18 -> navigatePageTo<YuvDataActivity>()
+                    7 -> navigatePageTo<TimeLineActivity>()
+                    8 -> navigatePageTo<HikVisionActivity>()
+                    9 -> navigatePageTo<RadarScanActivity>()
+                    10 -> navigatePageTo<CompassActivity>()
+                    11 -> navigatePageTo<GalleryActivity>()
+                    12 -> navigatePageTo<MLKitActivity>()
+                    13 -> navigatePageTo<SaveInAlbumActivity>()
+                    14 -> navigatePageTo<SatelliteStatusActivity>()
+                    15 -> navigatePageTo<AudioVisualActivity>()
+                    16 -> navigatePageTo<AddProductAnimationActivity>()
+                    17 -> navigatePageTo<YuvDataActivity>()
                 }
             }
         })

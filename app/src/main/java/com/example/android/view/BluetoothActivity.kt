@@ -19,7 +19,7 @@ import com.example.android.R
 import com.example.android.base.BaseApplication
 import com.example.android.databinding.ActivityBluetoothBinding
 import com.example.android.extensions.initImmersionBar
-import com.example.android.util.DemoConstant
+import com.example.android.util.ExampleConstant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.show
@@ -62,7 +62,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
     override fun initEvent() {
         binding.disconnectButton.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
-                sendCommand(DemoConstant.CLOSE_TRANSFER_COMMAND)
+                sendCommand(ExampleConstant.CLOSE_TRANSFER_COMMAND)
 
                 delay(500)
 
@@ -104,12 +104,12 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
         }
 
         binding.obtainDeviceCodeButton.setOnClickListener {
-            sendCommand(DemoConstant.ASK_DEV_CODE_COMMAND)
+            sendCommand(ExampleConstant.ASK_DEV_CODE_COMMAND)
         }
     }
 
     private fun sendCommand(command: ByteArray) {
-        bleManager.write(connectedDevice, DemoConstant.UUIDS[2], writeUuid, command,
+        bleManager.write(connectedDevice, ExampleConstant.UUIDS[2], writeUuid, command,
             object : BleWriteCallback() {
                 override fun onWriteSuccess(current: Int, total: Int, justWrite: ByteArray?) {
                     "指令下发成功".show(context)
@@ -181,7 +181,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
     }
 
     private fun notifyDeviceService(bleDevice: BleDevice, gatt: BluetoothGatt) {
-        val gattService = gatt.getService(UUID.fromString(DemoConstant.UUIDS[2]))
+        val gattService = gatt.getService(UUID.fromString(ExampleConstant.UUIDS[2]))
         if (gattService == null) {
             Log.d(kTag, "notifyDeviceService: gattService is null")
             LoadingDialog.dismiss()
@@ -210,7 +210,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
             }
         }
 
-        bleManager.notify(bleDevice, DemoConstant.UUIDS[2], notifyUuid,
+        bleManager.notify(bleDevice, ExampleConstant.UUIDS[2], notifyUuid,
             object : BleNotifyCallback() {
                 override fun onNotifySuccess() {
                     LoadingDialog.dismiss()
@@ -240,7 +240,7 @@ class BluetoothActivity : KotlinBaseActivity<ActivityBluetoothBinding>() {
                             delay(500)
 
                             //发送数据传送指令
-                            sendCommand(DemoConstant.OPEN_TRANSFER_COMMAND)
+                            sendCommand(ExampleConstant.OPEN_TRANSFER_COMMAND)
                         }
                     } else if (data.first() == (-86).toByte() && data.size >= 14) {
                         //[-86, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 13, 10, -86, 0, 0, 0, 0, 1]

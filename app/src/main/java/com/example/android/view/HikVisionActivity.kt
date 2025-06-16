@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.SurfaceHolder
 import com.example.android.databinding.ActivityHikvisionBinding
 import com.example.android.extensions.getChannel
-import com.example.android.util.DemoConstant
+import com.example.android.util.ExampleConstant
 import com.example.android.util.hk.MessageCodeHub
 import com.example.android.util.hk.SDKGuider
 import com.google.gson.JsonObject
@@ -39,10 +39,10 @@ class HikVisionActivity : KotlinBaseActivity<ActivityHikvisionBinding>(), Surfac
             val deviceItem = SDKGuider.sdkGuider.devManageGuider.DeviceItem()
             deviceItem.szDevName = ""
             deviceItem.devNetInfo = SDKGuider.sdkGuider.devManageGuider.DevNetInfo(
-                DemoConstant.HK_NET_IP,
-                DemoConstant.HK_NET_PORT,
-                DemoConstant.HK_NET_USERNAME,
-                DemoConstant.HK_NET_PASSWORD
+                ExampleConstant.HK_NET_IP,
+                ExampleConstant.HK_NET_PORT,
+                ExampleConstant.HK_NET_USERNAME,
+                ExampleConstant.HK_NET_PASSWORD
             )
             if (deviceItem.szDevName.isEmpty()) {
                 deviceItem.szDevName = deviceItem.devNetInfo.szIp

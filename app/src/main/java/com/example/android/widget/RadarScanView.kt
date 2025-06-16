@@ -17,15 +17,16 @@ import android.graphics.Typeface
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.graphics.toColorInt
 import com.example.android.R
-import com.example.android.util.DemoConstant
+import com.example.android.util.ExampleConstant
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.sp2px
 import kotlin.math.cos
 import kotlin.math.sin
 
 
-class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(context, attrs) {
+class RadarScanView(private val context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val kTag = "RadarScanView"
 
@@ -100,7 +101,7 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
     init {
         val type = context.obtainStyledAttributes(attrs, R.styleable.RadarScanView)
         borderColor = type.getColor(
-            R.styleable.RadarScanView_radar_borderColor, Color.parseColor("#8000FFF0")
+            R.styleable.RadarScanView_radar_borderColor, "#8000FFF0".toColorInt()
         )
         border = type.getDimensionPixelOffset(R.styleable.RadarScanView_radar_border, 1)
         circleCount = type.getInt(R.styleable.RadarScanView_radar_circleCount, 4)
@@ -434,7 +435,7 @@ class RadarScanView constructor(context: Context, attrs: AttributeSet) : View(co
         /**
          * 距离最大5.5米，表盘四个环，一个环距离1.5米，半径124dp（248px）
          * */
-        val dataDistance = (this.distance / DemoConstant.MAX_DISTANCE) * radius
+        val dataDistance = (this.distance / ExampleConstant.MAX_DISTANCE) * radius
         val x = dataDistance * cos(this.angle).toFloat()
         val y = dataDistance * sin(this.angle).toFloat()
         return PointF(x, y)
