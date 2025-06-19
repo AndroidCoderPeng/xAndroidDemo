@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.R
 import com.example.android.model.Satellite
@@ -58,5 +59,33 @@ class SatelliteRecyclerAdapter(
             .setText(R.id.signalValueView, "${satellite.signal}")
             .setText(R.id.azimuthView, "${satellite.azimuth}°")
             .setText(R.id.elevationView, "${satellite.elevation}°")
+    }
+
+    /**
+     * 刷新列表，局部刷新
+     * */
+    fun refresh(newRows: MutableList<Satellite>) {
+        val diffCallback = object : DiffUtil.Callback() {
+            override fun getOldListSize(): Int = dataRows.size
+
+            override fun getNewListSize(): Int = newRows.size
+
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                val oldItem = dataRows[oldItemPosition]
+                val newItem = newRows[newItemPosition]
+                return oldItem.type == newItem.type && oldItem.svid == newItem.svid
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return oldItemPosition == newItemPosition
+            }
+        }
+
+        val diffResult = DiffUtil.calculateDiff(diffCallback, true)
+
+        dataRows.clear()
+        dataRows.addAll(newRows)
+
+        diffResult.dispatchUpdatesTo(this)
     }
 }
