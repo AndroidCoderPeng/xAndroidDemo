@@ -153,5 +153,4 @@ Java_com_example_android_util_Yuv_rotate(JNIEnv *env, jobject thiz,
 JNIEXPORT void JNI_OnUnload(JavaVM *vm, void *reserved) {
     __android_log_print(ANDROID_LOG_DEBUG, "yuv", "JNI_OnUnload");
 }
-
 }

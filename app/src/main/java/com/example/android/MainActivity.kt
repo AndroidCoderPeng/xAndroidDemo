@@ -3,7 +3,6 @@ package com.example.android
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
-import android.view.KeyEvent
 import com.amap.api.maps.MapsInitializer
 import com.example.android.databinding.ActivityMainBinding
 import com.example.android.extensions.initImmersionBar
@@ -24,12 +23,12 @@ import com.example.android.view.SaveInAlbumActivity
 import com.example.android.view.SlideNavigationActivity
 import com.example.android.view.TimeLineActivity
 import com.example.android.view.WaterMarkerActivity
+import com.example.android.view.WrapVideoActivity
 import com.example.android.view.YuvDataActivity
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.navigatePageTo
-import com.pengxh.kt.lite.extensions.show
 import pub.devrel.easypermissions.EasyPermissions
 
 class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
@@ -109,9 +108,9 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "导航卫星数据",
         "音频可视化",
         "商品添加购物车",
-        "YUV420分析"
+        "YUV420分析",
+        "封装音视频"
     )
-    private var clickTime: Long = 0
 
     override fun setupTopBarLayout() {
         binding.rootView.initImmersionBar(this, true, R.color.white)
@@ -162,21 +161,10 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
                     15 -> navigatePageTo<AudioVisualActivity>()
                     16 -> navigatePageTo<AddProductAnimationActivity>()
                     17 -> navigatePageTo<YuvDataActivity>()
+                    18 -> navigatePageTo<WrapVideoActivity>()
                 }
             }
         })
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        return if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (System.currentTimeMillis() - clickTime > 2000) {
-                "再按一次退出程序".show(this)
-                clickTime = System.currentTimeMillis()
-                true
-            } else {
-                super.onKeyDown(keyCode, event)
-            }
-        } else super.onKeyDown(keyCode, event)
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {

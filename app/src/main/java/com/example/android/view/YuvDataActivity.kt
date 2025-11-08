@@ -186,7 +186,6 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
         }
     }
 
-    @Deprecated("Deprecated in Java")
     override fun onPreviewFrame(data: ByteArray, camera: Camera) {
         nv21 = data
     }
