@@ -177,11 +177,14 @@ public class CameraRecorder implements Camera.PreviewCallback {
                 ByteBuffer inputBuffer = mVideoEncoder.getInputBuffer(inIndex);
                 if (inputBuffer != null) {
                     inputBuffer.clear();
-                    if (data.length > inputBuffer.capacity()) {
-                        Log.e(TAG, "Frame data too large! Skipping. data=" + data.length + ", capacity=" + inputBuffer.capacity());
+
+                    byte[] nv12 = convertNV21toNV12(data, mActualPreviewWidth, mActualPreviewHeight);
+
+                    if (nv12.length > inputBuffer.capacity()) {
+                        Log.e(TAG, "Frame data too large! Skipping. data=" + nv12.length + ", capacity=" + inputBuffer.capacity());
                     } else {
-                        inputBuffer.put(data);
-                        mVideoEncoder.queueInputBuffer(inIndex, 0, data.length, pts, 0);
+                        inputBuffer.put(nv12);
+                        mVideoEncoder.queueInputBuffer(inIndex, 0, nv12.length, pts, 0);
                     }
                 }
             }
@@ -191,6 +194,18 @@ public class CameraRecorder implements Camera.PreviewCallback {
         } catch (Exception e) {
             Log.e(TAG, "Error in onPreviewFrame", e);
         }
+    }
+
+    private byte[] convertNV21toNV12(byte[] nv21, int width, int height) {
+        byte[] nv12 = nv21.clone();
+        int size = width * height;
+        for (int i = size; i < nv12.length; i += 2) {
+            // Swap U and V
+            byte tmp = nv12[i];
+            nv12[i] = nv12[i + 1];
+            nv12[i + 1] = tmp;
+        }
+        return nv12;
     }
 
     @SuppressLint("MissingPermission")
