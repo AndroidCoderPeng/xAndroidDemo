@@ -1,9 +1,6 @@
 package com.example.android.util;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.ImageFormat;
-import android.hardware.Camera;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaCodec;
@@ -11,19 +8,13 @@ import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.media.MediaRecorder;
-import android.os.Environment;
 import android.util.Log;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class CameraRecorder implements Camera.PreviewCallback {
+public class CameraRecorder {
     private static final String TAG = "CameraRecorder";
     private static final int FRAME_RATE = 30;
     private static final int I_FRAME_INTERVAL = 1;
@@ -32,20 +23,13 @@ public class CameraRecorder implements Camera.PreviewCallback {
     private static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
     private static final int AUDIO_BUFFER_SIZE = AudioRecord.getMinBufferSize(AUDIO_SAMPLE_RATE, AUDIO_CHANNELS, AUDIO_FORMAT) * 2;
 
-    private final int videoWidth;
-    private final int videoHeight;
+    private int videoWidth = 720;
+    private int videoHeight = 1280;
 
-    // 实际预览尺寸
-    private int mActualPreviewWidth;
-    private int mActualPreviewHeight;
-
-    private final Context mContext;
-    private Camera mCamera;
     private MediaMuxer mMuxer;
     private MediaCodec mVideoEncoder;
     private MediaCodec mAudioEncoder;
     private boolean mIsRecording = false;
-    private String mOutputPath;
     private Thread mAudioThread;
     private volatile boolean mShouldStop = false;
     private long mVideoPts = 0;
@@ -61,34 +45,30 @@ public class CameraRecorder implements Camera.PreviewCallback {
     private final Object mTrackLock = new Object();
     private final MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
 
-    public CameraRecorder(Context context, int width, int height) {
-        mContext = context;
+    public CameraRecorder() {
+
+    }
+
+    public void updateVideoSize(int width, int height) {
+        if (mIsRecording) {
+            throw new IllegalStateException("Cannot change video size while recording");
+        }
         videoWidth = width;
         videoHeight = height;
     }
 
-    public void startRecording() throws IOException {
+    public void startRecording(String outputPath) throws IOException {
         if (mIsRecording) return;
 
         if (!isHardwareSupported()) {
             throw new UnsupportedOperationException("设备不支持 H.264/AAC 硬编码");
         }
 
-        // 创建输出目录
-        File dir = mContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES);
-        if (dir == null) {
-            throw new IOException("无法访问外部存储");
-        }
-        if (!dir.exists()) dir.mkdirs();
-
-        String s = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        mOutputPath = new File(dir, "VIDEO_" + s + ".mp4").getAbsolutePath();
-
         // 初始化 Muxer
-        mMuxer = new MediaMuxer(mOutputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+        mMuxer = new MediaMuxer(outputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
 
         // 配置编码器（使用实际预览尺寸）
-        setupVideoEncoder(mActualPreviewWidth, mActualPreviewHeight);
+        setupVideoEncoder(videoWidth, videoHeight);
         setupAudioEncoder();
 
         mIsRecording = true;
@@ -99,19 +79,6 @@ public class CameraRecorder implements Camera.PreviewCallback {
         // 启动音频采集线程
         mAudioThread = new Thread(this::recordAudio);
         mAudioThread.start();
-
-        // 延迟 300ms 启动预览回调，让编码器初始化更稳定
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException ignored) {
-        }
-
-        // 开始预览回调
-        mCamera.setPreviewCallbackWithBuffer(this);
-        Camera.Size actualPreviewSize = mCamera.getParameters().getPreviewSize();
-        int bufSize = actualPreviewSize.width * actualPreviewSize.height * ImageFormat.getBitsPerPixel(ImageFormat.NV21) / 8;
-        byte[] buffer = new byte[bufSize];
-        mCamera.addCallbackBuffer(buffer);
     }
 
     public void stopRecording() {
@@ -126,48 +93,16 @@ public class CameraRecorder implements Camera.PreviewCallback {
             Log.e(TAG, "Audio thread join interrupted", e);
         }
 
-        mCamera.setPreviewCallbackWithBuffer(null);
         releaseEncoders();
         mIsRecording = false;
-        Log.d(TAG, "Recording saved to: " + mOutputPath);
     }
 
-    public void setCamera(Camera camera) {
-        mCamera = camera;
-        if (mCamera != null) {
-            Camera.Parameters params = mCamera.getParameters();
-            List<Camera.Size> sizes = params.getSupportedPreviewSizes();
-            Camera.Size target = getOptimalPreviewSize(sizes, videoWidth, videoHeight);
-            if (target != null) {
-                params.setPreviewSize(target.width, target.height);
-            }
-            params.setPreviewFormat(ImageFormat.NV21);
-            mCamera.setParameters(params);
-
-            // 获取实际生效的预览尺寸
-            Camera.Size actual = mCamera.getParameters().getPreviewSize();
-            mActualPreviewWidth = actual.width;
-            mActualPreviewHeight = actual.height;
-            Log.d(TAG, "Actual preview size: " + mActualPreviewWidth + "x" + mActualPreviewHeight);
-
-            mCamera.setDisplayOrientation(90);
-            mCamera.setPreviewCallbackWithBuffer(null);
-
-            // 分配正确大小的 callback buffer
-            int bufSize = mActualPreviewWidth * mActualPreviewHeight * ImageFormat.getBitsPerPixel(ImageFormat.NV21) / 8;
-            mCamera.addCallbackBuffer(new byte[bufSize]);
-        }
-    }
-
-    @Override
-    public void onPreviewFrame(byte[] data, Camera camera) {
+    public void encodeCameraFrame(byte[] data, long pts) {
         if (!mIsRecording || mVideoEncoder == null) {
-            camera.addCallbackBuffer(data);
             return;
         }
 
         try {
-            long pts = System.nanoTime() / 1000;
             synchronized (mVideoLock) {
                 mVideoPts = pts;
             }
@@ -177,35 +112,18 @@ public class CameraRecorder implements Camera.PreviewCallback {
                 ByteBuffer inputBuffer = mVideoEncoder.getInputBuffer(inIndex);
                 if (inputBuffer != null) {
                     inputBuffer.clear();
-
-                    byte[] nv12 = convertNV21toNV12(data, mActualPreviewWidth, mActualPreviewHeight);
-
-                    if (nv12.length > inputBuffer.capacity()) {
-                        Log.e(TAG, "Frame data too large! Skipping. data=" + nv12.length + ", capacity=" + inputBuffer.capacity());
+                    if (data.length > inputBuffer.capacity()) {
+                        Log.e(TAG, "Frame data too large! Skipping. data=" + data.length + ", capacity=" + inputBuffer.capacity());
                     } else {
-                        inputBuffer.put(nv12);
-                        mVideoEncoder.queueInputBuffer(inIndex, 0, nv12.length, pts, 0);
+                        inputBuffer.put(data);
+                        mVideoEncoder.queueInputBuffer(inIndex, 0, data.length, pts, 0);
                     }
                 }
             }
-
             drainEncoder(mVideoEncoder, false, true);
-            camera.addCallbackBuffer(data);
         } catch (Exception e) {
             Log.e(TAG, "Error in onPreviewFrame", e);
         }
-    }
-
-    private byte[] convertNV21toNV12(byte[] nv21, int width, int height) {
-        byte[] nv12 = nv21.clone();
-        int size = width * height;
-        for (int i = size; i < nv12.length; i += 2) {
-            // Swap U and V
-            byte tmp = nv12[i];
-            nv12[i] = nv12[i + 1];
-            nv12[i + 1] = tmp;
-        }
-        return nv12;
     }
 
     @SuppressLint("MissingPermission")
@@ -349,25 +267,5 @@ public class CameraRecorder implements Camera.PreviewCallback {
         } catch (IOException e) {
             return false;
         }
-    }
-
-    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
-        final double ASPECT_TOLERANCE = 0.1;
-        double targetRatio = (double) h / w;
-
-        if (sizes == null) return null;
-
-        Camera.Size optimalSize = null;
-        double minDiff = Double.MAX_VALUE;
-
-        for (Camera.Size size : sizes) {
-            double ratio = (double) size.height / size.width;
-            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
-            if (Math.abs(size.height - h) < minDiff) {
-                optimalSize = size;
-                minDiff = Math.abs(size.height - h);
-            }
-        }
-        return optimalSize;
     }
 }
