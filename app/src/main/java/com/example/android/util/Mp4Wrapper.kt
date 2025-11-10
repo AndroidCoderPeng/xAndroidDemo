@@ -68,7 +68,7 @@ class Mp4Wrapper {
         val format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height)
         format.setInteger(
             MediaFormat.KEY_COLOR_FORMAT,
-            MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible
+            MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar
         )
         format.setInteger(MediaFormat.KEY_BIT_RATE, calculateBitRate(width, height))
         format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE)
@@ -80,7 +80,8 @@ class Mp4Wrapper {
         }
     }
 
-    private fun setupAudioEncoder(bitRate: Int, sampleRate: Int, channelCount: Int) {
+    private fun setupAudioEncoder(sampleRate: Int, channelCount: Int, bitRate: Int) {
+        Log.d(kTag, "sampleRate: $sampleRate, channelCount: $channelCount, bitRate: $bitRate")
         val format = MediaFormat.createAudioFormat(
             MediaFormat.MIMETYPE_AUDIO_AAC, sampleRate, channelCount
         )
@@ -177,16 +178,13 @@ class Mp4Wrapper {
     /*******************************外部方法************************************/
 
     fun updateVideoSize(width: Int, height: Int, rotation: Int) {
-        if (!isRecording) {
-            throw IllegalStateException("Cannot change video size while recording")
-        }
         videoWidth = width
         videoHeight = height
         videoRotation = rotation
-        Log.d(kTag, "updateVideoSize: $width x $height @ $rotation")
+        Log.d(kTag, "updateVideoSize: ${width}x${height}@$rotation")
     }
 
-    fun startRecording(outputPath: String, bitRate: Int, sampleRate: Int, channelCount: Int) {
+    fun startRecording(outputPath: String, sampleRate: Int, channelCount: Int, bitRate: Int) {
         if (isRecording) return
 
         if (!isHardwareSupported()) {
@@ -198,7 +196,7 @@ class Mp4Wrapper {
 
         // 配置编码器
         setupVideoEncoder(videoWidth, videoHeight, videoRotation)
-        setupAudioEncoder(bitRate, sampleRate, channelCount)
+        setupAudioEncoder(sampleRate, channelCount, bitRate)
 
         isRecording = true
         pendingTracks = 2
@@ -219,7 +217,6 @@ class Mp4Wrapper {
      * */
     fun encodeVideoFrame(data: ByteArray, pts: Long) {
         if (!isRecording || videoEncoder == null) {
-            Log.d(kTag, "encodeVideoFrame: 录制未开始")
             return
         }
         try {
@@ -257,7 +254,6 @@ class Mp4Wrapper {
      * */
     fun encodeAudioFrame(pcm: ByteArray, pts: Long) {
         if (!isRecording || audioEncoder == null) {
-            Log.d(kTag, "encodeAudioFrame: 录制未开始")
             return
         }
         try {

@@ -3,20 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/videoDurationView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingVertical="16dp"
-        android:text="00:00:00"
-        android:textColor="@color/red"
-        android:visibility="gone" />
-
     <TextureView
         android:id="@+id/textureView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/videoDurationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
+        android:gravity="center"
+        android:paddingVertical="16dp"
+        android:text="00:00:00"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/optionButton"
