@@ -4,6 +4,8 @@ import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.HandlerThread
 import android.util.Log
 import android.view.TextureView
 import android.widget.Toast
@@ -28,6 +30,11 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
     private var previewHeight = 1280
     private var nv12Buffer: ByteArray? = null
     private val isEncoding = AtomicBoolean(false)
+    private val handlerThread = HandlerThread("VideoEncodeThread")
+    private val encodeHandler by lazy {
+        handlerThread.start()
+        Handler(handlerThread.looper)
+    }
 
     override fun initViewBinding(): ActivityWrapVideoBinding {
         return ActivityWrapVideoBinding.inflate(layoutInflater)
@@ -131,6 +138,7 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
 
     override fun onDestroy() {
         super.onDestroy()
+        handlerThread.quitSafely()
         releaseCamera()
     }
 
@@ -153,7 +161,7 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
         }
 
         if (isRecording && isEncoding.compareAndSet(false, true)) {
-            Thread {
+            encodeHandler.post {
                 try {
                     val nv12 = nv21ToNV12(data)
 
@@ -166,7 +174,7 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
                 }
 
                 camera?.addCallbackBuffer(data)
-            }.start()
+            }
         } else {
             camera?.addCallbackBuffer(data)
         }
