@@ -16,8 +16,9 @@ private const val kTag = "Extensions"
  * @return 最优的预览尺寸，如果找不到合适的尺寸或输入为空则返回null
  */
 fun List<Camera.Size>.selectOptimalPreviewSize(w: Int, h: Int): Camera.Size? {
+    Log.d(kTag, "Target preview size: width=${w}, height=${h}")
     val aspect = 0.1
-    val targetRatio = h.toDouble() / w
+    val targetRatio = w.toDouble() / h
 
     Log.d(kTag, "Supported preview sizes:")
     forEach {
@@ -28,17 +29,21 @@ fun List<Camera.Size>.selectOptimalPreviewSize(w: Int, h: Int): Camera.Size? {
     var minDiff = Double.MAX_VALUE
 
     for (size in this) {
-        val ratio = size.height.toDouble() / size.width
-        if (abs(ratio - targetRatio) > aspect) continue
-        if (abs(size.height - h) < minDiff) {
-            optimalSize = size
-            minDiff = abs(size.height - h).toDouble()
+        val ratio = size.width.toDouble() / size.height
+        val ratioInverse = size.height.toDouble() / size.width
+
+        // 检查是否匹配目标比例或其倒数
+        if (abs(ratio - targetRatio) <= aspect || abs(ratioInverse - targetRatio) <= aspect) {
+            if (abs(size.height - h) < minDiff) {
+                optimalSize = size
+                minDiff = abs(size.height - h).toDouble()
+            }
         }
     }
 
     // 打印选中的最优尺寸
     optimalSize?.let {
-        Log.d(kTag, "Selected optimal size: ${it.width}x${it.height}")
+        Log.d(kTag, "Selected optimal size: width=${it.width}, height=${it.height}")
     }
 
     return optimalSize
