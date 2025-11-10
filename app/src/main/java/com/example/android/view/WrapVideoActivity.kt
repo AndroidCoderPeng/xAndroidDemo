@@ -9,6 +9,8 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
 import android.view.TextureView
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import com.example.android.databinding.ActivityWrapVideoBinding
 import com.example.android.extensions.selectOptimalPreviewSize
@@ -54,7 +56,7 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
     }
 
     override fun initEvent() {
-        binding.btnToggleRecord.setOnClickListener {
+        binding.optionButton.setOnClickListener {
             try {
                 if (!isRecording) {
                     val dir = getExternalFilesDir(Environment.DIRECTORY_MOVIES)
@@ -62,10 +64,12 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
                     val filePath = File(dir, "VIDEO_$s.mp4").absolutePath
                     Log.d(kTag, "Recording saved to: $filePath")
                     cameraRecorder.startRecording(filePath)
-                    binding.btnToggleRecord.text = "Stop Recording"
+                    binding.optionButton.text = "Stop Recording"
+                    binding.videoDurationView.startTimer()
                 } else {
                     cameraRecorder.stopRecording()
-                    binding.btnToggleRecord.text = "Start Recording"
+                    binding.optionButton.text = "Start Recording"
+                    binding.videoDurationView.stopTimer()
                 }
                 isRecording = !isRecording
             } catch (e: Exception) {
@@ -126,7 +130,8 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
         if (isRecording) {
             cameraRecorder.stopRecording()
             isRecording = false
-            binding.btnToggleRecord.text = "Start Recording"
+            binding.optionButton.text = "Start Recording"
+            binding.videoDurationView.stopTimer()
         }
 
         camera?.let {
@@ -194,5 +199,37 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
             return it
         }
         return nv21
+    }
+
+    private lateinit var timerRunnable: Runnable
+    private var startTime: Long = 0
+
+    private fun TextView.startTimer() {
+        this.visibility = View.VISIBLE
+        startTime = System.currentTimeMillis()
+        timerRunnable = object : Runnable {
+            override fun run() {
+                val elapsedMillis = System.currentTimeMillis() - startTime
+                val seconds = elapsedMillis / 1000
+                val minutes = seconds / 60
+                val hours = minutes / 60
+
+                text = String.format(
+                    Locale.getDefault(),
+                    "%02d:%02d:%02d",
+                    hours,
+                    minutes % 60,
+                    seconds % 60
+                )
+
+                handler.postDelayed(this, 1000)
+            }
+        }
+        handler.post(timerRunnable)
+    }
+
+    private fun TextView.stopTimer() {
+        handler.removeCallbacks(timerRunnable)
+        this.visibility = View.GONE
     }
 }
