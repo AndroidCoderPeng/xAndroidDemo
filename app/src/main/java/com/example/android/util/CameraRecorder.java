@@ -23,9 +23,9 @@ public class CameraRecorder {
     private static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
     private static final int AUDIO_BUFFER_SIZE = AudioRecord.getMinBufferSize(AUDIO_SAMPLE_RATE, AUDIO_CHANNELS, AUDIO_FORMAT) * 2;
 
-    private int videoWidth = 720;
-    private int videoHeight = 1280;
-    private int videoRotation = 90;
+    private int mVideoWidth = 720;
+    private int mVideoHeight = 1280;
+    private int mVideoRotation = 90;
 
     private MediaMuxer mMuxer;
     private MediaCodec mVideoEncoder;
@@ -39,12 +39,12 @@ public class CameraRecorder {
     private final Object mAudioLock = new Object();
 
     // Track 管理
-    private volatile int videoTrackIndex = -1;
-    private volatile int audioTrackIndex = -1;
+    private volatile int mVideoTrackIndex = -1;
+    private volatile int mAudioTrackIndex = -1;
     private final AtomicBoolean mMuxerStarted = new AtomicBoolean(false);
     private volatile int mPendingTracks = 2; // video + audio
     private final Object mTrackLock = new Object();
-    private final MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+    private final MediaCodec.BufferInfo mBufferInfo = new MediaCodec.BufferInfo();
 
     public CameraRecorder() {
 
@@ -54,9 +54,10 @@ public class CameraRecorder {
         if (mIsRecording) {
             throw new IllegalStateException("Cannot change video size while recording");
         }
-        videoWidth = width;
-        videoHeight = height;
-        videoRotation = rotation;
+        mVideoWidth = width;
+        mVideoHeight = height;
+        mVideoRotation = rotation;
+        Log.d(TAG, "updateVideoSize: " + width + "x" + height + "@" + rotation);
     }
 
     public void startRecording(String outputPath) throws IOException {
@@ -70,7 +71,7 @@ public class CameraRecorder {
         mMuxer = new MediaMuxer(outputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
 
         // 配置编码器（使用实际预览尺寸）
-        setupVideoEncoder(videoWidth, videoHeight, videoRotation);
+        setupVideoEncoder(mVideoWidth, mVideoHeight, mVideoRotation);
         setupAudioEncoder();
 
         mIsRecording = true;
@@ -175,7 +176,7 @@ public class CameraRecorder {
     private void drainEncoder(MediaCodec encoder, boolean isVideo) {
         final int TIMEOUT_US = 10000;
         while (true) {
-            int outIndex = encoder.dequeueOutputBuffer(bufferInfo, TIMEOUT_US);
+            int outIndex = encoder.dequeueOutputBuffer(mBufferInfo, TIMEOUT_US);
             if (outIndex == MediaCodec.INFO_TRY_AGAIN_LATER) {
                 break;
             } else if (outIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
@@ -183,9 +184,9 @@ public class CameraRecorder {
                 synchronized (mTrackLock) {
                     int trackIndex = mMuxer.addTrack(format);
                     if (isVideo) {
-                        videoTrackIndex = trackIndex;
+                        mVideoTrackIndex = trackIndex;
                     } else {
-                        audioTrackIndex = trackIndex;
+                        mAudioTrackIndex = trackIndex;
                     }
                     mPendingTracks--;
 
@@ -197,22 +198,22 @@ public class CameraRecorder {
                     }
                 }
             } else if (outIndex >= 0) {
-                bufferInfo.presentationTimeUs = isVideo ? mVideoPts : mAudioPts;
+                mBufferInfo.presentationTimeUs = isVideo ? mVideoPts : mAudioPts;
 
-                if ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
+                if ((mBufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
                     // SPS/PPS 已通过 addTrack 提交，此处忽略
-                    bufferInfo.size = 0;
+                    mBufferInfo.size = 0;
                 }
 
-                if (bufferInfo.size > 0 && mMuxerStarted.get()) {
+                if (mBufferInfo.size > 0 && mMuxerStarted.get()) {
                     ByteBuffer outputBuffer = encoder.getOutputBuffer(outIndex);
                     if (outputBuffer != null) {
-                        mMuxer.writeSampleData(isVideo ? videoTrackIndex : audioTrackIndex, outputBuffer, bufferInfo);
+                        mMuxer.writeSampleData(isVideo ? mVideoTrackIndex : mAudioTrackIndex, outputBuffer, mBufferInfo);
                     }
                 }
                 encoder.releaseOutputBuffer(outIndex, false);
 
-                if ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
+                if ((mBufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
                     break;
                 }
             }
@@ -221,7 +222,7 @@ public class CameraRecorder {
 
     private void setupVideoEncoder(int width, int height, int rotation) throws IOException {
         MediaFormat format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height);
-        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar);
+        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible);
         format.setInteger(MediaFormat.KEY_BIT_RATE, 4000000);
         format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, I_FRAME_INTERVAL);
