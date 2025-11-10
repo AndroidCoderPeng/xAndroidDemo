@@ -1,8 +1,13 @@
 package com.example.android.view
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.ImageFormat
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
+import android.media.AudioFormat
+import android.media.AudioRecord
+import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
@@ -11,11 +16,17 @@ import android.util.Log
 import android.view.TextureView
 import android.view.View
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import com.example.android.databinding.ActivityWrapVideoBinding
 import com.example.android.extensions.selectOptimalPreviewSize
 import com.example.android.util.CameraRecorder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -27,6 +38,8 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
 
     private val kTag = "WrapVideoActivity"
     private var camera: Camera? = null
+    private val audioScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private var audioRecord: AudioRecord? = null
     private val cameraRecorder by lazy { CameraRecorder() }
     private var isRecording = false
     private var previewWidth = 1080
@@ -68,6 +81,9 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
                     cameraRecorder.startRecording(filePath)
                     binding.optionButton.text = "Stop Recording"
                     binding.videoDurationView.startTimer()
+
+                    // 启动音频采集协程
+                    audioScope.launch { recordAudio() }
                 } else {
                     cameraRecorder.stopRecording()
                     binding.optionButton.text = "Start Recording"
@@ -91,7 +107,7 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
     }
 
     override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
-        releaseCamera()
+        release()
         return true
     }
 
@@ -129,12 +145,19 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
         }
     }
 
-    private fun releaseCamera() {
+    private fun release() {
         if (isRecording) {
             cameraRecorder.stopRecording()
             isRecording = false
             binding.optionButton.text = "Start Recording"
             binding.videoDurationView.stopTimer()
+            // 停止音频协程
+            audioScope.cancel()
+            audioRecord?.let {
+                it.stop()
+                it.release()
+                audioRecord = null
+            }
         }
 
         camera?.let {
@@ -147,9 +170,49 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
     override fun onDestroy() {
         super.onDestroy()
         handlerThread.quitSafely()
-        releaseCamera()
+        release()
     }
 
+    private fun recordAudio() {
+        val minBufferSize = AudioRecord.getMinBufferSize(
+            44100,
+            AudioFormat.CHANNEL_IN_MONO,
+            AudioFormat.ENCODING_PCM_16BIT
+        ) * 2
+
+        if (ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            "缺少录音权限".show(this)
+            return
+        }
+
+        audioRecord = AudioRecord(
+            MediaRecorder.AudioSource.MIC,
+            44100,
+            AudioFormat.CHANNEL_IN_MONO,
+            AudioFormat.ENCODING_PCM_16BIT,
+            minBufferSize
+        ).apply {
+            startRecording()
+            /**
+             * AudioRecord.getMinBufferSize() 返回的是字节数（bytes）
+             * ENCODING_PCM_16BIT 格式每个采样点占用 2 字节（16位）
+             * ShortArray 每个元素是 Short 类型，占用 2 字节
+             * 因此需要的 ShortArray 长度是字节数的一半，即 minBufferSize / 2
+             * */
+            val buffer = ShortArray(minBufferSize / 2)
+            while (isRecording) {
+                val readSize = read(buffer, 0, buffer.size)
+                if (readSize > 0) {
+                    Log.d(kTag, buffer.contentToString())
+                }
+            }
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
     override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
         if (data == null) return
 
