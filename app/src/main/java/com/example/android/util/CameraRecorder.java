@@ -84,6 +84,27 @@ public class CameraRecorder {
         mAudioThread.start();
     }
 
+    private void setupVideoEncoder(int width, int height, int rotation) throws IOException {
+        MediaFormat format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height);
+        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible);
+        format.setInteger(MediaFormat.KEY_BIT_RATE, 4000000);
+        format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
+        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, I_FRAME_INTERVAL);
+        format.setInteger(MediaFormat.KEY_ROTATION, rotation); // 编码时候旋转角度
+        mVideoEncoder = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC);
+        mVideoEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+        mVideoEncoder.start();
+    }
+
+    private void setupAudioEncoder() throws IOException {
+        MediaFormat format = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, AUDIO_SAMPLE_RATE, 1);
+        format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
+        format.setInteger(MediaFormat.KEY_BIT_RATE, 64000);
+        mAudioEncoder = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_AUDIO_AAC);
+        mAudioEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+        mAudioEncoder.start();
+    }
+
     public void stopRecording() {
         if (!mIsRecording) return;
 
@@ -218,27 +239,6 @@ public class CameraRecorder {
                 }
             }
         }
-    }
-
-    private void setupVideoEncoder(int width, int height, int rotation) throws IOException {
-        MediaFormat format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height);
-        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible);
-        format.setInteger(MediaFormat.KEY_BIT_RATE, 4000000);
-        format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
-        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, I_FRAME_INTERVAL);
-        format.setInteger(MediaFormat.KEY_ROTATION, rotation); // 编码时候旋转角度
-        mVideoEncoder = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC);
-        mVideoEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-        mVideoEncoder.start();
-    }
-
-    private void setupAudioEncoder() throws IOException {
-        MediaFormat format = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, AUDIO_SAMPLE_RATE, 1);
-        format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
-        format.setInteger(MediaFormat.KEY_BIT_RATE, 64000);
-        mAudioEncoder = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_AUDIO_AAC);
-        mAudioEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-        mAudioEncoder.start();
     }
 
     private void releaseEncoders() {

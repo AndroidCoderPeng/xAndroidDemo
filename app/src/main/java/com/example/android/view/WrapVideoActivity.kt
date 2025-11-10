@@ -1,5 +1,6 @@
 package com.example.android.view
 
+import android.graphics.ImageFormat
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.util.Log
 import android.view.TextureView
 import android.widget.Toast
 import com.example.android.databinding.ActivityWrapVideoBinding
+import com.example.android.extensions.selectOptimalPreviewSize
 import com.example.android.util.CameraRecorder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import java.io.File
@@ -17,7 +19,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.math.abs
 
 class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Camera.PreviewCallback,
     TextureView.SurfaceTextureListener {
@@ -26,8 +27,8 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
     private var camera: Camera? = null
     private val cameraRecorder by lazy { CameraRecorder() }
     private var isRecording = false
-    private var previewWidth = 720
-    private var previewHeight = 1280
+    private var previewWidth = 1080
+    private var previewHeight = 1920
     private var nv12Buffer: ByteArray? = null
     private val isEncoding = AtomicBoolean(false)
     private val handlerThread = HandlerThread("VideoEncodeThread")
@@ -93,24 +94,23 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
 
     private fun openCamera() {
         try {
-            camera = Camera.open()
-            val parameters = camera?.parameters
-            val previewSizes = parameters?.supportedPreviewSizes
-            val optimalSize = getOptimalPreviewSize(previewSizes, previewWidth, previewHeight)
-
-            if (optimalSize != null) {
-                previewWidth = optimalSize.width
-                previewHeight = optimalSize.height
-                parameters?.setPreviewSize(previewWidth, previewHeight)
-                Log.d(kTag, "Setting preview size to: ${previewWidth}x${previewHeight}")
+            camera = Camera.open().apply {
+                val newParams = this.parameters.apply {
+                    val size = supportedPreviewSizes.selectOptimalPreviewSize(
+                        previewWidth, previewHeight
+                    )
+                    if (size != null) {
+                        previewWidth = size.width
+                        previewHeight = size.height
+                        setPreviewSize(previewWidth, previewHeight)
+                        Log.d(kTag, "Setting preview size to: ${previewWidth}x$previewHeight")
+                        // 准备NV12数据缓冲区
+                        nv12Buffer = ByteArray((previewWidth * previewHeight * 3) / 2)
+                    }
+                    previewFormat = ImageFormat.NV21
+                }
+                this.parameters = newParams
             }
-
-            parameters?.previewFormat = android.graphics.ImageFormat.NV21
-            camera?.parameters = parameters
-
-            // 准备NV12数据缓冲区
-            nv12Buffer = ByteArray((previewWidth * previewHeight * 3) / 2)
-
             camera?.let {
                 it.setPreviewTexture(binding.textureView.surfaceTexture)
                 it.setDisplayOrientation(90) // 设置预览方向
@@ -194,46 +194,5 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
             return it
         }
         return nv21
-    }
-
-    /**
-     * 获取最优的预览尺寸
-     *
-     * 该函数通过遍历相机支持的预览尺寸列表，找到与目标宽高比最接近且高度差最小的尺寸
-     *
-     * @param sizes 相机支持的预览尺寸列表，可能为null
-     * @param w 目标宽度
-     * @param h 目标高度
-     * @return 最优的预览尺寸，如果找不到合适的尺寸或输入为空则返回null
-     */
-    private fun getOptimalPreviewSize(sizes: List<Camera.Size>?, w: Int, h: Int): Camera.Size? {
-        val aspect = 0.1
-        val targetRatio = h.toDouble() / w
-
-        if (sizes == null) return null
-
-        Log.d(kTag, "Supported preview sizes:")
-        sizes.forEach { size ->
-            Log.d(kTag, "  ${size.width}x${size.height}")
-        }
-
-        var optimalSize: Camera.Size? = null
-        var minDiff = Double.MAX_VALUE
-
-        for (size in sizes) {
-            val ratio = size.height.toDouble() / size.width
-            if (abs(ratio - targetRatio) > aspect) continue
-            if (abs(size.height - h) < minDiff) {
-                optimalSize = size
-                minDiff = abs(size.height - h).toDouble()
-            }
-        }
-
-        // 打印选中的最优尺寸
-        optimalSize?.let {
-            Log.d(kTag, "Selected optimal size: ${it.width}x${it.height}")
-        }
-
-        return optimalSize
     }
 }
