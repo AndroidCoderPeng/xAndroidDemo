@@ -106,7 +106,7 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
 
             camera?.let {
                 it.setPreviewTexture(binding.textureView.surfaceTexture)
-                it.setDisplayOrientation(90)
+                it.setDisplayOrientation(90) // 设置预览方向
                 it.setPreviewCallback(this)
                 it.startPreview()
             }
@@ -148,7 +148,7 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
             previewWidth = actualWidth
             previewHeight = actualHeight
             nv12Buffer = ByteArray((previewWidth * previewHeight * 3) / 2)
-            cameraRecorder.updateVideoSize(previewWidth, previewHeight)
+            cameraRecorder.updateVideoSize(previewWidth, previewHeight, 90)
             Log.d(kTag, "Updated preview size to: ${previewWidth}x${previewHeight}")
         }
 

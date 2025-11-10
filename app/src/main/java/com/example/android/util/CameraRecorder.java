@@ -25,6 +25,7 @@ public class CameraRecorder {
 
     private int videoWidth = 720;
     private int videoHeight = 1280;
+    private int videoRotation = 90;
 
     private MediaMuxer mMuxer;
     private MediaCodec mVideoEncoder;
@@ -49,12 +50,13 @@ public class CameraRecorder {
 
     }
 
-    public void updateVideoSize(int width, int height) {
+    public void updateVideoSize(int width, int height, int rotation) {
         if (mIsRecording) {
             throw new IllegalStateException("Cannot change video size while recording");
         }
         videoWidth = width;
         videoHeight = height;
+        videoRotation = rotation;
     }
 
     public void startRecording(String outputPath) throws IOException {
@@ -68,7 +70,7 @@ public class CameraRecorder {
         mMuxer = new MediaMuxer(outputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
 
         // 配置编码器（使用实际预览尺寸）
-        setupVideoEncoder(videoWidth, videoHeight);
+        setupVideoEncoder(videoWidth, videoHeight, videoRotation);
         setupAudioEncoder();
 
         mIsRecording = true;
@@ -217,12 +219,13 @@ public class CameraRecorder {
         }
     }
 
-    private void setupVideoEncoder(int width, int height) throws IOException {
+    private void setupVideoEncoder(int width, int height, int rotation) throws IOException {
         MediaFormat format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height);
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar);
         format.setInteger(MediaFormat.KEY_BIT_RATE, 4000000);
         format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, I_FRAME_INTERVAL);
+        format.setInteger(MediaFormat.KEY_ROTATION, rotation); // 编码时候旋转角度
         mVideoEncoder = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC);
         mVideoEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         mVideoEncoder.start();
