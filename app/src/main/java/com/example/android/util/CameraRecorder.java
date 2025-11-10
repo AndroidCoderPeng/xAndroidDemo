@@ -122,7 +122,7 @@ public class CameraRecorder {
                     }
                 }
             }
-            drainEncoder(mVideoEncoder, false, true);
+            drainEncoder(mVideoEncoder, true);
         } catch (Exception e) {
             Log.e(TAG, "Error in onPreviewFrame", e);
         }
@@ -151,7 +151,7 @@ public class CameraRecorder {
                         }
                     }
                 }
-                drainEncoder(mAudioEncoder, false, false);
+                drainEncoder(mAudioEncoder, false);
             }
         } catch (Exception e) {
             Log.e(TAG, "Audio recording error", e);
@@ -166,13 +166,13 @@ public class CameraRecorder {
                 if (inIndex >= 0) {
                     mAudioEncoder.queueInputBuffer(inIndex, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
                 }
-                drainEncoder(mAudioEncoder, true, false);
+                drainEncoder(mAudioEncoder, false);
             } catch (Exception ignored) {
             }
         }
     }
 
-    private void drainEncoder(MediaCodec encoder, boolean endOfStream, boolean isVideo) {
+    private void drainEncoder(MediaCodec encoder, boolean isVideo) {
         final int TIMEOUT_US = 10000;
         while (true) {
             int outIndex = encoder.dequeueOutputBuffer(bufferInfo, TIMEOUT_US);
