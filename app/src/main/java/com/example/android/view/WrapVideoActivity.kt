@@ -11,11 +11,11 @@ import android.util.Log
 import android.view.TextureView
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import com.example.android.databinding.ActivityWrapVideoBinding
 import com.example.android.extensions.selectOptimalPreviewSize
 import com.example.android.util.CameraRecorder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.show
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -38,6 +38,8 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
         handlerThread.start()
         Handler(handlerThread.looper)
     }
+    private lateinit var timerRunnable: Runnable
+    private var startTime: Long = 0
 
     override fun initViewBinding(): ActivityWrapVideoBinding {
         return ActivityWrapVideoBinding.inflate(layoutInflater)
@@ -70,10 +72,11 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
                     cameraRecorder.stopRecording()
                     binding.optionButton.text = "Start Recording"
                     binding.videoDurationView.stopTimer()
+                    "视频录制完成".show(this)
                 }
                 isRecording = !isRecording
             } catch (e: Exception) {
-                Toast.makeText(this, "录制失败: " + e.message, Toast.LENGTH_LONG).show()
+                "录制失败: ${e.message}".show(this)
                 e.printStackTrace()
             }
         }
@@ -200,9 +203,6 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
         }
         return nv21
     }
-
-    private lateinit var timerRunnable: Runnable
-    private var startTime: Long = 0
 
     private fun TextView.startTimer() {
         this.visibility = View.VISIBLE
