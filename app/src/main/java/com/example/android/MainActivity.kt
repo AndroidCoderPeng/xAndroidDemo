@@ -10,7 +10,6 @@ import com.example.android.view.AddProductAnimationActivity
 import com.example.android.view.AudioVisualActivity
 import com.example.android.view.BluetoothActivity
 import com.example.android.view.CompassActivity
-import com.example.android.view.CompressVideoActivity
 import com.example.android.view.DragMapActivity
 import com.example.android.view.GalleryActivity
 import com.example.android.view.GridViewActivity
@@ -95,7 +94,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "拖拽地图选点",
         "音频录制与播放",
         "图片添加水印并压缩",
-        "视频压缩",
         "蓝牙相关",
         "可删减九宫格",
         "时间轴",
@@ -141,27 +139,26 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         binding.mainRecyclerView.adapter = adapter
         adapter.setOnItemClickedListener(object :
             NormalRecyclerAdapter.OnItemClickedListener<String> {
-            override fun onItemClicked(position: Int, t: String) {
+            override fun onItemClicked(position: Int, item: String) {
                 when (position) {
                     0 -> navigatePageTo<SlideNavigationActivity>()
                     1 -> navigatePageTo<DragMapActivity>()
                     2 -> navigatePageTo<RecodeAudioActivity>()
                     3 -> navigatePageTo<WaterMarkerActivity>()
-                    4 -> navigatePageTo<CompressVideoActivity>()
-                    5 -> navigatePageTo<BluetoothActivity>()
-                    6 -> navigatePageTo<GridViewActivity>()
-                    7 -> navigatePageTo<TimeLineActivity>()
-                    8 -> navigatePageTo<HikVisionActivity>()
-                    9 -> navigatePageTo<RadarScanActivity>()
-                    10 -> navigatePageTo<CompassActivity>()
-                    11 -> navigatePageTo<GalleryActivity>()
-                    12 -> navigatePageTo<MLKitActivity>()
-                    13 -> navigatePageTo<SaveInAlbumActivity>()
-                    14 -> navigatePageTo<SatelliteStatusActivity>()
-                    15 -> navigatePageTo<AudioVisualActivity>()
-                    16 -> navigatePageTo<AddProductAnimationActivity>()
-                    17 -> navigatePageTo<YuvDataActivity>()
-                    18 -> navigatePageTo<WrapVideoActivity>()
+                    4 -> navigatePageTo<BluetoothActivity>()
+                    5 -> navigatePageTo<GridViewActivity>()
+                    6 -> navigatePageTo<TimeLineActivity>()
+                    7 -> navigatePageTo<HikVisionActivity>()
+                    8 -> navigatePageTo<RadarScanActivity>()
+                    9 -> navigatePageTo<CompassActivity>()
+                    10 -> navigatePageTo<GalleryActivity>()
+                    11 -> navigatePageTo<MLKitActivity>()
+                    12 -> navigatePageTo<SaveInAlbumActivity>()
+                    13 -> navigatePageTo<SatelliteStatusActivity>()
+                    14 -> navigatePageTo<AudioVisualActivity>()
+                    15 -> navigatePageTo<AddProductAnimationActivity>()
+                    16 -> navigatePageTo<YuvDataActivity>()
+                    17 -> navigatePageTo<WrapVideoActivity>()
                 }
             }
         })

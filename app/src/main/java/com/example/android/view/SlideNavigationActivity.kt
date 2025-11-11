@@ -107,8 +107,8 @@ class SlideNavigationActivity : KotlinBaseActivity<ActivitySlideNavigationBindin
             if (view == null) {
                 view = inflater.inflate(R.layout.item_slide_list, parent, false)
                 holder = SlideItemViewHolder()
-                holder.imageView = view.findViewById(R.id.imageView) as ImageView
-                holder.textView = view.findViewById(R.id.textView) as TextView
+                holder.imageView = view.findViewById(R.id.imageView)
+                holder.textView = view.findViewById(R.id.textView)
                 view.tag = holder
             } else {
                 holder = view.tag as SlideItemViewHolder
@@ -129,7 +129,7 @@ class SlideNavigationActivity : KotlinBaseActivity<ActivitySlideNavigationBindin
         }
     }
 
-    inner class SlideItemViewHolder {
+    class SlideItemViewHolder {
         lateinit var imageView: ImageView
         lateinit var textView: TextView
     }

@@ -138,9 +138,15 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
         }
 
         camera?.let {
-            it.stopPreview()
-            it.release()
-            camera = null
+            try {
+                it.stopPreview()
+                it.setPreviewCallback(null) // 清除预览回调
+                it.release()
+            } catch (e: Exception) {
+                Log.e(kTag, "Error releasing camera", e)
+            } finally {
+                camera = null
+            }
         }
     }
 

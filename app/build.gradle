@@ -88,7 +88,6 @@ dependencies {
     implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
     implementation 'io.github.lucksiege:pictureselector:v3.11.1'
     implementation 'com.github.CarGuo.GSYVideoPlayer:gsyvideoplayer:v10.2.0'
-    implementation 'com.zolad:videoslimmer:1.0.0'
     implementation 'com.amap.api:3dmap:latest.integration'
     implementation 'com.amap.api:search:8.1.0'
     implementation 'com.google.code.gson:gson:2.13.2'
