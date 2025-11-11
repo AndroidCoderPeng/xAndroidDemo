@@ -1,13 +1,8 @@
 package com.example.android.view
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.graphics.ImageFormat
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
-import android.media.AudioFormat
-import android.media.AudioRecord
-import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
@@ -16,17 +11,11 @@ import android.util.Log
 import android.view.TextureView
 import android.view.View
 import android.widget.TextView
-import androidx.core.app.ActivityCompat
 import com.example.android.databinding.ActivityWrapVideoBinding
 import com.example.android.extensions.selectOptimalPreviewSize
-import com.example.android.util.Mp4Wrapper
+import com.example.android.util.CameraRecorder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -38,9 +27,7 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
 
     private val kTag = "WrapVideoActivity"
     private var camera: Camera? = null
-    private val audioScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private var audioRecord: AudioRecord? = null
-    private val mp4Wrapper by lazy { Mp4Wrapper() }
+    private val cameraRecorder by lazy { CameraRecorder() }
     private var isRecording = false
     private var previewWidth = 1080
     private var previewHeight = 1920
@@ -53,13 +40,6 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
     }
     private lateinit var timerRunnable: Runnable
     private var startTime: Long = 0
-    private val minBufferSize by lazy {
-        AudioRecord.getMinBufferSize(
-            44100,
-            AudioFormat.CHANNEL_IN_MONO,
-            AudioFormat.ENCODING_PCM_16BIT
-        )
-    }
 
     override fun initViewBinding(): ActivityWrapVideoBinding {
         return ActivityWrapVideoBinding.inflate(layoutInflater)
@@ -85,12 +65,11 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
                     val s = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
                     val filePath = File(dir, "VIDEO_$s.mp4").absolutePath
                     Log.d(kTag, "Recording saved to: $filePath")
-                    mp4Wrapper.startRecording(filePath)
-                    audioScope.launch { recordAudio() }
+                    cameraRecorder.startRecording(filePath)
                     binding.optionButton.text = "Stop Recording"
                     binding.videoDurationView.startTimer()
                 } else {
-                    mp4Wrapper.stopRecording()
+                    cameraRecorder.stopRecording()
                     binding.optionButton.text = "Start Recording"
                     binding.videoDurationView.stopTimer()
                     "视频录制完成".show(this)
@@ -131,9 +110,8 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
                         previewWidth = size.width
                         previewHeight = size.height
                         setPreviewSize(previewWidth, previewHeight)
-                        mp4Wrapper.updateVideoSize(previewWidth, previewHeight, 90)
+                        cameraRecorder.updateVideoSize(previewWidth, previewHeight, 90)
                         Log.d(kTag, "Setting preview size to: ${previewWidth}x$previewHeight")
-                        // 准备NV12数据缓冲区
                         nv12Buffer = ByteArray((previewWidth * previewHeight * 3) / 2)
                     }
                     previewFormat = ImageFormat.NV21
@@ -153,17 +131,10 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
 
     private fun release() {
         if (isRecording) {
-            mp4Wrapper.stopRecording()
+            cameraRecorder.stopRecording()
             isRecording = false
             binding.optionButton.text = "Start Recording"
             binding.videoDurationView.stopTimer()
-            // 停止音频协程
-            audioScope.cancel()
-            audioRecord?.let {
-                it.stop()
-                it.release()
-                audioRecord = null
-            }
         }
 
         camera?.let {
@@ -179,60 +150,24 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
         release()
     }
 
-    private fun recordAudio() {
-        if (ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.RECORD_AUDIO
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            "缺少录音权限".show(this)
+    @Deprecated("Deprecated in Java")
+    override fun onPreviewFrame(data: ByteArray?, camera: Camera) {
+        if (data == null || !isRecording) {
+            camera.addCallbackBuffer(data)
             return
         }
 
-        audioRecord = AudioRecord(
-            MediaRecorder.AudioSource.MIC,
-            44100,
-            AudioFormat.CHANNEL_IN_MONO,
-            AudioFormat.ENCODING_PCM_16BIT,
-            minBufferSize
-        ).apply {
-            startRecording()
-            val buffer = ShortArray(minBufferSize)
-            while (isRecording) {
-                val readSize = read(buffer, 0, buffer.size)
-                if (readSize > 0) {
-                    val pcm = ByteArray(readSize * 2) //按实际读取大小创建字节数组
-                    for (i in 0 until readSize) {
-                        val shortValue = buffer[i]
-                        pcm[i * 2] = (shortValue.toInt() and 0xFF).toByte()
-                        pcm[i * 2 + 1] = ((shortValue.toInt() shr 8) and 0xFF).toByte()
-                    }
-                    mp4Wrapper.encodeAudioFrame(pcm, System.nanoTime() / 1000)
-                } else if (readSize == AudioRecord.ERROR_INVALID_OPERATION || readSize == AudioRecord.ERROR_BAD_VALUE) {
-                    Log.e(kTag, "Audio record error: $readSize")
-                    break
-                }
-            }
-        }
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onPreviewFrame(data: ByteArray?, camera: Camera) {
-        if (data == null) return
-
-        if (isRecording && isEncoding.compareAndSet(false, true)) {
+        if (isEncoding.compareAndSet(false, true)) {
             encodeHandler.post {
                 try {
                     val nv12 = nv21ToNV12(data)
-
-                    // 提供视频数据给Mp4Wrapper
-                    mp4Wrapper.encodeVideoFrame(nv12, System.nanoTime() / 1000)
+                    cameraRecorder.encodeVideoFrame(nv12, System.nanoTime() / 1000)
                 } catch (e: Exception) {
                     Log.e(kTag, "Error processing frame", e)
                 } finally {
                     isEncoding.set(false)
+                    camera.addCallbackBuffer(data)
                 }
-
-                camera.addCallbackBuffer(data)
             }
         } else {
             camera.addCallbackBuffer(data)
@@ -266,11 +201,7 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
                 val hours = minutes / 60
 
                 text = String.format(
-                    Locale.getDefault(),
-                    "%02d:%02d:%02d",
-                    hours,
-                    minutes % 60,
-                    seconds % 60
+                    Locale.getDefault(), "%02d:%02d:%02d", hours, minutes % 60, seconds % 60
                 )
 
                 handler.postDelayed(this, 1000)

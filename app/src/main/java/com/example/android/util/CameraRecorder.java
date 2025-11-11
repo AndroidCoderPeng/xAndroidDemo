@@ -17,14 +17,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CameraRecorder {
     private static final String TAG = "CameraRecorder";
     private static final int FRAME_RATE = 30;
-    private static final int I_FRAME_INTERVAL = 1;
     private static final int AUDIO_SAMPLE_RATE = 44100;
     private static final int AUDIO_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
     private static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
     private static final int AUDIO_BUFFER_SIZE = AudioRecord.getMinBufferSize(AUDIO_SAMPLE_RATE, AUDIO_CHANNELS, AUDIO_FORMAT) * 2;
 
-    private int mVideoWidth = 720;
-    private int mVideoHeight = 1280;
+    private int mVideoWidth = 1080;
+    private int mVideoHeight = 1920;
     private int mVideoRotation = 90;
 
     private MediaMuxer mMuxer;
@@ -84,12 +83,23 @@ public class CameraRecorder {
         mAudioThread.start();
     }
 
+    /**
+     * 720p 推荐 2-5 Mbps
+     * 1080p 推荐 5-10 Mbps
+     *
+     */
+    private int calculateBitRate(int width, int height) {
+        // 每像素每帧约 0.1 ~ 0.3 bits
+        float bitsPerPixel = 0.125f;
+        return (int) (width * height * FRAME_RATE * bitsPerPixel);
+    }
+
     private void setupVideoEncoder(int width, int height, int rotation) throws IOException {
         MediaFormat format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height);
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible);
-        format.setInteger(MediaFormat.KEY_BIT_RATE, 4000000);
+        format.setInteger(MediaFormat.KEY_BIT_RATE, calculateBitRate(width, height));
         format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
-        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, I_FRAME_INTERVAL);
+        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
         format.setInteger(MediaFormat.KEY_ROTATION, rotation); // 编码时候旋转角度
         mVideoEncoder = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC);
         mVideoEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
@@ -121,7 +131,7 @@ public class CameraRecorder {
         mIsRecording = false;
     }
 
-    public void encodeCameraFrame(byte[] data, long pts) {
+    public void encodeVideoFrame(byte[] data, long pts) {
         if (!mIsRecording || mVideoEncoder == null) {
             return;
         }
@@ -189,15 +199,15 @@ public class CameraRecorder {
                     mAudioEncoder.queueInputBuffer(inIndex, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
                 }
                 drainEncoder(mAudioEncoder, false);
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                Log.e(TAG, "recordAudio: ", e);
             }
         }
     }
 
     private void drainEncoder(MediaCodec encoder, boolean isVideo) {
-        final int TIMEOUT_US = 10000;
         while (true) {
-            int outIndex = encoder.dequeueOutputBuffer(mBufferInfo, TIMEOUT_US);
+            int outIndex = encoder.dequeueOutputBuffer(mBufferInfo, 10000);
             if (outIndex == MediaCodec.INFO_TRY_AGAIN_LATER) {
                 break;
             } else if (outIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
