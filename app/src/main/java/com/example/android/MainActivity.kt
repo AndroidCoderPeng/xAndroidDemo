@@ -7,7 +7,6 @@ import com.amap.api.maps.MapsInitializer
 import com.example.android.databinding.ActivityMainBinding
 import com.example.android.extensions.initImmersionBar
 import com.example.android.view.AddProductAnimationActivity
-import com.example.android.view.AudioVisualActivity
 import com.example.android.view.BluetoothActivity
 import com.example.android.view.CompassActivity
 import com.example.android.view.DragMapActivity
@@ -104,7 +103,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "Google ML Kit",
         "拍照保存到相册",
         "导航卫星数据",
-        "音频可视化",
         "商品添加购物车",
         "YUV420分析",
         "封装音视频"
@@ -155,10 +153,9 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
                     11 -> navigatePageTo<MLKitActivity>()
                     12 -> navigatePageTo<SaveInAlbumActivity>()
                     13 -> navigatePageTo<SatelliteStatusActivity>()
-                    14 -> navigatePageTo<AudioVisualActivity>()
-                    15 -> navigatePageTo<AddProductAnimationActivity>()
-                    16 -> navigatePageTo<YuvDataActivity>()
-                    17 -> navigatePageTo<WrapVideoActivity>()
+                    14 -> navigatePageTo<AddProductAnimationActivity>()
+                    15 -> navigatePageTo<YuvDataActivity>()
+                    16 -> navigatePageTo<WrapVideoActivity>()
                 }
             }
         })

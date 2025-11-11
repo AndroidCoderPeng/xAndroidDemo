@@ -73,7 +73,6 @@
         <activity android:name=".view.HikVisionActivity" />
         <activity android:name=".view.SaveInAlbumActivity" />
         <activity android:name=".view.SatelliteStatusActivity" />
-        <activity android:name=".view.AudioVisualActivity" />
         <activity android:name=".view.AddProductAnimationActivity" />
         <activity android:name=".view.YuvDataActivity" />
         <activity android:name=".view.WrapVideoActivity" />

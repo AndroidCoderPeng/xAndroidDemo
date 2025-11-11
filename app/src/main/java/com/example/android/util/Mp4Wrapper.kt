@@ -129,14 +129,16 @@ class Mp4Wrapper {
                 synchronized(trackLock) {
                     mediaMuxer?.let {
                         val trackIndex = it.addTrack(encoder.outputFormat)
+                        Log.d(
+                            kTag,
+                            "Added ${if (isVideo) "video" else "audio"} track, index=$trackIndex"
+                        )
                         if (isVideo) {
                             videoTrackIndex = trackIndex
                         } else {
                             audioTrackIndex = trackIndex
                         }
                         pendingTracks -= 1
-
-                        // All tracks are added, start the muxer
                         if (pendingTracks == 0 && !muxerStarted.get()) {
                             it.start()
                             muxerStarted.set(true)
@@ -158,13 +160,15 @@ class Mp4Wrapper {
                 }
 
                 if (bufferInfo.size > 0 && muxerStarted.get()) {
-                    val outputBuffer = encoder.getOutputBuffer(outIndex)
-                    if (outputBuffer != null) {
-                        mediaMuxer?.let {
-                            if (isVideo) {
-                                it.writeSampleData(videoTrackIndex, outputBuffer, bufferInfo)
-                            } else {
-                                it.writeSampleData(audioTrackIndex, outputBuffer, bufferInfo)
+                    if ((isVideo && videoTrackIndex >= 0) || (!isVideo && audioTrackIndex >= 0)) {
+                        val outputBuffer = encoder.getOutputBuffer(outIndex)
+                        if (outputBuffer != null) {
+                            mediaMuxer?.let {
+                                if (isVideo) {
+                                    it.writeSampleData(videoTrackIndex, outputBuffer, bufferInfo)
+                                } else {
+                                    it.writeSampleData(audioTrackIndex, outputBuffer, bufferInfo)
+                                }
                             }
                         }
                     }
@@ -208,6 +212,83 @@ class Mp4Wrapper {
 
     fun stopRecording() {
         if (!isRecording) return
+
+        // 发送 EOS 到编码器
+        videoEncoder?.let { codec ->
+            val inputBufferIndex = codec.dequeueInputBuffer(-1)
+            if (inputBufferIndex >= 0) {
+                codec.queueInputBuffer(
+                    inputBufferIndex,
+                    0,
+                    0,
+                    0,
+                    MediaCodec.BUFFER_FLAG_END_OF_STREAM
+                )
+            }
+        }
+        audioEncoder?.let { codec ->
+            val inputBufferIndex = codec.dequeueInputBuffer(-1)
+            if (inputBufferIndex >= 0) {
+                codec.queueInputBuffer(
+                    inputBufferIndex,
+                    0,
+                    0,
+                    0,
+                    MediaCodec.BUFFER_FLAG_END_OF_STREAM
+                )
+            }
+        }
+
+        // 强制 drain 所有数据（最多等待 1 秒）
+        var videoDone = videoTrackIndex != -1
+        var audioDone = audioTrackIndex != -1
+        val startTime = System.currentTimeMillis()
+        while ((videoEncoder != null || audioEncoder != null) &&
+            (System.currentTimeMillis() - startTime < 1000)
+        ) {
+            videoEncoder?.let {
+                drainEncoder(it, true)
+                // 检查是否已收到 EOS
+                if (!videoDone && videoTrackIndex != -1) {
+                    // 尝试 drain 直到无数据
+                    var outputAvailable = true
+                    while (outputAvailable) {
+                        when (val outIndex = it.dequeueOutputBuffer(bufferInfo, 0)) {
+                            MediaCodec.INFO_TRY_AGAIN_LATER -> outputAvailable = false
+                            MediaCodec.INFO_OUTPUT_FORMAT_CHANGED -> {
+                                // 理论上不应再发生，但保险起见
+                            }
+
+                            else -> {
+                                it.releaseOutputBuffer(outIndex, false)
+                                if (bufferInfo.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0) {
+                                    videoDone = true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            audioEncoder?.let {
+                drainEncoder(it, false)
+                if (!audioDone && audioTrackIndex != -1) {
+                    var outputAvailable = true
+                    while (outputAvailable) {
+                        when (val outIndex = it.dequeueOutputBuffer(bufferInfo, 0)) {
+                            MediaCodec.INFO_TRY_AGAIN_LATER -> outputAvailable = false
+                            else -> {
+                                it.releaseOutputBuffer(outIndex, false)
+                                if (bufferInfo.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0) {
+                                    audioDone = true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Thread.sleep(10)
+        }
+
         releaseEncoders()
         isRecording = false
         Log.d(kTag, "stopRecording: 录像完成");
@@ -270,8 +351,10 @@ class Mp4Wrapper {
                     if (inputBuffer != null) {
                         inputBuffer.clear()
                         if (pcm.size > inputBuffer.capacity()) {
-                            inputBuffer.put(pcm, 0, inputBuffer.capacity())
-                            it.queueInputBuffer(inputBufferIndex, 0, inputBuffer.capacity(), pts, 0)
+                            Log.w(
+                                kTag,
+                                "Pcm data too large! Skipping. data=${pcm.size}, capacity=${inputBuffer.capacity()}"
+                            )
                         } else {
                             inputBuffer.put(pcm)
                             it.queueInputBuffer(inputBufferIndex, 0, pcm.size, pts, 0)

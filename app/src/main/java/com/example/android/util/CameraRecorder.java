@@ -90,7 +90,6 @@ public class CameraRecorder {
      * 比特率 (bitRate)：
      * 单声道：64000bps (64kbps) 或 96000bps (96kbps)
      * 双声道：128000bps (128kbps) 或 192000bps (192kbps)
-     *
      */
     private void setupAudioEncoder() throws IOException {
         MediaFormat format = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, AUDIO_SAMPLE_RATE, 1);
