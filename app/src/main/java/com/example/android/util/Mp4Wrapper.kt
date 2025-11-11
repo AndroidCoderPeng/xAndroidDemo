@@ -12,7 +12,6 @@ class Mp4Wrapper {
 
     companion object {
         private const val FRAME_RATE = 30
-        private const val I_FRAME_INTERVAL = 1
     }
 
     private val kTag = "Mp4Wrapper"
@@ -72,7 +71,7 @@ class Mp4Wrapper {
         )
         format.setInteger(MediaFormat.KEY_BIT_RATE, calculateBitRate(width, height))
         format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE)
-        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, I_FRAME_INTERVAL)
+        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1)
         format.setInteger(MediaFormat.KEY_ROTATION, rotation) // 编码时候旋转角度
         videoEncoder = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC).apply {
             configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
@@ -80,13 +79,17 @@ class Mp4Wrapper {
         }
     }
 
-    private fun setupAudioEncoder(sampleRate: Int, channelCount: Int, bitRate: Int) {
-        Log.d(kTag, "sampleRate: $sampleRate, channelCount: $channelCount, bitRate: $bitRate")
-        val format = MediaFormat.createAudioFormat(
-            MediaFormat.MIMETYPE_AUDIO_AAC, sampleRate, channelCount
-        )
+    /**
+     * 采样率 (sampleRate)：44100 Hz 或 48000 Hz（标准音频采样率）
+     * 声道数 (channelCount)：1（单声道）或 2（立体声）
+     * 比特率 (bitRate)：
+     *      单声道：64000bps (64kbps) 或 96000bps (96kbps)
+     *      双声道：128000bps (128kbps) 或 192000bps (192kbps)
+     * */
+    private fun setupAudioEncoder() {
+        val format = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, 44100, 1)
         format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC)
-        format.setInteger(MediaFormat.KEY_BIT_RATE, bitRate)
+        format.setInteger(MediaFormat.KEY_BIT_RATE, 64000)
         audioEncoder = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_AUDIO_AAC).apply {
             configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
             start()
@@ -184,7 +187,7 @@ class Mp4Wrapper {
         Log.d(kTag, "updateVideoSize: ${width}x${height}@$rotation")
     }
 
-    fun startRecording(outputPath: String, sampleRate: Int, channelCount: Int, bitRate: Int) {
+    fun startRecording(outputPath: String) {
         if (isRecording) return
 
         if (!isHardwareSupported()) {
@@ -196,7 +199,7 @@ class Mp4Wrapper {
 
         // 配置编码器
         setupVideoEncoder(videoWidth, videoHeight, videoRotation)
-        setupAudioEncoder(sampleRate, channelCount, bitRate)
+        setupAudioEncoder()
 
         isRecording = true
         pendingTracks = 2

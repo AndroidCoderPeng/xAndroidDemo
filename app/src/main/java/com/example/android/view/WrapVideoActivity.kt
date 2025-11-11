@@ -36,12 +36,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Camera.PreviewCallback,
     TextureView.SurfaceTextureListener {
 
-    companion object {
-        private const val AUDIO_SAMPLE_RATE = 44100
-        private const val AUDIO_CHANNELS = AudioFormat.CHANNEL_IN_MONO
-        private const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
-    }
-
     private val kTag = "WrapVideoActivity"
     private var camera: Camera? = null
     private val audioScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -61,9 +55,9 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
     private var startTime: Long = 0
     private val minBufferSize by lazy {
         AudioRecord.getMinBufferSize(
-            AUDIO_SAMPLE_RATE,
-            AUDIO_CHANNELS,
-            AUDIO_FORMAT
+            44100,
+            AudioFormat.CHANNEL_IN_MONO,
+            AudioFormat.ENCODING_PCM_16BIT
         )
     }
 
@@ -91,7 +85,7 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
                     val s = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
                     val filePath = File(dir, "VIDEO_$s.mp4").absolutePath
                     Log.d(kTag, "Recording saved to: $filePath")
-                    mp4Wrapper.startRecording(filePath, 44100, 1, 64000) // 44.1kHz, 单声道, 64kbps
+                    mp4Wrapper.startRecording(filePath)
                     audioScope.launch { recordAudio() }
                     binding.optionButton.text = "Stop Recording"
                     binding.videoDurationView.startTimer()
@@ -196,9 +190,9 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
 
         audioRecord = AudioRecord(
             MediaRecorder.AudioSource.MIC,
-            AUDIO_SAMPLE_RATE,
-            AUDIO_CHANNELS,
-            AUDIO_FORMAT,
+            44100,
+            AudioFormat.CHANNEL_IN_MONO,
+            AudioFormat.ENCODING_PCM_16BIT,
             minBufferSize
         ).apply {
             startRecording()
