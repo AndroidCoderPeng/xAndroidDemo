@@ -27,7 +27,7 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
 
     private val kTag = "WrapVideoActivity"
     private var camera: Camera? = null
-    private val cameraRecorder by lazy { CameraRecorder() }
+    private val cameraRecorder by lazy { CameraRecorder(this) }
     private var isRecording = false
     private var previewWidth = 1080
     private var previewHeight = 1920
