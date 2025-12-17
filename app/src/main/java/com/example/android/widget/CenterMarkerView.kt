@@ -14,43 +14,22 @@ import com.amap.api.maps.model.Marker
 import com.amap.api.maps.model.MarkerOptions
 import com.amap.api.maps.model.animation.Animation
 import com.amap.api.maps.model.animation.ScaleAnimation
-import com.amap.api.services.core.LatLonPoint
-import com.amap.api.services.geocoder.GeocodeResult
-import com.amap.api.services.geocoder.GeocodeSearch
-import com.amap.api.services.geocoder.RegeocodeQuery
-import com.amap.api.services.geocoder.RegeocodeResult
 import com.example.android.R
-import com.pengxh.kt.lite.extensions.wrapLine
 
 class CenterMarkerView(private val context: Context, private var aMap: AMap) {
     private lateinit var centerMarker: Marker
 
     //拿到地图中心点的坐标
     private var latLng = aMap.cameraPosition.target
-    private val geocoderSearch by lazy { GeocodeSearch(context) }
 
     init {
         aMap.setInfoWindowAdapter(object : AMap.InfoWindowAdapter {
             override fun getInfoWindow(marker: Marker): View {
                 val infoWindow =
                     LayoutInflater.from(context).inflate(R.layout.map_info_window, null)
-                val locationView: TextView = infoWindow.findViewById(R.id.locationView)
-                val queryParam = RegeocodeQuery(
-                    LatLonPoint(latLng.latitude, latLng.longitude), 200f, GeocodeSearch.AMAP
-                )
-                geocoderSearch.getFromLocationAsyn(queryParam)
-                geocoderSearch.setOnGeocodeSearchListener(object :
-                    GeocodeSearch.OnGeocodeSearchListener {
-                    override fun onRegeocodeSearched(regeocodeResult: RegeocodeResult, code: Int) {
-                        if (code == 1000) {
-                            //手动换行
-                            val address = regeocodeResult.regeocodeAddress.formatAddress
-                            locationView.text = address.wrapLine(22)
-                        }
-                    }
-
-                    override fun onGeocodeSearched(geocodeResult: GeocodeResult?, i: Int) {}
-                })
+                val locationView = infoWindow.findViewById<TextView>(R.id.locationView)
+                //手动换行
+                locationView.text = "${latLng.latitude}, ${latLng.longitude}"
                 return infoWindow
             }
 

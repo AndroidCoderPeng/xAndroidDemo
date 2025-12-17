@@ -89,7 +89,6 @@ dependencies {
     implementation 'io.github.lucksiege:pictureselector:v3.11.1'
     implementation 'com.github.CarGuo.GSYVideoPlayer:gsyvideoplayer:v10.2.0'
     implementation 'com.amap.api:3dmap:latest.integration'
-    implementation 'com.amap.api:search:8.1.0'
     implementation 'com.google.code.gson:gson:2.13.2'
     implementation 'com.google.mlkit:face-detection:16.1.6'
     implementation 'androidx.camera:camera-camera2:1.2.3'
