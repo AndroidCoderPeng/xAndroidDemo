@@ -12,7 +12,6 @@ import com.example.android.view.CompassActivity
 import com.example.android.view.DragMapActivity
 import com.example.android.view.GalleryActivity
 import com.example.android.view.GridViewActivity
-import com.example.android.view.HikVisionActivity
 import com.example.android.view.MLKitActivity
 import com.example.android.view.RadarScanActivity
 import com.example.android.view.RecodeAudioActivity
@@ -96,7 +95,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "蓝牙相关",
         "可删减九宫格",
         "时间轴",
-        "海康摄像头",
         "雷达扫描效果",
         "指南针",
         "3D画廊",
@@ -146,16 +144,15 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
                     4 -> navigatePageTo<BluetoothActivity>()
                     5 -> navigatePageTo<GridViewActivity>()
                     6 -> navigatePageTo<TimeLineActivity>()
-                    7 -> navigatePageTo<HikVisionActivity>()
-                    8 -> navigatePageTo<RadarScanActivity>()
-                    9 -> navigatePageTo<CompassActivity>()
-                    10 -> navigatePageTo<GalleryActivity>()
-                    11 -> navigatePageTo<MLKitActivity>()
-                    12 -> navigatePageTo<SaveInAlbumActivity>()
-                    13 -> navigatePageTo<SatelliteStatusActivity>()
-                    14 -> navigatePageTo<AddProductAnimationActivity>()
-                    15 -> navigatePageTo<YuvDataActivity>()
-                    16 -> navigatePageTo<WrapVideoActivity>()
+                    7 -> navigatePageTo<RadarScanActivity>()
+                    8 -> navigatePageTo<CompassActivity>()
+                    9 -> navigatePageTo<GalleryActivity>()
+                    10 -> navigatePageTo<MLKitActivity>()
+                    11 -> navigatePageTo<SaveInAlbumActivity>()
+                    12 -> navigatePageTo<SatelliteStatusActivity>()
+                    13 -> navigatePageTo<AddProductAnimationActivity>()
+                    14 -> navigatePageTo<YuvDataActivity>()
+                    15 -> navigatePageTo<WrapVideoActivity>()
                 }
             }
         })
