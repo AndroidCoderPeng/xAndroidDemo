@@ -12,7 +12,7 @@ import android.view.TextureView
 import android.view.View
 import android.widget.TextView
 import com.example.android.databinding.ActivityWrapVideoBinding
-import com.example.android.extensions.selectOptimalPreviewSize
+import com.example.android.extensions.chooseOptimalSize
 import com.example.android.util.CameraRecorder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
@@ -103,17 +103,15 @@ class WrapVideoActivity() : KotlinBaseActivity<ActivityWrapVideoBinding>(), Came
         try {
             camera = Camera.open().apply {
                 val newParams = this.parameters.apply {
-                    val size = supportedPreviewSizes.selectOptimalPreviewSize(
+                    val size = supportedPreviewSizes.chooseOptimalSize(
                         previewWidth, previewHeight
                     )
-                    if (size != null) {
-                        previewWidth = size.width
-                        previewHeight = size.height
-                        setPreviewSize(previewWidth, previewHeight)
-                        cameraRecorder.updateVideoSize(previewWidth, previewHeight, 90)
-                        Log.d(kTag, "Setting preview size to: ${previewWidth}x$previewHeight")
-                        nv12Buffer = ByteArray((previewWidth * previewHeight * 3) / 2)
-                    }
+                    previewWidth = size.width
+                    previewHeight = size.height
+                    setPreviewSize(previewWidth, previewHeight)
+                    cameraRecorder.updateVideoSize(previewWidth, previewHeight, 90)
+                    Log.d(kTag, "Setting preview size to: ${previewWidth}x$previewHeight")
+                    nv12Buffer = ByteArray((previewWidth * previewHeight * 3) / 2)
                     previewFormat = ImageFormat.NV21
                 }
                 this.parameters = newParams
