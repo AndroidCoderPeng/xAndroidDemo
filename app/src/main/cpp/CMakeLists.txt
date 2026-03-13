@@ -14,6 +14,7 @@ set_target_properties(libyuv PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/..
 set(BASE_SOURCES
         vision_core.cpp
         logger.cpp
+        yuv.cpp
 )
 
 # 合并所有源文件
