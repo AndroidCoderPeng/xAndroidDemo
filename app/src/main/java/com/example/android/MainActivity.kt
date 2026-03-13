@@ -32,52 +32,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
 
     private val kTag = "MainActivity"
     private val permissionsCode = 999
-    private val userPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        arrayOf(
-            Manifest.permission.READ_MEDIA_VIDEO,
-            Manifest.permission.READ_MEDIA_IMAGES,
-            Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA,
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        arrayOf(
-            Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA,
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        arrayOf(
-            Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA,
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-    } else {
-        arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA,
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-    }
     private val itemNames = listOf(
         "侧边导航栏",
         "拖拽地图选点",
@@ -95,6 +49,37 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "YUV420分析",
         "封装音视频"
     )
+
+    private val userPermissions = buildList {
+        // 通用权限（所有版本）
+        add(Manifest.permission.CAMERA)
+        add(Manifest.permission.READ_PHONE_STATE)
+        add(Manifest.permission.RECORD_AUDIO)
+        add(Manifest.permission.ACCESS_FINE_LOCATION)
+        add(Manifest.permission.ACCESS_COARSE_LOCATION)
+
+        // 存储权限根据版本适配
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                // Android 13+ 使用新的媒体权限
+                add(Manifest.permission.READ_MEDIA_VIDEO)
+                add(Manifest.permission.READ_MEDIA_IMAGES)
+            }
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                // Android 11+ 需要请求 MANAGE_EXTERNAL_STORAGE
+                add(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+                add(Manifest.permission.READ_EXTERNAL_STORAGE)
+                add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+
+            else -> {
+                // Android 10 及以下
+                add(Manifest.permission.READ_EXTERNAL_STORAGE)
+                add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+        }
+    }.toTypedArray()
 
     override fun setupTopBarLayout() {
         binding.rootView.initImmersionBar(this, true, R.color.white)
