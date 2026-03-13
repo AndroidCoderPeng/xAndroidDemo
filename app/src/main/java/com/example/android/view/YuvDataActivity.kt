@@ -1,28 +1,31 @@
 package com.example.android.view
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
+import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.graphics.YuvImage
 import android.hardware.Camera
 import android.os.Bundle
 import android.util.Log
-import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.core.app.ActivityCompat
 import androidx.core.graphics.createBitmap
 import com.example.android.R
 import com.example.android.databinding.ActivityYuvDataBinding
+import com.example.android.extensions.chooseOptimalSize
 import com.example.android.extensions.initImmersionBar
-import com.example.android.util.Yuv
+import com.example.android.util.VisionCore
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.getScreenHeight
 import java.io.ByteArrayOutputStream
-import java.io.IOException
-import kotlin.math.abs
+import java.nio.ByteBuffer
 
 class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.PreviewCallback {
 
@@ -34,11 +37,17 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
      *
      * 因为相机默认是横屏，所以需要把nv21矩阵逆时针旋转90度才能正常显示
      * */
-    private var degrees = 90
-    private lateinit var camera: Camera
+    private var rotation = 90
+    private var camera: Camera? = null
     private lateinit var surfaceHolder: SurfaceHolder
     private lateinit var optimalSize: Camera.Size
-    private lateinit var nv21: ByteArray
+
+    // YUV 数据
+    private lateinit var inputBuffer: ByteBuffer // 使用 Direct ByteBuffer 避免 JNI 拷贝
+    private lateinit var outputBuffer: ByteBuffer
+
+    @Volatile
+    private lateinit var rotatedYuv: ByteArray
 
     override fun initViewBinding(): ActivityYuvDataBinding {
         return ActivityYuvDataBinding.inflate(layoutInflater)
@@ -52,7 +61,7 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
         val viewParams = binding.surfaceView.layoutParams as ViewGroup.LayoutParams
         val videoHeight = getScreenHeight() shr 1
         val videoWidth = videoHeight * (9f / 16)
-        viewParams.height = videoHeight.toInt()
+        viewParams.height = videoHeight
         viewParams.width = videoWidth.toInt()
         binding.surfaceView.layoutParams = viewParams
         surfaceHolder = binding.surfaceView.holder
@@ -64,22 +73,12 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
     }
 
     override fun initEvent() {
-        binding.changeCameraButton.setOnClickListener {
-            releaseCamera()
-            cameraId = if (cameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                Camera.CameraInfo.CAMERA_FACING_FRONT
-            } else {
-                Camera.CameraInfo.CAMERA_FACING_BACK
-            }
-            openCamera()
-        }
-
         binding.spinner.setSelection(1)
         binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
-                degrees = parent?.getItemAtPosition(position).toString().toInt()
+                rotation = parent?.getItemAtPosition(position).toString().toInt()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -90,26 +89,31 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
         binding.yuvButton.setOnClickListener {
             val width = optimalSize.width
             val height = optimalSize.height
-            val bytes = Yuv.rotate(nv21, width, height, degrees)
+
+            // 调用 Native 旋转，直接操作 Direct Buffer
+            VisionCore.rotateYuv(inputBuffer, width, height, rotation, outputBuffer)
+
+            // 从 outputBuffer 读取到 byte[]
+            outputBuffer.clear()
+            outputBuffer.get(rotatedYuv)
 
             val rotatedWidth: Int
             val rotatedHeight: Int
             // 90和270旋转后宽高互换
-            if (degrees == 90 || degrees == 270) {
+            if (rotation == 90 || rotation == 270) {
                 rotatedWidth = height
                 rotatedHeight = width
             } else {
                 rotatedWidth = width
                 rotatedHeight = height
             }
-
             val bitmap = createBitmap(rotatedWidth, rotatedHeight, Bitmap.Config.ARGB_8888)
 
             // 提取 Y 平面并复制到 IntArray 中（转换为灰度）
             val ySize = rotatedWidth * rotatedHeight
             val pixels = IntArray(ySize)
             for (i in 0 until ySize) {
-                val y = bytes[i].toInt() and 0xFF
+                val y = rotatedYuv[i].toInt() and 0xFF
                 pixels[i] = 0xFF000000.toInt() or (y shl 16) or (y shl 8) or y
             }
 
@@ -120,12 +124,18 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
         binding.rgbButton.setOnClickListener {
             val width = optimalSize.width
             val height = optimalSize.height
-            val bytes = Yuv.rotate(nv21, width, height, degrees)
+
+            // 调用 Native 旋转，直接操作 Direct Buffer
+            VisionCore.rotateYuv(inputBuffer, width, height, rotation, outputBuffer)
+
+            // 从 outputBuffer 读取到 byte[]
+            outputBuffer.clear()
+            outputBuffer.get(rotatedYuv)
 
             val rotatedWidth: Int
             val rotatedHeight: Int
             // 90和270旋转后宽高互换
-            if (degrees == 90 || degrees == 270) {
+            if (rotation == 90 || rotation == 270) {
                 rotatedWidth = height
                 rotatedHeight = width
             } else {
@@ -133,7 +143,7 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
                 rotatedHeight = height
             }
 
-            val yuvImage = YuvImage(bytes, ImageFormat.NV21, rotatedWidth, rotatedHeight, null)
+            val yuvImage = YuvImage(rotatedYuv, ImageFormat.NV21, rotatedWidth, rotatedHeight, null)
             val out = ByteArrayOutputStream()
             yuvImage.compressToJpeg(Rect(0, 0, rotatedWidth, rotatedHeight), 100, out)
             val imageBytes = out.toByteArray()
@@ -144,29 +154,93 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
 
     private fun openCamera() {
         try {
-            camera = Camera.open(cameraId)
-            val optimalParameters = camera.getParameters()
-            optimalSize = optimalParameters?.supportedPreviewSizes?.findOptimalPreviewSize()!!
-            optimalParameters.setPreviewSize(optimalSize.width, optimalSize.height)
-            camera.apply {
-                parameters = optimalParameters
-                /**
-                 *
-                 * 这个设置只会影响 SurfaceView 的预览画面显示方向，但不会改变 onPreviewFrame 中返回的原始 YUV 数据的方向
-                 * */
-                val rotation = getCameraRotation()
-                setDisplayOrientation(rotation)
-                setPreviewDisplay(surfaceHolder)
-                startPreview()
-                if (parameters.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-                    autoFocus(object : Camera.AutoFocusCallback {
-                        override fun onAutoFocus(success: Boolean, camera: Camera?) {}
-                    })
-                }
-                setPreviewCallback(this@YuvDataActivity)
+            val result = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                Log.w(kTag, "openCamera: 缺少相机权限")
+                return
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
+            // 获取后置摄像头实例
+            val cameraCount = Camera.getNumberOfCameras()
+            var backCameraId = -1
+
+            for (i in 0 until cameraCount) {
+                val cameraInfo = Camera.CameraInfo()
+                Camera.getCameraInfo(i, cameraInfo)
+                if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                    backCameraId = i
+                    break
+                }
+            }
+
+            if (backCameraId == -1) {
+                Log.w(kTag, "No back camera found")
+                return
+            }
+
+            camera = Camera.open(backCameraId)
+            camera?.let {
+                val parameters = it.parameters
+                val supportedPreviewSizes = parameters.supportedPreviewSizes
+
+                // 选择合适的预览尺寸
+                optimalSize = supportedPreviewSizes.chooseOptimalSize(720, 1280).apply {
+                    parameters.setPreviewSize(width, height)
+                    /**
+                     * 分配预览缓冲区
+                     *
+                     * 这是YUV420格式的存储特点：
+                     * 每个像素都需要存储亮度(Y)信息 - 1个字节
+                     * 每4个像素共享一组色度(U、V)信息 - 各0.5个字节
+                     * 所以平均每个像素需要1.5个字节(即3/2)
+                     * */
+                    val bufferSize = width * height * 3 / 2
+
+                    // 使用 Direct ByteBuffer 替代 byte[]
+                    inputBuffer = ByteBuffer.allocateDirect(bufferSize)
+                    outputBuffer = ByteBuffer.allocateDirect(bufferSize)
+
+                    // 旋转后的YUV420数据
+                    rotatedYuv = ByteArray(bufferSize)
+
+                    // 添加缓冲区
+                    val cameraBuffer = ByteArray(bufferSize)
+                    it.addCallbackBuffer(cameraBuffer)
+                }
+                // 设置预览格式为NV21
+                parameters.previewFormat = PixelFormat.YCbCr_420_SP
+
+                // 启用硬件视频防抖（如果设备支持）
+                if (parameters.isVideoStabilizationSupported) {
+                    parameters.videoStabilization = true
+                    Log.d(kTag, "openCamera: 硬件视频防抖已启用")
+                }
+
+                // 添加自动对焦设置
+                if (parameters.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+                    parameters.focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO
+                } else if (parameters.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+                    parameters.focusMode = Camera.Parameters.FOCUS_MODE_AUTO
+                }
+
+                // 降低曝光时间，减少运动模糊
+                if (parameters.isAutoExposureLockSupported) {
+                    parameters.autoExposureLock = false
+                }
+
+                it.parameters = parameters
+
+                // 设置预览显示（竖屏预览）
+                it.setDisplayOrientation(rotation)
+                it.setPreviewDisplay(surfaceHolder)
+                it.setPreviewCallbackWithBuffer(this@YuvDataActivity)
+
+                // 开始预览
+                it.startPreview()
+            }
+        } catch (e: RuntimeException) {
+            Log.e(kTag, "openCamera failed: ${e.message}", e)
+            camera?.release()
+            camera = null
         }
     }
 
@@ -176,84 +250,48 @@ class YuvDataActivity : KotlinBaseActivity<ActivityYuvDataBinding>(), Camera.Pre
         }
 
         override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-
-        }
-
-        override fun surfaceDestroyed(holder: SurfaceHolder) {
-            if (::camera.isInitialized) {
-                camera.stopPreview()
-            }
-        }
-    }
-
-    override fun onPreviewFrame(data: ByteArray, camera: Camera) {
-        nv21 = data
-    }
-
-    override fun onDestroy() {
-        releaseCamera()
-        super.onDestroy()
-    }
-
-    private fun releaseCamera() {
-        try {
-            if (::camera.isInitialized) {
-                camera.setPreviewCallback(null)
-                camera.stopPreview()
-                camera.release()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun List<Camera.Size>.findOptimalPreviewSize(): Camera.Size {
-        val targetRatio = 16f / 9f
-        val tolerance = 0.001f
-        var optimalSize: Camera.Size? = null
-        forEach { size ->
-            val ratio = size.width.toFloat() / size.height.toFloat()
-            Log.d(kTag, "[${size.width}, ${size.height}], $ratio")
-
-            if (abs(ratio - targetRatio) <= tolerance) {
-                if (optimalSize == null || size.width > optimalSize.width) {
-                    optimalSize = size
+            camera?.let {
+                it.stopPreview()
+                try {
+                    it.setPreviewDisplay(holder)
+                    it.startPreview()
+                } catch (e: Exception) {
+                    Log.w(kTag, "Error starting camera preview: ${e.message}")
                 }
             }
         }
 
-        // 如果没有找到符合比例的，就选最大分辨率
-        if (optimalSize == null) {
-            optimalSize = maxByOrNull { it.width * it.height }!!
+        override fun surfaceDestroyed(holder: SurfaceHolder) {
+            closeCamera()
         }
-
-        Log.d(kTag, "最佳尺寸：[${optimalSize.width}, ${optimalSize.height}]")
-        return optimalSize
     }
 
-    /**
-     * Android 相机硬件的“自然方向”是横屏。即使你在竖屏下拍照或预览，相机输出的图像依然是横屏方向。
-     * */
-    fun getCameraRotation(): Int {
-        // 0, 1, 2, 3 → Surface.ROTATION_0/90/180/270
-        val rotation = windowManager.defaultDisplay.rotation
-        var degrees = 0
-        when (rotation) {
-            Surface.ROTATION_0 -> degrees = 0
-            Surface.ROTATION_90 -> degrees = 90
-            Surface.ROTATION_180 -> degrees = 270
-            Surface.ROTATION_270 -> degrees = 180
+    @Deprecated("Deprecated in Java")
+    override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
+        if (data != null) {
+            // 复制数据到 Direct Buffer
+            inputBuffer.clear()
+            inputBuffer.put(data)
+            inputBuffer.flip()
         }
+        camera?.addCallbackBuffer(data)
+    }
 
-        val info = Camera.CameraInfo()
-        Camera.getCameraInfo(cameraId, info)
-        var result = 0
-        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            result = (info.orientation + degrees) % 360
-            result = (360 - result) % 360 // 镜像翻转
-        } else {
-            result = (info.orientation - degrees + 360) % 360
+    override fun onDestroy() {
+        super.onDestroy()
+        closeCamera()
+    }
+
+    private fun closeCamera() {
+        try {
+            camera?.let {
+                it.stopPreview()
+                it.setPreviewCallback(null)
+                it.release()
+            }
+            camera = null
+        } catch (e: Exception) {
+            Log.w(kTag, "Error closing camera: ${e.message}")
         }
-        return result
     }
 }
