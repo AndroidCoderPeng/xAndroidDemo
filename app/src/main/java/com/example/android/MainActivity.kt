@@ -19,6 +19,7 @@ import com.example.android.view.SaveInAlbumActivity
 import com.example.android.view.SlideNavigationActivity
 import com.example.android.view.TimeLineActivity
 import com.example.android.view.WaterMarkerActivity
+import com.example.android.view.WebRtcActivity
 import com.example.android.view.WrapVideoActivity
 import com.example.android.view.YuvDataActivity
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
@@ -47,7 +48,8 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "导航卫星数据",
         "商品添加购物车",
         "YUV420分析",
-        "封装音视频"
+        "封装音视频",
+        "WebRTC"
     )
 
     private val userPermissions = buildList {
@@ -127,6 +129,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
                     12 -> navigatePageTo<AddProductAnimationActivity>()
                     13 -> navigatePageTo<YuvDataActivity>()
                     14 -> navigatePageTo<WrapVideoActivity>()
+                    15 -> navigatePageTo<WebRtcActivity>()
                 }
             }
         })

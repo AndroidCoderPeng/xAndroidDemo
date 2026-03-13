@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <!--危险权限，需要手动申请-->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -15,6 +14,11 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!--允许读取手机状态-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <!-- 后台服务权限 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
 
     <!-- Android 10以下 -->
     <uses-permission
@@ -76,6 +80,7 @@
         <activity android:name=".view.AddProductAnimationActivity" />
         <activity android:name=".view.YuvDataActivity" />
         <activity android:name=".view.WrapVideoActivity" />
+        <activity android:name=".view.WebRtcActivity" />
 
         <activity
             android:name=".view.BigImageActivity"
@@ -95,6 +100,13 @@
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="56fa2f20eef95e6107f998a5b59f0e10" />
+
+        <!-- 通话服务 -->
+        <service
+            android:name=".webrtc.service.CallService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
     </application>
 
     <!--Android 11+ use camera-->
