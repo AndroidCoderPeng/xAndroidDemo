@@ -45,7 +45,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
 
     <application
-        android:name=".base.BaseApplication"
+        android:name=".BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/launcher_logo"
         android:label="@string/app_name"
@@ -64,26 +64,26 @@
         </activity>
 
         <activity
-            android:name=".view.SlideNavigationActivity"
+            android:name=".slide.SlideNavigationActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".view.RecodeAudioActivity" />
-        <activity android:name=".view.DragMapActivity" />
-        <activity android:name=".view.WaterMarkerActivity" />
-        <activity android:name=".view.GridViewActivity" />
-        <activity android:name=".view.TimeLineActivity" />
-        <activity android:name=".view.RadarScanActivity" />
-        <activity android:name=".view.CompassActivity" />
-        <activity android:name=".view.GalleryActivity" />
-        <activity android:name=".view.MLKitActivity" />
-        <activity android:name=".view.SaveInAlbumActivity" />
-        <activity android:name=".view.SatelliteStatusActivity" />
-        <activity android:name=".view.AddProductAnimationActivity" />
-        <activity android:name=".view.YuvDataActivity" />
-        <activity android:name=".view.WrapVideoActivity" />
-        <activity android:name=".view.WebRtcActivity" />
+        <activity android:name=".RecodeAudioActivity" />
+        <activity android:name=".map.DragMapActivity" />
+        <activity android:name=".WaterMarkerActivity" />
+        <activity android:name=".GridViewActivity" />
+        <activity android:name=".timeline.TimeLineActivity" />
+        <activity android:name=".radar.RadarScanActivity" />
+        <activity android:name=".compass.CompassActivity" />
+        <activity android:name=".gallery.GalleryActivity" />
+        <activity android:name=".MLKitActivity" />
+        <activity android:name=".SaveInAlbumActivity" />
+        <activity android:name=".satellite.SatelliteStatusActivity" />
+        <activity android:name=".shopping.AddProductAnimationActivity" />
+        <activity android:name=".YuvDataActivity" />
+        <activity android:name=".video.WrapVideoActivity" />
+        <activity android:name=".WebRtcActivity" />
 
         <activity
-            android:name=".view.BigImageActivity"
+            android:name=".BigImageActivity"
             android:theme="@style/Theme.BigImageActivity" />
 
         <!-- 拍照压缩图片用 FileProvider -->

@@ -24,9 +24,9 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_android_util_VisionCore_rotateYuv(JNIEnv *env, jobject thiz,
-                                                   jobject input, jint width, jint height,
-                                                   jint rotate, jobject output) {
+Java_com_example_android_base_util_VisionCore_rotateYuv(JNIEnv *env, jobject thiz,
+                                                        jobject input, jint width, jint height,
+                                                        jint rotate, jobject output) {
     if (!input || !output || width <= 0 || height <= 0) {
         logger_ptr->e("Invalid input parameters");
         return;
