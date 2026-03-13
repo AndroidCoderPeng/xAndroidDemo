@@ -9,9 +9,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <!--危险权限，需要手动申请-->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -68,7 +65,6 @@
         <activity android:name=".view.RecodeAudioActivity" />
         <activity android:name=".view.DragMapActivity" />
         <activity android:name=".view.WaterMarkerActivity" />
-        <activity android:name=".view.BluetoothActivity" />
         <activity android:name=".view.GridViewActivity" />
         <activity android:name=".view.TimeLineActivity" />
         <activity android:name=".view.RadarScanActivity" />

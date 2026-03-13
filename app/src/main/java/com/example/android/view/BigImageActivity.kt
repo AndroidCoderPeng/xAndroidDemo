@@ -23,7 +23,7 @@ class BigImageActivity : KotlinBaseActivity<ActivityBigImageBinding>() {
     override fun initOnCreate(savedInstanceState: Bundle?) {
         val index = intent.getIntExtra(LiteKitConstant.BIG_IMAGE_INTENT_INDEX_KEY, 0)
         val urls = intent.getStringArrayListExtra(LiteKitConstant.BIG_IMAGE_INTENT_DATA_KEY)
-        if (urls == null || urls.size == 0) {
+        if (urls == null || urls.isEmpty()) {
             return
         }
         val imageSize = urls.size

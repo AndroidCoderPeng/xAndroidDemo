@@ -7,7 +7,6 @@ import com.amap.api.maps.MapsInitializer
 import com.example.android.databinding.ActivityMainBinding
 import com.example.android.extensions.initImmersionBar
 import com.example.android.view.AddProductAnimationActivity
-import com.example.android.view.BluetoothActivity
 import com.example.android.view.CompassActivity
 import com.example.android.view.DragMapActivity
 import com.example.android.view.GalleryActivity
@@ -41,9 +40,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA,
-            Manifest.permission.BLUETOOTH_SCAN,
-            Manifest.permission.BLUETOOTH_CONNECT,
-            Manifest.permission.BLUETOOTH,
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -55,9 +51,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA,
-            Manifest.permission.BLUETOOTH_SCAN,
-            Manifest.permission.BLUETOOTH_CONNECT,
-            Manifest.permission.BLUETOOTH,
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -69,7 +62,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA,
-            Manifest.permission.BLUETOOTH,
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -80,7 +72,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA,
-            Manifest.permission.BLUETOOTH,
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -92,7 +83,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "拖拽地图选点",
         "音频录制与播放",
         "图片添加水印并压缩",
-        "蓝牙相关",
         "可删减九宫格",
         "时间轴",
         "雷达扫描效果",
@@ -141,18 +131,17 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
                     1 -> navigatePageTo<DragMapActivity>()
                     2 -> navigatePageTo<RecodeAudioActivity>()
                     3 -> navigatePageTo<WaterMarkerActivity>()
-                    4 -> navigatePageTo<BluetoothActivity>()
-                    5 -> navigatePageTo<GridViewActivity>()
-                    6 -> navigatePageTo<TimeLineActivity>()
-                    7 -> navigatePageTo<RadarScanActivity>()
-                    8 -> navigatePageTo<CompassActivity>()
-                    9 -> navigatePageTo<GalleryActivity>()
-                    10 -> navigatePageTo<MLKitActivity>()
-                    11 -> navigatePageTo<SaveInAlbumActivity>()
-                    12 -> navigatePageTo<SatelliteStatusActivity>()
-                    13 -> navigatePageTo<AddProductAnimationActivity>()
-                    14 -> navigatePageTo<YuvDataActivity>()
-                    15 -> navigatePageTo<WrapVideoActivity>()
+                    4 -> navigatePageTo<GridViewActivity>()
+                    5 -> navigatePageTo<TimeLineActivity>()
+                    6 -> navigatePageTo<RadarScanActivity>()
+                    7 -> navigatePageTo<CompassActivity>()
+                    8 -> navigatePageTo<GalleryActivity>()
+                    9 -> navigatePageTo<MLKitActivity>()
+                    10 -> navigatePageTo<SaveInAlbumActivity>()
+                    11 -> navigatePageTo<SatelliteStatusActivity>()
+                    12 -> navigatePageTo<AddProductAnimationActivity>()
+                    13 -> navigatePageTo<YuvDataActivity>()
+                    14 -> navigatePageTo<WrapVideoActivity>()
                 }
             }
         })

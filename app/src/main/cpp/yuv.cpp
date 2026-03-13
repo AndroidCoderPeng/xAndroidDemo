@@ -3,9 +3,9 @@
 //
 
 #include <jni.h>
-#include <android/log.h>
 #include <cstring>
-#include <__memory/unique_ptr.h>
+
+#include "logger.hpp"
 
 void rotate_nv21_90(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst, uint8_t *vu_dst,
                     int width, int height) {
@@ -99,16 +99,26 @@ void rotate_nv21_270(const uint8_t *y_src, const uint8_t *vu_src, uint8_t *y_dst
     }
 }
 
-extern "C" {
-JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
-    __android_log_print(ANDROID_LOG_DEBUG, "yuv", "JNI_OnLoad");
-    return JNI_VERSION_1_4;
+
+static std::unique_ptr<Logger> logger_ptr;
+
+extern "C"
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+    JNIEnv *env;
+    if (vm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6) != JNI_OK) {
+        return JNI_ERR;
+    }
+
+    logger_ptr = std::make_unique<Logger>("JNI-Yuv");
+    logger_ptr->i("JNI_OnLoad");
+    return JNI_VERSION_1_6;
 }
 
+extern "C"
 JNIEXPORT jbyteArray JNICALL
 Java_com_example_android_util_Yuv_rotate(JNIEnv *env, jobject thiz,
                                          jbyteArray input, jint width, jint height, jint rotation) {
-    __android_log_print(ANDROID_LOG_DEBUG, "yuv", "rotate: width=%d, height=%d", width, height);
+    logger_ptr->dFmt("rotate: width=%d, height=%d", width, height);
     jbyte *data = env->GetByteArrayElements(input, nullptr);
     if (!data) return nullptr;
 
@@ -116,7 +126,8 @@ Java_com_example_android_util_Yuv_rotate(JNIEnv *env, jobject thiz,
     int u_plane_size = width / 2 * height / 2;
     int v_plane_size = width / 2 * height / 2;
     int total_size = y_plane_size + u_plane_size + v_plane_size;
-    __android_log_print(ANDROID_LOG_DEBUG, "yuv", "rotate: total size=%d", total_size);
+    logger_ptr->dFmt("rotate: y size=%d, u size=%d, v size=%d, total size=%d", y_plane_size,
+                     u_plane_size, v_plane_size, total_size);
 
     // 分配输出内存
     auto *out_data = new jbyte[total_size];
@@ -151,6 +162,8 @@ Java_com_example_android_util_Yuv_rotate(JNIEnv *env, jobject thiz,
 }
 
 JNIEXPORT void JNI_OnUnload(JavaVM *vm, void *reserved) {
-    __android_log_print(ANDROID_LOG_DEBUG, "yuv", "JNI_OnUnload");
-}
+    if (logger_ptr) {
+        logger_ptr.reset();
+    }
+    logger_ptr->i("JNI_OnUnload");
 }

@@ -22,85 +22,35 @@ fun ByteArray.toHex(): String? {
     return sb.toString()
 }
 
-fun ByteArray.rotate90(width: Int, height: Int): ByteArray {
+/**
+ * 将 NV21 转换为 NV12
+ *
+ * @suppress libyuv 的价值在于计算密集型操作，而不是简单的数据交换，NV21 转 NV12 没必要使用libyuv
+ *
+ * @param width 宽
+ * @param height 高
+ * @param dst 目标NV12缓冲区
+ * */
+fun ByteArray.toNV12(width: Int, height: Int, dst: ByteArray) {
+    require(width > 0 && height > 0) { "width and height must be positive, got ${width}x${height}" }
+
     val ySize = width * height
-    val bufferSize = ySize * 3 / 2
-    val result = ByteArray(bufferSize)
+    val uvSize = ySize / 2
+    val totalSize = ySize + uvSize
 
-    // Rotate the Y luma
-    var index = 0
-    val startPos = (height - 1) * width
-    for (col in 0 until width) {
-        var offset = startPos
-        (0 until height).forEach {
-            result[index++] = this[offset + col]
-            offset -= width
-        }
+    require(this.size >= totalSize) {
+        "Source NV21 buffer size ${this.size} is too small, need at least $totalSize"
+    }
+    require(dst.size >= totalSize) {
+        "Destination NV12 buffer size ${dst.size} is too small, need at least $totalSize"
     }
 
-    // Rotate the U and V color components
-    index = bufferSize - 1
-    for (x in width - 1 downTo 1 step 2) {
-        var offset = ySize
-        (0 until height / 2).forEach {
-            result[index] = this[offset + x]
-            index--
-            result[index] = this[offset + (x - 1)]
-            index--
-            offset += width
-        }
+    // 复制 Y 分量（NV21 和 NV12 完全相同）
+    System.arraycopy(this, 0, dst, 0, ySize)
+
+    // 转换 UV 分量：NV21 是 VU 交替，NV12 是 UV 交替
+    for (i in ySize until totalSize step 2) {
+        dst[ySize + (i - ySize)] = this[i + 1]     // U (原 NV21 的第二个字节)
+        dst[ySize + (i - ySize) + 1] = this[i]     // V (原 NV21 的第一个字节)
     }
-
-    return result
-}
-
-fun ByteArray.rotate180(width: Int, height: Int): ByteArray {
-    val ySize = width * height
-    val bufferSize = ySize * 3 / 2
-    val result = ByteArray(bufferSize)
-
-    // Rotate the Y luma
-    var index = 0
-    for (i in ySize - 1 downTo 0) {
-        result[index++] = this[i]
-    }
-
-    // Rotate the U and V color components
-    for (i in bufferSize - 1 downTo ySize step 2) {
-        result[index++] = this[i - 1]
-        result[index++] = this[i]
-    }
-
-    return result
-}
-
-fun ByteArray.rotate270(width: Int, height: Int): ByteArray {
-    val ySize = width * height
-    val bufferSize = ySize * 3 / 2
-    val result = ByteArray(bufferSize)
-
-    // Rotate the Y luma
-    var index = 0
-    for (x in width - 1 downTo 0) {
-        var offset = 0
-        (0 until height).forEach {
-            result[index] = this[offset + x]
-            index++
-            offset += width
-        }
-    }
-
-    // Rotate the U and V color components
-    index = ySize
-    for (x in width - 1 downTo 1 step 2) {
-        var offset = ySize
-        (0 until height / 2).forEach {
-            result[index] = this[offset + (x - 1)]
-            index++
-            result[index] = this[offset + x]
-            index++
-            offset += width
-        }
-    }
-    return result
 }
