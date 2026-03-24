@@ -30,15 +30,11 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
     private val itemNames = listOf(
         "侧边导航栏",
         "拖拽地图选点",
-        "音频录制与播放",
         "图片添加水印并压缩",
-        "可删减九宫格",
         "时间轴",
         "雷达扫描效果",
         "指南针",
         "3D画廊",
-        "Google ML Kit",
-        "拍照保存到相册",
         "导航卫星数据",
         "商品添加购物车",
         "YUV420分析",
@@ -109,21 +105,17 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
                 when (position) {
                     0 -> navigatePageTo<SlideNavigationActivity>()
                     1 -> navigatePageTo<DragMapActivity>()
-                    2 -> navigatePageTo<RecodeAudioActivity>()
-                    3 -> navigatePageTo<WaterMarkerActivity>()
-                    4 -> navigatePageTo<GridViewActivity>()
-                    5 -> navigatePageTo<TimeLineActivity>()
-                    6 -> navigatePageTo<RadarScanActivity>()
-                    7 -> navigatePageTo<CompassActivity>()
-                    8 -> navigatePageTo<GalleryActivity>()
-                    9 -> navigatePageTo<MLKitActivity>()
-                    10 -> navigatePageTo<SaveInAlbumActivity>()
-                    11 -> navigatePageTo<SatelliteStatusActivity>()
-                    12 -> navigatePageTo<AddProductAnimationActivity>()
-                    13 -> navigatePageTo<YuvDataActivity>()
-                    14 -> navigatePageTo<WrapVideoActivity>()
-                    15 -> navigatePageTo<WebRtcActivity>()
-                    16 -> navigatePageTo<PtzActivity>()
+                    2 -> navigatePageTo<WaterMarkerActivity>()
+                    3 -> navigatePageTo<TimeLineActivity>()
+                    4 -> navigatePageTo<RadarScanActivity>()
+                    5 -> navigatePageTo<CompassActivity>()
+                    6 -> navigatePageTo<GalleryActivity>()
+                    7 -> navigatePageTo<SatelliteStatusActivity>()
+                    8 -> navigatePageTo<AddProductAnimationActivity>()
+                    9 -> navigatePageTo<YuvDataActivity>()
+                    10 -> navigatePageTo<WrapVideoActivity>()
+                    11 -> navigatePageTo<WebRtcActivity>()
+                    12 -> navigatePageTo<PtzActivity>()
                 }
             }
         })

@@ -41,7 +41,6 @@
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
 
     <application
@@ -66,16 +65,12 @@
         <activity
             android:name=".slide.SlideNavigationActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".RecodeAudioActivity" />
         <activity android:name=".map.DragMapActivity" />
         <activity android:name=".WaterMarkerActivity" />
-        <activity android:name=".GridViewActivity" />
         <activity android:name=".timeline.TimeLineActivity" />
         <activity android:name=".radar.RadarScanActivity" />
         <activity android:name=".compass.CompassActivity" />
         <activity android:name=".gallery.GalleryActivity" />
-        <activity android:name=".MLKitActivity" />
-        <activity android:name=".SaveInAlbumActivity" />
         <activity android:name=".satellite.SatelliteStatusActivity" />
         <activity android:name=".shopping.AddProductAnimationActivity" />
         <activity android:name=".YuvDataActivity" />

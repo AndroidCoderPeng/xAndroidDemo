@@ -56,10 +56,6 @@ class PtzActivity : KotlinBaseActivity<ActivityPtzBinding>() {
     @SuppressLint("all")
     override fun initEvent() {
         binding.stopNavigationButton.setOnClickListener {
-            if (!isNavigating) {
-                "没有正在执行的导航任务".show(this)
-                return@setOnClickListener
-            }
             MaterialAlertDialogBuilder(this)
                 .setTitle("提示")
                 .setCancelable(false)
