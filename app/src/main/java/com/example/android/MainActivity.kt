@@ -9,6 +9,7 @@ import com.example.android.compass.CompassActivity
 import com.example.android.databinding.ActivityMainBinding
 import com.example.android.gallery.GalleryActivity
 import com.example.android.map.DragMapActivity
+import com.example.android.ptz.PtzActivity
 import com.example.android.radar.RadarScanActivity
 import com.example.android.satellite.SatelliteStatusActivity
 import com.example.android.shopping.AddProductAnimationActivity
@@ -42,7 +43,8 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "商品添加购物车",
         "YUV420分析",
         "封装音视频",
-        "WebRTC"
+        "WebRTC",
+        "PTZ"
     )
 
     private val userPermissions = buildList {
@@ -70,8 +72,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
 
             else -> {
                 // Android 10 及以下
-                add(Manifest.permission.READ_EXTERNAL_STORAGE)
-                add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             }
         }
     }.toTypedArray()
@@ -123,6 +123,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
                     13 -> navigatePageTo<YuvDataActivity>()
                     14 -> navigatePageTo<WrapVideoActivity>()
                     15 -> navigatePageTo<WebRtcActivity>()
+                    16 -> navigatePageTo<PtzActivity>()
                 }
             }
         })

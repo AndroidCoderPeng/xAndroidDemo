@@ -81,6 +81,7 @@
         <activity android:name=".YuvDataActivity" />
         <activity android:name=".video.WrapVideoActivity" />
         <activity android:name=".WebRtcActivity" />
+        <activity android:name=".ptz.PtzActivity" />
 
         <activity
             android:name=".BigImageActivity"

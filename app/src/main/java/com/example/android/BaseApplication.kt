@@ -1,6 +1,7 @@
 package com.example.android
 
 import android.app.Application
+import com.pengxh.kt.lite.utils.SaveKeyValues
 import kotlin.properties.Delegates
 
 class BaseApplication : Application() {
@@ -14,5 +15,6 @@ class BaseApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         application = this
+        SaveKeyValues.initSharedPreferences(this)
     }
 }

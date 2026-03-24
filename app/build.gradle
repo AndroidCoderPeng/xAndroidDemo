@@ -107,4 +107,7 @@ dependencies {
     implementation 'org.webrtc:google-webrtc:1.0.32006'
     // 信令通信
     implementation 'org.java-websocket:Java-WebSocket:1.6.0'
+    // 协程网络请求
+    implementation 'com.squareup.retrofit2:retrofit:3.0.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.1.0'
 }
