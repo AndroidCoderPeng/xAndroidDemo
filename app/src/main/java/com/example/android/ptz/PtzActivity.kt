@@ -29,6 +29,7 @@ class PtzActivity : KotlinBaseActivity<ActivityPtzBinding>() {
     private var speed = 5
     private var isNavigating = false  // 是否正在执行导航
     private var shouldStopNavigation = false  // 是否需要停止导航
+    private val restTime=1000L
 
     override fun initViewBinding(): ActivityPtzBinding {
         return ActivityPtzBinding.inflate(layoutInflater)
@@ -67,6 +68,7 @@ class PtzActivity : KotlinBaseActivity<ActivityPtzBinding>() {
                     executePtzCommand("Stop")
                     ptzPointAdapter.notifyItemRangeRemoved(0, ptzPoints.size)
                     ptzPoints.clear()
+                    SaveKeyValues.removeKey("PTZ_POINT_KEY")
                 }
                 .setNegativeButton("取消") { _, _ ->
                 }.show()
@@ -88,18 +90,17 @@ class PtzActivity : KotlinBaseActivity<ActivityPtzBinding>() {
 
             lifecycleScope.launch {
                 "开始执行导航任务，共 ${ptzPoints.size} 个预置点".show(this@PtzActivity)
-                ptzPoints.forEachIndexed { index, presetIndex ->
+                ptzPoints.forEachIndexed { i, point ->
                     // 检查是否需要停止导航
                     if (shouldStopNavigation) {
                         Log.d(kTag, "导航任务已停止")
                         return@forEachIndexed
                     }
 
-                    executeSinglePtzCommand(index, presetIndex)
+                    executeSinglePtzCommand(point)
 
                     // 如果不是最后一个点，则等待10秒
-                    if (index < ptzPoints.size - 1) {
-                        Log.d(kTag, "等待10秒后执行下一个预置点...")
+                    if (i < ptzPoints.size - 1) {
                         delay(10_000)  // 10秒 = 10000毫秒
                     }
                 }
@@ -169,48 +170,49 @@ class PtzActivity : KotlinBaseActivity<ActivityPtzBinding>() {
 
     /**
      * 执行单个PTZ预置点命令
-     * 包含四个方向的扫描：左、右、上、下
-     * 每个方向：先移动半秒，停止，再调用预置点
+     * 包含四个方向的扫描：上、下、左、右
+     * 每个方向：先移动1秒，停止，再调用预置点
      */
-    private suspend fun executeSinglePtzCommand(index: Int, presetIndex: Int) {
-        Log.d(kTag, "执行第 ${index + 1}/${ptzPoints.size} 个预置点: $presetIndex")
+    private suspend fun executeSinglePtzCommand(point: Int) {
+        "执行第 ${point}/${ptzPoints.size} 个预置点".show(this)
+        deviceViewModel.executePreset("Call", point)
+        delay(1000)
 
-        // 1. 向左扫描
-        Log.d(kTag, "向左扫描...")
-        executePtzCommand("Left")
-        delay(500)  // 半秒钟
-        executePtzCommand("Stop")
-        deviceViewModel.executePreset("Call", presetIndex)
-
-        // 检查是否需要停止导航
-        if (shouldStopNavigation) return
-
-        // 2. 向右扫描
-        Log.d(kTag, "向右扫描...")
-        executePtzCommand("Right")
-        delay(500)  // 半秒钟
-        executePtzCommand("Stop")
-        deviceViewModel.executePreset("Call", presetIndex)
-
-        // 检查是否需要停止导航
-        if (shouldStopNavigation) return
-
-        // 3. 向上扫描
-        Log.d(kTag, "向上扫描...")
+        // 1. 上下扫描
         executePtzCommand("Up")
-        delay(500)  // 半秒钟
+        delay(300)
         executePtzCommand("Stop")
-        deviceViewModel.executePreset("Call", presetIndex)
+        delay(restTime)
+
+        deviceViewModel.executePreset("Call", point)
+        delay(restTime)
+
+        executePtzCommand("Down")
+        delay(300)
+        executePtzCommand("Stop")
+        delay(restTime)
+
+        deviceViewModel.executePreset("Call", point)
+        delay(restTime)
 
         // 检查是否需要停止导航
         if (shouldStopNavigation) return
 
-        // 4. 向下扫描
-        Log.d(kTag, "向下扫描...")
-        executePtzCommand("Down")
-        delay(500)  // 半秒钟
+        // 2. 左有扫描
+        executePtzCommand("Left")
+        delay(200)
         executePtzCommand("Stop")
-        deviceViewModel.executePreset("Call", presetIndex)
+        delay(restTime)
+
+        deviceViewModel.executePreset("Call", point)
+        delay(restTime)
+
+        executePtzCommand("Right")
+        delay(200)
+        executePtzCommand("Stop")
+        delay(restTime)
+
+        deviceViewModel.executePreset("Call", point)
     }
 
     private fun executePtzCommand(action: String) {
