@@ -4,18 +4,21 @@ import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import com.amap.api.maps.MapsInitializer
-import com.example.android.base.extensions.initImmersionBar
-import com.example.android.compass.CompassActivity
+import com.example.android.activity.AddProductActivity
+import com.example.android.activity.AudioVisualizerActivity
+import com.example.android.activity.CompassActivity
+import com.example.android.activity.DragMapActivity
+import com.example.android.activity.GalleryActivity
+import com.example.android.activity.PtzActivity
+import com.example.android.activity.RadarScanActivity
+import com.example.android.activity.SatelliteStatusActivity
+import com.example.android.activity.SlideNavigationActivity
+import com.example.android.activity.TimeLineActivity
+import com.example.android.activity.WaterMarkerActivity
+import com.example.android.activity.WrapVideoActivity
+import com.example.android.activity.YuvDataActivity
 import com.example.android.databinding.ActivityMainBinding
-import com.example.android.gallery.GalleryActivity
-import com.example.android.map.DragMapActivity
-import com.example.android.ptz.PtzActivity
-import com.example.android.radar.RadarScanActivity
-import com.example.android.satellite.SatelliteStatusActivity
-import com.example.android.shopping.AddProductAnimationActivity
-import com.example.android.slide.SlideNavigationActivity
-import com.example.android.timeline.TimeLineActivity
-import com.example.android.video.WrapVideoActivity
+import com.example.android.extensions.initImmersionBar
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
@@ -39,7 +42,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "商品添加购物车",
         "YUV420分析",
         "封装音视频",
-        "WebRTC",
+        "音频可视化",
         "PTZ"
     )
 
@@ -111,10 +114,10 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
                     5 -> navigatePageTo<CompassActivity>()
                     6 -> navigatePageTo<GalleryActivity>()
                     7 -> navigatePageTo<SatelliteStatusActivity>()
-                    8 -> navigatePageTo<AddProductAnimationActivity>()
+                    8 -> navigatePageTo<AddProductActivity>()
                     9 -> navigatePageTo<YuvDataActivity>()
                     10 -> navigatePageTo<WrapVideoActivity>()
-                    11 -> navigatePageTo<WebRtcActivity>()
+                    11 -> navigatePageTo<AudioVisualizerActivity>()
                     12 -> navigatePageTo<PtzActivity>()
                 }
             }

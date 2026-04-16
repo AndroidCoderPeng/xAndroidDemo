@@ -63,23 +63,23 @@
         </activity>
 
         <activity
-            android:name=".slide.SlideNavigationActivity"
+            android:name=".activity.SlideNavigationActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".map.DragMapActivity" />
-        <activity android:name=".WaterMarkerActivity" />
-        <activity android:name=".timeline.TimeLineActivity" />
-        <activity android:name=".radar.RadarScanActivity" />
-        <activity android:name=".compass.CompassActivity" />
-        <activity android:name=".gallery.GalleryActivity" />
-        <activity android:name=".satellite.SatelliteStatusActivity" />
-        <activity android:name=".shopping.AddProductAnimationActivity" />
-        <activity android:name=".YuvDataActivity" />
-        <activity android:name=".video.WrapVideoActivity" />
-        <activity android:name=".WebRtcActivity" />
-        <activity android:name=".ptz.PtzActivity" />
+        <activity android:name=".activity.DragMapActivity" />
+        <activity android:name=".activity.WaterMarkerActivity" />
+        <activity android:name=".activity.TimeLineActivity" />
+        <activity android:name=".activity.RadarScanActivity" />
+        <activity android:name=".activity.CompassActivity" />
+        <activity android:name=".activity.GalleryActivity" />
+        <activity android:name=".activity.SatelliteStatusActivity" />
+        <activity android:name=".activity.AddProductActivity" />
+        <activity android:name=".activity.YuvDataActivity" />
+        <activity android:name=".activity.WrapVideoActivity" />
+        <activity android:name=".activity.AudioVisualizerActivity" />
+        <activity android:name=".activity.PtzActivity" />
 
         <activity
-            android:name=".BigImageActivity"
+            android:name=".activity.BigImageActivity"
             android:theme="@style/Theme.BigImageActivity" />
 
         <!-- 拍照压缩图片用 FileProvider -->
@@ -96,13 +96,6 @@
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="56fa2f20eef95e6107f998a5b59f0e10" />
-
-        <!-- 通话服务 -->
-        <service
-            android:name=".webrtc.service.CallService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="microphone" />
     </application>
 
     <!--Android 11+ use camera-->
