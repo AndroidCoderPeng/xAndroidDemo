@@ -28,7 +28,17 @@ class AudioVisualizer {
     fun initialize(mediaPlayer: MediaPlayer) {
         this.mediaPlayer = mediaPlayer
 
+        // 采集率，根据奈奎斯特采样定理要准确还原信号，采样频率必须至少是信号最高频率的 2 倍
+        val rate = Visualizer.getMaxCaptureRate() / 2
+
         visualizer = Visualizer(mediaPlayer.audioSessionId).apply {
+            /**
+             * [0] - 最小支持的采集大小
+             * [1] - 最大支持的采集大小
+             *
+             * 采集大小越大，音频波形数据的分辨率越高，可视化效果越精细
+             * 通常是 1024 或 2048 字节，具体取决于设备硬件支持。
+             * */
             captureSize = Visualizer.getCaptureSizeRange()[1]
 
             setDataCaptureListener(object : Visualizer.OnDataCaptureListener {
@@ -51,7 +61,7 @@ class AudioVisualizer {
                         onAudioDataListener?.onGetFrequencyDomain(it)
                     }
                 }
-            }, Visualizer.getMaxCaptureRate() / 2, true, true)
+            }, rate, true, true)
 
             enabled = true
         }
