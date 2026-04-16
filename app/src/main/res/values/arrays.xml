@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="music_array">
+        <item>光良 - 童话.mp3</item>
+        <item>大王叫我来巡山-赵英俊.mp3</item>
+        <item>最后的倾诉-韩磊.mp3</item>
+        <item>爱的供养-杨幂.mp3</item>
+        <item>铁血丹心-罗文,甄妮.mp3</item>
+    </string-array>
+</resources>
