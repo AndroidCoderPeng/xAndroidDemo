@@ -125,7 +125,7 @@ class AudioVisualizerActivity : KotlinBaseActivity<ActivityAudioVisualizerBindin
             data,
             binding.audioCurveLayout.width.toFloat(),
             binding.audioCurveLayout.height.toFloat(),
-            hsvColors[index],
+            hsvColors[index % hsvColors.size],
             0f
         )
     }

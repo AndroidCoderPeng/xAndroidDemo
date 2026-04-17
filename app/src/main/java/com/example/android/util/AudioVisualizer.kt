@@ -4,6 +4,7 @@ import android.media.MediaPlayer
 import android.media.audiofx.Visualizer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import com.example.android.extensions.calculateWeights
 import com.example.android.model.FrequencyDomainData
 import com.example.android.model.TimeDomainData
@@ -14,6 +15,7 @@ import kotlin.math.sqrt
 
 class AudioVisualizer {
 
+    private val kTag = "AudioVisualizer"
     private var minBass = Double.MAX_VALUE
     private var maxBass = Double.MIN_VALUE
     private var minHigh = Double.MAX_VALUE
@@ -77,18 +79,21 @@ class AudioVisualizer {
     fun initialize(mediaPlayer: MediaPlayer) {
         this.mediaPlayer = mediaPlayer
 
-        // 采集率，根据奈奎斯特采样定理要准确还原信号，采样频率必须至少是信号最高频率的 2 倍
+        // 采样率，根据奈奎斯特采样定理要准确还原信号，采样频率必须至少是信号最高频率的 2 倍
         val rate = Visualizer.getMaxCaptureRate() / 2
+        Log.d(kTag, "音频采样率: $rate")
 
         visualizer = Visualizer(mediaPlayer.audioSessionId).apply {
             /**
+             * Visualizer.getCaptureSizeRange()[1]
              * [0] - 最小支持的采集大小
              * [1] - 最大支持的采集大小
              *
-             * 采集大小越大，音频波形数据的分辨率越高，可视化效果越精细
+             * 采集大小越大，音频波形数据的分辨率越高，可视化效果越精细，决定fft数据长度
              * 通常是 1024 或 2048 字节，具体取决于设备硬件支持。
              * */
-            captureSize = Visualizer.getCaptureSizeRange()[1]
+//            captureSize = Visualizer.getCaptureSizeRange()[1]
+            captureSize = 256
 
             setDataCaptureListener(object : Visualizer.OnDataCaptureListener {
                 override fun onWaveFormDataCapture(
