@@ -2,12 +2,23 @@ package com.example.android.util
 
 import android.media.MediaPlayer
 import android.media.audiofx.Visualizer
+import com.example.android.extensions.calculateWeights
 import com.example.android.model.FrequencyDomainData
 import com.example.android.model.TimeDomainData
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 
 class AudioVisualizer {
 
+    private var minBass = Double.MAX_VALUE
+    private var maxBass = Double.MIN_VALUE
+    private var minHigh = Double.MAX_VALUE
+    private var maxHigh = Double.MIN_VALUE
+    private val historySize = 60
+    private val bassHistory = ArrayDeque<Double>()
+    private val highHistory = ArrayDeque<Double>()
     private var mediaPlayer: MediaPlayer? = null
     private var visualizer: Visualizer? = null
     private var onAudioDataListener: OnAudioDataListener? = null
@@ -89,6 +100,163 @@ class AudioVisualizer {
 
             enabled = true
         }
+    }
+
+    fun calculateBassScale(data: FrequencyDomainData): Double {
+        if (data.frequencies.isEmpty() || data.magnitudes.isEmpty()) {
+            return 1.0
+        }
+
+        val bassThreshold = 200.0
+        var count = 0
+        var sum = 0.0
+
+        data.frequencies.forEachIndexed { index, freq ->
+            if (freq <= bassThreshold && freq >= 0) {
+                sum += abs(data.magnitudes[index])
+                count++
+            }
+        }
+
+        val avgBass = if (count > 0) {
+            sum / count
+        } else {
+            0.0
+        }
+
+        bassHistory.add(avgBass)
+        if (bassHistory.size > historySize) {
+            bassHistory.removeFirst()
+        }
+
+        if (bassHistory.size > 10) {
+            minBass = Double.MAX_VALUE
+            maxBass = Double.MIN_VALUE
+            for (bass in bassHistory) {
+                if (bass < minBass) {
+                    minBass = bass
+                }
+
+                if (bass > maxBass) {
+                    maxBass = bass
+                }
+            }
+        }
+
+        val range = maxBass - minBass
+        if (range < 0.0001) {
+            return 1.0
+        }
+
+        val normalized = (avgBass - minBass) / range
+        val scale = 0.8 + normalized * 0.8
+
+        return 0.8.coerceAtLeast(scale.coerceAtMost(1.6))
+    }
+
+    fun calculateHighScale(data: FrequencyDomainData): Double {
+        if (data.frequencies.isEmpty() || data.magnitudes.isEmpty()) {
+            return 1.0
+        }
+
+        val highThreshold = 1500
+        var count = 0.0
+        var sum = 0.0
+
+        data.frequencies.forEachIndexed { index, freq ->
+            if (freq >= highThreshold) {
+                sum += abs(data.magnitudes[index])
+                count++
+            }
+        }
+
+        val avgHigh = if (count > 0) {
+            sum / count
+        } else {
+            0.0
+        }
+
+        highHistory.add(avgHigh)
+        if (highHistory.size > historySize) {
+            highHistory.removeFirst()
+        }
+
+        if (highHistory.size > 10) {
+            minHigh = Double.MAX_VALUE
+            maxHigh = Double.MIN_VALUE
+            for (high in highHistory) {
+                if (high < minHigh) {
+                    minHigh = high
+                }
+                if (high > maxHigh) {
+                    maxHigh = high
+                }
+            }
+        }
+
+        val range = maxHigh - minHigh
+        if (range < 0.0001) {
+            return 1.0
+        }
+
+        val normalized = (avgHigh - minHigh) / range
+        val scale = 0.8 + normalized * 0.8;
+
+        return 0.8.coerceAtLeast(scale.coerceAtMost(1.6))
+    }
+
+    fun makeSmooth(data: FrequencyDomainData, radius: Int): FrequencyDomainData {
+        if (data.magnitudes.isEmpty()) {
+            return data
+        }
+
+        val magnitudes = data.magnitudes
+        val smoothed = DoubleArray(magnitudes.size)
+        val weights = radius.calculateWeights()
+
+        magnitudes.forEachIndexed { index, mag ->
+            val start = max(0, index - radius)
+            val end = min(magnitudes.size - 1, index + radius)
+
+            var sum = 0.0
+            var weightSum = 0.0
+            for (i in start..end) {
+                val weightIndex = i - start
+                sum += magnitudes[i] * weights[weightIndex]
+                weightSum += weights[weightIndex]
+            }
+
+            smoothed[index] = sum / weightSum
+        }
+
+        return FrequencyDomainData(data.frequencies, smoothed)
+    }
+
+    fun makeSmooth(data: TimeDomainData, radius: Int): TimeDomainData {
+        if (data.amplitude.isEmpty()) {
+            return data
+        }
+
+        val amplitude = data.amplitude
+        val smoothed = DoubleArray(amplitude.size)
+        val weights = radius.calculateWeights()
+
+        amplitude.forEachIndexed { index, amp ->
+            val start = max(0, index - radius)
+            val end = min(amplitude.size - 1, index + radius)
+
+            var sum = 0.0
+            var weightSum = 0.0
+            for (i in start..end) {
+                val weightIndex = i - start
+                sum += amplitude[i] * weights[weightIndex]
+                weightSum += weights[weightIndex]
+            }
+
+            smoothed[index] = sum / weightSum
+        }
+
+        return TimeDomainData(data.timeAxis, smoothed)
     }
 
     fun release() {
