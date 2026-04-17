@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import com.example.android.databinding.ActivityAudioVisualizerBinding
+import com.example.android.model.FrequencyDomainData
+import com.example.android.model.TimeDomainData
 import com.example.android.util.AudioVisualizer
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import java.io.IOException
@@ -106,11 +108,11 @@ class AudioVisualizerActivity : KotlinBaseActivity<ActivityAudioVisualizerBindin
         Log.d(kTag, "停止播放")
     }
 
-    override fun onGetTimeDomain(bytes: ByteArray) {
+    override fun onGetTimeDomain(data: TimeDomainData) {
 
     }
 
-    override fun onGetFrequencyDomain(bytes: ByteArray) {
+    override fun onGetFrequencyDomain(data: FrequencyDomainData) {
 
     }
 
