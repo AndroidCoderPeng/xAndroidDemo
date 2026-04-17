@@ -2,8 +2,10 @@ package com.example.android.widget
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.Shader
 import android.util.AttributeSet
 import android.view.View
 import com.example.android.model.CanvasPoint
@@ -33,8 +35,64 @@ class GradientCurveView @JvmOverloads constructor(
         }
     }
 
-    fun drawBorder(audioScale: Float, innerColor: Int, outerColor: Int, stroke: Float) {
+    fun drawBorder(
+        audioScale: Float,
+        width: Float,
+        height: Float,
+        innerColor: Int,
+        outerColor: Int,
+        stroke: Float
+    ) {
+        // 边框粗细根据音频高低音变化
+        val thickness = (stroke * audioScale).toInt()
 
+        // 重置边框Path
+        borderPath.reset()
+
+        // 顶部边框：从左到右，渐变从outer到inner（垂直渐变，角度90度对应从上往下）
+        val topGradient = LinearGradient(
+            0f, 0f, 0f, thickness.toFloat(),
+            outerColor, innerColor,
+            Shader.TileMode.CLAMP
+        )
+        borderPaint.shader = topGradient
+        borderPath.addRect(0f, 0f, width, thickness.toFloat(), Path.Direction.CW)
+
+        // 底部边框：从左到右，渐变从inner到outer
+        val bottomGradient = LinearGradient(
+            0f, height - thickness,
+            0f, height,
+            innerColor,
+            outerColor,
+            Shader.TileMode.CLAMP
+        )
+        borderPaint.shader = bottomGradient
+        borderPath.addRect(0f, height - thickness, width, height, Path.Direction.CW)
+
+        // 左边框：从上到下，渐变从outer到inner（水平渐变，角度0度对应从左往右）
+        val leftGradient = LinearGradient(
+            0f, 0f,
+            thickness.toFloat(), 0f,
+            outerColor,
+            innerColor,
+            Shader.TileMode.CLAMP
+        )
+        borderPaint.shader = leftGradient
+        borderPath.addRect(0f, 0f, thickness.toFloat(), height, Path.Direction.CW)
+
+        // 右边框：从上到下，渐变从inner到outer
+        val rightGradient = LinearGradient(
+            width - thickness, 0f,
+            width, 0f,
+            innerColor,
+            outerColor,
+            Shader.TileMode.CLAMP
+        )
+        borderPaint.shader = rightGradient
+        borderPath.addRect(width - thickness, 0f, width, height, Path.Direction.CW)
+
+        // 刷新
+        postInvalidate()
     }
 
     fun draw(data: TimeDomainData, width: Float, height: Float, color: Int, xOffset: Float) {
