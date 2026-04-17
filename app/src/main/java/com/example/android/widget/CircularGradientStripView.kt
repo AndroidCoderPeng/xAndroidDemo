@@ -100,7 +100,7 @@ class CircularGradientStripView @JvmOverloads constructor(
         // 创建点数组
         val pointArray = Array(stripCount) { i ->
             val x = blockRadian * i + rotationRadian // 弧度
-            val y = magnitudes[i].absoluteValue * scale // 弧度所对应的竖条的高度
+            val y = magnitudes[i].absoluteValue * scale * 0.5 // 弧度所对应的竖条的高度, 缩放到 50%
             CanvasPoint(x.toFloat(), y.toFloat())
         }
 
