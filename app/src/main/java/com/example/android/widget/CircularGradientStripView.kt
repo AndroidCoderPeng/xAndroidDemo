@@ -129,6 +129,9 @@ class CircularGradientStripView @JvmOverloads constructor(
         )
         paint.shader = linearGradient
 
+        // 重置路径
+        path.reset()
+
         // 绘制多边形
         pointArray.forEach { point ->
             val sinStart = sin(point.x)
@@ -156,7 +159,6 @@ class CircularGradientStripView @JvmOverloads constructor(
             )
 
             // 绘制多边形
-            path.reset()
             path.moveTo(polygon[0].x, polygon[0].y)
             for (i in 1 until polygon.size) {
                 path.lineTo(polygon[i].x, polygon[i].y)

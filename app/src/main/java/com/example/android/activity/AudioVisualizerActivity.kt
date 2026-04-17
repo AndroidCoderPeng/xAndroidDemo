@@ -155,8 +155,8 @@ class AudioVisualizerActivity : KotlinBaseActivity<ActivityAudioVisualizerBindin
             binding.audioCircularLayout.height.toFloat(),
             innerColor = color1,
             outerColor = color2,
-            0f,
-            0f,
+            binding.circularStripView.width / 2f,
+            binding.circularStripView.height / 2f,
             radius.toFloat(),
             1f,
             rotation
