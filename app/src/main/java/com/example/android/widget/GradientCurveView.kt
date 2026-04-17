@@ -19,13 +19,6 @@ class GradientCurveView @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) : View(context, attrs, defStyleAttr, defStyleRes) {
 
-    private val borderPaint by lazy {
-        Paint().apply {
-            isAntiAlias = true
-            style = Paint.Style.FILL
-        }
-    }
-
     // 四个边框各自独立的 Path 和 Paint
     private val topBorder = BorderData()
     private val bottomBorder = BorderData()
@@ -107,12 +100,12 @@ class GradientCurveView @JvmOverloads constructor(
 
     fun drawPath(data: TimeDomainData, width: Float, height: Float, color: Int, xOffset: Float) {
         val timeAxis = data.timeAxis
-        val amplitude = data.amplitude
+        val amplitudes = data.amplitudes
         val pointCount = timeAxis.size
 
         var maxAmplitude = 0.0
-        for (value in amplitude) {
-            val amp = value.absoluteValue
+        for (amplitude in amplitudes) {
+            val amp = amplitude.absoluteValue
             if (amp > maxAmplitude) {
                 maxAmplitude = amp
             }
@@ -124,16 +117,21 @@ class GradientCurveView @JvmOverloads constructor(
         // 创建点数组
         val pointArray = Array(pointCount) { i ->
             val x = i * width / pointCount + xOffset
-            val y = height / 2 - amplitude[i] * scale
+            val y = height / 2 - amplitudes[i] * scale
             CanvasPoint(x, y.toFloat())
         }
 
         // 构建Path：移动到起点，然后连线
         path.reset()
         if (pointArray.isNotEmpty()) {
-            path.moveTo(pointArray[0].x, pointArray[0].y)
-            for (i in 1 until pointArray.size) {
-                path.lineTo(pointArray[i].x, pointArray[i].y)
+            val startX = 0 * width / pointCount + xOffset
+            val startY = height / 2 - amplitudes[0] * scale
+            path.moveTo(startX, startY.toFloat())
+
+            for (i in 1 until pointCount) {
+                val x = i * width / pointCount + xOffset
+                val y = height / 2 - amplitudes[i] * scale
+                path.lineTo(x, y.toFloat())
             }
         }
 

@@ -107,8 +107,14 @@ class AudioVisualizer {
                         val timeAxis = DoubleArray(it.size) { index ->
                             index * timeStep
                         }
+
+                        Log.d(kTag, "timeStep: $timeStep, timeAxis: $timeAxis")
+
+                        // 128（静音）→ 0（屏幕中间）
+                        // 255（最大正振幅）→ +127（向上偏移）
+                        // 0（最大负振幅）→ -128（向下偏移）
                         val amplitude = DoubleArray(it.size) { index ->
-                            (it[index].toInt() and 0xFF).toDouble()
+                            (it[index].toInt() - 128).toDouble()
                         }
                         val timeDomain = TimeDomainData(timeAxis, amplitude)
 
@@ -117,13 +123,13 @@ class AudioVisualizer {
                         if (timeDomainBuffer == null) {
                             timeDomainBuffer = sTimeDomain
                         } else {
-                            sTimeDomain.amplitude.forEachIndexed { index, amp ->
-                                val oldData = timeDomainBuffer?.amplitude[index]!!
-                                val newData = sTimeDomain.amplitude[index]
+                            sTimeDomain.amplitudes.forEachIndexed { index, amp ->
+                                val oldData = timeDomainBuffer?.amplitudes[index]!!
+                                val newData = sTimeDomain.amplitudes[index]
 
                                 // 计算旧频谱数据和新频谱数据之间的 "中间值"，每次向目标值移动 20%
                                 val deltaData = oldData + (newData - oldData) * 0.2
-                                timeDomainBuffer?.amplitude[index] = deltaData
+                                timeDomainBuffer?.amplitudes[index] = deltaData
                             }
                         }
                     }
@@ -293,7 +299,7 @@ class AudioVisualizer {
             var weightSum = 0.0
             for (i in start..end) {
                 val weightIndex = i - start
-                sum += magnitudes[i] * weights[weightIndex]
+                sum += mag * weights[weightIndex]
                 weightSum += weights[weightIndex]
             }
 
@@ -304,23 +310,23 @@ class AudioVisualizer {
     }
 
     private fun makeSmooth(data: TimeDomainData): TimeDomainData {
-        if (data.amplitude.isEmpty()) {
+        if (data.amplitudes.isEmpty()) {
             return data
         }
 
-        val amplitude = data.amplitude
-        val smoothed = DoubleArray(amplitude.size)
+        val amplitudes = data.amplitudes
+        val smoothed = DoubleArray(amplitudes.size)
         val weights = blurRadius.calculateWeights()
 
-        amplitude.forEachIndexed { index, amp ->
+        amplitudes.forEachIndexed { index, amp ->
             val start = max(0, index - blurRadius)
-            val end = min(amplitude.size - 1, index + blurRadius)
+            val end = min(amplitudes.size - 1, index + blurRadius)
 
             var sum = 0.0
             var weightSum = 0.0
             for (i in start..end) {
                 val weightIndex = i - start
-                sum += amplitude[i] * weights[weightIndex]
+                sum += amp * weights[weightIndex]
                 weightSum += weights[weightIndex]
             }
 
