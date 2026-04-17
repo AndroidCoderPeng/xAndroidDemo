@@ -5,7 +5,7 @@ import android.media.audiofx.Visualizer
 import com.example.android.extensions.calculateWeights
 import com.example.android.model.FrequencyDomainData
 import com.example.android.model.TimeDomainData
-import kotlin.math.abs
+import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -113,7 +113,7 @@ class AudioVisualizer {
 
         data.frequencies.forEachIndexed { index, freq ->
             if (freq <= bassThreshold && freq >= 0) {
-                sum += abs(data.magnitudes[index])
+                sum += data.magnitudes[index].absoluteValue
                 count++
             }
         }
@@ -165,7 +165,7 @@ class AudioVisualizer {
 
         data.frequencies.forEachIndexed { index, freq ->
             if (freq >= highThreshold) {
-                sum += abs(data.magnitudes[index])
+                sum += data.magnitudes[index].absoluteValue
                 count++
             }
         }
