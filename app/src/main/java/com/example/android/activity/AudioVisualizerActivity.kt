@@ -6,9 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
-import androidx.core.graphics.blue
-import androidx.core.graphics.green
-import androidx.core.graphics.red
 import com.example.android.databinding.ActivityAudioVisualizerBinding
 import com.example.android.model.FrequencyDomainData
 import com.example.android.model.TimeDomainData
@@ -137,13 +134,16 @@ class AudioVisualizerActivity : KotlinBaseActivity<ActivityAudioVisualizerBindin
         val color1 = hsvColors[index % hsvColors.size]
         val color2 = hsvColors[(index + 200) % hsvColors.size]
 
+        val red = Color.red(color1)
+        val green = Color.green(color1)
+        val blue = Color.blue(color1)
         binding.curveView.drawBorder(
             bassScale.toFloat(),
             binding.audioCurveLayout.width.toFloat(),
             binding.audioCurveLayout.height.toFloat(),
-            innerColor = Color.argb(0, color1.red, color1.green, color1.blue),
+            innerColor = Color.argb(0, red, green, blue),
             outerColor = color2,
-            2
+            10
         )
 
         rotation += 0.1f
