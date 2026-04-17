@@ -1,25 +1,33 @@
 package com.example.android.activity
 
+import android.graphics.Color
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import com.example.android.databinding.ActivityAudioVisualizerBinding
 import com.example.android.model.FrequencyDomainData
 import com.example.android.model.TimeDomainData
 import com.example.android.util.AudioVisualizer
+import com.example.android.util.ColorRender
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import java.io.IOException
 
 class AudioVisualizerActivity : KotlinBaseActivity<ActivityAudioVisualizerBinding>(),
-    AudioVisualizer.OnAudioDataListener {
+    AudioVisualizer.OnRenderListener {
 
     private val kTag = "AudioVisualizerActivity"
     private lateinit var selectedMusic: String
     private var isPlaying = false
     private var mediaPlayer: MediaPlayer? = null
     private val audioVisualizer by lazy { AudioVisualizer() }
+    private var index = 0
+    private val hsvColors by lazy { ColorRender.getHsvColor() }
+    private var rotation = 0f
 
     override fun initViewBinding(): ActivityAudioVisualizerBinding {
         return ActivityAudioVisualizerBinding.inflate(layoutInflater)
@@ -32,7 +40,7 @@ class AudioVisualizerActivity : KotlinBaseActivity<ActivityAudioVisualizerBindin
     override fun initOnCreate(savedInstanceState: Bundle?) {
         selectedMusic = binding.musicSpinner.selectedItem.toString()
 
-        audioVisualizer.setOnAudioDataListener(this)
+        audioVisualizer.setOnRenderListener(this)
     }
 
     override fun observeRequestState() {
@@ -108,12 +116,61 @@ class AudioVisualizerActivity : KotlinBaseActivity<ActivityAudioVisualizerBindin
         Log.d(kTag, "停止播放")
     }
 
-    override fun onGetTimeDomain(data: TimeDomainData) {
-
+    override fun onRenderCounter(count: Int) {
+        index = count
     }
 
-    override fun onGetFrequencyDomain(data: FrequencyDomainData) {
+    override fun onRenderTimeDomain(data: TimeDomainData) {
+        binding.curveView.drawPath(
+            data,
+            binding.audioCurveLayout.width.toFloat(),
+            binding.audioCurveLayout.height.toFloat(),
+            hsvColors[index],
+            0f
+        )
+    }
 
+    override fun onRenderFrequencyDomain(data: FrequencyDomainData) {
+        val bassScale = audioVisualizer.calculateBassScale(data) // 获取低音系数
+        val highScale = audioVisualizer.calculateHighScale(data) // 获取高音系数
+
+        val color1 = hsvColors[index % hsvColors.size]
+        val color2 = hsvColors[(index + 200) % hsvColors.size]
+
+        binding.curveView.drawBorder(
+            bassScale.toFloat(),
+            binding.audioCurveLayout.width.toFloat(),
+            binding.audioCurveLayout.height.toFloat(),
+            innerColor = Color.argb(0, color1.red, color1.green, color1.blue),
+            outerColor = color2,
+            2
+        )
+
+        rotation += 0.1f
+        val baseRadius =
+            binding.audioCircularLayout.width.coerceAtMost(binding.audioCircularLayout.height) / 3
+        val radius = baseRadius + highScale * bassScale
+        binding.circularStripView.drawPath(
+            data,
+            binding.audioCircularLayout.height.toFloat(),
+            innerColor = color1,
+            outerColor = color2,
+            0f,
+            0f,
+            radius.toFloat(),
+            1f,
+            rotation
+        )
+
+        binding.stripView.drawPath(
+            data,
+            binding.audioStripLayout.width.toFloat(),
+            binding.audioStripLayout.height.toFloat(),
+            bottomColor = color1,
+            topColor = color2,
+            0f,
+            1f
+        )
     }
 
     override fun onDestroy() {

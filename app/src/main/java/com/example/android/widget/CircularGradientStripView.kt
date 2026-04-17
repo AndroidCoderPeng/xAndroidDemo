@@ -56,7 +56,7 @@ class CircularGradientStripView @JvmOverloads constructor(
      * @param spacing 频域数据之间的间隔
      * @param rotation 旋转角度
      */
-    fun draw(
+    fun drawPath(
         data: FrequencyDomainData,
         height: Float,
         innerColor: Int,

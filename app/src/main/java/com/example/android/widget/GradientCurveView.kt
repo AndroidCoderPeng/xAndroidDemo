@@ -41,7 +41,7 @@ class GradientCurveView @JvmOverloads constructor(
         height: Float,
         innerColor: Int,
         outerColor: Int,
-        stroke: Float
+        stroke: Int
     ) {
         // 边框粗细根据音频高低音变化
         val thickness = (stroke * audioScale).toInt()
@@ -95,7 +95,7 @@ class GradientCurveView @JvmOverloads constructor(
         postInvalidate()
     }
 
-    fun draw(data: TimeDomainData, width: Float, height: Float, color: Int, xOffset: Float) {
+    fun drawPath(data: TimeDomainData, width: Float, height: Float, color: Int, xOffset: Float) {
         val timeAxis = data.timeAxis
         val amplitude = data.amplitude
         val pointCount = timeAxis.size

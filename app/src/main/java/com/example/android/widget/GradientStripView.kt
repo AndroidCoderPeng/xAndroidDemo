@@ -39,7 +39,7 @@ class GradientStripView @JvmOverloads constructor(
      * @param xOffset X轴偏移量
      * @param spacing 频域数据之间的间隔
      */
-    fun draw(
+    fun drawPath(
         data: FrequencyDomainData,
         width: Float,
         height: Float,
