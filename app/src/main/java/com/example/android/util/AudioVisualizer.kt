@@ -108,15 +108,11 @@ class AudioVisualizer {
                             index * timeStep
                         }
 
-                        Log.d(kTag, "timeStep: $timeStep, timeAxis: $timeAxis")
-
-                        // 128（静音）→ 0（屏幕中间）
-                        // 255（最大正振幅）→ +127（向上偏移）
-                        // 0（最大负振幅）→ -128（向下偏移）
-                        val amplitude = DoubleArray(it.size) { index ->
-                            (it[index].toInt() - 128).toDouble()
+                        val amplitudes = DoubleArray(it.size) { index ->
+                            // 减去 128，将数据映射到 [-128, 127]，这是 Android Audio Visualizer API 的标准做法
+                            it[index].toUByte().toInt() - 128.0
                         }
-                        val timeDomain = TimeDomainData(timeAxis, amplitude)
+                        val timeDomain = TimeDomainData(timeAxis, amplitudes)
 
                         // 平滑时域数据
                         val sTimeDomain = makeSmooth(timeDomain)
