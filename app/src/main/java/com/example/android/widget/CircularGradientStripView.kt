@@ -47,7 +47,7 @@ class CircularGradientStripView @JvmOverloads constructor(
      * 绘制圆形渐变条
      *
      * @param data 频域数据
-     * @param height 频域数据高度
+     * @param height 绘制频谱图的视图高度
      * @param innerColor 内环颜色
      * @param outerColor 外环颜色
      * @param xOffset X轴偏移量
@@ -58,14 +58,14 @@ class CircularGradientStripView @JvmOverloads constructor(
      */
     fun draw(
         data: FrequencyDomainData,
-        height: Double,
+        height: Float,
         innerColor: Int,
         outerColor: Int,
         xOffset: Float,
         yOffset: Float,
-        radius: Double,
-        spacing: Double,
-        rotation: Double
+        radius: Float,
+        spacing: Float,
+        rotation: Float
     ) {
         val frequencies = data.frequencies
         val magnitudes = data.magnitudes
@@ -101,10 +101,10 @@ class CircularGradientStripView @JvmOverloads constructor(
         val pointArray = Array(stripCount) { i ->
             val x = blockRadian * i + rotationRadian // 弧度
             val y = magnitudes[i].absoluteValue * scale // 弧度所对应的竖条的高度
-            CanvasPoint(x, y)
+            CanvasPoint(x.toFloat(), y.toFloat())
         }
 
-        val maxHeight = pointArray.maxOf { it.y }
+        val maxHeight = pointArray.maxOf { it.y.absoluteValue }
 
         val colors = intArrayOf(
             Color.TRANSPARENT,
@@ -115,14 +115,14 @@ class CircularGradientStripView @JvmOverloads constructor(
         // 渐变位置：0 -> radius/(radius+maxHeight) -> 1
         val positions = floatArrayOf(
             0f,
-            (radius / (radius + maxHeight)).toFloat(),
+            (radius / (radius + maxHeight)),
             1f
         )
 
         // 创建线性渐变：从 (xOffset, 0) 到 (xOffset, 1) 的垂直渐变
         val linearGradient = LinearGradient(
             xOffset, 0f,           // 起点
-            xOffset, height.toFloat(), // 终点（垂直方向）
+            xOffset, height,        // 终点（垂直方向）
             colors,
             positions,
             Shader.TileMode.CLAMP
@@ -138,8 +138,8 @@ class CircularGradientStripView @JvmOverloads constructor(
 
             val polygon = arrayOf(
                 PointF(
-                    (cosStart * radius + xOffset).toFloat(),
-                    (sinStart * radius + yOffset).toFloat()
+                    cosStart * radius + xOffset,
+                    sinStart * radius + yOffset
                 ),
                 PointF(
                     (cosEnd * radius + xOffset).toFloat(),
@@ -150,8 +150,8 @@ class CircularGradientStripView @JvmOverloads constructor(
                     (sinEnd * (radius + point.y) + yOffset).toFloat()
                 ),
                 PointF(
-                    (cosStart * (radius + point.y) + xOffset).toFloat(),
-                    (sinStart * (radius + point.y) + yOffset).toFloat()
+                    cosStart * (radius + point.y) + xOffset,
+                    sinStart * (radius + point.y) + yOffset
                 )
             )
 
