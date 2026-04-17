@@ -1,6 +1,7 @@
 package com.example.android.extensions
 
 import kotlin.math.floor
+import kotlin.math.pow
 
 /**
  * 经纬度转度分格式，ddmm.mmmm
@@ -31,4 +32,11 @@ fun Double.toDegree(): String {
     val seconds = ((this - degrees) * 60 - minutes) * 60
     val formattedSeconds = "%.3f".format(seconds)
     return "$degrees°$minutes'$formattedSeconds\""
+}
+
+/**
+ * 高斯函数
+ * */
+fun Double.gaussian(): Double {
+    return Math.E.pow(-4 * this * this)
 }
