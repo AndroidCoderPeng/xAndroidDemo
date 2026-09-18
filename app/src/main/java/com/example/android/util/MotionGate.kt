@@ -27,6 +27,13 @@ class MotionGate(
     @Volatile
     private var isMoving = false
 
+    // 计步确认：静止时偶发的孤立单步（桌面震动、碰撞等）会误报，
+    // 要求时间窗口内连续多步才判定为真实移动（正常步行步频 1.5~3Hz）
+    private var stepCount = 0
+    private var stepWindowStart = 0L
+    private val stepConfirmCount = 2
+    private val stepWindowMs = 3000L
+
     // 显著运动传感器（机型不支持时为 null）
     private val sigMotionSensor: Sensor? =
         sensorManager.getDefaultSensor(Sensor.TYPE_SIGNIFICANT_MOTION)
@@ -100,6 +107,18 @@ class MotionGate(
     // 计步回调走 SensorEventListener
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_STEP_DETECTOR) {
+            onStepDetected()
+        }
+    }
+
+    private fun onStepDetected() {
+        val now = SystemClock.elapsedRealtime()
+        if (now - stepWindowStart > stepWindowMs) {
+            stepWindowStart = now
+            stepCount = 0
+        }
+        stepCount++
+        if (stepCount >= stepConfirmCount) {
             onMotionDetected()
         }
     }

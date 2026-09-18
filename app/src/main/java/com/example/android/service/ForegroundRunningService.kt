@@ -168,8 +168,12 @@ class ForegroundRunningService : Service(), AMapLocationListener {
                     if (avgSpeed > 35) {
                         return
                     }
-                    // 位移兜底：骑车/坐车时计步传感器无感，靠位移维持高频采样
-                    if (distance >= MIN_MOVE_DISTANCE_M && avgSpeed >= MIN_MOVE_SPEED_MPS) {
+                    // 位移兜底：骑车/坐车时计步传感器无感，靠位移维持高频采样。
+                    // 仅用 GPS 定位点判定：网络定位室内漂移可达几十米，静止时也会误判为移动。
+                    if (isGpsLocation &&
+                        distance >= MIN_MOVE_DISTANCE_M &&
+                        avgSpeed >= MIN_MOVE_SPEED_MPS
+                    ) {
                         motionGate.notifyMotion()
                     }
                 }
