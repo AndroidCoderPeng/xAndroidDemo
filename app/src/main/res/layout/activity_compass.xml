@@ -6,14 +6,25 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/mainColor"
+        app:navigationIcon="@drawable/ic_title_left_white"
+        app:title="指南针"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/TextAppearance.Material3.TitleMedium"
+        app:titleTextColor="@color/white" />
+
     <com.example.android.widget.CompassDialView
         android:id="@+id/compassView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        app:cps_degree_textSize="50sp"
-        app:cps_inner_textSize="@dimen/sp_16"
-        app:cps_outer_textSize="@dimen/sp_14"
-        app:cps_radius="@dimen/dp_125" />
+        app:cps_degree_textSize="48sp"
+        app:cps_inner_textSize="@dimen/default_text_size"
+        app:cps_outer_textSize="@dimen/auxiliary_text_size"
+        app:cps_radius="128dp" />
 
 </RelativeLayout>

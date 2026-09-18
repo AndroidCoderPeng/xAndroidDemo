@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/mainColor"
+        app:navigationIcon="@drawable/ic_title_left_white"
+        app:title="PTZ"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/TextAppearance.Material3.TitleMedium"
+        app:titleTextColor="@color/white" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -11,14 +23,15 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="3" />
+        app:spanCount="3"
+        tools:listitem="@layout/item_point_rv_g" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/dp_5">
+        android:paddingHorizontal="@dimen/padding">
 
         <Button
             android:id="@+id/stopNavigationButton"
@@ -31,7 +44,7 @@
             android:id="@+id/startNavigationButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/dp_10"
+            android:layout_marginHorizontal="@dimen/margin"
             android:layout_weight="1"
             android:text="开始巡检" />
 
@@ -45,8 +58,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:padding="@dimen/dp_5">
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding">
 
         <Space
             android:layout_width="0dp"
@@ -57,9 +70,10 @@
             android:id="@+id/turnUpButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/dp_5"
+            android:layout_marginHorizontal="@dimen/margin"
             android:layout_weight="1"
             android:background="@drawable/selector_layout_button_background"
+            android:padding="@dimen/padding_half"
             android:src="@drawable/ic_turn_up" />
 
         <Space
@@ -70,9 +84,9 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="@dimen/dp_5"
-        android:padding="@dimen/dp_5">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin"
+        android:padding="@dimen/padding">
 
         <ImageButton
             android:id="@+id/turnLeftButton"
@@ -80,15 +94,17 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/selector_layout_button_background"
+            android:padding="@dimen/padding_half"
             android:src="@drawable/ic_turn_left" />
 
         <ImageButton
             android:id="@+id/turnDownButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/dp_10"
+            android:layout_marginHorizontal="@dimen/margin"
             android:layout_weight="1"
             android:background="@drawable/selector_layout_button_background"
+            android:padding="@dimen/padding_half"
             android:src="@drawable/ic_turn_down" />
 
         <ImageButton
@@ -97,6 +113,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/selector_layout_button_background"
+            android:padding="@dimen/padding_half"
             android:src="@drawable/ic_turn_right" />
     </LinearLayout>
 </LinearLayout>

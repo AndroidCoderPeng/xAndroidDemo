@@ -1,46 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/dp_35"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingHorizontal="@dimen/dp_5">
-
-    <LinearLayout
-        android:layout_width="@dimen/dp_80"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/nationalityView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_china"
-            app:shapeAppearance="@style/RoundedStyle" />
-
-        <TextView
-            android:id="@+id/svidView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="100"
-            android:textColor="@color/white" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="@dimen/borderThickness"
-        android:layout_height="match_parent"
-        android:background="@color/white" />
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_weight="1.5"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingVertical="@dimen/padding">
+
+        <androidx.constraintlayout.utils.widget.ImageFilterView
+            android:id="@+id/nationalityView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_china"
+            app:round="2dp" />
+
+        <TextView
+            android:id="@+id/svidView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_half"
+            android:gravity="center"
+            tools:text="100" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="@dimen/line_view_height"
+        android:layout_height="match_parent"
+        android:background="@color/lightGray" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="5"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingVertical="@dimen/padding">
 
         <ProgressBar
             android:id="@+id/signalProgressView"
@@ -48,61 +49,84 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:max="63" />
+            android:max="64" />
 
         <TextView
             android:id="@+id/signalValueView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_10"
-            android:text="50"
-            android:textColor="@color/white" />
+            android:layout_marginHorizontal="@dimen/margin"
+            tools:text="64" />
     </LinearLayout>
 
     <View
-        android:layout_width="@dimen/borderThickness"
+        android:layout_width="@dimen/line_view_height"
         android:layout_height="match_parent"
-        android:background="@color/white" />
+        android:background="@color/lightGray" />
 
     <LinearLayout
-        android:layout_width="@dimen/dp_110"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.5"
         android:gravity="center"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/satelliteStateView"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/ic_un_use" />
+            android:layout_weight="0.75"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingVertical="@dimen/padding">
+
+            <ImageView
+                android:id="@+id/satelliteStateView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_un_use" />
+        </LinearLayout>
 
         <View
-            android:layout_width="@dimen/borderThickness"
+            android:layout_width="@dimen/line_view_height"
             android:layout_height="match_parent"
-            android:background="@color/white" />
+            android:background="@color/lightGray" />
 
-        <TextView
-            android:id="@+id/azimuthView"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="300°"
-            android:textColor="@color/white" />
+            android:orientation="horizontal"
+            android:paddingVertical="@dimen/padding">
+
+            <TextView
+                android:id="@+id/azimuthView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="300°" />
+        </LinearLayout>
 
         <View
-            android:layout_width="@dimen/borderThickness"
+            android:layout_width="@dimen/line_view_height"
             android:layout_height="match_parent"
-            android:background="@color/white" />
+            android:background="@color/lightGray" />
 
-        <TextView
-            android:id="@+id/elevationView"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="90°"
-            android:textColor="@color/white" />
+            android:orientation="horizontal"
+            android:paddingVertical="@dimen/padding">
+
+            <TextView
+                android:id="@+id/elevationView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                tools:text="90°" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

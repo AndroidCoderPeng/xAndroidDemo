@@ -3,9 +3,10 @@ package com.example.android.activity
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.android.R
 import com.example.android.databinding.ActivityTimeLineBinding
-import com.example.android.extensions.initImmersionBar
 import com.example.android.model.TimeLineDataModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -77,6 +78,12 @@ class TimeLineActivity : KotlinBaseActivity<ActivityTimeLineBinding>() {
     }
 
     override fun setupTopBarLayout() {
-        binding.rootView.initImmersionBar(this, true, R.color.white)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(0, statusBarHeight, 0, 0)
+            insets
+        }
+
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 }

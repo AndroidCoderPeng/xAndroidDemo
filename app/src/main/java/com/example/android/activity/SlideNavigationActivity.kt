@@ -15,7 +15,6 @@ import com.example.android.fragment.AlarmPageFragment
 import com.example.android.fragment.HomePageFragment
 import com.example.android.fragment.MinePageFragment
 import com.example.android.fragment.TaskPageFragment
-import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
 
@@ -79,7 +78,7 @@ class SlideNavigationActivity : KotlinBaseActivity<ActivitySlideNavigationBindin
     }
 
     override fun setupTopBarLayout() {
-        ImmersionBar.with(this).statusBarDarkFont(true).init()
+
     }
 
     /**

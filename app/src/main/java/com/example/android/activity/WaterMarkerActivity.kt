@@ -1,29 +1,23 @@
 package com.example.android.activity
 
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.os.Bundle
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.android.R
 import com.example.android.databinding.ActivityWaterMarkerBinding
-import com.example.android.extensions.initImmersionBar
 import com.example.android.util.GlideLoadEngine
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
-import com.pengxh.kt.lite.annotations.WaterMarkPosition
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.createCompressImageDir
-import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.formatFileSize
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
-import com.pengxh.kt.lite.extensions.sp2px
-import com.pengxh.kt.lite.utils.LoadingDialog
-import com.pengxh.kt.lite.utils.WaterMarkerEngine
-import java.io.File
 
 
 class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
@@ -34,7 +28,13 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
     private val compressImageDir by lazy { createCompressImageDir() }
 
     override fun setupTopBarLayout() {
-        binding.rootView.initImmersionBar(this, true, R.color.white)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(0, statusBarHeight, 0, 0)
+            insets
+        }
+
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
     override fun observeRequestState() {
@@ -93,30 +93,30 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
             }
 
             val bitmap = BitmapFactory.decodeFile(mediaRealPath)
-            WaterMarkerEngine.Builder()
-                .setOriginalBitmap(bitmap)
-                .setTextMaker(this.localClassName)
-                .setTextColor(Color.RED)
-                .setTextSize(30f.sp2px(context))
-                .setMarkerPosition(WaterMarkPosition.RIGHT_BOTTOM)
-                .setTextMargin(50f.dp2px(context))
-                .setMarkedSavePath("${compressImageDir}/${System.currentTimeMillis()}.png")
-                .setOnWaterMarkerAddedListener(object :
-                    WaterMarkerEngine.OnWaterMarkerAddedListener {
-                    override fun onStart() {
-                        LoadingDialog.show(this@WaterMarkerActivity, "水印添加中，请稍后...")
-                    }
-
-                    override fun onMarkAdded(file: File) {
-                        Glide.with(context)
-                            .load(file)
-                            .apply(RequestOptions().error(R.drawable.ic_load_error))
-                            .into(binding.markerImageView)
-                        binding.markerImageSizeView.text =
-                            "压缩后：${file.length().formatFileSize()}"
-                        LoadingDialog.dismiss()
-                    }
-                }).build().start()
+//            WaterMarkerEngine.Builder()
+//                .setOriginalBitmap(bitmap)
+//                .setTextMaker(this.localClassName)
+//                .setTextColor(Color.RED)
+//                .setTextSize(30f.sp2px(context))
+//                .setMarkerPosition(WaterMarkPosition.RIGHT_BOTTOM)
+//                .setTextMargin(50f.dp2px(context))
+//                .setMarkedSavePath("${compressImageDir}/${System.currentTimeMillis()}.png")
+//                .setOnWaterMarkerAddedListener(object :
+//                    WaterMarkerEngine.OnWaterMarkerAddedListener {
+//                    override fun onStart() {
+//                        LoadingDialog.show(this@WaterMarkerActivity, "水印添加中，请稍后...")
+//                    }
+//
+//                    override fun onMarkAdded(file: File) {
+//                        Glide.with(context)
+//                            .load(file)
+//                            .apply(RequestOptions().error(R.drawable.ic_load_error))
+//                            .into(binding.markerImageView)
+//                        binding.markerImageSizeView.text =
+//                            "压缩后：${file.length().formatFileSize()}"
+//                        LoadingDialog.dismiss()
+//                    }
+//                }).build().start()
         }
     }
 }

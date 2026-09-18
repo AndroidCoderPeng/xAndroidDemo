@@ -1,14 +1,14 @@
 package com.example.android.activity
 
 import android.os.Bundle
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.amap.api.maps.AMap
 import com.amap.api.maps.AMapOptions
 import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.model.CameraPosition
 import com.amap.api.maps.model.LatLng
-import com.example.android.R
 import com.example.android.databinding.ActivityDragMapBinding
-import com.example.android.extensions.initImmersionBar
 import com.example.android.widget.CenterMarkerView
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 
@@ -91,6 +91,12 @@ class DragMapActivity : KotlinBaseActivity<ActivityDragMapBinding>(), AMap.OnMap
     }
 
     override fun setupTopBarLayout() {
-        binding.rootView.initImmersionBar(this, true, R.color.white)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(0, statusBarHeight, 0, 0)
+            insets
+        }
+
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 }

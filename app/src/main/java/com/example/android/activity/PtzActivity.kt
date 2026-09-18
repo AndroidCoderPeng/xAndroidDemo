@@ -6,6 +6,8 @@ import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.android.adapter.PtzPointAdapter
@@ -31,18 +33,24 @@ class PtzActivity : KotlinBaseActivity<ActivityPtzBinding>() {
     private var speed = 5
     private var isNavigating = false  // 是否正在执行导航
     private var shouldStopNavigation = false  // 是否需要停止导航
-    private val restTime=1000L
+    private val restTime = 1000L
 
     override fun initViewBinding(): ActivityPtzBinding {
         return ActivityPtzBinding.inflate(layoutInflater)
     }
 
     override fun setupTopBarLayout() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(0, statusBarHeight, 0, 0)
+            insets
+        }
 
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        val json = SaveKeyValues.getValue("PTZ_POINT_KEY", "") as String
+        val json = SaveKeyValues.getString("PTZ_POINT_KEY", "")
         if (json.isNotBlank()) {
             // [1,2,3,4,5,6,7]
             val type = object : TypeToken<MutableList<Int>>() {}.type
@@ -134,7 +142,7 @@ class PtzActivity : KotlinBaseActivity<ActivityPtzBinding>() {
             Log.d(kTag, "添加第 $index 个点")
             deviceViewModel.executePreset("SetPreset", index)
 
-            SaveKeyValues.putValue("PTZ_POINT_KEY", ptzPoints.toJson())
+            SaveKeyValues.putString("PTZ_POINT_KEY", ptzPoints.toJson())
         }
 
         binding.turnUpButton.setOnTouchListener { _, motionEvent ->

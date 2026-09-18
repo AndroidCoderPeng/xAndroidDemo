@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/mainColor"
+        app:navigationIcon="@drawable/ic_title_left_white"
+        app:title="图片添加水印并压缩"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/TextAppearance.Material3.TitleMedium"
+        app:titleTextColor="@color/white" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -37,8 +49,8 @@
             android:layout_height="wrap_content"
             android:text="选择图片" />
 
-        <View
-            android:layout_width="@dimen/dp_20"
+        <Space
+            android:layout_width="@dimen/margin_3x"
             android:layout_height="match_parent" />
 
         <Button

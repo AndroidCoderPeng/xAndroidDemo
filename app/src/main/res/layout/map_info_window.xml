@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -9,11 +10,11 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_solid_text_blue_radius_top_5"
-        android:padding="5dp"
+        android:background="@drawable/bg_solid_text_blue_radius_top_4"
+        android:padding="@dimen/padding_half"
         android:text="当前选定点位置"
-        android:textColor="@color/white"
-        android:textSize="12sp" />
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+        android:textColor="@color/white" />
 
     <TextView
         android:id="@+id/locationView"
@@ -21,6 +22,7 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/lib_dp_5"
         android:paddingVertical="@dimen/lib_dp_3"
+        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
         android:textColor="@color/mainColor"
-        android:textSize="12sp" />
+        tools:text="北京市海淀区永定路52号中国航天科工第二研究院" />
 </LinearLayout>

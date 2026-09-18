@@ -6,18 +6,18 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.android.databinding.ActivityRadarScanBinding
 import com.example.android.widget.RadarScanView
-import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.toJson
 
 class RadarScanActivity : KotlinBaseActivity<ActivityRadarScanBinding>(),
     SensorEventListener {
 
     private val kTag = "RadarScanActivity"
-    private val sensorManager by lazy { getSystemService<SensorManager>() }
+    private val sensorManager by lazy { getSystemService(SensorManager::class.java) }
     private val rotationMatrix = FloatArray(9)//旋转矩阵缓存
     private val valueArray = FloatArray(3)//方位角数值
     private var gravity: FloatArray? = null
@@ -34,7 +34,8 @@ class RadarScanActivity : KotlinBaseActivity<ActivityRadarScanBinding>(),
         dataPoints.add(RadarScanView.DataPoint(120.0, 5f))
         dataPoints.add(RadarScanView.DataPoint(225.0, 0.5f))
         dataPoints.add(RadarScanView.DataPoint(345.0, 3.75f))
-        binding.radarScanView.renderPointData(dataPoints,
+        binding.radarScanView.renderPointData(
+            dataPoints,
             object : RadarScanView.OnGetNearestPointCallback {
                 override fun getNearestPoint(point: RadarScanView.DataPoint?) {
                     point?.apply {
@@ -53,7 +54,13 @@ class RadarScanActivity : KotlinBaseActivity<ActivityRadarScanBinding>(),
     }
 
     override fun setupTopBarLayout() {
-        ImmersionBar.with(this).init()
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(0, statusBarHeight, 0, 0)
+            insets
+        }
+
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
     override fun onResume() {

@@ -8,11 +8,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
-import com.example.android.R
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.android.databinding.ActivityCompassBinding
-import com.example.android.extensions.initImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 
 class CompassActivity : KotlinBaseActivity<ActivityCompassBinding>(), SensorEventListener,
@@ -35,12 +34,18 @@ class CompassActivity : KotlinBaseActivity<ActivityCompassBinding>(), SensorEven
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        mSensorManager = getSystemService<SensorManager>()!!
+        mSensorManager = getSystemService(SensorManager::class.java)
         weakReferenceHandler = WeakReferenceHandler(this)
     }
 
     override fun setupTopBarLayout() {
-        binding.rootView.initImmersionBar(this, false, R.color.black)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(0, statusBarHeight, 0, 0)
+            insets
+        }
+
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
     override fun initEvent() {

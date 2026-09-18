@@ -1,24 +1,24 @@
 package com.example.android
 
 import android.Manifest
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.amap.api.maps.MapsInitializer
-import com.example.android.activity.AddProductActivity
 import com.example.android.activity.AudioVisualizerActivity
 import com.example.android.activity.CompassActivity
 import com.example.android.activity.DragMapActivity
-import com.example.android.activity.GalleryActivity
 import com.example.android.activity.PtzActivity
 import com.example.android.activity.RadarScanActivity
 import com.example.android.activity.SatelliteStatusActivity
 import com.example.android.activity.SlideNavigationActivity
 import com.example.android.activity.TimeLineActivity
 import com.example.android.activity.WaterMarkerActivity
-import com.example.android.activity.WrapVideoActivity
-import com.example.android.activity.YuvDataActivity
 import com.example.android.databinding.ActivityMainBinding
-import com.example.android.extensions.initImmersionBar
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
@@ -30,27 +30,21 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
 
     private val kTag = "MainActivity"
     private val permissionsCode = 999
-    private val itemNames = listOf(
+    private val itemNames = mutableListOf(
         "侧边导航栏",
         "拖拽地图选点",
         "图片添加水印并压缩",
         "时间轴",
-        "雷达扫描效果",
+        "雷达扫描动画",
         "指南针",
-        "3D画廊",
         "导航卫星数据",
-        "商品添加购物车",
-        "YUV420分析",
-        "封装音视频",
         "音频可视化",
         "PTZ"
     )
 
     private val userPermissions = buildList {
         // 通用权限（所有版本）
-        add(Manifest.permission.CAMERA)
         add(Manifest.permission.READ_PHONE_STATE)
-        add(Manifest.permission.RECORD_AUDIO)
         add(Manifest.permission.ACCESS_FINE_LOCATION)
         add(Manifest.permission.ACCESS_COARSE_LOCATION)
 
@@ -76,7 +70,11 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
     }.toTypedArray()
 
     override fun setupTopBarLayout() {
-        binding.rootView.initImmersionBar(this, true, R.color.white)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(0, statusBarHeight, 0, 0)
+            insets
+        }
     }
 
     override fun observeRequestState() {
@@ -95,13 +93,14 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
 
     override fun initEvent() {
         val adapter = object : NormalRecyclerAdapter<String>(
-            R.layout.item_main_rv_g, itemNames.toMutableList()
+            R.layout.item_main_rv_g, itemNames
         ) {
             override fun convertView(viewHolder: ViewHolder, position: Int, item: String) {
                 viewHolder.setText(R.id.itemTitleView, item)
             }
         }
-        binding.mainRecyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.addItemDecoration(itemDecoration)
         adapter.setOnItemClickedListener(object :
             NormalRecyclerAdapter.OnItemClickedListener<String> {
             override fun onItemClicked(position: Int, item: String) {
@@ -112,16 +111,21 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
                     3 -> navigatePageTo<TimeLineActivity>()
                     4 -> navigatePageTo<RadarScanActivity>()
                     5 -> navigatePageTo<CompassActivity>()
-                    6 -> navigatePageTo<GalleryActivity>()
-                    7 -> navigatePageTo<SatelliteStatusActivity>()
-                    8 -> navigatePageTo<AddProductActivity>()
-                    9 -> navigatePageTo<YuvDataActivity>()
-                    10 -> navigatePageTo<WrapVideoActivity>()
-                    11 -> navigatePageTo<AudioVisualizerActivity>()
-                    12 -> navigatePageTo<PtzActivity>()
+                    6 -> navigatePageTo<SatelliteStatusActivity>()
+                    7 -> navigatePageTo<AudioVisualizerActivity>()
+                    8 -> navigatePageTo<PtzActivity>()
                 }
             }
         })
+    }
+
+    private val itemDecoration = object : RecyclerView.ItemDecoration() {
+        override fun getItemOffsets(
+            outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
+        ) {
+            val half = parent.resources.getDimensionPixelOffset(R.dimen.margin) / 2
+            outRect.set(half, half, half, half)
+        }
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {

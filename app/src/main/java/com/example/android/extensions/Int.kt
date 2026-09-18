@@ -1,9 +1,5 @@
 package com.example.android.extensions
 
-fun Int.isPowerOfTwo(): Boolean {
-    return this > 0 && (this and (this - 1)) == 0
-}
-
 fun Int.calculateWeights(): DoubleArray {
     val len = 1 + this * 2
     val end = len - 1

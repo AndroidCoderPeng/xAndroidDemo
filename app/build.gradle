@@ -9,51 +9,69 @@ android {
     namespace 'com.example.android'
     compileSdk 36
 
+    lint {
+        disable 'ChromeOsAbiSupport'
+        disable 'GradleDependency'
+    }
+
     defaultConfig {
         applicationId 'com.example.android'
         minSdk 26
         targetSdk 36
         versionCode 1000
         versionName '1.0.0.0'
-        multiDexEnabled true
-        ndkVersion "26.3.11579264"
+        ndkVersion "25.1.8937393"
+
         ndk {
-            abiFilters "arm64-v8a", "armeabi-v7a", "x86_64", "x86"
+            // 仅保留 ARM 架构，适用于实体设备
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
+
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++17"
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.22.1"
         }
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles 'proguard-rules.pro'
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
-    kotlin {
-        jvmToolchain(8)
-    }
-
-    externalNativeBuild {
-        cmake {
-            path file('src/main/cpp/CMakeLists.txt')
-            version '3.22.1'
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
         }
     }
 
     buildFeatures {
-        buildConfig true
         viewBinding true
+        buildConfig true
     }
 
     applicationVariants.configureEach {
         outputs.configureEach {
             outputFileName = 'X_' + getBuildDate() + '_' + defaultConfig.versionName + '.apk'
         }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/versions/9/OSGI-INF/MANIFEST.MF'
     }
 }
 
@@ -64,36 +82,34 @@ static def getBuildDate() {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.core:core-ktx:1.17.0'
     implementation 'androidx.appcompat:appcompat:1.7.1'
-    // 轻量级常用工具库
-    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.1.7'
+    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:2.0.0'
     implementation 'com.google.android.material:material:1.13.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     // 官方权限库
     implementation 'pub.devrel:easypermissions:3.0.0'
     // 图片加载库
-    implementation 'com.github.bumptech.glide:glide:5.0.5'
+    implementation 'com.github.bumptech.glide:glide:5.0.7'
     // 选择器
-    implementation 'com.github.gzu-liyujiang.AndroidPicker:WheelPicker:4.1.14'
-    // 协程
+    implementation 'com.github.gzu-liyujiang.AndroidPicker:WheelPicker:4.1.15'
+    //Kotlin协程
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.9.4'
+    //LiveData
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.9.4'
+    //ViewModel
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     // 图片查看
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
-    // 沉浸式
-    implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
     // 图片选择
     implementation 'io.github.lucksiege:pictureselector:v3.11.1'
-    // 地图
+    //高德地图+定位
     implementation 'com.amap.api:3dmap:latest.integration'
-    implementation 'com.google.code.gson:gson:2.13.2'
+    implementation 'com.google.code.gson:gson:2.14.0'
     // 图表
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
-    // 可滑动、侧滑等的列表
-    implementation 'com.yanzhenjie.recyclerview:support:1.3.2'
-    // 网络请求
-    implementation 'com.squareup.okhttp3:okhttp:5.3.2'
-    // 协程网络请求
+    //网络请求和接口封装
     implementation 'com.squareup.retrofit2:retrofit:3.0.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.4.0'
 }

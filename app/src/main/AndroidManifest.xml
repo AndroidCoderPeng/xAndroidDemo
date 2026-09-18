@@ -8,8 +8,6 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <!--危险权限，需要手动申请-->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!--允许读取手机状态-->
@@ -35,14 +33,6 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.any" />
-    <uses-feature
-        android:name="android.hardware.camera.autofocus"
-        android:required="false" />
-
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
-
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"
@@ -62,6 +52,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".activity.BigImageActivity" />
         <activity
             android:name=".activity.SlideNavigationActivity"
             android:screenOrientation="landscape" />
@@ -70,38 +61,12 @@
         <activity android:name=".activity.TimeLineActivity" />
         <activity android:name=".activity.RadarScanActivity" />
         <activity android:name=".activity.CompassActivity" />
-        <activity android:name=".activity.GalleryActivity" />
         <activity android:name=".activity.SatelliteStatusActivity" />
-        <activity android:name=".activity.AddProductActivity" />
-        <activity android:name=".activity.YuvDataActivity" />
-        <activity android:name=".activity.WrapVideoActivity" />
         <activity android:name=".activity.AudioVisualizerActivity" />
         <activity android:name=".activity.PtzActivity" />
-
-        <activity
-            android:name=".activity.BigImageActivity"
-            android:theme="@style/Theme.BigImageActivity" />
-
-        <!-- 拍照压缩图片用 FileProvider -->
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.android.fileProvider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="56fa2f20eef95e6107f998a5b59f0e10" />
     </application>
-
-    <!--Android 11+ use camera-->
-    <queries>
-        <intent>
-            <action android:name="android.media.action.IMAGE_CAPTURE" />
-        </intent>
-    </queries>
 </manifest>

@@ -1,53 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rootView"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/mainColor"
+        app:navigationIcon="@drawable/ic_title_left_white"
+        app:title="拖拽地图选点"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/TextAppearance.Material3.TitleMedium"
+        app:titleTextColor="@color/white" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dp_10"
+        android:layout_margin="@dimen/margin_2x"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="经度："
-            android:textSize="@dimen/sp_16" />
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
         <TextView
             android:id="@+id/longitudeView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#000"
-            android:textSize="@dimen/sp_16" />
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/dp_10"
+        android:layout_marginHorizontal="@dimen/margin_2x"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="纬度："
-            android:textSize="@dimen/sp_16" />
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
         <TextView
             android:id="@+id/latitudeView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#000"
-            android:textSize="@dimen/sp_16" />
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
     </LinearLayout>
 
     <com.amap.api.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/dp_10" />
+        android:layout_marginTop="@dimen/margin_2x" />
 </LinearLayout>

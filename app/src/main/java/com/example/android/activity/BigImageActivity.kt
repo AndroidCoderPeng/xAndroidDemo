@@ -1,50 +1,73 @@
 package com.example.android.activity
 
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
-import androidx.viewpager2.widget.ViewPager2
-import com.example.android.R
+import android.transition.ChangeBounds
+import android.transition.ChangeImageTransform
+import android.transition.TransitionSet
+import android.view.View
+import android.view.Window
+import android.view.WindowInsetsController
+import androidx.activity.OnBackPressedCallback
+import com.bumptech.glide.Glide
 import com.example.android.databinding.ActivityBigImageBinding
-import com.gyf.immersionbar.ImmersionBar
-import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
-import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.utils.LiteKitConstant
 
 class BigImageActivity : KotlinBaseActivity<ActivityBigImageBinding>() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // 启用共享元素过渡 - 必须在 super.onCreate 和 setContentView 之前调用
+        window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun initViewBinding(): ActivityBigImageBinding {
         return ActivityBigImageBinding.inflate(layoutInflater)
     }
 
+    @Suppress("DEPRECATION")
     override fun setupTopBarLayout() {
-        ImmersionBar.with(this).statusBarDarkFont(false).init()
+        // 设置过渡动画
+        val transitionSet = TransitionSet().apply {
+            addTransition(ChangeBounds())
+            addTransition(ChangeImageTransform())
+            duration = 300
+        }
+        window.sharedElementEnterTransition = transitionSet
+        window.sharedElementReturnTransition = transitionSet
+
+        // 使状态栏透明
+        window.statusBarColor = Color.BLACK
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(true)
+            window.insetsController?.setSystemBarsAppearance(
+                0,  // 清除 LIGHT 外观 → 恢复默认暗色背景 + 浅色图标
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
+        } else {
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE  // 默认样式
+        }
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        val index = intent.getIntExtra(LiteKitConstant.BIG_IMAGE_INTENT_INDEX_KEY, 0)
-        val urls = intent.getStringArrayListExtra(LiteKitConstant.BIG_IMAGE_INTENT_DATA_KEY)
-        if (urls == null || urls.isEmpty()) {
-            return
-        }
-        val imageSize = urls.size
-        binding.indexView.text = String.format("(${(index + 1)}/${imageSize})")
-        val adapter = object : NormalRecyclerAdapter<String>(R.layout.item_big_image, urls) {
-            override fun convertView(viewHolder: ViewHolder, position: Int, item: String) {
-                viewHolder.setImageResource(R.id.photoView, item)
-            }
-        }
-        binding.viewPager.adapter = adapter
-        binding.viewPager.currentItem = index
-        adapter.setOnItemClickedListener(object :
-            NormalRecyclerAdapter.OnItemClickedListener<String> {
-            override fun onItemClicked(position: Int, item: String) {
-                finish()
-            }
-        })
+        val fileName = intent.getStringExtra("fileName")
+        binding.toolbar.title = fileName
 
-        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                binding.indexView.text = String.format("(${(position + 1)}/${imageSize})")
+        // 设置共享元素名称
+        binding.imageView.transitionName = "shared_image"
+        val imagePath = intent.getStringExtra("imagePath")
+        imagePath?.let {
+            Glide.with(this).load(it).into(binding.imageView)
+        }
+
+        binding.imageView.setOnClickListener {
+            finishAfterTransition()
+        }
+
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finishAfterTransition()
             }
         })
     }
@@ -54,6 +77,6 @@ class BigImageActivity : KotlinBaseActivity<ActivityBigImageBinding>() {
     }
 
     override fun initEvent() {
-        binding.leftBackView.setOnClickListener { finish() }
+
     }
 }

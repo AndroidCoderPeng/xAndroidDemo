@@ -10,20 +10,21 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.android.adapter.SatelliteRecyclerAdapter
 import com.example.android.databinding.ActivitySatelliteStatusBinding
 import com.example.android.extensions.toDegree
 import com.example.android.model.Satellite
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
-import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.show
 
 @SuppressLint("SetTextI18n")
 class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBinding>(),
     LocationListener {
 
-    private val locationManager by lazy { getSystemService<LocationManager>()!! }
+    private val locationManager by lazy { getSystemService(LocationManager::class.java) }
     private val satelliteTypeMap = mapOf(
         0 to "UNKNOWN",
         1 to "GPS",
@@ -44,7 +45,13 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
     }
 
     override fun setupTopBarLayout() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(0, statusBarHeight, 0, 0)
+            insets
+        }
 
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {

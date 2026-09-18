@@ -1,29 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rootView"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lib_text_color"
     android:orientation="vertical">
 
-    <View
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/borderThickness"
-        android:background="@color/white" />
+        android:layout_height="wrap_content"
+        android:background="@color/mainColor"
+        app:navigationIcon="@drawable/ic_title_left_white"
+        app:title="导航卫星数据"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/TextAppearance.Material3.TitleMedium"
+        app:titleTextColor="@color/white" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_35"
+        android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/dp_5">
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="@dimen/dp_80"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1.5"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingVertical="@dimen/padding">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -32,16 +38,17 @@
         </LinearLayout>
 
         <View
-            android:layout_width="@dimen/borderThickness"
+            android:layout_width="@dimen/line_view_height"
             android:layout_height="match_parent"
-            android:background="@color/white" />
+            android:background="@color/lightGray" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="5"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingVertical="@dimen/padding">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -50,68 +57,93 @@
         </LinearLayout>
 
         <View
-            android:layout_width="@dimen/borderThickness"
+            android:layout_width="@dimen/line_view_height"
             android:layout_height="match_parent"
-            android:background="@color/white" />
+            android:background="@color/lightGray" />
 
         <LinearLayout
-            android:layout_width="@dimen/dp_110"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2.5"
             android:gravity="center"
             android:orientation="horizontal">
 
-            <ImageView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/ic_right_red" />
+                android:layout_weight="0.75"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/padding">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_right_red" />
+            </LinearLayout>
 
             <View
-                android:layout_width="@dimen/borderThickness"
+                android:layout_width="@dimen/line_view_height"
                 android:layout_height="match_parent"
-                android:background="@color/white" />
+                android:background="@color/lightGray" />
 
-            <ImageView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/ic_azimuth" />
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/padding">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_azimuth" />
+            </LinearLayout>
 
             <View
-                android:layout_width="@dimen/borderThickness"
+                android:layout_width="@dimen/line_view_height"
                 android:layout_height="match_parent"
-                android:background="@color/white" />
+                android:background="@color/lightGray" />
 
-            <ImageView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/ic_elevation" />
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/padding">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_elevation" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/borderThickness"
-        android:background="@color/white" />
+        android:layout_height="@dimen/line_view_height"
+        android:background="@color/lightGray" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_satellite_rv_l" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/borderThickness"
-        android:background="@color/white" />
+        android:layout_height="@dimen/line_view_height"
+        android:background="@color/lightGray" />
 
     <TextView
         android:id="@+id/locationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/dp_10"
-        android:text="锁定卫星太少，无法获取定位"
-        android:textColor="@color/white" />
+        android:padding="@dimen/padding"
+        android:text="锁定卫星太少，无法获取定位" />
 </LinearLayout>

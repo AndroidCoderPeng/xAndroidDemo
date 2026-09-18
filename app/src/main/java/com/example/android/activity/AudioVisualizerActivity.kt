@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.android.databinding.ActivityAudioVisualizerBinding
 import com.example.android.model.FrequencyDomainData
 import com.example.android.model.TimeDomainData
@@ -31,7 +33,13 @@ class AudioVisualizerActivity : KotlinBaseActivity<ActivityAudioVisualizerBindin
     }
 
     override fun setupTopBarLayout() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(0, statusBarHeight, 0, 0)
+            insets
+        }
 
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
