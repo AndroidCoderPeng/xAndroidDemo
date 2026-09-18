@@ -10,12 +10,6 @@
     <!--危险权限，需要手动申请-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" /> <!-- 计步器传感器需要此权限 -->
-    <!--允许读取手机状态-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <!-- Android 10以下 -->
@@ -62,16 +56,8 @@
         <activity android:name=".activity.AudioVisualizerActivity" />
         <activity android:name=".activity.PtzActivity" />
 
-        <!--高德定位-->
-        <service android:name="com.amap.api.location.APSService" />
-
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="56fa2f20eef95e6107f998a5b59f0e10" />
-
-        <service
-            android:name=".service.ForegroundRunningService"
-            android:exported="false"
-            android:foregroundServiceType="location" />
     </application>
 </manifest>

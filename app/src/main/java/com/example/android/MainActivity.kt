@@ -1,18 +1,13 @@
 package com.example.android
 
 import android.Manifest
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.amap.api.location.AMapLocationClient
 import com.amap.api.maps.MapsInitializer
 import com.example.android.activity.AudioVisualizerActivity
 import com.example.android.activity.CompassActivity
@@ -24,7 +19,6 @@ import com.example.android.activity.SlideNavigationActivity
 import com.example.android.activity.TimeLineActivity
 import com.example.android.activity.WaterMarkerActivity
 import com.example.android.databinding.ActivityMainBinding
-import com.example.android.service.ForegroundRunningService
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
@@ -95,15 +89,8 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         if (!EasyPermissions.hasPermissions(this, *userPermissions)) {
             EasyPermissions.requestPermissions(this, "", permissionsCode, *userPermissions)
         } else {
-            //开启后台定位
-            Intent(this, ForegroundRunningService::class.java).apply {
-                startForegroundService(this)
-            }
-
             MapsInitializer.updatePrivacyShow(this, true, true)
             MapsInitializer.updatePrivacyAgree(this, true)
-            AMapLocationClient.updatePrivacyShow(this, true, true)
-            AMapLocationClient.updatePrivacyAgree(this, true)
         }
     }
 
@@ -145,28 +132,8 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val checkSelfPermission = ContextCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            )
-            if (checkSelfPermission == PackageManager.PERMISSION_DENIED) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-                    permissionsCode
-                )
-            }
-        }
-
-        //开启后台定位
-        Intent(this, ForegroundRunningService::class.java).apply {
-            startForegroundService(this)
-        }
-
         MapsInitializer.updatePrivacyShow(this, true, true)
         MapsInitializer.updatePrivacyAgree(this, true)
-        AMapLocationClient.updatePrivacyShow(this, true, true)
-        AMapLocationClient.updatePrivacyAgree(this, true)
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {}
