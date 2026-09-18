@@ -5,4 +5,6 @@ object ExampleConstant {
     const val PTZ_CONTROL_SERVER_URL = "http://192.168.10.153"
     const val PTZ_ACCOUNT = "admin"
     const val PTZ_PASSWORD = "admin"
+
+    const val FOREGROUND_RUNNING_SERVICE_TITLE = "为保证程序正常运行，请勿移除此通知"
 }
