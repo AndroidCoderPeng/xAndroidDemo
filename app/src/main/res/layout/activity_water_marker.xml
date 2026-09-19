@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@color/mainColor"
         app:navigationIcon="@drawable/ic_title_left_white"
-        app:title="图片添加水印并压缩"
+        app:title="图片添加水印"
         app:titleCentered="true"
         app:titleTextAppearance="@style/TextAppearance.Material3.TitleMedium"
         app:titleTextColor="@color/white" />
@@ -28,13 +28,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerInParent="true" />
-
-        <TextView
-            android:id="@+id/originalImageSizeView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:textColor="@color/red" />
     </RelativeLayout>
 
     <LinearLayout
@@ -70,12 +63,5 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerInParent="true" />
-
-        <TextView
-            android:id="@+id/markerImageSizeView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:textColor="@color/red" />
     </RelativeLayout>
 </LinearLayout>

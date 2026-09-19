@@ -5,8 +5,6 @@ import android.os.Bundle
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.example.android.R
 import com.example.android.databinding.ActivityWaterMarkerBinding
 import com.example.android.util.GlideLoadEngine
 import com.luck.picture.lib.basic.PictureSelector
@@ -14,9 +12,6 @@ import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.extensions.createCompressImageDir
-import com.pengxh.kt.lite.extensions.formatFileSize
-import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
 
 
@@ -25,7 +20,6 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
     private val kTag = "WaterMarkerActivity"
     private val context = this@WaterMarkerActivity
     private var mediaRealPath: String? = null
-    private val compressImageDir by lazy { createCompressImageDir() }
 
     override fun setupTopBarLayout() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
@@ -60,8 +54,8 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
                 .isDisplayCamera(false)
                 .setImageEngine(GlideLoadEngine.get)
                 .forResult(object : OnResultCallbackListener<LocalMedia> {
-                    override fun onResult(result: ArrayList<LocalMedia>?) {
-                        if (result == null) {
+                    override fun onResult(result: ArrayList<LocalMedia>) {
+                        if (result.isEmpty()) {
                             "选择照片失败，请重试".show(context)
                             return
                         }
@@ -69,26 +63,23 @@ class WaterMarkerActivity : KotlinBaseActivity<ActivityWaterMarkerBinding>() {
                         val media = result[0]
                         mediaRealPath = media.realPath
 
-                        Glide.with(context)
-                            .load(mediaRealPath)
-                            .apply(RequestOptions().error(R.drawable.ic_load_error))
-                            .into(binding.originalImageView)
-
-                        binding.originalImageSizeView.text = "压缩前：${media.size.formatFileSize()}"
-                        binding.originalImageView.setOnClickListener {
-                            val urls = ArrayList<String>()
-                            urls.add(mediaRealPath!!)
-                            navigatePageTo<BigImageActivity>(0, urls)
-                        }
+                        Glide.with(context).load(mediaRealPath).into(binding.originalImageView)
                     }
 
                     override fun onCancel() {}
                 })
         }
 
+        binding.originalImageView.setOnClickListener {
+            if (mediaRealPath == null) {
+                "请先选择图片".show(this)
+                return@setOnClickListener
+            }
+        }
+
         binding.addMarkerButton.setOnClickListener {
             if (mediaRealPath == null) {
-                "请先选择图片再添加水印".show(this)
+                "请先选择图片".show(this)
                 return@setOnClickListener
             }
 
