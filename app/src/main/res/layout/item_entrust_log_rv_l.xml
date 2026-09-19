@@ -11,7 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/padding_half">
 
         <View
             android:id="@+id/topLineView"
