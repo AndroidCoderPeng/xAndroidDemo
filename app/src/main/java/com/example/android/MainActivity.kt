@@ -15,9 +15,7 @@ import com.example.android.activity.DragMapActivity
 import com.example.android.activity.PtzActivity
 import com.example.android.activity.RadarScanActivity
 import com.example.android.activity.SatelliteStatusActivity
-import com.example.android.activity.SlideNavigationActivity
 import com.example.android.activity.TimeLineActivity
-import com.example.android.activity.WaterMarkerActivity
 import com.example.android.databinding.ActivityMainBinding
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
@@ -31,9 +29,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
     private val kTag = "MainActivity"
     private val permissionsCode = 999
     private val itemNames = mutableListOf(
-        "侧边导航栏",
         "拖拽地图选点",
-        "图片添加水印",
         "时间轴",
         "雷达扫描动画",
         "指南针",
@@ -44,23 +40,25 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
 
     private val userPermissions = buildList {
         // 通用权限（所有版本）
-        add(Manifest.permission.READ_PHONE_STATE)
         add(Manifest.permission.ACCESS_FINE_LOCATION)
         add(Manifest.permission.ACCESS_COARSE_LOCATION)
 
         // 存储权限根据版本适配
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                // Android 13+ 使用新的媒体权限
-                add(Manifest.permission.READ_MEDIA_VIDEO)
-                add(Manifest.permission.READ_MEDIA_IMAGES)
+                // Android 13+
+            }
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                // Android 12+
             }
 
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
-                // Android 11+ 需要请求 MANAGE_EXTERNAL_STORAGE
-                add(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
-                add(Manifest.permission.READ_EXTERNAL_STORAGE)
-                add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                // Android 11+
+            }
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                // Android 10+
             }
 
             else -> {
@@ -108,15 +106,13 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
             NormalRecyclerAdapter.OnItemClickedListener<String> {
             override fun onItemClicked(position: Int, item: String) {
                 when (position) {
-                    0 -> navigatePageTo<SlideNavigationActivity>()
-                    1 -> navigatePageTo<DragMapActivity>()
-                    2 -> navigatePageTo<WaterMarkerActivity>()
-                    3 -> navigatePageTo<TimeLineActivity>()
-                    4 -> navigatePageTo<RadarScanActivity>()
-                    5 -> navigatePageTo<CompassActivity>()
-                    6 -> navigatePageTo<SatelliteStatusActivity>()
-                    7 -> navigatePageTo<AudioVisualizerActivity>()
-                    8 -> navigatePageTo<PtzActivity>()
+                    0 -> navigatePageTo<DragMapActivity>()
+                    1 -> navigatePageTo<TimeLineActivity>()
+                    2 -> navigatePageTo<RadarScanActivity>()
+                    3 -> navigatePageTo<CompassActivity>()
+                    4 -> navigatePageTo<SatelliteStatusActivity>()
+                    5 -> navigatePageTo<AudioVisualizerActivity>()
+                    6 -> navigatePageTo<PtzActivity>()
                 }
             }
         })
