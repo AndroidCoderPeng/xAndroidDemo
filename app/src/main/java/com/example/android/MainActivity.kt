@@ -33,7 +33,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
     private val itemNames = mutableListOf(
         "侧边导航栏",
         "拖拽地图选点",
-        "图片添加水印并压缩",
+        "图片添加水印",
         "时间轴",
         "雷达扫描动画",
         "指南针",
