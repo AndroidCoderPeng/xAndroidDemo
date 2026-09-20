@@ -1,6 +1,5 @@
 package com.example.android.activity
 
-import android.graphics.Color
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
@@ -9,8 +8,8 @@ import android.widget.AdapterView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.android.databinding.ActivityAudioVisualizerBinding
-import com.example.android.model.FrequencyDomainData
-import com.example.android.model.TimeDomainData
+import com.example.android.model.FrequencyDomain
+import com.example.android.model.TimeDomain
 import com.example.android.util.AudioVisualizer
 import com.example.android.util.ColorRender
 import com.pengxh.kt.lite.base.KotlinBaseActivity
@@ -79,13 +78,9 @@ class AudioVisualizerActivity : KotlinBaseActivity<ActivityAudioVisualizerBindin
     private fun startPlay() {
         try {
             mediaPlayer = MediaPlayer().apply {
-                val assetFileDescriptor = assets.openFd(selectedMusic)
-                setDataSource(
-                    assetFileDescriptor.fileDescriptor,
-                    assetFileDescriptor.startOffset,
-                    assetFileDescriptor.length
-                )
-                assetFileDescriptor.close()
+                val fd = assets.openFd(selectedMusic)
+                setDataSource(fd.fileDescriptor, fd.startOffset, fd.length)
+                fd.close()
 
                 prepare()
                 start()
@@ -125,7 +120,7 @@ class AudioVisualizerActivity : KotlinBaseActivity<ActivityAudioVisualizerBindin
         index = count
     }
 
-    override fun onRenderTimeDomain(data: TimeDomainData) {
+    override fun onRenderTimeDomain(data: TimeDomain) {
         binding.curveView.drawPath(
             data,
             binding.audioCurveLayout.width.toFloat(),
@@ -135,50 +130,50 @@ class AudioVisualizerActivity : KotlinBaseActivity<ActivityAudioVisualizerBindin
         )
     }
 
-    override fun onRenderFrequencyDomain(data: FrequencyDomainData) {
-        val bassScale = audioVisualizer.calculateBassScale(data) // 获取低音系数
-        val highScale = audioVisualizer.calculateHighScale(data) // 获取高音系数
-
-        val color1 = hsvColors[index % hsvColors.size]
-        val color2 = hsvColors[(index + 200) % hsvColors.size]
-
-        val red = Color.red(color1)
-        val green = Color.green(color1)
-        val blue = Color.blue(color1)
-        binding.curveView.drawBorder(
-            bassScale.toFloat(),
-            binding.audioCurveLayout.width.toFloat(),
-            binding.audioCurveLayout.height.toFloat(),
-            innerColor = Color.argb(0, red, green, blue),
-            outerColor = color2,
-            10
-        )
-
-        rotation += 0.1f
-        val baseRadius =
-            binding.audioCircularLayout.width.coerceAtMost(binding.audioCircularLayout.height) / 3
-        val radius = baseRadius + highScale * bassScale
-        binding.circularStripView.drawPath(
-            data,
-            binding.audioCircularLayout.height.toFloat(),
-            innerColor = color1,
-            outerColor = color2,
-            binding.circularStripView.width / 2f,
-            binding.circularStripView.height / 2f,
-            radius.toFloat(),
-            1f,
-            rotation
-        )
-
-        binding.stripView.drawPath(
-            data,
-            binding.audioStripLayout.width.toFloat(),
-            binding.audioStripLayout.height.toFloat(),
-            bottomColor = color1,
-            topColor = color2,
-            0f,
-            1f
-        )
+    override fun onRenderFrequencyDomain(data: FrequencyDomain) {
+//        val bassScale = audioVisualizer.calculateBassScale(data) // 获取低音系数
+//        val highScale = audioVisualizer.calculateHighScale(data) // 获取高音系数
+//
+//        val color1 = hsvColors[index % hsvColors.size]
+//        val color2 = hsvColors[(index + 200) % hsvColors.size]
+//
+//        val red = Color.red(color1)
+//        val green = Color.green(color1)
+//        val blue = Color.blue(color1)
+//        binding.curveView.drawBorder(
+//            bassScale.toFloat(),
+//            binding.audioCurveLayout.width.toFloat(),
+//            binding.audioCurveLayout.height.toFloat(),
+//            innerColor = Color.argb(0, red, green, blue),
+//            outerColor = color2,
+//            10
+//        )
+//
+//        rotation += 0.1f
+//        val baseRadius =
+//            binding.audioCircularLayout.width.coerceAtMost(binding.audioCircularLayout.height) / 3
+//        val radius = baseRadius + highScale * bassScale
+//        binding.circularStripView.drawPath(
+//            data,
+//            binding.audioCircularLayout.height.toFloat(),
+//            innerColor = color1,
+//            outerColor = color2,
+//            binding.circularStripView.width / 2f,
+//            binding.circularStripView.height / 2f,
+//            radius.toFloat(),
+//            1f,
+//            rotation
+//        )
+//
+//        binding.stripView.drawPath(
+//            data,
+//            binding.audioStripLayout.width.toFloat(),
+//            binding.audioStripLayout.height.toFloat(),
+//            bottomColor = color1,
+//            topColor = color2,
+//            0f,
+//            1f
+//        )
     }
 
     override fun onDestroy() {

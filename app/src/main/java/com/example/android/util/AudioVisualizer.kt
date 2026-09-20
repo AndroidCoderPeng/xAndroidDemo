@@ -6,8 +6,8 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import com.example.android.extensions.calculateWeights
-import com.example.android.model.FrequencyDomainData
-import com.example.android.model.TimeDomainData
+import com.example.android.model.FrequencyDomain
+import com.example.android.model.TimeDomain
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
@@ -31,10 +31,10 @@ class AudioVisualizer {
 
     // 数据缓存（双缓冲）
     @Volatile
-    private var timeDomainBuffer: TimeDomainData? = null
+    private var timeDomain: TimeDomain? = null
 
     @Volatile
-    private var frequencyDomainBuffer: FrequencyDomainData? = null
+    private var frequencyDomain: FrequencyDomain? = null
 
     // 渲染任务（从缓存取数据并回调）
     private val renderRunnable = object : Runnable {
@@ -42,10 +42,10 @@ class AudioVisualizer {
             onRenderListener?.onRenderCounter(count++)
 
             // 从缓存读取数据并回调
-            timeDomainBuffer?.let { data ->
+            timeDomain?.let { data ->
                 onRenderListener?.onRenderTimeDomain(data)
             }
-            frequencyDomainBuffer?.let { data ->
+            frequencyDomain?.let { data ->
                 onRenderListener?.onRenderFrequencyDomain(data)
             }
             handler.postDelayed(this, 25)
@@ -64,12 +64,12 @@ class AudioVisualizer {
         /**
          * 渲染时域数据（平缓刷新）
          */
-        fun onRenderTimeDomain(data: TimeDomainData)
+        fun onRenderTimeDomain(data: TimeDomain)
 
         /**
          * 渲染频域数据（平缓刷新）
          */
-        fun onRenderFrequencyDomain(data: FrequencyDomainData)
+        fun onRenderFrequencyDomain(data: FrequencyDomain)
     }
 
     fun setOnRenderListener(listener: OnRenderListener) {
@@ -112,20 +112,20 @@ class AudioVisualizer {
                             // 减去 128，将数据映射到 [-128, 127]，这是 Android Audio Visualizer API 的标准做法
                             it[index].toUByte().toInt() - 128.0
                         }
-                        val timeDomain = TimeDomainData(timeAxis, amplitudes)
+                        val td = TimeDomain(timeAxis, amplitudes)
 
                         // 平滑时域数据
-                        val sTimeDomain = makeSmooth(timeDomain)
-                        if (timeDomainBuffer == null) {
-                            timeDomainBuffer = sTimeDomain
+                        val sTimeDomain = makeSmooth(td)
+                        if (timeDomain == null) {
+                            timeDomain = sTimeDomain
                         } else {
                             sTimeDomain.amplitudes.forEachIndexed { index, amp ->
-                                val oldData = timeDomainBuffer?.amplitudes[index]!!
+                                val oldData = timeDomain?.amplitudes[index]!!
                                 val newData = sTimeDomain.amplitudes[index]
 
                                 // 计算旧频谱数据和新频谱数据之间的 "中间值"，每次向目标值移动 20%
                                 val deltaData = oldData + (newData - oldData) * 0.2
-                                timeDomainBuffer?.amplitudes[index] = deltaData
+                                timeDomain?.amplitudes[index] = deltaData
                             }
                         }
                     }
@@ -148,20 +148,20 @@ class AudioVisualizer {
                             val imag = it[index * 2 + 1].toInt()
                             sqrt((real * real + imag * imag).toDouble())
                         }
-                        val frequencyDomain = FrequencyDomainData(frequencies, magnitudes)
+                        val fd = FrequencyDomain(frequencies, magnitudes)
 
                         // 平滑处理
-                        val sFrequencyDomain = makeSmooth(frequencyDomain)
-                        if (frequencyDomainBuffer == null) {
-                            frequencyDomainBuffer = sFrequencyDomain
+                        val sFrequencyDomain = makeSmooth(fd)
+                        if (frequencyDomain == null) {
+                            frequencyDomain = sFrequencyDomain
                         } else {
                             sFrequencyDomain.magnitudes.forEachIndexed { index, mag ->
-                                val oldData = frequencyDomainBuffer?.magnitudes[index]!!
+                                val oldData = frequencyDomain?.magnitudes[index]!!
                                 val newData = sFrequencyDomain.magnitudes[index]
 
                                 // 计算旧频谱数据和新频谱数据之间的 "中间值"，每次向目标值移动 20%
                                 val deltaData = oldData + (newData - oldData) * 0.2
-                                frequencyDomainBuffer?.magnitudes[index] = deltaData
+                                frequencyDomain?.magnitudes[index] = deltaData
                             }
                         }
                     }
@@ -175,7 +175,7 @@ class AudioVisualizer {
         handler.post(renderRunnable)
     }
 
-    fun calculateBassScale(data: FrequencyDomainData): Double {
+    fun calculateBassScale(data: FrequencyDomain): Double {
         if (data.frequencies.isEmpty() || data.magnitudes.isEmpty()) {
             return 1.0
         }
@@ -227,7 +227,7 @@ class AudioVisualizer {
         return 0.8.coerceAtLeast(scale.coerceAtMost(1.6))
     }
 
-    fun calculateHighScale(data: FrequencyDomainData): Double {
+    fun calculateHighScale(data: FrequencyDomain): Double {
         if (data.frequencies.isEmpty() || data.magnitudes.isEmpty()) {
             return 1.0
         }
@@ -278,7 +278,7 @@ class AudioVisualizer {
         return 0.8.coerceAtLeast(scale.coerceAtMost(1.6))
     }
 
-    private fun makeSmooth(data: FrequencyDomainData): FrequencyDomainData {
+    private fun makeSmooth(data: FrequencyDomain): FrequencyDomain {
         if (data.magnitudes.isEmpty()) {
             return data
         }
@@ -302,10 +302,10 @@ class AudioVisualizer {
             smoothed[index] = sum / weightSum
         }
 
-        return FrequencyDomainData(data.frequencies, smoothed)
+        return FrequencyDomain(data.frequencies, smoothed)
     }
 
-    private fun makeSmooth(data: TimeDomainData): TimeDomainData {
+    private fun makeSmooth(data: TimeDomain): TimeDomain {
         if (data.amplitudes.isEmpty()) {
             return data
         }
@@ -329,7 +329,7 @@ class AudioVisualizer {
             smoothed[index] = sum / weightSum
         }
 
-        return TimeDomainData(data.timeAxis, smoothed)
+        return TimeDomain(data.times, smoothed)
     }
 
     fun release() {
@@ -343,7 +343,7 @@ class AudioVisualizer {
         mediaPlayer?.release()
         mediaPlayer = null
 
-        timeDomainBuffer = null
-        frequencyDomainBuffer = null
+        timeDomain = null
+        frequencyDomain = null
     }
 }

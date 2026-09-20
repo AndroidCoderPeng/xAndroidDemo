@@ -10,7 +10,7 @@ import android.graphics.Shader
 import android.util.AttributeSet
 import android.view.View
 import com.example.android.model.CanvasPoint
-import com.example.android.model.FrequencyDomainData
+import com.example.android.model.FrequencyDomain
 import kotlin.math.absoluteValue
 
 class GradientStripView @JvmOverloads constructor(
@@ -40,7 +40,7 @@ class GradientStripView @JvmOverloads constructor(
      * @param spacing 频域数据之间的间隔
      */
     fun drawPath(
-        data: FrequencyDomainData,
+        data: FrequencyDomain,
         width: Float,
         height: Float,
         bottomColor: Int,

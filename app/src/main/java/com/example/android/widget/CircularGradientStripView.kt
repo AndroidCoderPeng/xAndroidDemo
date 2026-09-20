@@ -11,7 +11,7 @@ import android.graphics.Shader
 import android.util.AttributeSet
 import android.view.View
 import com.example.android.model.CanvasPoint
-import com.example.android.model.FrequencyDomainData
+import com.example.android.model.FrequencyDomain
 import kotlin.math.absoluteValue
 import kotlin.math.cos
 import kotlin.math.sin
@@ -57,7 +57,7 @@ class CircularGradientStripView @JvmOverloads constructor(
      * @param rotation 旋转角度
      */
     fun drawPath(
-        data: FrequencyDomainData,
+        data: FrequencyDomain,
         height: Float,
         innerColor: Int,
         outerColor: Int,
