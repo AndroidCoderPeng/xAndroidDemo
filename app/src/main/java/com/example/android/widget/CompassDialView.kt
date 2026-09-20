@@ -5,376 +5,268 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.Rect
-import android.graphics.RectF
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.withStyledAttributes
+import androidx.core.graphics.withRotation
 import com.example.android.R
 import com.pengxh.kt.lite.extensions.dp2px
+import com.pengxh.kt.lite.extensions.sp2px
+import kotlin.math.abs
 import kotlin.math.cos
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 /**
- * 指南针自定义表盘
+ * 指南针表盘
+ *
+ * 角度约定：正北为 0°，顺时针递增
  * */
-class CompassDialView(private val context: Context, attrs: AttributeSet) : View(context, attrs) {
+class CompassDialView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : View(context, attrs, defStyleAttr) {
 
-    private val kTag = "CompassDialView"
+    private companion object {
+        const val FULL_CIRCLE = 360
+        const val HALF_CIRCLE = 180
+        const val DIRECTION_STEP = 90   // 方位文字间隔角度
+        const val DEGREE_STEP = 30      // 外环角度文字间隔
+        const val TICK_STEP = 3         // 刻度间隔角度
 
-    //View中心X坐标
+        const val DEFAULT_RADIUS_DP = 144f
+        const val DEFAULT_VALUE_TEXT_SP = 30f // 中心读数
+        const val DEFAULT_INNER_TEXT_SP = 16f // 方位文字
+        const val DEFAULT_OUTER_TEXT_SP = 14f // 外环角度文字
+
+        const val TICK_LENGTH_DP = 15f
+        const val INNER_TEXT_GAP_DP = 30f // 方位文字相对表盘内缩的距离
+        const val OUTER_TEXT_GAP_DP = 15f // 角度文字相对表盘外扩的距离
+        const val VIEW_MARGIN_DP = 30f    // wrap_content 时为刻度、文字预留的边距
+        const val END_TICK_SCALE = 1.5f   // 末端刻度相对普通刻度的倍数
+    }
+
+    // ---------- 自定义属性 ----------
+    //先给默认值，init 中再按 XML 覆盖；因需在 lambda 内赋值，故为 var
+    private var radius: Float = DEFAULT_RADIUS_DP.dp2px(context)
+    private var valueTextSize: Float = DEFAULT_VALUE_TEXT_SP.sp2px(context)
+    private var innerTextSize: Float = DEFAULT_INNER_TEXT_SP.sp2px(context)
+    private var outerTextSize: Float = DEFAULT_OUTER_TEXT_SP.sp2px(context)
+
+    // ---------- 画笔 ----------
+    private val tickPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        color = Color.DKGRAY
+        strokeWidth = 2f.dp2px(context)
+    }
+    private val currentTickPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        color = Color.RED
+        strokeWidth = 2f.dp2px(context)
+    }
+    private val trianglePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = Color.RED
+    }
+    private val valuePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.CENTER
+        color = Color.WHITE
+    }
+    private val innerPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.CENTER
+    }
+    private val outerPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.CENTER
+        color = Color.DKGRAY
+    }
+
+    // ---------- 派生尺寸 ----------
+    private val innerTextRadius: Float // 方位文字所在圆
+    private val outerTextRadius: Float // 外环角度文字所在圆
+    private val tickLength: Float
+    private val halfSide: Float        // wrap_content 时的半边长
+    private val trianglePath: Path
+
+    //文字基线偏移，正值朝圆心，使文字视觉中心压在所在圆上
+    private val valueOffsetY: Float
+    private val innerOffsetY: Float
+
+    // ---------- 数据 ----------
+    private val directions = listOf("北", "东", "南", "西")
     private var centerX = 0f
-
-    //View中心Y坐标
     private var centerY = 0f
-
-    //控件边长
-    private val viewSideLength: Int
-    private val rect: Rect
-
-    //内部表盘半径
-    private val compassDialRadius: Int
-    private var innerRadius = 0
-    private var outerRadius = 0
-    private var degreeValue = 0
-    private val valueTextSize: Int
-    private val innerTextSize: Int
-    private val outerTextSize: Int
-
-    //表盘刻度
-    private lateinit var tickPaint: Paint
-    private lateinit var currentTickPaint: Paint
-    private lateinit var trianglePaint: Paint
-    private lateinit var valuePaint: TextPaint
-    private lateinit var innerPaint: TextPaint
-    private lateinit var outerPaint: TextPaint
-
-    private lateinit var innerTextPath: Path
-    private lateinit var outerTextPath: Path
-    private lateinit var trianglePath: Path
-
-    //刻度长度
-    private val tickLength = 15f.dp2px(context)
+    private var degreeValue = 0        // 设备罗盘上报的方位角
 
     init {
-        val type = context.obtainStyledAttributes(attrs, R.styleable.CompassDialView)
-        compassDialRadius = type.getDimensionPixelOffset(
-            R.styleable.CompassDialView_cps_radius, 300
-        )
-        //需要给外围刻度留位置
-        viewSideLength = compassDialRadius + 30.dp2px(context)
+        //withStyledAttributes 在 lambda 结束时自动 recycle
+        context.withStyledAttributes(attrs, R.styleable.CompassDialView, defStyleAttr) {
+            //属性自身即默认值，无需把默认值写两遍
+            radius = getDimension(R.styleable.CompassDialView_cps_radius, radius)
+            valueTextSize = getDimension(
+                R.styleable.CompassDialView_cps_degree_textSize, valueTextSize
+            )
+            innerTextSize = getDimension(
+                R.styleable.CompassDialView_cps_inner_textSize, innerTextSize
+            )
+            outerTextSize = getDimension(
+                R.styleable.CompassDialView_cps_outer_textSize, outerTextSize
+            )
+        }
 
-        valueTextSize = type.getDimensionPixelOffset(
-            R.styleable.CompassDialView_cps_degree_textSize, 30
-        )
-        innerTextSize = type.getDimensionPixelOffset(
-            R.styleable.CompassDialView_cps_inner_textSize, 16
-        )
-        outerTextSize = type.getDimensionPixelOffset(
-            R.styleable.CompassDialView_cps_outer_textSize, 14
-        )
-        type.recycle()
+        //以下尺寸全部由半径派生，坐标系以圆心为原点
+        tickLength = TICK_LENGTH_DP.dp2px(context)
+        innerTextRadius = radius - INNER_TEXT_GAP_DP.dp2px(context)
+        outerTextRadius = radius + OUTER_TEXT_GAP_DP.dp2px(context)
+        halfSide = radius + VIEW_MARGIN_DP.dp2px(context)
 
-        initPaint()
+        valuePaint.textSize = valueTextSize
+        innerPaint.textSize = innerTextSize
+        outerPaint.textSize = outerTextSize
 
-        //辅助框
-        rect = Rect(-viewSideLength, -viewSideLength, viewSideLength, viewSideLength)
+        valueOffsetY = valuePaint.fontMetrics.run { -(top + bottom) / 2f }
+        innerOffsetY = innerPaint.fontMetrics.run { -(top + bottom) / 2f }
+
+        //正北方向的小三角，紧贴外环角度文字的内侧，顶点朝上
+        trianglePath = Path().apply {
+            moveTo(0f, -outerTextRadius + tickLength * 0.25f)
+            lineTo(tickLength * 0.25f, -outerTextRadius + tickLength * 0.75f)
+            lineTo(-tickLength * 0.25f, -outerTextRadius + tickLength * 0.75f)
+            close()
+        }
     }
 
-    private fun initPaint() {
-        tickPaint = Paint()
-        tickPaint.color = Color.DKGRAY
-        tickPaint.style = Paint.Style.STROKE
-        tickPaint.strokeWidth = 2f.dp2px(context)
-        tickPaint.isAntiAlias = true
-
-        valuePaint = TextPaint()
-        valuePaint.color = Color.WHITE
-        valuePaint.isAntiAlias = true
-        valuePaint.textAlign = Paint.Align.CENTER
-        valuePaint.textSize = valueTextSize.toFloat()
-
-        innerPaint = TextPaint()
-        innerPaint.isAntiAlias = true
-        innerPaint.textAlign = Paint.Align.CENTER
-        innerPaint.textSize = innerTextSize.toFloat()
-        innerTextPath = Path()
-        innerRadius = compassDialRadius - 30.dp2px(context)
-        val innerRectF = RectF(
-            -innerRadius.toFloat(),
-            -innerRadius.toFloat(),
-            innerRadius.toFloat(),
-            innerRadius.toFloat()
-        )
-        innerTextPath.addArc(innerRectF, -90f, 360f)
-
-        outerPaint = TextPaint()
-        outerPaint.color = Color.DKGRAY
-        outerPaint.isAntiAlias = true
-        outerPaint.textAlign = Paint.Align.CENTER
-        outerPaint.textSize = outerTextSize.toFloat()
-        outerTextPath = Path()
-        outerRadius = compassDialRadius + 15.dp2px(context)
-        val outRectF = RectF(
-            -outerRadius.toFloat(),
-            -outerRadius.toFloat(),
-            outerRadius.toFloat(),
-            outerRadius.toFloat()
-        )
-        //起点是正北方
-        outerTextPath.addArc(outRectF, -90f, 360f)
-
-        currentTickPaint = Paint()
-        currentTickPaint.color = Color.RED
-        currentTickPaint.style = Paint.Style.STROKE
-        currentTickPaint.strokeWidth = 2f.dp2px(context).toFloat()
-        currentTickPaint.isAntiAlias = true
-
-        trianglePaint = Paint()
-        trianglePaint.color = Color.RED
-        trianglePaint.style = Paint.Style.FILL
-        trianglePaint.isAntiAlias = true
-        trianglePath = Path()
-        trianglePath.moveTo(0f, -outerRadius.toFloat() + tickLength * 0.25f)
-        trianglePath.lineTo(tickLength * 0.25f, -outerRadius.toFloat() + tickLength * 0.75f)
-        trianglePath.lineTo(-tickLength * 0.25f, -outerRadius.toFloat() + tickLength * 0.75f)
-        trianglePath.close()
-    }
-
-    //计算出中心位置，便于定位
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        centerX = (w shr 1).toFloat()
-        centerY = (h shr 1).toFloat()
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val widthSpecMode = MeasureSpec.getMode(widthMeasureSpec)
-        val widthSpecSize = MeasureSpec.getSize(widthMeasureSpec)
-        val heightSpecMode = MeasureSpec.getMode(heightMeasureSpec)
-        val heightSpecSize = MeasureSpec.getSize(heightMeasureSpec)
-        // 获取宽
-        val mWidth: Int = if (widthSpecMode == MeasureSpec.EXACTLY) {
-            // match_parent/精确值
-            widthSpecSize
-        } else {
-            // wrap_content，外边界宽
-            (viewSideLength * 2)
-        }
-        // 获取高
-        val mHeight: Int = if (heightSpecMode == MeasureSpec.EXACTLY) {
-            // match_parent/精确值
-            heightSpecSize
-        } else {
-            // wrap_content，外边界高
-            (viewSideLength * 2)
-        }
-        // 设置该view的宽高
-        setMeasuredDimension(mWidth, mHeight)
+        centerX = paddingLeft + (w - paddingLeft - paddingRight) / 2f
+        centerY = paddingTop + (h - paddingTop - paddingBottom) / 2f
     }
 
     /**
-     * 注意：坐标系和生活中不一样，需要逆时针-90。已作处理
+     * wrap_content 时给出期望边长：直径 + 预留边距 + padding，
+     * 其余模式交给 View.resolveSize() 按父容器约束收敛，无需手写 MeasureSpec 分支
+     * */
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val side = (halfSide * 2).roundToInt()
+        setMeasuredDimension(
+            resolveSize(side + paddingLeft + paddingRight, widthMeasureSpec),
+            resolveSize(side + paddingTop + paddingBottom, heightMeasureSpec)
+        )
+    }
+
+    /**
+     * 调用顺序即图层顺序：表盘刻度 → 方位文字 → 角度文字 → 正北三角 → 中心读数 → 当前方位刻度。
+     * 先把原点平移到圆心，后续所有坐标都以圆心为 (0, 0)
      * */
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        /**
-         * 画布移到中心位置，方便绘制一系列图形
-         */
         canvas.translate(centerX, centerY)
+        drawDialTicks(canvas)
+        drawDirections(canvas)
+        drawDegreeTexts(canvas)
+        drawNorthTriangle(canvas)
+        drawDegreeValue(canvas)
+        drawCurrentTicks(canvas)
+    }
 
-//        drawGuides(canvas)
-
-        //画表盘刻度
-        for (angle in 0 until 360 step 3) {
-            //角度需要转为弧度
-            val radians = (angle - 90) * (Math.PI / 180)
-
-            val startX = (compassDialRadius - tickLength) * cos(radians)
-            val startY = (compassDialRadius - tickLength) * sin(radians)
-            val stopX = compassDialRadius * cos(radians)
-            val stopY = compassDialRadius * sin(radians)
-
-            canvas.drawLine(
-                startX.toFloat(),
-                startY.toFloat(),
-                stopX.toFloat(),
-                stopY.toFloat(),
-                tickPaint
-            )
+    //整圈表盘刻度，由表盘边缘向内延伸
+    private fun drawDialTicks(canvas: Canvas) {
+        for (angle in 0 until FULL_CIRCLE step TICK_STEP) {
+            canvas.drawTick(angle, tickLength, tickPaint)
         }
+    }
 
-        //画方位
-        for (angle in 0 until 360 step 90) {
-            //角度需要转为弧度
-            val radians = (angle - 180) * (Math.PI / 180)
-
-            val hOffset = innerRadius * radians
-
-            var direction = ""
-            when (angle) {
-                0 -> {
-                    direction = "北"
-                    innerPaint.color = Color.RED
-                }
-
-                90 -> {
-                    direction = "东"
-                    innerPaint.color = Color.DKGRAY
-                }
-
-                180 -> {
-                    direction = "南"
-                    innerPaint.color = Color.DKGRAY
-                }
-
-                270 -> {
-                    direction = "西"
-                    innerPaint.color = Color.DKGRAY
-                }
-            }
-
-            val fontMetrics = innerPaint.fontMetrics
-            val top = fontMetrics.top //基线到字体上边框的距离,即上图中的top
-            val bottom = fontMetrics.bottom //基线到字体下边框的距离,即上图中的bottom
-            val fontHeight = top + bottom
-            canvas.drawTextOnPath(
-                direction,
-                innerTextPath,
-                hOffset.toFloat(),
-                -fontHeight / 2,
-                innerPaint
-            )
+    //方位文字沿内圈排布，正北标红
+    private fun drawDirections(canvas: Canvas) {
+        directions.forEachIndexed { index, text ->
+            innerPaint.color = if (index == 0) Color.RED else Color.DKGRAY
+            val degrees = (index * DIRECTION_STEP).toFloat()
+            canvas.drawTextOnCircle(text, innerTextRadius, degrees, innerPaint, innerOffsetY)
         }
+    }
 
-        //画外围刻度
-        for (angle in 0 until 360 step 30) {
-            //角度需要转为弧度。减180是为了将drawTextOnPath的起点和outerTextPath的起点保持一致
-            val radians = (angle - 180) * (Math.PI / 180)
-
-            val hOffset = outerRadius * radians
-
-            /**
-             * hOffset : 与路径起始点的水平偏移距离。直线上为直线距离，曲线上为弧长
-             * vOffset : 与路径中心的垂直偏移量
-             * */
-            canvas.drawTextOnPath(
-                angle.toString(),
-                outerTextPath,
-                hOffset.toFloat(),
-                0f,
-                outerPaint
-            )
+    //外环角度文字，基线落在角度文字所在圆上，故不传径向偏移
+    private fun drawDegreeTexts(canvas: Canvas) {
+        for (angle in 0 until FULL_CIRCLE step DEGREE_STEP) {
+            canvas.drawTextOnCircle(angle.toString(), outerTextRadius, angle.toFloat(), outerPaint)
         }
+    }
 
-        //画正北方小三角
+    private fun drawNorthTriangle(canvas: Canvas) {
         canvas.drawPath(trianglePath, trianglePaint)
+    }
 
-        val fontMetrics = valuePaint.fontMetrics
-        val top = fontMetrics.top
-        val bottom = fontMetrics.bottom
-        val fontHeight = top + bottom
-        canvas.drawText("${degreeValue}°", 0f, -fontHeight / 2, valuePaint)
+    private fun drawDegreeValue(canvas: Canvas) {
+        canvas.drawText("${degreeValue}°", 0f, valueOffsetY, valuePaint)
+    }
 
-        //绘制实际角度值刻度。
-        /**
-         * 判断是否是大于180
-         * [0,180]，顺时针
-         * [180,360]，逆时针
-         * */
-        if (degreeValue < 180) {
-            for (angle in 0..degreeValue step 3) {
-                //角度需要转为弧度
-                val radians = (angle - 90) * (Math.PI / 180)
-
-                //判断是否是最后一个元素
-                val startX: Double
-                val startY: Double
-                if ((degreeValue - angle) <= 2) {
-                    startX = (compassDialRadius - tickLength * 1.5) * cos(radians)
-                    startY = (compassDialRadius - tickLength * 1.5) * sin(radians)
-                } else {
-                    startX = (compassDialRadius - tickLength) * cos(radians)
-                    startY = (compassDialRadius - tickLength) * sin(radians)
-                }
-
-                val stopX = compassDialRadius * cos(radians)
-                val stopY = compassDialRadius * sin(radians)
-
-                canvas.drawLine(
-                    startX.toFloat(),
-                    startY.toFloat(),
-                    stopX.toFloat(),
-                    stopY.toFloat(),
-                    currentTickPaint
-                )
-            }
+    /**
+     * 画当前方位角刻度：从正北出发沿「劣弧」补齐到当前角度，末端那根加长，兼作指示。
+     *
+     * 拆成两段是为了让填充范围始终不超过半圈：
+     * - 方位角 < 180°：0 → degreeValue，顺时针补齐；
+     * - 方位角 ≥ 180°：360 → degreeValue，等价于逆时针补齐另一侧。
+     *
+     * 两种写法覆盖的弧长都是 min(θ, 360 - θ)，观感是刻度从正北向两侧对称生长
+     * */
+    private fun drawCurrentTicks(canvas: Canvas) {
+        val progression = if (degreeValue < HALF_CIRCLE) {
+            0..degreeValue
         } else {
-            for (angle in 360 downTo degreeValue step 3) {
-                //角度需要转为弧度
-                val radians = (angle - 90) * (Math.PI / 180)
-
-                //判断是否是最后一个元素
-                val startX: Double
-                val startY: Double
-                if ((angle - degreeValue) <= 2) {
-                    startX = (compassDialRadius - tickLength * 1.5) * cos(radians)
-                    startY = (compassDialRadius - tickLength * 1.5) * sin(radians)
-                } else {
-                    startX = (compassDialRadius - tickLength) * cos(radians)
-                    startY = (compassDialRadius - tickLength) * sin(radians)
-                }
-
-                val stopX = compassDialRadius * cos(radians)
-                val stopY = compassDialRadius * sin(radians)
-
-                canvas.drawLine(
-                    startX.toFloat(),
-                    startY.toFloat(),
-                    stopX.toFloat(),
-                    stopY.toFloat(),
-                    currentTickPaint
-                )
-            }
+            FULL_CIRCLE downTo degreeValue
+        }
+        for (angle in progression step TICK_STEP) {
+            //序列末端离当前角度最近（差值必小于步长），把它加长成指示针
+            val isEndTick = abs(angle - degreeValue) < TICK_STEP
+            val length = if (isEndTick) tickLength * END_TICK_SCALE else tickLength
+            canvas.drawTick(angle, length, currentTickPaint)
         }
     }
 
     /**
-     * 辅助线
+     * 在方位角 degrees 处画一根刻度，由表盘边缘向内延伸 length。
+     * 正北为 0°，而屏幕正上方是 -Y，故统一减 90° 对齐
      * */
-    private fun drawGuides(canvas: Canvas) {
-        //最外层方框，即自定义View的边界
-        canvas.drawRect(rect, tickPaint)
-
-        //外层表盘刻度文字基准线
-        canvas.drawPath(outerTextPath, tickPaint)
-
-        //内层表盘方向文字基准线
-        canvas.drawPath(innerTextPath, tickPaint)
-
-        //中心横线
-        canvas.drawLine(
-            -viewSideLength.toFloat(),
-            0f,
-            viewSideLength.toFloat(),
-            0f,
-            tickPaint
-        )
-
-        //中心竖线
-        canvas.drawLine(
-            0f,
-            -viewSideLength.toFloat(),
-            0f,
-            viewSideLength.toFloat(),
-            tickPaint
-        )
+    private fun Canvas.drawTick(degrees: Int, length: Float, paint: Paint) {
+        val radians = Math.toRadians((degrees - 90).toDouble())
+        val unitX = cos(radians).toFloat()
+        val unitY = sin(radians).toFloat()
+        val inner = radius - length
+        drawLine(radius * unitX, radius * unitY, inner * unitX, inner * unitY, paint)
     }
 
+    /**
+     * 把文字画在半径 textRadius、方位角 degrees 处，并沿圆周切线旋转。
+     * 不用 drawTextOnPath：整圆 Path（sweep = 360）会被 Skia 退化处理，起点与走向均不可控。
+     *
+     * @param radialOffset 基线沿半径方向的偏移，正值朝圆心
+     * */
+    private fun Canvas.drawTextOnCircle(
+        text: String,
+        textRadius: Float,
+        degrees: Float,
+        paint: TextPaint,
+        radialOffset: Float = 0f
+    ) {
+        val radians = Math.toRadians(degrees.toDouble())
+        //x 向东为正，y 向南为正
+        val x = (textRadius * sin(radians)).toFloat()
+        val y = (-textRadius * cos(radians)).toFloat()
+        withRotation(degrees, x, y) {
+            drawText(text, x, y + radialOffset, paint)
+        }
+    }
+
+    /**
+     * 更新方位角，驱动中心读数与当前方位刻度
+     * @param value 方位角，超出 [0, 360) 会归一化
+     * */
     fun setDegreeValue(value: Int) {
-        degreeValue = value
-        //实时刷新角度值
+        val normalized = ((value % FULL_CIRCLE) + FULL_CIRCLE) % FULL_CIRCLE
+        //传感器回调频率很高，角度没变就不重绘
+        if (degreeValue == normalized) return
+        degreeValue = normalized
         invalidate()
     }
 }

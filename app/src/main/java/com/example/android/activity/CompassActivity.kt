@@ -5,21 +5,16 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.util.Log
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.android.databinding.ActivityCompassBinding
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.utils.WeakReferenceHandler
 
-class CompassActivity : KotlinBaseActivity<ActivityCompassBinding>(), SensorEventListener,
-    Handler.Callback {
+class CompassActivity : KotlinBaseActivity<ActivityCompassBinding>(), SensorEventListener {
 
     private val kTag = "CompassActivity"
-    private lateinit var mSensorManager: SensorManager
-    private lateinit var weakReferenceHandler: WeakReferenceHandler
+    private val sensorManager by lazy { getSystemService(SensorManager::class.java) }
     private var gravity: FloatArray? = null
     private var geomagnetic: FloatArray? = null
 
@@ -34,8 +29,7 @@ class CompassActivity : KotlinBaseActivity<ActivityCompassBinding>(), SensorEven
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        mSensorManager = getSystemService(SensorManager::class.java)
-        weakReferenceHandler = WeakReferenceHandler(this)
+
     }
 
     override fun setupTopBarLayout() {
@@ -59,17 +53,17 @@ class CompassActivity : KotlinBaseActivity<ActivityCompassBinding>(), SensorEven
     override fun onResume() {
         super.onResume()
         //注册加速度传感器监听
-        val accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        mSensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+        val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
 
         //注册磁场传感器监听
-        val magnetic = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
-        mSensorManager.registerListener(this, magnetic, SensorManager.SENSOR_DELAY_NORMAL)
+        val magnetic = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+        sensorManager.registerListener(this, magnetic, SensorManager.SENSOR_DELAY_NORMAL)
     }
 
     override fun onPause() {
         super.onPause()
-        mSensorManager.unregisterListener(this)
+        sensorManager.unregisterListener(this)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
@@ -92,18 +86,13 @@ class CompassActivity : KotlinBaseActivity<ActivityCompassBinding>(), SensorEven
             return
         }
 
-        weakReferenceHandler.sendEmptyMessage(2023120501)
-    }
+        if (SensorManager.getRotationMatrix(rotationMatrix, null, gravity, geomagnetic)) {
+            SensorManager.getOrientation(rotationMatrix, valueArray)
 
-    override fun handleMessage(msg: Message): Boolean {
-        if (msg.what == 2023120501) {
-            if (SensorManager.getRotationMatrix(rotationMatrix, null, gravity, geomagnetic)) {
-                SensorManager.getOrientation(rotationMatrix, valueArray)
-
-                val degree = ((360f + valueArray[0] * 180f / Math.PI) % 360).toInt()
+            val degree = ((360f + valueArray[0] * 180f / Math.PI) % 360).toInt()
+            runOnUiThread {
                 binding.compassView.setDegreeValue(degree)
             }
         }
-        return true
     }
 }
