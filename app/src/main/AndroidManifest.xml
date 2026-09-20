@@ -7,6 +7,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
+    <!--音频可视化必需，Visualizer 依赖此权限，否则部分机型返回全 0-->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <!--危险权限，需要手动申请-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -36,7 +40,6 @@
         <activity android:name=".activity.RadarScanActivity" />
         <activity android:name=".activity.CompassActivity" />
         <activity android:name=".activity.SatelliteStatusActivity" />
-        <activity android:name=".activity.AudioVisualizerActivity" />
         <activity android:name=".activity.PtzActivity" />
 
         <meta-data

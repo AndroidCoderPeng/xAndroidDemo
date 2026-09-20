@@ -1,7 +1,6 @@
 package com.example.android.activity
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.GnssStatus
@@ -20,7 +19,6 @@ import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
 import com.pengxh.kt.lite.extensions.show
 
-@SuppressLint("SetTextI18n")
 class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBinding>(),
     LocationListener {
 
@@ -88,10 +86,13 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
         //转为度分秒
         val lng = location.longitude.toDegree()
         val lat = location.latitude.toDegree()
-        binding.locationView.text = "经度：${lng} 纬度：${lat}\n" +
-                "经度：%.9f 纬度：%.9f\n".format(location.longitude, location.latitude) +
-                "精度：${location.accuracy}m\n" +
-                "类型：GPS"
+        val str = buildString {
+            append("经度：${lng} 纬度：${lat}\n")
+            append("经度：%.9f 纬度：%.9f\n".format(location.longitude, location.latitude))
+            append("精度：${location.accuracy}m\n")
+            append("类型：GPS")
+        }
+        binding.locationView.text = str
     }
 
     private val gnssStatusListener = object : GnssStatus.Callback() {

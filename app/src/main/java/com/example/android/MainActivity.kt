@@ -9,7 +9,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.amap.api.maps.MapsInitializer
-import com.example.android.activity.AudioVisualizerActivity
 import com.example.android.activity.CompassActivity
 import com.example.android.activity.DragMapActivity
 import com.example.android.activity.PtzActivity
@@ -34,7 +33,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
         "雷达扫描动画",
         "指南针",
         "导航卫星数据",
-        "音频可视化",
         "PTZ"
     )
 
@@ -111,8 +109,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>(),
                     2 -> navigatePageTo<RadarScanActivity>()
                     3 -> navigatePageTo<CompassActivity>()
                     4 -> navigatePageTo<SatelliteStatusActivity>()
-                    5 -> navigatePageTo<AudioVisualizerActivity>()
-                    6 -> navigatePageTo<PtzActivity>()
+                    5 -> navigatePageTo<PtzActivity>()
                 }
             }
         })
