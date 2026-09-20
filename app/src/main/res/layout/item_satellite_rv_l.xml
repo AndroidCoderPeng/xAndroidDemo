@@ -43,12 +43,16 @@
         android:paddingVertical="@dimen/padding">
 
         <ProgressBar
-            android:id="@+id/signalProgressView"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:id="@+id/signalProgressBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:max="64" />
+            android:indeterminateOnly="false"
+            android:max="64"
+            android:maxHeight="20dp"
+            android:minHeight="20dp"
+            android:mirrorForRtl="true"
+            android:progressDrawable="@drawable/progress_horizontal" />
 
         <TextView
             android:id="@+id/signalValueView"

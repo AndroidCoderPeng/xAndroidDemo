@@ -4,59 +4,64 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.R
 import com.example.android.model.Satellite
 import com.pengxh.kt.lite.adapter.ViewHolder
-import com.pengxh.kt.lite.extensions.convertDrawable
 
 class SatelliteRecyclerAdapter(
-    private val context: Context, private val dataRows: MutableList<Satellite>
+    private val context: Context,
+    private val dataRows: MutableList<Satellite>
 ) : RecyclerView.Adapter<ViewHolder>() {
+
+    private val flags = listOf(
+        R.drawable.ic_unknown,  // 0: UNKNOWN
+        R.drawable.ic_usa,      // 1: GPS
+        R.drawable.ic_usa,      // 2: SBAS（复用GPS图标，因为SBAS主要增强GPS）
+        R.drawable.ic_russia,   // 3: GLONASS
+        R.drawable.ic_japen,    // 4: QZSS
+        R.drawable.ic_china,    // 5: BDS
+        R.drawable.ic_eu,       // 6: GALILEO
+        R.drawable.ic_india     // 7: IRNSS
+    )
 
     override fun getItemCount(): Int = dataRows.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(
+        val itemView =
             LayoutInflater.from(context).inflate(R.layout.item_satellite_rv_l, parent, false)
-        )
+        return ViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val satellite = dataRows[position]
+        val signal = satellite.signal
 
-        var image = R.drawable.ic_unknown
-        when (satellite.type) {
-            1 -> image = R.drawable.ic_usa
-            3 -> image = R.drawable.ic_russia
-            4 -> image = R.drawable.ic_japen
-            5 -> image = R.drawable.ic_china
-            6 -> image = R.drawable.ic_eu
-            7 -> image = R.drawable.ic_india
-        }
-
-        //如果返回true，则表示该卫星正在被用于定位计算；如果返回false，则表示该卫星未被用于定位计算
-        val signalDrawable = if (satellite.isUsedInFix) {
+        // 返回true表示该卫星正在被用于定位计算；返回false表示未被用于定位计算
+        val signalColor: Int
+        if (satellite.isUsedInFix) {
             holder.setImageResource(R.id.satelliteStateView, R.drawable.ic_in_use)
-            if (satellite.signal <= 19) {
-                R.drawable.bg_progress_bar_middle_low
-            } else if (satellite.signal in 20..29) {
-                R.drawable.bg_progress_bar_middle_high
-            } else {
-                R.drawable.bg_progress_bar_high
+            signalColor = when {
+                signal <= 18 -> R.color.mildColor
+                signal <= 28 -> R.color.wellColor
+                else -> R.color.green
             }
         } else {
             holder.setImageResource(R.id.satelliteStateView, R.drawable.ic_un_use)
-            R.drawable.bg_progress_bar_low
+            signalColor = R.color.badColor
         }
-        val signalProgressView = holder.getView<ProgressBar>(R.id.signalProgressView)
-        signalProgressView.progressDrawable = signalDrawable.convertDrawable(context)
-        signalProgressView.progress = satellite.signal
 
-        holder.setImageResource(R.id.nationalityView, image)
-            .setText(R.id.svidView, satellite.svid.split("_")[1])
-            .setText(R.id.signalValueView, "${satellite.signal}")
+        val progressBar = holder.getView<ProgressBar>(R.id.signalProgressBar)
+        progressBar.progressTintList = ContextCompat.getColorStateList(context, signalColor)
+        progressBar.progress = signal
+
+        holder.setImageResource(
+            R.id.nationalityView, flags.getOrElse(satellite.type) { R.drawable.ic_unknown }
+        )
+            .setText(R.id.svidView, satellite.svid.substringAfterLast('_', satellite.svid))
+            .setText(R.id.signalValueView, signal.toString())
             .setText(R.id.azimuthView, "${satellite.azimuth}°")
             .setText(R.id.elevationView, "${satellite.elevation}°")
     }

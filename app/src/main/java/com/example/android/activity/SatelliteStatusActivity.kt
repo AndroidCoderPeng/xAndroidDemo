@@ -24,16 +24,23 @@ import com.pengxh.kt.lite.extensions.show
 class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBinding>(),
     LocationListener {
 
+    companion object {
+        private val CONSTELLATION_NAMES = listOf(
+            "UNKNOWN",  // 0: 未知星座 (CONSTELLATION_UNKNOWN)
+            "GPS",      // 1: 美国GPS卫星导航系统 (CONSTELLATION_GPS)
+            "SBAS",     // 2: 星基增强系统 (CONSTELLATION_SBAS)
+            "GLONASS",  // 3: 俄罗斯格洛纳斯卫星导航系统 (CONSTELLATION_GLONASS)
+            "QZSS",     // 4: 日本准天顶卫星系统 (CONSTELLATION_QZSS)
+            "BDS",      // 5: 中国北斗卫星导航系统 (CONSTELLATION_BEIDOU)
+            "GALILEO",  // 6: 欧盟伽利略卫星导航系统 (CONSTELLATION_GALILEO)
+            "IRNSS"     // 7: 印度区域导航卫星系统 (CONSTELLATION_IRNSS)
+        )
+    }
+
     private val locationManager by lazy { getSystemService(LocationManager::class.java) }
-    private val satelliteTypeMap = mapOf(
-        0 to "UNKNOWN",
-        1 to "GPS",
-        3 to "GLONASS",
-        4 to "QZSS",
-        5 to "BDS",
-        6 to "GALILEO",
-        7 to "IRNSS",
-    )
+    private val satelliteTypeMap: Map<Int, String> =
+        CONSTELLATION_NAMES.mapIndexed { index, name -> index to name }.toMap()
+
     private lateinit var satelliteAdapter: SatelliteRecyclerAdapter
 
     override fun initViewBinding(): ActivitySatelliteStatusBinding {
@@ -74,7 +81,7 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
         locationManager.registerGnssStatusCallback(gnssStatusListener, null)
         satelliteAdapter = SatelliteRecyclerAdapter(this, ArrayList())
         binding.recyclerView.adapter = satelliteAdapter
-        binding.recyclerView.addItemDecoration(RecyclerViewItemDivider(0f, 0f, Color.WHITE))
+        binding.recyclerView.addItemDecoration(RecyclerViewItemDivider(0f, 0f, Color.LTGRAY))
     }
 
     override fun onLocationChanged(location: Location) {
@@ -89,22 +96,38 @@ class SatelliteStatusActivity : KotlinBaseActivity<ActivitySatelliteStatusBindin
 
     private val gnssStatusListener = object : GnssStatus.Callback() {
         override fun onSatelliteStatusChanged(status: GnssStatus) {
-            val newSatellites = mutableListOf<Satellite>()
+            // 使用 Map 去重，相同 svid 的卫星只保留最后一个（信号值最新的）
+            val satelliteMap = LinkedHashMap<String, Satellite>()
+            //只统计已捕获到信号的卫星
+            var totalCount = 0
             for (i in 0 until status.satelliteCount) {
-                //在同一个导航系统内，svid是唯一的，不会重复，但是，不同的导航系统可能会使用相同的svid数值
+                //C/N0 为 0 表示该卫星尚未捕获到信号，不参与统计与展示
+                val cn0 = status.getCn0DbHz(i)
+                if (cn0 <= 0f) continue
+                totalCount++
+
                 val constellationType = status.getConstellationType(i)
                 val satellite = Satellite().apply {
-                    svid = "${satelliteTypeMap[constellationType]}_${status.getSvid(i)}"
-                    signal = status.getCn0DbHz(i).toInt() //获取卫星的信号
-                    elevation = status.getElevationDegrees(i).toInt()// 获取卫星的仰角
-                    azimuth = status.getAzimuthDegrees(i).toInt()// 获取卫星的方位角
-                    type = constellationType // 获取卫星的类型
+                    svid =
+                        "${satelliteTypeMap[constellationType] ?: "UNKNOWN"}_${status.getSvid(i)}"
+                    signal = cn0.toInt()
+                    elevation = status.getElevationDegrees(i).toInt()
+                    azimuth = status.getAzimuthDegrees(i).toInt()
+                    type = constellationType
                     isUsedInFix = status.usedInFix(i)
                 }
-                if (satellite.signal != 0) {
-                    newSatellites.add(satellite)
-                }
+                satelliteMap[satellite.svid] = satellite
             }
+
+            val availableCount = satelliteMap.values.count { it.isUsedInFix }
+            binding.toolbar.title = "卫星定位信号（$availableCount/$totalCount）"
+
+            // 将 Map 的值转为列表
+            val newSatellites = ArrayList(satelliteMap.values)
+            // 让信号值更强的排在前面
+            newSatellites.sortWith(compareByDescending<Satellite> {
+                it.signal
+            })
             satelliteAdapter.refresh(newSatellites)
         }
     }
