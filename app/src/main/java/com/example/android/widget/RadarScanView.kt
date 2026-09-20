@@ -1,442 +1,378 @@
 package com.example.android.widget
 
-import android.annotation.SuppressLint
+import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Matrix
 import android.graphics.Paint
-import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.Rect
-import android.graphics.RectF
 import android.graphics.SweepGradient
 import android.graphics.Typeface
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.LinearInterpolator
+import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.toColorInt
+import androidx.core.graphics.withRotation
+import androidx.core.graphics.withScale
 import com.example.android.R
 import com.example.android.util.ExampleConstant
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.sp2px
 import kotlin.math.cos
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
-class RadarScanView(private val context: Context, attrs: AttributeSet) : View(context, attrs) {
+/**
+ * 雷达扫描表盘
+ *
+ * 角度约定：正北为 0°，顺时针递增
+ * */
+class RadarScanView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : View(context, attrs, defStyleAttr) {
 
-    private val kTag = "RadarScanView"
+    private companion object {
+        const val FULL_CIRCLE = 360
+        const val HALF_CIRCLE = 180
+        const val DIRECTION_STEP = 90
+        const val TICK_STEP = 3
+        const val SCAN_DURATION_MS = 3600L
 
-    //View边框线条颜色
-    private val borderColor: Int
+        const val DEFAULT_CIRCLE_COUNT = 4
+        const val DEFAULT_RADIUS_DP = 144f
+        const val DEFAULT_BORDER_DP = 1f
+        const val DEFAULT_BORDER_COLOR = "#8000FFF0"
 
-    //View边框线条粗细
-    private val border: Int
+        const val TEXT_GAP_DP = 8f      // 方位文字与外圆之间留出的间距
+        const val VIEW_MARGIN_DP = 30f  // wrap_content 时为刻度、方位文字预留的边距
+        const val NEEDLE_SCALE = 0.75f  // 指针长度占半径的比例
+        const val TICK_LENGTH_DP = 15f
+        const val POINT_RADIUS_DP = 6f
+    }
 
-    //同心圆数量
-    private val circleCount: Int
+    // ---------- 自定义属性 ----------
+    //先给默认值，init 中再按 XML 覆盖；因需在 lambda 内赋值，故为 var
+    private var borderColor: Int = DEFAULT_BORDER_COLOR.toColorInt()
+    private var borderWidth: Float = DEFAULT_BORDER_DP.dp2px(context)
+    private var circleCount: Int = DEFAULT_CIRCLE_COUNT
+    private var radius: Float = DEFAULT_RADIUS_DP.dp2px(context)
+    private val outerTextRadius: Float  // 方位文字所在圆的半径
+    private val tickLength: Float
+    private val pointRadius: Float
+    private val halfSide: Float         // wrap_content 时的半边长
 
-    //最外层圆半径
-    private var radius: Int
+    // ---------- 画笔 ----------
+    private val gridPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        isFilterBitmap = true
+    }
+    private val circlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeCap = Paint.Cap.ROUND
+    }
 
-    //外圆文字路径半径
-    private var outerRadius: Int
+    private val tickPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeWidth = 8f.dp2px(context)
+    }
+    private val directionPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.CENTER
+        textSize = 14f.sp2px(context)
+    }
+    private val pointPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = Color.RED
+    }
+    private val nearestPointPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = Color.GREEN
+    }
 
-    //控件边长
-    private val viewSideLength: Int
-    private val rect: Rect
+    private val sweepPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+    }
+    private val needlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        isFilterBitmap = true
+    }
 
-    //需要渲染的数据点集合
-    private var points: ArrayList<PointF>? = null
+    // ---------- 绘制资源 ----------
+    private val backgroundBitmap = BitmapFactory.decodeResource(resources, R.mipmap.bg_radar)
+    private val needleBitmap = BitmapFactory.decodeResource(resources, R.mipmap.needle)
+    private val backgroundRect = Rect()
+    private val needleRect = Rect()
 
-    //距离最近的点
-    private var targetPoint: PointF? = null
+    //文字基线在径向上的偏移，使文字的视觉中心压在方位点上
+    private val directionOffsetY = directionPaint.fontMetrics.run {
+        -(top + bottom) / 2f
+    }
 
-    //View中心X坐标
+    // ---------- 数据 ----------
+    private val directions = listOf("北", "东", "南", "西")
+    private val points = mutableListOf<PointF>()
+    private var nearestPoint: PointF? = null
+
     private var centerX = 0f
-
-    //View中心Y坐标
     private var centerY = 0f
+    private var scanDegrees = 0f
+    private var degreeValue = 0  //设备罗盘上报的方位角，与扫描角 scanDegrees 无关
 
-    //雷达扫描角度步长
-    private var degrees = 0f
-
-    //方位角
-    private var degreeValue = 0
-
-    private lateinit var tickPaint: Paint
-    private lateinit var backPaint: Paint
-    private lateinit var needlePaint: Paint
-    private lateinit var borderPaint: Paint
-    private lateinit var shaderPaint: Paint
-    private lateinit var dataPaint: Paint
-    private lateinit var targetPaint: Paint
-    private lateinit var outerPaint: TextPaint
-    private lateinit var outerTextPath: Path
-
-    //雷达扫描线后面的渐变梯度
-    private lateinit var sweepGradient: SweepGradient
-
-    //背景栅格图
-    private lateinit var bitmap: Bitmap
-
-    //针
-    private lateinit var needleBitmap: Bitmap
-
-    //雷达旋转矩阵
-    private lateinit var matrix: Matrix
-
-    //背景区域范围
-    private var bgRect: Rect
-
-    //针区域范围
-    private var needleRect: Rect
-
-    //刻度长度
-    private val tickLength = 15f.dp2px(context)
+    //0 → 360 即完整一圈，动画值直接当作扫描线当前扫过的角度；启停见下方生命周期回调
+    private val scanAnimator = ValueAnimator.ofFloat(0f, FULL_CIRCLE.toFloat()).apply {
+        duration = SCAN_DURATION_MS
+        interpolator = LinearInterpolator()
+        repeatCount = ValueAnimator.INFINITE
+        addUpdateListener { animator ->
+            scanDegrees = animator.animatedValue as Float
+            invalidate()
+        }
+    }
 
     init {
-        val type = context.obtainStyledAttributes(attrs, R.styleable.RadarScanView)
-        borderColor = type.getColor(
-            R.styleable.RadarScanView_radar_borderColor, "#8000FFF0".toColorInt()
-        )
-        border = type.getDimensionPixelOffset(R.styleable.RadarScanView_radar_border, 1)
-        circleCount = type.getInt(R.styleable.RadarScanView_radar_circleCount, 4)
-        radius = type.getDimensionPixelOffset(R.styleable.RadarScanView_radar_radius, 300)
-        type.recycle()
+        //withStyledAttributes 在 lambda 结束时自动 recycle
+        context.withStyledAttributes(attrs, R.styleable.RadarScanView, defStyleAttr) {
+            //属性自身即默认值，无需把默认值写两遍
+            borderColor = getColor(R.styleable.RadarScanView_radar_borderColor, borderColor)
+            borderWidth = getDimension(R.styleable.RadarScanView_radar_border, borderWidth)
+            circleCount = getInt(
+                R.styleable.RadarScanView_radar_circleCount, circleCount
+            ).coerceAtLeast(1)
+            radius = getDimension(R.styleable.RadarScanView_radar_radius, radius)
+        }
 
-        outerRadius = radius + 8.dp2px(context)
+        //以下尺寸全部由半径派生，坐标系以圆心为原点
+        outerTextRadius = radius + TEXT_GAP_DP.dp2px(context)
+        tickLength = TICK_LENGTH_DP.dp2px(context)
+        pointRadius = POINT_RADIUS_DP.dp2px(context)
+        halfSide = radius + VIEW_MARGIN_DP.dp2px(context)
 
-        //需要给外围刻度留位置
-        viewSideLength = radius + 30.dp2px(context)
-        //辅助框
-        rect = Rect(-viewSideLength, -viewSideLength, viewSideLength, viewSideLength)
+        circlePaint.color = borderColor
+        circlePaint.strokeWidth = borderWidth
+        tickPaint.color = borderColor
+        sweepPaint.shader = SweepGradient(0f, 0f, borderColor, Color.TRANSPARENT)
 
-        bgRect = Rect(-radius, -radius, radius, radius)
+        //背景铺满整圆，指针按 NEEDLE_SCALE 略短于半径
+        val half = radius.roundToInt()
+        backgroundRect.set(-half, -half, half, half)
+        val needleHalf = (radius * NEEDLE_SCALE).roundToInt()
+        needleRect.set(-needleHalf, -needleHalf, needleHalf, needleHalf)
+    }
 
-        val needleRectRadius = (radius * 0.75).toInt()
-        needleRect = Rect(-needleRectRadius, -needleRectRadius, needleRectRadius, needleRectRadius)
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        scanAnimator.start()
+    }
 
-        initPaint()
+    override fun onDetachedFromWindow() {
+        scanAnimator.cancel()
+        super.onDetachedFromWindow()
+    }
 
-        //控制转动
-        postDelayed(object : Runnable {
-            override fun run() {
-                degrees++
-                //为矩阵设置旋转坐标，顺时针。因为翻转过坐标轴，所以需要-
-                matrix.setRotate(-degrees, 0f, 0f)
-
-                invalidate()
-                if (degrees == 360f) {
-                    degrees = 0f
-                }
-
-                //周期10ms
-                postDelayed(this, 10)
+    override fun onWindowVisibilityChanged(visibility: Int) {
+        super.onWindowVisibilityChanged(visibility)
+        if (visibility == VISIBLE) {
+            //只有已 start 的动画才能 resume，避免 View 尚未 attach 时就被启动
+            if (scanAnimator.isStarted) {
+                scanAnimator.resume()
             }
-            //延迟100ms启动
-        }, 100)
+        } else {
+            scanAnimator.pause()
+        }
     }
 
-    private fun initPaint() {
-        tickPaint = Paint()
-        tickPaint.color = Color.RED
-        tickPaint.style = Paint.Style.STROKE
-        tickPaint.strokeWidth = 2f.dp2px(context)
-        tickPaint.isAntiAlias = true
-
-        backPaint = Paint()
-        backPaint.isAntiAlias = true
-        bitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.bg_radar)
-
-        needlePaint = Paint()
-        needlePaint.isAntiAlias = true
-        //针
-        needleBitmap = BitmapFactory.decodeResource(context.resources, R.mipmap.needle)
-
-        borderPaint = Paint()
-        borderPaint.color = borderColor
-        borderPaint.style = Paint.Style.STROKE
-        borderPaint.strokeWidth = border.toFloat()
-        borderPaint.strokeCap = Paint.Cap.ROUND //圆头
-        borderPaint.isAntiAlias = true
-
-        outerPaint = TextPaint()
-        outerPaint.isAntiAlias = true
-        outerPaint.textAlign = Paint.Align.CENTER
-        outerPaint.textSize = 14f.sp2px(context)
-        outerTextPath = Path()
-        val innerRectF = RectF(
-            -outerRadius.toFloat(),
-            -outerRadius.toFloat(),
-            outerRadius.toFloat(),
-            outerRadius.toFloat()
-        )
-        outerTextPath.addArc(innerRectF, -90f, 360f)
-
-        //扫描线画笔
-        shaderPaint = Paint()
-        shaderPaint.isAntiAlias = true
-        shaderPaint.style = Paint.Style.FILL
-        sweepGradient = SweepGradient(0f, 0f, borderColor, Color.TRANSPARENT)
-        shaderPaint.shader = sweepGradient
-
-        //数据点画笔
-        dataPaint = Paint()
-        dataPaint.color = Color.RED
-        dataPaint.isAntiAlias = true
-        dataPaint.style = Paint.Style.FILL
-
-        //最近点画笔
-        targetPaint = Paint()
-        targetPaint.color = Color.GREEN
-        targetPaint.isAntiAlias = true
-        targetPaint.style = Paint.Style.FILL
-
-        //矩阵
-        matrix = Matrix()
-    }
-
-    //计算出中心位置，便于定位
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        centerX = (w shr 1).toFloat()
-        centerY = (h shr 1).toFloat()
+        centerX = paddingLeft + (w - paddingLeft - paddingRight) / 2f
+        centerY = paddingTop + (h - paddingTop - paddingBottom) / 2f
     }
 
+    /**
+     * wrap_content 时给出期望边长：直径 + 预留边距 + padding，
+     * 其余模式交给 View.resolveSize() 按父容器约束收敛，无需手写 MeasureSpec 分支
+     * */
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val widthSpecMode = MeasureSpec.getMode(widthMeasureSpec)
-        val widthSpecSize = MeasureSpec.getSize(widthMeasureSpec)
-        val heightSpecMode = MeasureSpec.getMode(heightMeasureSpec)
-        val heightSpecSize = MeasureSpec.getSize(heightMeasureSpec)
-        // 获取宽
-        val mWidth: Int = if (widthSpecMode == MeasureSpec.EXACTLY) {
-            // match_parent/精确值
-            widthSpecSize
-        } else {
-            // wrap_content，外边界宽
-            (viewSideLength * 2)
-        }
-        // 获取高
-        val mHeight: Int = if (heightSpecMode == MeasureSpec.EXACTLY) {
-            // match_parent/精确值
-            heightSpecSize
-        } else {
-            // wrap_content，外边界高
-            (viewSideLength * 2)
-        }
-        // 设置该view的宽高
-        setMeasuredDimension(mWidth, mHeight)
+        val side = (halfSide * 2).roundToInt()
+        setMeasuredDimension(
+            resolveSize(side + paddingLeft + paddingRight, widthMeasureSpec),
+            resolveSize(side + paddingTop + paddingBottom, heightMeasureSpec)
+        )
     }
 
-    @SuppressLint("DrawAllocation")
+    /**
+     * 调用顺序即图层顺序：底图 → 同心圆 → 十字线 → 方位文字 → 方位刻度 → 指针 → 数据点 → 扫描光束。
+     * 先把原点平移到圆心，后续所有坐标都以圆心为 (0, 0)
+     * */
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        /**
-         * 画布移到中心位置，方便绘制一系列图形
-         */
         canvas.translate(centerX, centerY)
+        drawBackground(canvas)
+        drawCircles(canvas)
+        drawCrossLines(canvas)
+        drawDirections(canvas)
+        drawDegreeTicks(canvas)
+        drawNeedle(canvas)
+        drawPoints(canvas)
+        drawSweep(canvas)
+    }
 
-        //画背景
-        canvas.drawBitmap(bitmap, null, bgRect, backPaint)
+    private fun drawBackground(canvas: Canvas) {
+        canvas.drawBitmap(backgroundBitmap, null, backgroundRect, gridPaint)
+    }
 
-        //每道同心圆的半径差
-        var tempR = radius
-        val deltaR = tempR / circleCount
-        for (i in 0 until circleCount) {
-            canvas.drawCircle(0f, 0f, tempR.toFloat(), borderPaint)
-            tempR -= deltaR
+    //由外向内等间距分布，最外圈半径为 radius，共 circleCount 圈
+    private fun drawCircles(canvas: Canvas) {
+        val deltaR = radius / circleCount
+        for (index in 0 until circleCount) {
+            canvas.drawCircle(0f, 0f, radius - deltaR * index, circlePaint)
         }
+    }
 
-        //画十字交叉线
-        canvas.drawLine(0f, -radius.toFloat(), 0f, radius.toFloat(), borderPaint)
-        canvas.drawLine(-radius.toFloat(), 0f, radius.toFloat(), 0f, borderPaint)
+    private fun drawCrossLines(canvas: Canvas) {
+        canvas.drawLine(0f, -radius, 0f, radius, circlePaint)
+        canvas.drawLine(-radius, 0f, radius, 0f, circlePaint)
+    }
 
-        //画方位
-        for (angle in 0 until 360 step 90) {
-            //角度需要转为弧度
-            val radians = (angle - 180) * (Math.PI / 180)
+    /**
+     * 画方位文字。正北为 0°，顺时针。
+     * 直接按三角函数算出外圈上四个正方位的坐标，再以该点为轴心旋转画布，
+     * 文字沿圆周切线排布。不依赖 Path 的起点与弧长，位置严格对齐外圈上下左右
+     * */
+    private fun drawDirections(canvas: Canvas) {
+        directions.forEachIndexed { index, text ->
+            val degrees = index * DIRECTION_STEP.toFloat()
+            val radians = Math.toRadians(degrees.toDouble())
+            //外圈正方位坐标：x 向东为正，y 向南为正
+            val x = (outerTextRadius * sin(radians)).toFloat()
+            val y = (-outerTextRadius * cos(radians)).toFloat()
 
-            val hOffset = outerRadius * radians
+            val isNorth = index == 0
+            directionPaint.color = if (isNorth) Color.RED else Color.WHITE
+            directionPaint.typeface = if (isNorth) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
 
-            var direction = ""
-            when (angle) {
-                0 -> {
-                    direction = "北"
-                    outerPaint.color = Color.RED
-                    outerPaint.typeface = Typeface.DEFAULT_BOLD
-                }
-
-                90 -> {
-                    direction = "东"
-                    outerPaint.color = Color.WHITE
-                    outerPaint.typeface = Typeface.DEFAULT
-                }
-
-                180 -> {
-                    direction = "南"
-                    outerPaint.color = Color.WHITE
-                    outerPaint.typeface = Typeface.DEFAULT
-                }
-
-                270 -> {
-                    direction = "西"
-                    outerPaint.color = Color.WHITE
-                    outerPaint.typeface = Typeface.DEFAULT
-                }
+            canvas.withRotation(degrees, x, y) {
+                //textAlign 为 CENTER，x 传方位点即水平居中；偏移量指向圆心
+                drawText(text, x, y + directionOffsetY, directionPaint)
             }
+        }
+    }
 
-            val fontMetrics = outerPaint.fontMetrics
-            val top = fontMetrics.top //基线到字体上边框的距离,即上图中的top
-            val bottom = fontMetrics.bottom //基线到字体下边框的距离,即上图中的bottom
-            val fontHeight = top + bottom
-            canvas.drawTextOnPath(
-                direction,
-                outerTextPath,
-                hOffset.toFloat(),
-                -fontHeight / 2,
-                outerPaint
+    /**
+     * 画实时方位角刻度：从正北出发，沿「劣弧」把刻度补齐到当前方位角。
+     *
+     * 拆成两段是为了让填充范围始终不超过半圈：
+     * - 方位角 < 180°：0 → degreeValue，顺时针补齐；
+     * - 方位角 ≥ 180°：360 → degreeValue，等价于逆时针补齐另一侧。
+     *
+     * 两种写法覆盖的弧长都是 min(θ, 360 - θ)，观感是刻度从正北向两侧对称生长，
+     * 既不会把整圈画满，也省掉了一半的绘制量
+     * */
+    private fun drawDegreeTicks(canvas: Canvas) {
+        val progression = if (degreeValue < HALF_CIRCLE) {
+            0..degreeValue
+        } else {
+            FULL_CIRCLE downTo degreeValue
+        }
+        for (angle in progression step TICK_STEP) {
+            //正北为 0°，而 -Y 才是屏幕正上方，故统一减 90° 对齐
+            val radians = Math.toRadians((angle - 90).toDouble())
+            val unitX = cos(radians).toFloat()
+            val unitY = sin(radians).toFloat()
+            val outer = radius + tickLength
+            canvas.drawLine(
+                outer * unitX, outer * unitY,
+                radius * unitX, radius * unitY,
+                tickPaint
             )
         }
+    }
 
-        //画实时方位角
-        if (degreeValue < 180) {
-            for (angle in 0..degreeValue step 3) {
-                //角度需要转为弧度
-                val radians = (angle - 90) * (Math.PI / 180)
-
-                val startX = (radius + tickLength) * cos(radians)
-                val startY = (radius + tickLength) * sin(radians)
-
-                val stopX = radius * cos(radians)
-                val stopY = radius * sin(radians)
-
-                tickPaint.strokeWidth = 8f.dp2px(context)
-                tickPaint.color = borderColor
-                canvas.drawLine(
-                    startX.toFloat(),
-                    startY.toFloat(),
-                    stopX.toFloat(),
-                    stopY.toFloat(),
-                    tickPaint
-                )
-            }
-        } else {
-            for (angle in 360 downTo degreeValue step 3) {
-                //角度需要转为弧度
-                val radians = (angle - 90) * (Math.PI / 180)
-
-                val startX = (radius + tickLength) * cos(radians)
-                val startY = (radius + tickLength) * sin(radians)
-
-                val stopX = radius * cos(radians)
-                val stopY = radius * sin(radians)
-
-                tickPaint.color = borderColor
-                tickPaint.strokeWidth = 8f.dp2px(context)
-                canvas.drawLine(
-                    startX.toFloat(),
-                    startY.toFloat(),
-                    stopX.toFloat(),
-                    stopY.toFloat(),
-                    tickPaint
-                )
-            }
+    //旋转画布即可，不必每帧 Bitmap.createBitmap 生成旋转后的新图
+    private fun drawNeedle(canvas: Canvas) {
+        canvas.withRotation(degreeValue.toFloat()) {
+            drawBitmap(needleBitmap, null, needleRect, needlePaint)
         }
+    }
 
-        val needleMatrix = Matrix()
-        needleMatrix.postRotate(degreeValue.toFloat())
-        val bmp = Bitmap.createBitmap(
-            needleBitmap,
-            0, 0,
-            needleBitmap.width, needleBitmap.height,
-            needleMatrix, true
-        )
-        canvas.drawBitmap(bmp, null, needleRect, needlePaint)
-
-        //画数据点
-        points?.forEach {
-            canvas.drawCircle(it.x, it.y, 10f, dataPaint)
+    //最近点最后画，才能盖在与之重叠的普通点之上
+    private fun drawPoints(canvas: Canvas) {
+        points.forEach {
+            canvas.drawCircle(it.x, it.y, pointRadius, pointPaint)
         }
-
-        //画最近的点
-        targetPoint?.apply {
-            canvas.drawCircle(x, y, 10f, targetPaint)
+        nearestPoint?.let {
+            canvas.drawCircle(it.x, it.y, pointRadius, nearestPointPaint)
         }
-
-        /**
-         * 上下翻转画布，否则矩阵旋转是逆时针，因为手机等设备Y轴和生活中的坐标轴Y轴是反的
-         * */
-        canvas.scale(1f, -1f)
-
-        //关联矩阵
-        canvas.concat(matrix)
-        canvas.drawCircle(0f, 0f, radius.toFloat(), shaderPaint)
     }
 
     /**
-     * 更新罗盘方位角度
-     * @param value 方位角
+     * 画扫描光束。整圆填充带 [SweepGradient] 的画笔：渐变自 3 点钟方向起、
+     * 沿角度增大方向由实色渐隐到透明，于是圆自带一条拖尾，看着就是扫描光束。
+     *
+     * 两处方向修正都是为了对齐「顺时针扫」的观感：
+     * 1. canvas 的 Y 轴向下，先翻转 Y 轴，拖尾才会落在扫描前进方向的后方；
+     * 2. 翻转后 [Canvas.rotate] 的视觉方向随之反转，故传 -scanDegrees 补偿回来。
+     *
+     * [withScale] 自带 save/restore，不会污染后续绘制
+     * */
+    private fun drawSweep(canvas: Canvas) {
+        canvas.withScale(1f, -1f) {
+            rotate(-scanDegrees)
+            drawCircle(0f, 0f, radius, sweepPaint)
+        }
+    }
+
+    /**
+     * 更新罗盘方位角，驱动方位刻度与指针
+     * @param value 方位角，超出 [0, 360) 会归一化
      * */
     fun setDegreeValue(value: Int) {
-        degreeValue = value
-        //实时刷新角度值
+        val normalized = ((value % FULL_CIRCLE) + FULL_CIRCLE) % FULL_CIRCLE
+        //传感器回调频率很高，角度没变就不重绘
+        if (degreeValue == normalized) return
+        degreeValue = normalized
         invalidate()
     }
 
     /**
-     * 数据点
-     * @param dataPoints 数据点集合
+     * 渲染数据点，并把距圆心最近的点回调出去
+     * @param dataPoints 数据点集合，只读，不会被排序或改动
      * */
-    fun renderPointData(dataPoints: ArrayList<DataPoint>, callback: OnGetNearestPointCallback) {
-        if (dataPoints.isNotEmpty()) {
-            points = ArrayList()
-            dataPoints.forEach {
-                points?.add(it.convertPointF())
-            }
-
-            //计算出附近最近的点
-            dataPoints.sortBy(DataPoint::distance)
-
-            val nearestPoint = dataPoints.first()
-            //减少排序计算次数，回调最近的点到主界面
-            callback.getNearestPoint(nearestPoint)
-
-            //在最近的点外侧绘制同心圆
-            targetPoint = nearestPoint.convertPointF()
+    fun renderPointData(dataPoints: List<DataPoint>, onGetNearestPoint: (DataPoint?) -> Unit) {
+        points.clear()
+        //用 minByOrNull 而非 sortBy，避免把调用方传入的集合就地排序
+        val nearest = dataPoints.minByOrNull { it.distance }
+        nearestPoint = nearest?.toPointF()
+        if (nearest == null) {
+            onGetNearestPoint(null)
         } else {
-            points?.clear()
-            targetPoint = null
-            callback.getNearestPoint(null)
+            dataPoints.forEach {
+                points.add(it.toPointF())
+            }
+            onGetNearestPoint(nearest)
         }
-        //不管有无数据点，都要刷新点位数据，不然从有数据到无数据这个过程，界面不会及时刷新
+        //不管有没有点都要刷新，否则从「有点」到「无点」界面不会更新
         invalidate()
     }
 
     /**
      * 数据点
-     * @param angle 数据点和圆心的方位角
-     * @param distance 数据点和圆心的相对距离
+     * @param angle 相对正北方向的方位角，单位「度」，顺时针
+     * @param distance 距圆心的实际距离，单位米
      * */
     data class DataPoint(var angle: Double, var distance: Float)
 
-    interface OnGetNearestPointCallback {
-        fun getNearestPoint(point: DataPoint?)
-    }
-
     /**
-     * dataPoint转为PointF
+     * 数据点转画布坐标。
+     * angle 以正北为 0°，而屏幕正上方是 -Y，故统一减 90° 再转弧度；
+     * 距离按 [ExampleConstant.MAX_DISTANCE] 归一化到半径，超量程的点收敛到最外环，
+     * 异常负值同样被 coerceIn 收敛到圆心
      * */
-    private fun DataPoint.convertPointF(): PointF {
-        /**
-         * 距离最大5.5米，表盘四个环，一个环距离1.5米，半径124dp（248px）
-         * */
-        val dataDistance = (this.distance / ExampleConstant.MAX_DISTANCE) * radius
-        val x = dataDistance * cos(this.angle).toFloat()
-        val y = dataDistance * sin(this.angle).toFloat()
-        return PointF(x, y)
+    private fun DataPoint.toPointF(): PointF {
+        val radians = Math.toRadians(angle - 90.0)
+        val offset = (distance / ExampleConstant.MAX_DISTANCE).coerceIn(0f, 1f) * radius
+        return PointF(offset * cos(radians).toFloat(), offset * sin(radians).toFloat())
     }
 }

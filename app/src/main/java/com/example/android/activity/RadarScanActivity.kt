@@ -34,15 +34,9 @@ class RadarScanActivity : KotlinBaseActivity<ActivityRadarScanBinding>(),
         dataPoints.add(RadarScanView.DataPoint(120.0, 5f))
         dataPoints.add(RadarScanView.DataPoint(225.0, 0.5f))
         dataPoints.add(RadarScanView.DataPoint(345.0, 3.75f))
-        binding.radarScanView.renderPointData(
-            dataPoints,
-            object : RadarScanView.OnGetNearestPointCallback {
-                override fun getNearestPoint(point: RadarScanView.DataPoint?) {
-                    point?.apply {
-                        Log.d(kTag, "getNearestPoint: ${this.toJson()}")
-                    }
-                }
-            })
+        binding.radarScanView.renderPointData(dataPoints) {
+            Log.d(kTag, "nearestPoint: ${it?.toJson()}")
+        }
     }
 
     override fun initViewBinding(): ActivityRadarScanBinding {
